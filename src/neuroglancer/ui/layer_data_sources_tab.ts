@@ -275,6 +275,12 @@ export class DataSourceView extends RefCounted {
     element.appendChild(urlInput.element);
     element.appendChild(this.registerDisposer(new MessagesView(source.messages)).element);
     this.updateView();
+
+    const controllerList = document.createElement('div')
+    controllerList.style.display = 'contents';
+    controllerList.innerHTML = '<br><br> Translation: <ul> <li>Left/Right/Up/Down : control+ (←/→/↑/↓) </li> <li>In/Out : control+shift+(↑/↓)</li> </ul> Rotation <ul> <li>Z-Axis/X-Axis: alt+ (←/→/↑/↓) </li> <li>Y-Axis: alt+ (←/→) </li> </ul><br><br>'
+    element.appendChild(controllerList);
+
   }
 
   updateView() {

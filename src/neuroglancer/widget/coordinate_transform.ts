@@ -29,7 +29,7 @@ import {arraysEqual} from 'neuroglancer/util/array';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren, removeFromParent} from 'neuroglancer/util/dom';
 import {ActionEvent, KeyboardEventBinder, registerActionListener} from 'neuroglancer/util/keyboard_bindings';
-import {createIdentity, extendHomogeneousTransform, isIdentity} from 'neuroglancer/util/matrix';
+import {createIdentity, extendHomogeneousTransform, isIdentity, rotateMatrix} from 'neuroglancer/util/matrix';
 import {EventActionMap, MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
 import {formatScaleWithUnitAsString, parseScale} from 'neuroglancer/util/si_units';
 import {makeIcon} from 'neuroglancer/widget/icon';
@@ -63,6 +63,18 @@ const inputEventMap = EventActionMap.fromObject({
   'arrowright': {action: 'move-right', preventDefault: false},
   'enter': {action: 'commit'},
   'escape': {action: 'cancel'},
+  'control+arrowup':{action: 'move-vol-up'},
+  'control+arrowdown':{action: 'move-vol-down'},
+  'control+shift+arrowup':{action: 'move-vol-in'},
+  'control+shift+arrowdown':{action: 'move-vol-out'},
+  'control+arrowleft':{action: 'move-vol-left'},
+  'control+arrowright':{action: 'move-vol-right'},
+  'alt+arrowright':{action: 'yaw-right'},
+  'alt+arrowleft':{action: 'yaw-left'},
+  'alt+arrowup': {action: 'roll-up'},
+  'alt+arrowdown': {action: 'roll-down'},
+  'alt+shift+arrowleft':{action: 'pitch-left'},
+  'alt+shift+arrowright':{action: 'pitch-right'}
 });
 
 function makeScaleElement() {
@@ -183,6 +195,10 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private outputScaleModified: boolean[] = [];
   private curSourceRank: number = -1;
   private curRank: number = -1;
+  private curYaw: number = 0;
+  private curPitch: number = 0;
+  private curRoll: number = 0;
+  private rotPoint: Float64Array;
   private curTransform: CoordinateSpaceTransform|undefined = undefined;
   private addingSourceDimension = false;
   private resetToIdentityButton = makeIcon({
@@ -368,6 +384,62 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerMoveUpDown('move-down', +1, 0);
     registerMoveUpDown('move-left', 0, -1);
     registerMoveUpDown('move-right', 0, +1);
+
+    const registerMoveVol = (action: string, diff: number, dir: string) => {
+      registerActionListener<Event>(element, action, () => {
+        const {transform} = this;
+        if(dir == 'x'){
+          let temp = this.transform.value.transform;
+          temp[12] = temp[12] + diff;
+          transform.transform = temp;
+        }
+        if(dir == 'y'){
+          let temp = this.transform.value.transform;
+          temp[13] = temp[13] + diff;
+          transform.transform = temp;
+        }
+        if(dir=='z'){
+          let temp = this.transform.value.transform;
+          temp[14] = temp[14] + diff;
+          transform.transform = temp;
+        }
+        
+      });
+    };
+    let lowerBound = globalCombiner.combined.value.bounds.lowerBounds;
+    // let upperBounds = globalCombiner.combined.value.bounds.upperBounds;
+
+    // this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBounds[i]));
+    this.rotPoint = lowerBound.map(() => 0);
+
+    const registerRotVol = (action: string, yawAngle: number, pitchAngle : number, rollAngle : number) => {
+      registerActionListener<Event>(element, action, () => {
+        const {transform} = this;
+        this.curYaw = this.curYaw + yawAngle;
+        this.curPitch = this.curPitch + pitchAngle;
+        this.curRoll = this.curRoll + rollAngle;
+        let temp = rotateMatrix(this.curYaw, this.curPitch, this.curRoll, this.rotPoint);
+        transform.transform = temp;
+
+      });
+    }
+
+    registerMoveVol('move-vol-up', -10, 'y');
+    registerMoveVol('move-vol-down', 10, 'y');
+    registerMoveVol('move-vol-right', 10, 'x');
+    registerMoveVol('move-vol-left', -10, 'x');
+    registerMoveVol('move-vol-in', 10, 'z');
+    registerMoveVol('move-vol-out', -10, 'z');
+    
+    registerRotVol('yaw-left', -5, 0, 0);
+    registerRotVol('yaw-right', 5, 0, 0);
+    
+    registerRotVol('pitch-left', 0, -5, 0);
+    registerRotVol('pitch-right', 0, 5, 0);
+    
+    registerRotVol('roll-up', 0, 0, -5);
+    registerRotVol('roll-down', 0, 0, 5);
+
     const registerFocusout = (container: HTMLDivElement, handler: (event: FocusEvent) => void) => {
       container.addEventListener('focusout', (event: FocusEvent) => {
         const {relatedTarget} = event;
@@ -734,7 +806,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       inputScaleContainer,
       inputLowerBoundsContainer,
       inputUpperBoundsContainer,
-      outputScaleContainer,
+      outputScaleContainer
     } = this;
     element.style.gridTemplateColumns =
         `[outputLabel headerStart] min-content [outputNames] 1fr [outputScales] 1fr [headerEnd] ` +

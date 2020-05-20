@@ -45,6 +45,69 @@ export function identity<T extends TypedArray>(a: T, lda: number, n: number): T 
   return a;
 }
 
+export function rotateMatrix(yawAngle:number, pitchAngle:number, rollAngle:number, rotPoint:Float64Array){
+
+  let yawRot = yawMat(yawAngle);
+  let rollRot = rollMat(rollAngle);
+  let pitchRot = pitchMat(pitchAngle);
+
+  let temp = new Float64Array(16);
+  multiply(temp, 4, yawRot, 4, pitchRot, 4, 4, 4, 4);
+  let finalRot = new Float64Array(16);
+  multiply(finalRot, 4, temp, 4, rollRot, 4, 4, 4, 4);
+  rotPoint[2] = rotPoint[2]*2; // Divide by Half of Resolution
+  let offset = calcOffset(finalRot, rotPoint);
+
+  finalRot[12] = offset[0];
+  finalRot[13] = offset[1];
+  finalRot[14] = offset[2]/2;
+
+  return finalRot;
+}
+
+export function yawMat (yawAngle:number){
+  return rotHelper(yawAngle, [0,1,4,5,10,15]);
+}
+
+export function rollMat(rollAngle:number){
+  return rotHelper(rollAngle, [5,6,9,10,0,15]);
+}
+
+export function pitchMat(pitchAngle:number){
+  return rotHelper(pitchAngle, [0,8,2,10,5,15]);
+}
+
+export function rotHelper(degree:number, idxs:number[]){
+  let sin_deg = Math.sin(degree * Math.PI / 180);
+  let cos_deg = Math.cos(degree * Math.PI / 180);
+
+  let rotMat = new Float64Array(16);
+
+  rotMat[idxs[0]] = cos_deg;
+  rotMat[idxs[1]] = sin_deg;
+  rotMat[idxs[2]] = -1*sin_deg;
+  rotMat[idxs[3]] = cos_deg;
+  rotMat[idxs[4]] = 1;
+  rotMat[idxs[5]] = 1;
+
+  return rotMat
+}
+
+export function calcOffset<T extends TypedArray>(rotMat: T, rotPoint:Float64Array){
+  // New offset is going to be (I-R)*rotPoint 
+  // Here R is the rotation matrix
+
+  const eye = identity(new Float64Array(16), 4, 16);
+  const diffMat = eye.map((a, i) => (a - rotMat[i]));
+  const offset = new Float64Array(4);
+
+  let point = new Float64Array(4);
+  point[0] = rotPoint[0]; point[1] = rotPoint[1]; point[2] = rotPoint[2];
+  point[3] = 1;
+
+  return multiply(offset, 4, diffMat, 4, point, 4, 4, 4, 1);
+}
+
 export function createIdentity<T extends TypedArray>(
     c: {new (n: number): T}, rows: number, cols: number = rows): T {
   return identity(new c(rows * cols), rows, Math.min(rows, cols));
