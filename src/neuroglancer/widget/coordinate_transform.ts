@@ -29,7 +29,7 @@ import {arraysEqual} from 'neuroglancer/util/array';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren, removeFromParent} from 'neuroglancer/util/dom';
 import {ActionEvent, KeyboardEventBinder, registerActionListener} from 'neuroglancer/util/keyboard_bindings';
-import {createIdentity, extendHomogeneousTransform, isIdentity, rotateMatrix} from 'neuroglancer/util/matrix';
+import {createIdentity, extendHomogeneousTransform, isIdentity, rotateMatrix, scaleTformMat} from 'neuroglancer/util/matrix';
 import {EventActionMap, MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
 import {formatScaleWithUnitAsString, parseScale} from 'neuroglancer/util/si_units';
 import {makeIcon} from 'neuroglancer/widget/icon';
@@ -74,7 +74,9 @@ const inputEventMap = EventActionMap.fromObject({
   'alt+arrowup': {action: 'roll-up'},
   'alt+arrowdown': {action: 'roll-down'},
   'alt+shift+arrowleft':{action: 'pitch-left'},
-  'alt+shift+arrowright':{action: 'pitch-right'}
+  'alt+shift+arrowright':{action: 'pitch-right'},
+  'alt+shift+arrowup':{action: 'inc-scale'},
+  'alt+shift+arrowdown':{action: 'dec-scale'}
 });
 
 function makeScaleElement() {
@@ -198,6 +200,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private curYaw: number = 0;
   private curPitch: number = 0;
   private curRoll: number = 0;
+  private curScale:number = 1;
   private rotPoint: Float64Array;
   private curTransform: CoordinateSpaceTransform|undefined = undefined;
   private addingSourceDimension = false;
@@ -424,6 +427,21 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       });
     }
 
+    const registerScaleVol = (action: string, scale: number) => {
+      registerActionListener<Event>(element, action, () => {
+        const {transform} = this;
+        if(action='inc'){
+          this.curScale *= 1/scale;
+        }
+        else{
+          this.curScale *= scale;
+        }
+        let temp = scaleTformMat(this.transform.transform.value, this.curScale);
+        transform.transform = temp;
+
+      });
+    }
+
     registerMoveVol('move-vol-up', -10, 'y');
     registerMoveVol('move-vol-down', 10, 'y');
     registerMoveVol('move-vol-right', 10, 'x');
@@ -439,6 +457,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     
     registerRotVol('roll-up', 0, 0, -5);
     registerRotVol('roll-down', 0, 0, 5);
+
+    registerScaleVol('inc-scale', 0.1);
+    registerScaleVol('dec-scale', 0.1);
 
     const registerFocusout = (container: HTMLDivElement, handler: (event: FocusEvent) => void) => {
       container.addEventListener('focusout', (event: FocusEvent) => {

@@ -65,7 +65,15 @@ export function rotateMatrix(yawAngle:number, pitchAngle:number, rollAngle:numbe
   return finalRot;
 }
 
-export function yawMat (yawAngle:number){
+export function scaleTformMat(tform: Float64Array, scale: number){
+  let scale_mat = identity(new Float64Array(16), 4, 16);
+  scale_mat.map(a => scale * a);
+  let new_tform = new Float64Array(16);
+  multiply(new_tform, 4, tform, 4, scale_mat, 4, 4, 4, 4);
+  return new_tform
+}
+
+export function yawMat(yawAngle:number){
   return rotHelper(yawAngle, [0,1,4,5,10,15]);
 }
 
