@@ -19,6 +19,7 @@ from __future__ import absolute_import
 import collections
 import copy
 import math
+import numbers
 
 try:
     import collections.abc as collections_abc
@@ -193,18 +194,93 @@ class CoordinateSpace(object):
             d[name] = [scale, unit]
         return d
 
+
+@export
+class Tool(JsonObjectWrapper):
+    __slots__ = ()
+
+    type = wrapped_property('type', text_type)
+
+    def __init__(self, json_data, **kwargs):
+        super(Tool, self).__init__(json_data=json_data, **kwargs)
+
+
+@export
+class PlacePointTool(Tool):
+    __slots__ = ()
+
+    def __init__(self, *args, **kwargs):
+        super(PlacePointTool, self).__init__(*args, type='annotatePoint', **kwargs)
+
+
+@export
+class PlaceLineTool(Tool):
+    __slots__ = ()
+
+    def __init__(self, *args, **kwargs):
+        super(PlaceLineTool, self).__init__(*args, type='annotateLine', **kwargs)
+
+
+@export
+class PlaceBoundingBoxTool(Tool):
+    __slots__ = ()
+
+    def __init__(self, *args, **kwargs):
+        super(PlaceBoundingBoxTool, self).__init__(*args, type='annotateBoundingBox', **kwargs)
+
+
+@export
+class PlaceEllipsoidTool(Tool):
+    __slots__ = ()
+
+    def __init__(self, *args, **kwargs):
+        super(PlaceEllipsoidTool, self).__init__(*args, type='annotateSphere', **kwargs)
+
+
+tool_types = {
+    'annotatePoint': PlacePointTool,
+    'annotateLine': PlaceLineTool,
+    'annotateBoundingBox': PlaceBoundingBoxTool,
+    'annotateSphere': PlaceEllipsoidTool,
+}
+
+
+@export
+def tool(json_data, _readonly=False):
+    if isinstance(json_data, Tool):
+        return json_data
+    if isinstance(json_data, six.string_types):
+        json_data = {'type': json_data}
+    if not isinstance(json_data, dict):
+        raise TypeError
+
+    type_name = json_data.get('type')
+    tool_type = tool_types.get(type_name)
+    if tool_type is None: raise ValueError
+    return tool_type(json_data, _readonly=_readonly)
+
+
+tool.supports_readonly = True
+
+
 @export
 class Layer(JsonObjectWrapper):
     __slots__ = ()
     type = wrapped_property('type', optional(text_type))
     layer_dimensions = layerDimensions = wrapped_property('localDimensions', CoordinateSpace)
-    layer_position = layerPosition = wrapped_property('localPosition', optional(array_wrapper(np.float32)))
+    layer_position = layerPosition = wrapped_property('localPosition',
+                                                      optional(array_wrapper(np.float32)))
+    tab = wrapped_property('tab', optional(text_type))
+    pick = wrapped_property('pick', optional(bool))
+    tool = wrapped_property('tool', optional(tool))
 
     @staticmethod
     def interpolate(a, b, t):
         c = copy.deepcopy(a)
-        c.layer_position = interpolate_linear_optional_vectors(a.layer_position, b.layer_position, t)
+        c.layer_position = interpolate_linear_optional_vectors(a.layer_position, b.layer_position,
+                                                               t)
         return c
+
 
 @export
 class PointAnnotationLayer(Layer):
@@ -222,6 +298,7 @@ class CoordinateSpaceTransform(JsonObjectWrapper):
     output_dimensions = outputDimensions = wrapped_property('outputDimensions', CoordinateSpace)
     input_dimensions = inputDimensions = wrapped_property('inputDimensions', optional(CoordinateSpace))
     source_rank = sourceRank = wrapped_property('sourceRank', optional(int))
+    matrix = wrapped_property('matrix', optional(array_wrapper(np.float64)))
 
 def data_source_url(x):
     if isinstance(x, (local_volume.LocalVolume, skeleton.SkeletonSource)):
@@ -229,6 +306,18 @@ def data_source_url(x):
     if not isinstance(x, six.string_types):
         raise TypeError
     return text_type(x)
+
+@export
+class LayerDataSubsource(JsonObjectWrapper):
+    __slots__ = ()
+    supports_validation = True
+
+    def __init__(self, json_data=None, *args, **kwargs):
+        if isinstance(json_data, bool):
+            json_data = {'enabled': json_data}
+        super(LayerDataSubsource, self).__init__(json_data, *args, **kwargs)
+
+    enabled = wrapped_property('enabled', optional(bool))
 
 @export
 class LayerDataSource(JsonObjectWrapper):
@@ -242,6 +331,7 @@ class LayerDataSource(JsonObjectWrapper):
 
     url = wrapped_property('url', data_source_url)
     transform = wrapped_property('transform', optional(CoordinateSpaceTransform))
+    subsources = wrapped_property('subsources', typed_string_map(LayerDataSubsource))
     enable_default_subsources = enableDefaultSubsources = wrapped_property('enableDefaultSubsources', optional(bool, True))
 
 @export
@@ -249,16 +339,19 @@ class LayerDataSources(typed_list(LayerDataSource, validator=LayerDataSource)):
     __slots__ = ()
 
     def __init__(self, json_data=None, **kwargs):
-        if (isinstance(json_data, LayerDataSource) or
-            isinstance(json_data, six.string_types) or
-            isinstance(json_data, (local_volume.LocalVolume, skeleton.SkeletonSource))):
+        if isinstance(json_data, (LayerDataSource, six.string_types, local_volume.LocalVolume,
+                                  skeleton.SkeletonSource, dict)):
             json_data = [json_data]
+        elif isinstance(json_data, LayerDataSources):
+            json_data = json_data.to_json()
         super(LayerDataSources, self).__init__(json_data, **kwargs)
 
 class _AnnotationLayerOptions(object):
     __slots__ = ()
     annotation_color = annotationColor = wrapped_property('annotationColor', optional(text_type))
-    annotation_fill_opacity = annotationFillOpacity = wrapped_property('annotationFillOpacity', optional(float, 0))
+
+
+ShaderControls = typed_string_map((six.text_type, numbers.Number))
 
 
 @export
@@ -270,6 +363,7 @@ class ImageLayer(Layer, _AnnotationLayerOptions):
 
     source = wrapped_property('source', LayerDataSources)
     shader = wrapped_property('shader', text_type)
+    shader_controls = shaderControls = wrapped_property('shaderControls', ShaderControls)
     opacity = wrapped_property('opacity', optional(float, 0.5))
     blend = wrapped_property('blend', optional(str))
     cross_section_render_scale = crossSectionRenderScale = wrapped_property(
@@ -291,6 +385,18 @@ def uint64_equivalence_map(obj, _readonly=False):
 
 
 @export
+class SkeletonRenderingOptions(JsonObjectWrapper):
+    __slots__ = ()
+
+    shader = wrapped_property('shader', optional(text_type))
+    shader_controls = shaderControls = wrapped_property('shaderControls', ShaderControls)
+    mode2d = wrapped_property('mode2d', optional(text_type))
+    line_width2d = lineWidth2d = wrapped_property('lineWidth2d', optional(float, 2))
+    mode3d = wrapped_property('mode3d', optional(text_type))
+    line_width3d = lineWidth3d = wrapped_property('lineWidth3d', optional(float, 1))
+
+
+@export
 class SegmentationLayer(Layer, _AnnotationLayerOptions):
     __slots__ = ()
 
@@ -304,11 +410,24 @@ class SegmentationLayer(Layer, _AnnotationLayerOptions):
     selected_alpha = selectedAlpha = wrapped_property('selectedAlpha', optional(float, 0.5))
     not_selected_alpha = notSelectedAlpha = wrapped_property('notSelectedAlpha', optional(float, 0))
     object_alpha = objectAlpha = wrapped_property('objectAlpha', optional(float, 1.0))
-    skeleton_shader = skeletonShader = wrapped_property('skeletonShader', text_type)
+    skeleton_rendering = skeletonRendering = wrapped_property('skeletonRendering', SkeletonRenderingOptions)
+
+    @property
+    def skeleton_shader(self):
+        return self.skeleton_rendering.shader
+
+    @skeleton_shader.setter
+    def skeleton_shader(self, shader):
+        self.skeleton_rendering.shader = shader
+
+    skeletonShader = skeleton_shader
+
     color_seed = colorSeed = wrapped_property('colorSeed', optional(int, 0))
     cross_section_render_scale = crossSectionRenderScale = wrapped_property(
         'crossSectionRenderScale', optional(float, 1))
     mesh_render_scale = meshRenderScale = wrapped_property('meshRenderScale', optional(float, 10))
+    mesh_silhouette_rendering = meshSilhouetteRendering = wrapped_property('meshSilhouetteRendering', optional(float, 0))
+    segment_query = segmentQuery = wrapped_property('segmentQuery', optional(text_type))
 
     @staticmethod
     def interpolate(a, b, t):
@@ -416,8 +535,11 @@ class AnnotationLayer(Layer, _AnnotationLayerOptions):
 
     source = wrapped_property('source', LayerDataSources)
     annotations = wrapped_property('annotations', typed_list(annotation))
-    linked_segmentation_layer = linkedSegmentationLayer = wrapped_property('linkedSegmentationLayer', optional(text_type))
-    filter_by_segmentation = filterBySegmentation = wrapped_property('filterBySegmentation', optional(bool, False))
+    linked_segmentation_layer = linkedSegmentationLayer = wrapped_property('linkedSegmentationLayer', typed_string_map(text_type))
+    filter_by_segmentation = filterBySegmentation = wrapped_property('filterBySegmentation', typed_list(text_type))
+    ignore_null_segment_filter = ignoreNullSegmentFilter = wrapped_property('ignoreNullSegmentFilter', optional(bool, True))
+    shader = wrapped_property('shader', text_type)
+    shader_controls = shaderControls = wrapped_property('shaderControls', ShaderControls)
 
     @staticmethod
     def interpolate(a, b, t):
@@ -548,6 +670,9 @@ class Layers(object):
             if u.name == k:
                 return i
         return -1
+
+    def __contains__(self, k):
+        return self.index(k) != -1
 
     def __getitem__(self, k):
         """Indexes into the list of layers by index, slice, or layer name."""
@@ -913,6 +1038,7 @@ class ViewerState(JsonObjectWrapper):
     gpu_memory_limit = gpuMemoryLimit = wrapped_property('gpuMemoryLimit', optional(int))
     system_memory_limit = systemMemoryLimit = wrapped_property('systemMemoryLimit', optional(int))
     concurrent_downloads = concurrentDownloads = wrapped_property('concurrentDownloads', optional(int))
+    prefetch = wrapped_property('prefetch', optional(bool, True))
     layers = wrapped_property('layers', Layers)
     layout = wrapped_property('layout', layout_specification)
     cross_section_background_color = crossSectionBackgroundColor = wrapped_property(
