@@ -76,7 +76,7 @@ const inputEventMap = EventActionMap.fromObject({
   'alt+shift+arrowleft':{action: 'pitch-left'},
   'alt+shift+arrowright':{action: 'pitch-right'},
   'alt+shift+arrowup':{action: 'inc-scale'},
-  'alt+shift+arrowdown':{action: 'dec-scale'}
+  'alt+shift+arrowdown':{action: 'dec-scale'},
 });
 
 function makeScaleElement() {
@@ -417,11 +417,22 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
     const registerRotVol = (action: string, yawAngle: number, pitchAngle : number, rollAngle : number) => {
       registerActionListener<Event>(element, action, () => {
+        
         const {transform} = this;
+        
+        let lowerBound = globalCombiner.combined.value.bounds.lowerBounds;
+        let upperBounds = globalCombiner.combined.value.bounds.upperBounds;
+    
+        this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBounds[i]));
+        let scales = globalCombiner.combined.value.scales;
+        let scale_y = scales[1] / scales[0];
+        let scale_z = scales[2] / scales[0];
+        // this.rotPoint = lowerBound.map(() => 0);
+
         this.curYaw = this.curYaw + yawAngle;
         this.curPitch = this.curPitch + pitchAngle;
         this.curRoll = this.curRoll + rollAngle;
-        let temp = rotateMatrix(this.curYaw, this.curPitch, this.curRoll, this.rotPoint);
+        let temp = rotateMatrix(this.curYaw, this.curPitch, this.curRoll, this.rotPoint, scale_y, scale_z);
         transform.transform = temp;
 
       });
@@ -430,13 +441,13 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     const registerScaleVol = (action: string, scale: number) => {
       registerActionListener<Event>(element, action, () => {
         const {transform} = this;
-        if(action='inc'){
-          this.curScale *= 1/scale;
+        if(action=='inc-scale'){
+          this.curScale = 1/scale;
         }
         else{
-          this.curScale *= scale;
+          this.curScale = scale;
         }
-        let temp = scaleTformMat(this.transform.transform.value, this.curScale);
+        let temp = scaleTformMat(this.transform.value.transform, this.curScale);
         transform.transform = temp;
 
       });
@@ -458,8 +469,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerRotVol('roll-up', 0, 0, -5);
     registerRotVol('roll-down', 0, 0, 5);
 
-    registerScaleVol('inc-scale', 0.1);
-    registerScaleVol('dec-scale', 0.1);
+    registerScaleVol('inc-scale', 0.99);
+    registerScaleVol('dec-scale', 0.99);
 
     const registerFocusout = (container: HTMLDivElement, handler: (event: FocusEvent) => void) => {
       container.addEventListener('focusout', (event: FocusEvent) => {
@@ -827,7 +838,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       inputScaleContainer,
       inputLowerBoundsContainer,
       inputUpperBoundsContainer,
-      outputScaleContainer
+      outputScaleContainer,
     } = this;
     element.style.gridTemplateColumns =
         `[outputLabel headerStart] min-content [outputNames] 1fr [outputScales] 1fr [headerEnd] ` +

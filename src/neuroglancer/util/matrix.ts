@@ -45,7 +45,7 @@ export function identity<T extends TypedArray>(a: T, lda: number, n: number): T 
   return a;
 }
 
-export function rotateMatrix(yawAngle:number, pitchAngle:number, rollAngle:number, rotPoint:Float64Array){
+export function rotateMatrix(yawAngle:number, pitchAngle:number, rollAngle:number, rotPoint:Float64Array, scale_y:number, scale_z:number){
 
   let yawRot = yawMat(yawAngle);
   let rollRot = rollMat(rollAngle);
@@ -55,21 +55,25 @@ export function rotateMatrix(yawAngle:number, pitchAngle:number, rollAngle:numbe
   multiply(temp, 4, yawRot, 4, pitchRot, 4, 4, 4, 4);
   let finalRot = new Float64Array(16);
   multiply(finalRot, 4, temp, 4, rollRot, 4, 4, 4, 4);
-  rotPoint[2] = rotPoint[2]*2; // Divide by Half of Resolution
+  rotPoint[1] = rotPoint[1]*scale_y;
+  rotPoint[2] = rotPoint[2]*scale_z;
+  // rotPoint[2] = rotPoint[2]*2; // Divide by Half of Resolution
   let offset = calcOffset(finalRot, rotPoint);
 
   finalRot[12] = offset[0];
-  finalRot[13] = offset[1];
-  finalRot[14] = offset[2]/2;
+  finalRot[13] = offset[1]/scale_y;
+  finalRot[14] = offset[2]/scale_z;
 
+  finalRot = finalRot.map(a=> Math.round((a + Number.EPSILON) * 1000) / 1000);
   return finalRot;
 }
 
 export function scaleTformMat(tform: Float64Array, scale: number){
   let scale_mat = identity(new Float64Array(16), 4, 16);
-  scale_mat.map(a => scale * a);
+  scale_mat = scale_mat.map(a => scale * a);
   let new_tform = new Float64Array(16);
   multiply(new_tform, 4, tform, 4, scale_mat, 4, 4, 4, 4);
+  new_tform = new_tform.map(a=> Math.round((a + Number.EPSILON) * 1000) / 1000);
   return new_tform
 }
 

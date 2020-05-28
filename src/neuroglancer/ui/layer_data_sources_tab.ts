@@ -278,7 +278,13 @@ export class DataSourceView extends RefCounted {
 
     const controllerList = document.createElement('div')
     controllerList.style.display = 'contents';
-    controllerList.innerHTML = '<br><br> Translation: <ul> <li>Left/Right/Up/Down : control+ (←/→/↑/↓) </li> <li>In/Out : control+shift+(↑/↓)</li> </ul> Rotation <ul> <li>Z-Axis/X-Axis: alt+ (←/→/↑/↓) </li> <li>Y-Axis: alt+ (←/→) </li> </ul><br><br>'
+
+    let translationString = 'Translation:<ul><li>Left/Right/Up/Down : control+ (←/→/↑/↓) </li><li>In/Out : control+shift+(↑/↓)</li></ul>'
+    let rotString = 'Rotation<ul><li>Z-Axis/X-Axis: alt+ (←/→/↑/↓) </li><li>Y-Axis: alt+shift+ (←/→) </li></ul>'
+    let scaleString = 'Scale:<ul><li>Increase/Decrease: alt+shift+(↑/↓)</li></ul>'
+    let controlInstructions = '<br><br>' + translationString + rotString + scaleString + '<br><br>'
+    // controllerList.innerHTML = '<br><br> Translation: <ul> <li>Left/Right/Up/Down : control+ (←/→/↑/↓) </li> <li>In/Out : control+shift+(↑/↓)</li> </ul> Rotation <ul> <li>Z-Axis/X-Axis: alt+ (←/→/↑/↓) </li> <li>Y-Axis: alt+shift+ (←/→) </li> </ul><br><br>'
+    controllerList.innerHTML = controlInstructions;
     element.appendChild(controllerList);
 
   }
