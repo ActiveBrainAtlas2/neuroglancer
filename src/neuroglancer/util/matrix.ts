@@ -45,7 +45,7 @@ export function identity<T extends TypedArray>(a: T, lda: number, n: number): T 
   return a;
 }
 
-export function rotateMatrix(yawAngle:number, pitchAngle:number, rollAngle:number, rotPoint:Float64Array, scale_y:number, scale_z:number){
+export function rotateMatrix(transform: Float64Array, yawAngle:number, pitchAngle:number, rollAngle:number, rotPoint:Float64Array, scale_y:number, scale_z:number){
 
   let yawRot = yawMat(yawAngle);
   let rollRot = rollMat(rollAngle);
@@ -53,18 +53,22 @@ export function rotateMatrix(yawAngle:number, pitchAngle:number, rollAngle:numbe
 
   let temp = new Float64Array(16);
   multiply(temp, 4, yawRot, 4, pitchRot, 4, 4, 4, 4);
+  let rot = new Float64Array(16);
+  multiply(rot, 4, temp, 4, rollRot, 4, 4, 4, 4);
   let finalRot = new Float64Array(16);
-  multiply(finalRot, 4, temp, 4, rollRot, 4, 4, 4, 4);
-  rotPoint[1] = rotPoint[1]*scale_y;
-  rotPoint[2] = rotPoint[2]*scale_z;
+  multiply(finalRot, 4, transform, 4, rot, 4, 4, 4, 4);
+  let rot_new = new Float64Array(3);
+  rot_new[0] = rotPoint[0];
+  rot_new[1] = rotPoint[1]*scale_y;
+  rot_new[2] = rotPoint[2]*scale_z;
   // rotPoint[2] = rotPoint[2]*2; // Divide by Half of Resolution
-  let offset = calcOffset(finalRot, rotPoint);
+  let offset = calcOffset(finalRot, rot_new);
 
   finalRot[12] = offset[0];
   finalRot[13] = offset[1]/scale_y;
   finalRot[14] = offset[2]/scale_z;
 
-  finalRot = finalRot.map(a=> Math.round((a + Number.EPSILON) * 1000) / 1000);
+  // finalRot = finalRot.map(a=> Math.round((a + Number.EPSILON) * 100000) / 100000);
   return finalRot;
 }
 
@@ -73,7 +77,7 @@ export function scaleTformMat(tform: Float64Array, scale: number){
   scale_mat = scale_mat.map(a => scale * a);
   let new_tform = new Float64Array(16);
   multiply(new_tform, 4, tform, 4, scale_mat, 4, 4, 4, 4);
-  new_tform = new_tform.map(a=> Math.round((a + Number.EPSILON) * 1000) / 1000);
+  // new_tform = new_tform.map(a=> Math.round((a + Number.EPSILON) * 100000) / 100000);
   return new_tform
 }
 
@@ -100,7 +104,7 @@ export function rotHelper(degree:number, idxs:number[]){
   rotMat[idxs[2]] = -1*sin_deg;
   rotMat[idxs[3]] = cos_deg;
   rotMat[idxs[4]] = 1;
-  rotMat[idxs[5]] = 1;
+  rotMat[idxs[5]] = 0;
 
   return rotMat
 }
@@ -123,6 +127,21 @@ export function calcOffset<T extends TypedArray>(rotMat: T, rotPoint:Float64Arra
 export function createIdentity<T extends TypedArray>(
     c: {new (n: number): T}, rows: number, cols: number = rows): T {
   return identity(new c(rows * cols), rows, Math.min(rows, cols));
+}
+
+
+export function computeInitialOffsets<T extends TypedArray>(transform : T, orignalRot : Float64Array){
+  const eye = identity(new Float64Array(16), 4, 16);
+  const diffMat = eye.map((a, i) => (a - transform[i]));
+  const midRot = new Float64Array(4);
+  multiply(midRot, 4, diffMat, 4, orignalRot, 4, 4, 4, 1);
+  let translation = new Float64Array(3);
+  translation[0] = transform[12] - midRot[0];
+  translation[1] = transform[13] - midRot[1];
+  translation[2] = transform[14] - midRot[2];
+
+  // translation = translation.map(a=> Math.round((a + Number.EPSILON) * 100000) / 100000);
+  return translation;
 }
 
 
