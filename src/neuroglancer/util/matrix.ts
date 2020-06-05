@@ -124,6 +124,18 @@ export function calcOffset<T extends TypedArray>(rotMat: T, rotPoint:Float64Arra
   return multiply(offset, 4, diffMat, 4, point, 4, 4, 4, 1);
 }
 
+// function trivialCheckRank<T extends TypedArray>(mat : T, ld:number){
+//   let checkZero = false;
+//   let checkCount = 4;
+//   for(let i=0; i<mat.length; i++){
+//     if(i==checkCount){
+//       checkCount+=4;
+//     }
+//     if(checkCount)
+//   }
+// }
+
+
 export function createIdentity<T extends TypedArray>(
     c: {new (n: number): T}, rows: number, cols: number = rows): T {
   return identity(new c(rows * cols), rows, Math.min(rows, cols));
@@ -141,6 +153,9 @@ export function computeInitialOffsets<T extends TypedArray>(transform : T, orign
   translation[2] = transform[14] - midRot[2];
 
   // translation = translation.map(a=> Math.round((a + Number.EPSILON) * 100000) / 100000);
+  // let matRot3_3 = new Float64Array(16);
+  // matRot3_3.set(rotMat);
+  // matRot3_3[12] = 0; matRot3_3[13] = 0; matRot3_3[14] = 0; 
   return translation;
 }
 

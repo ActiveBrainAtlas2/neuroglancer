@@ -212,10 +212,11 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     title: 'Reset to identity transform',
     onClick:
         () => {
-          this.x_offset = 0; this.y_offset = 1; this.z_offset = 0;
+          this.x_offset = 0; this.y_offset = 0; this.z_offset = 0;
           const {transform} = this;
           const rank = transform.value.rank;
           transform.transform = createIdentity(Float64Array, rank + 1);
+          this.updateRotPoint();
         }
   });
   private resetToDefaultButton = makeIcon({
@@ -223,7 +224,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     title: 'Reset to default input scales, transform, and output dimensions.',
     onClick:
         () => {
-          this.x_offset = 0; this.y_offset = 1; this.z_offset = 0;
+          this.x_offset = 0; this.y_offset = 0; this.z_offset = 0;
           const {transform} = this;
           if (transform.mutableSourceRank) return;
           const {defaultTransform} = transform;
@@ -236,6 +237,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
               ids,
             },
           };
+          this.updateRotPoint();
         }
   });
   constructor(
@@ -399,34 +401,44 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         if(dir == 'x'){
           let temp = this.transform.value.transform;
           this.x_offset += diff;
-          temp[12] = this.x_offset;
+          temp[12] += diff;
           transform.transform = temp;
         }
         if(dir == 'y'){
           let temp = this.transform.value.transform;
           this.y_offset += diff;
-          temp[13] = this.y_offset;
+          temp[13] += diff;
           transform.transform = temp;
         }
         if(dir=='z'){
           let temp = this.transform.value.transform;
           this.z_offset += diff;
-          temp[14] = this.z_offset;
+          temp[14] += diff;
           transform.transform = temp;
         }
         
       });
     };
-    let lowerBound = new Float64Array(3);
-    lowerBound.set(transform.value.outputSpace.bounds.lowerBounds);
-    let upperBound = new Float64Array(3);
-    upperBound.set(transform.value.outputSpace.bounds.upperBounds);
-    this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBound[i]));
+    // let lowerBound = new Float64Array(3);
+    // lowerBound.set(transform.value.outputSpace.bounds.lowerBounds);
+    // let upperBound = new Float64Array(3);
+    // upperBound.set(transform.value.outputSpace.bounds.upperBounds);
+    // this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBound[i]));
     // this.rotPoint = lowerBound.map(() => 0);
+
+    this.updateRotPoint();
+
     let offsets = this.calculateTranslationOffset();
-    this.x_offset = offsets[0];
-    this.y_offset = offsets[1];
-    this.z_offset = offsets[2];
+    offsets = offsets;
+    // this.x_offset = offsets[0];
+    // this.y_offset = offsets[1];
+    // this.z_offset = offsets[2];
+
+    this.x_offset = 0;
+    this.y_offset = 0;
+    this.z_offset = 0;
+
+    this.updateOriginalRotPointAndOffsets();
 
     const registerRotVol = (action: string, yawAngle: number, pitchAngle : number, rollAngle : number, scale : number) => {
       registerActionListener<Event>(element, action, () => {
@@ -450,12 +462,12 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     //   });
     // }
 
-    registerMoveVol('move-vol-up', -10, 'y');
-    registerMoveVol('move-vol-down', 10, 'y');
-    registerMoveVol('move-vol-right', 10, 'x');
-    registerMoveVol('move-vol-left', -10, 'x');
-    registerMoveVol('move-vol-in', 10, 'z');
-    registerMoveVol('move-vol-out', -10, 'z');
+    registerMoveVol('move-vol-up', -100, 'y');
+    registerMoveVol('move-vol-down', 100, 'y');
+    registerMoveVol('move-vol-right', 100, 'x');
+    registerMoveVol('move-vol-left', -100, 'x');
+    registerMoveVol('move-vol-in', 100/43, 'z');
+    registerMoveVol('move-vol-out', -100/43, 'z');
     
     registerRotVol('yaw-left', -5, 0, 0, 1);
     registerRotVol('yaw-right', 5, 0, 0, 1);
@@ -1141,5 +1153,39 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     temp[12] += this.x_offset; temp[13] += this.y_offset; temp[14] += this.z_offset;
     transform.transform = temp;
   }
-  
+
+  private resetTransform(){
+    const {transform} = this;
+    let old_transform = transform.value.transform;
+    const rank = transform.value.rank;
+    transform.transform = createIdentity(Float64Array, rank + 1);
+    return old_transform;
+  }
+
+  private updateRotPoint(){
+    let lowerBound = new Float64Array(3);
+    lowerBound.set(this.transform.value.outputSpace.bounds.lowerBounds);
+    let upperBound = new Float64Array(3);
+    upperBound.set(this.transform.value.outputSpace.bounds.upperBounds);
+    this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBound[i]));
+  }
+
+  private updateOriginalRotPointAndOffsets(){
+    this.updateRotPoint();
+
+    let newRotPoint = new Float64Array(3);
+    newRotPoint.set(this.rotPoint);
+
+    let old_tform = this.resetTransform();
+    this.updateRotPoint();
+
+    let oldRotPoint = new Float64Array(3);
+    oldRotPoint.set(this.rotPoint);
+
+    this.x_offset = newRotPoint[0] - oldRotPoint[0];
+    this.y_offset = newRotPoint[1] - oldRotPoint[1];
+    this.z_offset = newRotPoint[2] - oldRotPoint[2];
+
+    this.transform.transform = old_tform;
+  }
 }
