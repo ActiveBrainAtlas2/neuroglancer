@@ -50,7 +50,11 @@ import {vec3} from 'neuroglancer/util/geom';
 import {parseFixedLengthArray, verifyFinitePositiveFloat, verifyObject, verifyOptionalObjectProperty} from 'neuroglancer/util/json';
 import {EventActionMap, KeyboardEventBinder} from 'neuroglancer/util/keyboard_bindings';
 import {NullarySignal, Signal} from 'neuroglancer/util/signal';
-import {CompoundTrackable, optionallyRestoreFromJsonMember} from 'neuroglancer/util/trackable';
+import {
+  CompoundTrackable,
+  getCachedJson,
+  optionallyRestoreFromJsonMember,
+} from 'neuroglancer/util/trackable';
 import {ViewerState, VisibilityPrioritySpecification} from 'neuroglancer/viewer_state';
 import {WatchableVisibilityPriority} from 'neuroglancer/visibility_priority/frontend';
 import {GL} from 'neuroglancer/webgl/context';
@@ -61,7 +65,7 @@ import {MousePositionWidget, PositionWidget} from 'neuroglancer/widget/position_
 import {TrackableScaleBarOptions} from 'neuroglancer/widget/scale_bar';
 import {RPC} from 'neuroglancer/worker_rpc';
 
-declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
+declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any;
 
 export class DataManagementContext extends RefCounted {
   worker: Worker;
@@ -97,6 +101,7 @@ export class InputEventBindings extends DataPanelInputEventBindings {
 const viewerUiControlOptionKeys: (keyof ViewerUIControlConfiguration)[] = [
   'showHelpButton',
   'showEditStateButton',
+  'showSaveStateButton',
   'showLayerPanel',
   'showLocation',
   'showLayerHoverValues',
@@ -109,6 +114,7 @@ const viewerOptionKeys: (keyof ViewerUIOptions)[] =
 export class ViewerUIControlConfiguration {
   showHelpButton = new TrackableBoolean(true);
   showEditStateButton = new TrackableBoolean(true);
+  showSaveStateButton = new TrackableBoolean(true);
   showLayerPanel = new TrackableBoolean(true);
   showLocation = new TrackableBoolean(true);
   showLayerHoverValues = new TrackableBoolean(true);
@@ -137,6 +143,7 @@ interface ViewerUIOptions {
   showUIControls: boolean;
   showHelpButton: boolean;
   showEditStateButton: boolean;
+  showSaveStateButton: boolean;
   showLayerPanel: boolean;
   showLocation: boolean;
   showLayerHoverValues: boolean;
@@ -509,6 +516,16 @@ export class Viewer extends RefCounted implements ViewerState {
         this.uiControlVisibility.showAnnotationToolStatus, annotationToolStatus.element));
 
     {
+      const button = makeIcon({text: 'save', title: 'Save JSON state'});
+      this.registerEventListener(button, 'click', () => {
+        this.saveJsonState();
+      });
+      this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
+        this.uiControlVisibility.showSaveStateButton, button));
+      topRow.appendChild(button);
+    }
+
+    {
       const button = makeIcon({text: '{}', title: 'Edit JSON state'});
       this.registerEventListener(button, 'click', () => {
         this.editJsonState();
@@ -517,7 +534,6 @@ export class Viewer extends RefCounted implements ViewerState {
           this.uiControlVisibility.showEditStateButton, button));
       topRow.appendChild(button);
     }
-
 
     {
       const button = makeIcon({text: '?', title: 'Help'});
@@ -696,6 +712,15 @@ export class Viewer extends RefCounted implements ViewerState {
 
   editJsonState() {
     new StateEditorDialog(this);
+  }
+
+  saveJsonState() {
+    const json = JSON.stringify(getCachedJson(this.state).value, null, '  ');
+
+    let element = document.createElement('a');
+    element.setAttribute('href', `data:${'text/json'};charset=utf-8,${encodeURIComponent(json)}`);
+    element.setAttribute('download', 'state.json');
+    element.dispatchEvent(new MouseEvent('click'));
   }
 
   showStatistics(value: boolean|undefined = undefined) {

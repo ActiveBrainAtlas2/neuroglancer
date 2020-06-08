@@ -29,7 +29,8 @@ import {arraysEqual} from 'neuroglancer/util/array';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren, removeFromParent} from 'neuroglancer/util/dom';
 import {ActionEvent, KeyboardEventBinder, registerActionListener} from 'neuroglancer/util/keyboard_bindings';
-import {createIdentity, extendHomogeneousTransform, isIdentity, rotateMatrix, scaleTformMat, computeInitialOffsets} from 'neuroglancer/util/matrix';
+// import {createIdentity, extendHomogeneousTransform, isIdentity, rotateMatrix, scaleTformMat, computeInitialOffsets} from 'neuroglancer/util/matrix';
+import {createIdentity, extendHomogeneousTransform, isIdentity, rotateMatrix, scaleTformMat} from 'neuroglancer/util/matrix';
 import {EventActionMap, MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
 import {formatScaleWithUnitAsString, parseScale} from 'neuroglancer/util/si_units';
 import {makeIcon} from 'neuroglancer/widget/icon';
@@ -197,25 +198,26 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private outputScaleModified: boolean[] = [];
   private curSourceRank: number = -1;
   private curRank: number = -1;
-  // private curYaw: number = 0;
-  // private curPitch: number = 0;
-  // private curRoll: number = 0;
+  private curTransform: CoordinateSpaceTransform|undefined = undefined;
+  private addingSourceDimension = false;
+
+  /* START OF CHANGE: instance variables */
   private x_offset = 0;
   private y_offset = 0;
   private z_offset = 0;
-  // private curScale:number = 1;
   private rotPoint: Float64Array;
-  private curTransform: CoordinateSpaceTransform|undefined = undefined;
-  private addingSourceDimension = false;
+
   private resetToIdentityButton = makeIcon({
     text: 'Set to identity',
     title: 'Reset to identity transform',
     onClick:
         () => {
-          this.x_offset = 0; this.y_offset = 0; this.z_offset = 0;
           const {transform} = this;
           const rank = transform.value.rank;
           transform.transform = createIdentity(Float64Array, rank + 1);
+
+          // Reset offsets and update rotation point
+          this.x_offset = 0; this.y_offset = 0; this.z_offset = 0;
           this.updateRotPoint();
         }
   });
@@ -224,7 +226,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     title: 'Reset to default input scales, transform, and output dimensions.',
     onClick:
         () => {
-          this.x_offset = 0; this.y_offset = 0; this.z_offset = 0;
           const {transform} = this;
           if (transform.mutableSourceRank) return;
           const {defaultTransform} = transform;
@@ -237,9 +238,14 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
               ids,
             },
           };
+
+          // Reset offsets and update rotation point
+          this.x_offset = 0; this.y_offset = 0; this.z_offset = 0;
           this.updateRotPoint();
         }
   });
+  /* END OF CHANGE: instance variables */
+
   constructor(
       public transform: WatchableCoordinateSpaceTransform,
       public localCombiner: CoordinateSpaceCombiner,
@@ -320,7 +326,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     addSourceDimensionIcon.addEventListener('click', () => {
       this.addingSourceDimension = true;
       this.addOutputDimensionInput.title = extendSourceDimensionsTitle;
-      ;
       this.addOutputDimensionCell.dataset.isActive = 'true';
       this.addOutputDimensionInput.focus();
     });
@@ -395,72 +400,40 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerMoveUpDown('move-left', 0, -1);
     registerMoveUpDown('move-right', 0, +1);
 
+    /* START OF CHANGE: constructor*/
     const registerMoveVol = (action: string, diff: number, dir: string) => {
       registerActionListener<Event>(element, action, () => {
         const {transform} = this;
-        if(dir == 'x'){
+        if(dir === 'x') {
           let temp = this.transform.value.transform;
           this.x_offset += diff;
           temp[12] += diff;
           transform.transform = temp;
         }
-        if(dir == 'y'){
+        if(dir === 'y') {
           let temp = this.transform.value.transform;
           this.y_offset += diff;
           temp[13] += diff;
           transform.transform = temp;
         }
-        if(dir=='z'){
+        if(dir === 'z') {
           let temp = this.transform.value.transform;
           this.z_offset += diff;
           temp[14] += diff;
           transform.transform = temp;
         }
-        
+
       });
     };
-    // let lowerBound = new Float64Array(3);
-    // lowerBound.set(transform.value.outputSpace.bounds.lowerBounds);
-    // let upperBound = new Float64Array(3);
-    // upperBound.set(transform.value.outputSpace.bounds.upperBounds);
-    // this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBound[i]));
-    // this.rotPoint = lowerBound.map(() => 0);
 
-    this.updateRotPoint();
-
-    let offsets = this.calculateTranslationOffset();
-    offsets = offsets;
-    // this.x_offset = offsets[0];
-    // this.y_offset = offsets[1];
-    // this.z_offset = offsets[2];
-
-    this.x_offset = 0;
-    this.y_offset = 0;
-    this.z_offset = 0;
-
-    this.updateOriginalRotPointAndOffsets();
-
-    const registerRotVol = (action: string, yawAngle: number, pitchAngle : number, rollAngle : number, scale : number) => {
+    const registerRotVol = (action: string, yawAngle: number, pitchAngle: number, rollAngle: number, scale: number) => {
       registerActionListener<Event>(element, action, () => {
         this.handleMatrixTransform(yawAngle, pitchAngle, rollAngle, scale);
       });
-    }
+    };
 
-    // const registerScaleVol = (action: string, scale: number) => {
-    //   registerActionListener<Event>(element, action, () => {
-    //     const {transform} = this;
-    //     if(action=='inc-scale'){
-    //       this.curScale = 1/scale;
-    //     }
-    //     else{
-    //       this.curScale = scale;
-    //     }
-    //     let temp = scaleTformMat(this.transform.value.transform, this.curScale);
-    //     temp[12] += this.x_offset; temp[13] += this.y_offset; temp[14] += this.z_offset;
-    //     transform.transform = temp;
-
-    //   });
-    // }
+    this.updateRotPoint();
+    this.updateOriginalRotPointAndOffsets();
 
     registerMoveVol('move-vol-up', -100, 'y');
     registerMoveVol('move-vol-down', 100, 'y');
@@ -468,18 +441,16 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerMoveVol('move-vol-left', -100, 'x');
     registerMoveVol('move-vol-in', 100/43, 'z');
     registerMoveVol('move-vol-out', -100/43, 'z');
-    
+
     registerRotVol('yaw-left', -5, 0, 0, 1);
     registerRotVol('yaw-right', 5, 0, 0, 1);
-    
     registerRotVol('pitch-left', 0, 5, 0, 1);
     registerRotVol('pitch-right', 0, -5, 0, 1);
-    
     registerRotVol('roll-up', 0, 0, -5, 1);
     registerRotVol('roll-down', 0, 0, 5, 1);
-
     registerRotVol('inc-scale', 0, 0, 0, 1/0.99);
     registerRotVol('dec-scale', 0, 0, 0, 0.99);
+    /* END OF CHANGE: constructor*/
 
     const registerFocusout = (container: HTMLDivElement, handler: (event: FocusEvent) => void) => {
       container.addEventListener('focusout', (event: FocusEvent) => {
@@ -534,6 +505,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       }
     });
     this.updateView();
+    console.log(this.transform);
   }
 
   private updateWillBeDeletedAttributes(dimensionWillBeDeleted?: boolean[]) {
@@ -787,6 +759,14 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         newTransform[col * (rank + 1) + row] = v;
       }
     }
+
+    /* START CHANGE */
+    // Update x,y,z offsets
+    this.x_offset += newTransform[12] - this.transform.value.transform[12];
+    this.y_offset += newTransform[13] - this.transform.value.transform[13];
+    this.z_offset += newTransform[14] - this.transform.value.transform[14];
+    /* END CHANGE */
+
     this.transform.transform = newTransform;
     return true;
   }
@@ -1111,42 +1091,13 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     super.disposed();
   }
 
-  private calculateTranslationOffset(){
-    const {transform} =  this;
-    let scales = new Float64Array(3);
-    scales[0] = transform.value.inputSpace.scales[0] / transform.value.outputSpace.scales[0];
-    scales[1] = transform.value.inputSpace.scales[1] / transform.value.outputSpace.scales[1];
-    scales[2] = transform.value.inputSpace.scales[2] / transform.value.outputSpace.scales[2];
-
-    let max_vals = new Float64Array(4);
-    max_vals[0] = transform.value.inputSpace.bounds.upperBounds[0];
-    max_vals[1] = transform.value.inputSpace.bounds.upperBounds[1];
-    max_vals[2] = transform.value.inputSpace.bounds.upperBounds[2]; 
-    
-    let originalCenterPoint = max_vals.map((a, i) => a * 0.5 * scales[i]);
-    originalCenterPoint[3] = 0;
-
-    return computeInitialOffsets(transform.value.transform, originalCenterPoint);
-  }
-
-  private handleMatrixTransform(yawAngle : number, pitchAngle : number, rollAngle : number, scale : number){
+  /* START OF CHANGE: functions */
+  private handleMatrixTransform(yawAngle: number, pitchAngle: number, rollAngle: number, scale: number) {
     const {transform} = this;
-        
-    // let lowerBound = new Float64Array(3);
-    // lowerBound.set(transform.value.outputSpace.bounds.lowerBounds);
-    // let upperBound = new Float64Array(3);
-    // upperBound.set(transform.value.outputSpace.bounds.upperBounds);
-    // this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBound[i]));
-    // this.rotPoint[0] -= this.x_offset; this.rotPoint[1] -= this.y_offset;  this.rotPoint[2] -= this.z_offset;
 
     let scales = this.globalCombiner.combined.value.scales;
     let scale_y = scales[1] / scales[0];
     let scale_z = scales[2] / scales[0];
-    // this.rotPoint = lowerBound.map(() => 0);
-
-    // this.curYaw = (this.curYaw + yawAngle) % 360;
-    // this.curPitch = (this.curPitch + pitchAngle) % 360;
-    // this.curRoll = (this.curRoll + rollAngle) % 360;
 
     let scale_temp = scaleTformMat(transform.value.transform, scale);
     let temp = rotateMatrix(scale_temp, yawAngle, pitchAngle, rollAngle, this.rotPoint, scale_y, scale_z);
@@ -1154,7 +1105,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     transform.transform = temp;
   }
 
-  private resetTransform(){
+  private resetTransform() {
     const {transform} = this;
     let old_transform = transform.value.transform;
     const rank = transform.value.rank;
@@ -1162,7 +1113,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     return old_transform;
   }
 
-  private updateRotPoint(){
+  private updateRotPoint() {
     let lowerBound = new Float64Array(3);
     lowerBound.set(this.transform.value.outputSpace.bounds.lowerBounds);
     let upperBound = new Float64Array(3);
@@ -1170,22 +1121,26 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBound[i]));
   }
 
-  private updateOriginalRotPointAndOffsets(){
+  private updateOriginalRotPointAndOffsets() {
+    // Get the current rotation point
     this.updateRotPoint();
-
     let newRotPoint = new Float64Array(3);
     newRotPoint.set(this.rotPoint);
 
+    // Save a copy of the current transformation matrix and reset it
     let old_tform = this.resetTransform();
-    this.updateRotPoint();
 
+    // Get the rotation point after transformation matrix is reset
+    this.updateRotPoint();
     let oldRotPoint = new Float64Array(3);
     oldRotPoint.set(this.rotPoint);
 
+    // Update the offsets
     this.x_offset = newRotPoint[0] - oldRotPoint[0];
     this.y_offset = newRotPoint[1] - oldRotPoint[1];
     this.z_offset = newRotPoint[2] - oldRotPoint[2];
 
     this.transform.transform = old_tform;
   }
+  /* END OF CHANGE: functions */
 }
