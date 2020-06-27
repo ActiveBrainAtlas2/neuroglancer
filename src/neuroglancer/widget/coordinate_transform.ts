@@ -29,7 +29,6 @@ import {arraysEqual} from 'neuroglancer/util/array';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren, removeFromParent} from 'neuroglancer/util/dom';
 import {ActionEvent, KeyboardEventBinder, registerActionListener} from 'neuroglancer/util/keyboard_bindings';
-// import {createIdentity, extendHomogeneousTransform, isIdentity, rotateMatrix, scaleTformMat, computeInitialOffsets} from 'neuroglancer/util/matrix';
 import {createIdentity, extendHomogeneousTransform, isIdentity, rotateMatrix, scaleTformMat} from 'neuroglancer/util/matrix';
 import {EventActionMap, MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
 import {formatScaleWithUnitAsString, parseScale} from 'neuroglancer/util/si_units';
@@ -291,7 +290,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     resetButtons.appendChild(resetToDefaultButton);
     element.appendChild(resetButtons);
 
-
     for (const [className, textContent] of [
              ['source', 'Source dimensions'],
              ['output', 'Output dimensions'],
@@ -401,31 +399,14 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerMoveUpDown('move-right', 0, +1);
 
     /* START OF CHANGE: constructor*/
+    // Define translation listener
     const registerMoveVol = (action: string, diff: number, dir: string) => {
       registerActionListener<Event>(element, action, () => {
-        const {transform} = this;
-        if(dir === 'x') {
-          let temp = this.transform.value.transform;
-          this.x_offset += diff;
-          temp[12] += diff;
-          transform.transform = temp;
-        }
-        if(dir === 'y') {
-          let temp = this.transform.value.transform;
-          this.y_offset += diff;
-          temp[13] += diff;
-          transform.transform = temp;
-        }
-        if(dir === 'z') {
-          let temp = this.transform.value.transform;
-          this.z_offset += diff;
-          temp[14] += diff;
-          transform.transform = temp;
-        }
-
+        this.handleOffsetsTransform(diff, dir);
       });
     };
 
+    // Define rotation/scale listener
     const registerRotVol = (action: string, yawAngle: number, pitchAngle: number, rollAngle: number, scale: number) => {
       registerActionListener<Event>(element, action, () => {
         this.handleMatrixTransform(yawAngle, pitchAngle, rollAngle, scale);
@@ -448,6 +429,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerRotVol('pitch-right', 0, -5, 0, 1);
     registerRotVol('roll-up', 0, 0, -5, 1);
     registerRotVol('roll-down', 0, 0, 5, 1);
+
     registerRotVol('inc-scale', 0, 0, 0, 1/0.99);
     registerRotVol('dec-scale', 0, 0, 0, 0.99);
     /* END OF CHANGE: constructor*/
@@ -505,7 +487,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       }
     });
     this.updateView();
-    console.log(this.transform);
   }
 
   private updateWillBeDeletedAttributes(dimensionWillBeDeleted?: boolean[]) {
@@ -792,7 +773,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     for (let outputDim = 0; outputDim < rank; ++outputDim) {
       for (let inputDim = 0; inputDim <= rank; ++inputDim) {
         const coeffElement = coefficientElements[inputDim * rank + outputDim];
-        coeffElement.value = transform[inputDim * (rank + 1) + outputDim].toString();
+        coeffElement.value = (Math.round(transform[inputDim * (rank + 1) + outputDim] * 1000) / 1000).toString();
         coeffElement.dataset.isValid = 'true';
         updateInputFieldWidth(coeffElement);
       }
@@ -1092,7 +1073,28 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   }
 
   /* START OF CHANGE: functions */
-  private handleMatrixTransform(yawAngle: number, pitchAngle: number, rollAngle: number, scale: number) {
+  public handleOffsetsTransform(diff: number, dir: string) {
+    if(dir === 'x') {
+      let temp = this.transform.value.transform;
+      this.x_offset += diff;
+      temp[12] += diff;
+      this.transform.transform = temp;
+    }
+    if(dir === 'y') {
+      let temp = this.transform.value.transform;
+      this.y_offset += diff;
+      temp[13] += diff;
+      this.transform.transform = temp;
+    }
+    if(dir === 'z') {
+      let temp = this.transform.value.transform;
+      this.z_offset += diff;
+      temp[14] += diff;
+      this.transform.transform = temp;
+    }
+  }
+
+  public handleMatrixTransform(yawAngle: number, pitchAngle: number, rollAngle: number, scale: number) {
     const {transform} = this;
 
     let scales = this.globalCombiner.combined.value.scales;
