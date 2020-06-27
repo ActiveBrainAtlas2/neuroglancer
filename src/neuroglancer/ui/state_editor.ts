@@ -38,7 +38,6 @@ const valueUpdateDelay = 100;
 export class StateEditorDialog extends Overlay {
   textEditor: CodeMirror.Editor;
   applyButton: HTMLButtonElement;
-  downloadButton: HTMLButtonElement;
   constructor(public viewer: Viewer) {
     super();
 

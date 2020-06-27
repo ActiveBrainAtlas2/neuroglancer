@@ -102,6 +102,7 @@ const viewerUiControlOptionKeys: (keyof ViewerUIControlConfiguration)[] = [
   'showHelpButton',
   'showEditStateButton',
   'showSaveStateButton',
+  'showLoadStateButton',
   'showLayerPanel',
   'showLocation',
   'showLayerHoverValues',
@@ -115,6 +116,7 @@ export class ViewerUIControlConfiguration {
   showHelpButton = new TrackableBoolean(true);
   showEditStateButton = new TrackableBoolean(true);
   showSaveStateButton = new TrackableBoolean(true);
+  showLoadStateButton = new TrackableBoolean(true);
   showLayerPanel = new TrackableBoolean(true);
   showLocation = new TrackableBoolean(true);
   showLayerHoverValues = new TrackableBoolean(true);
@@ -144,6 +146,7 @@ interface ViewerUIOptions {
   showHelpButton: boolean;
   showEditStateButton: boolean;
   showSaveStateButton: boolean;
+  showLoadStateButton: boolean;
   showLayerPanel: boolean;
   showLocation: boolean;
   showLayerHoverValues: boolean;
@@ -516,6 +519,16 @@ export class Viewer extends RefCounted implements ViewerState {
         this.uiControlVisibility.showAnnotationToolStatus, annotationToolStatus.element));
 
     {
+      const button = makeIcon({text: 'load', title: 'Load JSON state'});
+      this.registerEventListener(button, 'click', () => {
+        this.loadJsonState();
+      });
+      this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
+        this.uiControlVisibility.showLoadStateButton, button));
+      topRow.appendChild(button);
+    }
+
+    {
       const button = makeIcon({text: 'save', title: 'Save JSON state'});
       this.registerEventListener(button, 'click', () => {
         this.saveJsonState();
@@ -720,6 +733,29 @@ export class Viewer extends RefCounted implements ViewerState {
     let element = document.createElement('a');
     element.setAttribute('href', `data:${'text/json'};charset=utf-8,${encodeURIComponent(json)}`);
     element.setAttribute('download', 'state.json');
+    element.dispatchEvent(new MouseEvent('click'));
+  }
+
+  loadJsonState() {
+    let element = document.createElement('input');
+    element.setAttribute('type', 'file');
+    element.addEventListener('change', () => {
+      if(element.files !== null) {
+        const reader = new FileReader();
+        reader.addEventListener('load', (event) => {
+          if(event.target !== null && typeof event.target.result === 'string') {
+            try {
+              this.state.restoreState(JSON.parse(event.target.result));
+              StatusMessage.showTemporaryMessage('JSON file loaded successfully');
+            }
+            catch (e) {
+              StatusMessage.showMessage('The selected file is not a valid json file');
+            }
+          }
+        });
+        reader.readAsText(element.files[0]);
+      }
+    });
     element.dispatchEvent(new MouseEvent('click'));
   }
 
