@@ -38,7 +38,6 @@ import {makeAddButton} from 'neuroglancer/widget/add_button';
 import {CoordinateSpaceTransformWidget} from 'neuroglancer/widget/coordinate_transform';
 import {AutocompleteTextInput, makeCompletionElementWithDescription} from 'neuroglancer/widget/multiline_autocomplete';
 import {Tab} from 'neuroglancer/widget/tab_view';
-import { makeIcon } from 'neuroglancer/widget/icon'
 
 class SourceUrlAutocomplete extends AutocompleteTextInput {
   dataSourceView: DataSourceView;
@@ -224,96 +223,6 @@ export class LoadedDataSourceView extends RefCounted {
         source.layer.manager.root.coordinateSpaceCombiner));
     this.element.appendChild(transformWidget.element);
     this.registerDisposer(() => removeFromParent(this.element));
-
-    /* START OF CHANGE: instructions */
-    const moveLeft = makeIcon({text: '←', title: 'Move Left', onClick: () => {
-      transformWidget.handleOffsetsTransform(-10, 'x');
-    }});
-    const moveRight = makeIcon({text: '→', title: 'Move right', onClick: () => {
-      transformWidget.handleOffsetsTransform(10, 'x');
-    }});
-    const moveUp = makeIcon({text: '↑', title: 'Move up', onClick: () => {
-      transformWidget.handleOffsetsTransform(-10, 'y');
-    }});
-    const moveDown = makeIcon({text: '↓', title: 'Move down', onClick: () => {
-      transformWidget.handleOffsetsTransform(10, 'y');
-    }});
-    const moveIn = makeIcon({text: '↑', title: 'Move in', onClick: () => {
-      transformWidget.handleOffsetsTransform(10, 'z');
-    }});
-    const moveOut = makeIcon({text: '↓', title: 'Move out', onClick: () => {
-      transformWidget.handleOffsetsTransform(-10, 'z');
-    }});
-    const rotZLeft = makeIcon({text: '←', title: 'Z-axis rotate left', onClick: () => {
-      transformWidget.handleMatrixTransform(-5, 0, 0, 1);
-    }});
-    const rotZRight = makeIcon({text: '→', title: 'Z-axis rotate right', onClick: () => {
-      transformWidget.handleMatrixTransform(5, 0, 0, 1);
-    }});
-    const rotXLeft = makeIcon({text: '↑', title: 'X-axis rotate left', onClick: () => {
-      transformWidget.handleMatrixTransform(0, 0, -5, 1);
-    }});
-    const rotXRight = makeIcon({text: '↓', title: 'X-axis rotate right', onClick: () => {
-      transformWidget.handleMatrixTransform(0, 0, 5, 1);
-    }});
-    const rotYLeft = makeIcon({text: '←', title: 'Y-axis rotate left', onClick: () => {
-      transformWidget.handleMatrixTransform(0, 5, 0, 1);
-    }});
-    const rotYRight = makeIcon({text: '→', title: 'Y-axis rotate right', onClick: () => {
-      transformWidget.handleMatrixTransform(0, -5, 0, 1);
-    }});
-    const zoomIn = makeIcon({text: '↑', title: 'Zoom in', onClick: () => {
-      transformWidget.handleMatrixTransform(0, 0, 0, 1/0.99);
-    }});
-    const zoomOut = makeIcon({text: '↓', title: 'Zoom out', onClick: () => {
-      transformWidget.handleMatrixTransform(0, 0, 0, 0.99);
-    }});
-
-    const instructions = document.createElement('div');
-    instructions.insertAdjacentHTML('beforeend', '</br>Translation:');
-
-    const translationList = document.createElement('ul');
-    const translation1 = document.createElement('li');
-    translation1.insertAdjacentHTML('beforeend', 'Left/Right/Up/Down : Ctrl +');
-    translation1.appendChild(moveLeft);
-    translation1.appendChild(moveRight);
-    translation1.appendChild(moveUp);
-    translation1.appendChild(moveDown);
-    const translation2 = document.createElement('li');
-    translation2.insertAdjacentHTML('beforeend', 'In/Out : Ctrl+Shift +');
-    translation2.appendChild(moveIn);
-    translation2.appendChild(moveOut);
-    translationList.appendChild(translation1);
-    translationList.appendChild(translation2);
-    instructions.appendChild(translationList);
-
-    instructions.insertAdjacentHTML('beforeend', 'Rotation:');
-    const rotationList = document.createElement('ul');
-    const rotation1 = document.createElement('li');
-    rotation1.insertAdjacentHTML('afterbegin', 'Z-Axis/X-Axis: Alt +');
-    rotation1.appendChild(rotZLeft);
-    rotation1.appendChild(rotZRight);
-    rotation1.appendChild(rotXLeft);
-    rotation1.appendChild(rotXRight);
-    const rotation2 = document.createElement('li');
-    rotation2.insertAdjacentHTML('afterbegin', 'Y-Axis: Alt+Shift +');
-    rotation2.appendChild(rotYLeft);
-    rotation2.appendChild(rotYRight);
-    rotationList.appendChild(rotation1);
-    rotationList.appendChild(rotation2);
-    instructions.appendChild(rotationList);
-
-    instructions.insertAdjacentHTML('beforeend', 'Scale:');
-    const scaleList = document.createElement('ul');
-    const scale1 = document.createElement('li');
-    scale1.insertAdjacentHTML('afterbegin', 'Zoom In/Out: Alt+Shift +');
-    scale1.appendChild(zoomIn);
-    scale1.appendChild(zoomOut);
-    scaleList.appendChild(scale1);
-    instructions.appendChild(scaleList);
-
-    element.appendChild(instructions);
-    /* END OF CHANGE: instructions */
   }
 }
 
