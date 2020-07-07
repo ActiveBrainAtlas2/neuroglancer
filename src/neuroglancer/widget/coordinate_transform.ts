@@ -36,6 +36,10 @@ import {makeIcon} from 'neuroglancer/widget/icon';
 
 function updateInputFieldWidth(element: HTMLInputElement, value: string = element.value) {
   element.style.minWidth = (value.length + 1) + 'ch';
+
+  /* START OF CHANGE: fix matrix width */
+  element.style.minWidth = '4ch';
+  /* END OF CHANGE: fix matrix width */
 }
 
 const singletonClassName = 'neuroglancer-coordinate-space-transform-singleton';
@@ -203,7 +207,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
   /* START OF CHANGE: instance variables */
   public rotPoint: Float64Array;
-  private offsets: Float64Array = new Float64Array(9);
+  private operationOffsets: Float64Array = new Float64Array(9);
 
   private resetToIdentityButton = makeIcon({
     text: 'Set to identity',
@@ -215,7 +219,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           transform.transform = createIdentity(Float64Array, rank + 1);
 
           // Reset offsets and update rotation point
-          this.offsets.fill(0);
+          this.resetOperationOffsets();
           this.updateRotPoint();
         }
   });
@@ -238,7 +242,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           };
 
           // Reset offsets and update rotation point
-          this.offsets.fill(0);
+          this.resetOperationOffsets();
           this.updateRotPoint();
         }
   });
@@ -418,9 +422,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       });
     };
 
-    this.updateRotPoint();
-    this.updateOriginalRotPointAndOffsets();
-
     registerMoveVol('move-vol-left', -100, 0, 0);
     registerMoveVol('move-vol-right', 100, 0, 0);
     registerMoveVol('move-vol-up', 0, -100, 0);
@@ -441,6 +442,10 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerScaleVol('y-dec-scale', 0.99, 1, 0.99);
     registerScaleVol('x-inc-scale', 1, 1/0.99, 1/0.99);
     registerScaleVol('x-dec-scale', 1, 0.99, 0.99);
+
+    this.updateRotPoint();
+    this.updateOriginalRotPointAndOffsets();
+    this.resetOperationOffsets();
 
     this.makeOperationElement();
     /* END OF CHANGE: constructor*/
@@ -753,9 +758,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     }
 
     /* START CHANGE */
-    this.offsets[0] += newTransform[12] - this.transform.value.transform[12];
-    this.offsets[1] += newTransform[13] - this.transform.value.transform[13];
-    this.offsets[2] += newTransform[14] - this.transform.value.transform[14];
+    this.operationOffsets[0] += newTransform[12] - this.transform.value.transform[12];
+    this.operationOffsets[1] += newTransform[13] - this.transform.value.transform[13];
+    this.operationOffsets[2] += newTransform[14] - this.transform.value.transform[14];
     /* END CHANGE */
 
     this.transform.transform = newTransform;
@@ -783,7 +788,10 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     for (let outputDim = 0; outputDim < rank; ++outputDim) {
       for (let inputDim = 0; inputDim <= rank; ++inputDim) {
         const coeffElement = coefficientElements[inputDim * rank + outputDim];
-        coeffElement.value = (Math.round(transform[inputDim * (rank + 1) + outputDim] * 1000) / 1000).toString();
+        /* START OF CHANGE: round the matrix numbers */
+        // coeffElement.value = (Math.round(transform[inputDim * (rank + 1) + outputDim] * 1000) / 1000).toString();
+        /* END OF CHANGE: round the matrix numbers */
+        coeffElement.value = transform[inputDim * (rank + 1) + outputDim].toString();
         coeffElement.dataset.isValid = 'true';
         updateInputFieldWidth(coeffElement);
       }
@@ -1076,9 +1084,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.updateAddOutputDimensionCellStyle();
     this.updateResetButtonVisibility();
 
-    /* START CHANGE: update view */
+    /* START CHANGE: update operation matrix */
     this.updateOperationInputs();
-    /* END CHANGE: update view */
+    /* END CHANGE: update operation matrix */
   }
 
   disposed() {
@@ -1088,19 +1096,29 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
   /* START OF CHANGE: functions */
   private makeOperationElement() {
-    // Add operation labels
     const OPERATIONS = ['Translation', 'Rotation', 'Scaling'];
     const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
+    const LAST_ROW = 12;
+
     for(let i = 0; i < 3; i++) {
+      // Add operation axes
+      const axisElement = document.createElement('div');
+      axisElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
+      axisElement.textContent = AXES[i];
+      axisElement.style.gridRow = `${LAST_ROW}`;
+      axisElement.style.gridColumn = `sourceDim ${i + 1}`;
+      this.element.appendChild(axisElement);
+
+      // Add operation names
       const nameElement = document.createElement('div');
       nameElement.classList.add(`neuroglancer-coordinate-space-transform-label`);
       nameElement.textContent = OPERATIONS[i];
-      nameElement.style.gridRow = `${12 + i}`;
+      nameElement.style.gridRow = `${LAST_ROW + 1 + i}`;
       nameElement.style.gridColumn = `2 / 4`;
       nameElement.style.textAlign = `center`;
       this.element.appendChild(nameElement);
 
-      // Add each operations
+      // Add operation offsets
       for(let j = 0; j < 3; j++) {
         const inputElement = document.createElement('input');
         inputElement.classList.add(`neuroglancer-coordinate-space-transform-scale`);
@@ -1114,19 +1132,43 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         controlElement.style.display = 'flex';
         controlElement.style.justifyContent = 'center';
         const increase = makeIcon({text: '+', title: `Increase ${OPERATIONS[i]} on ${AXES[j]}`});
-        increase.addEventListener('mousedown', () => {
-          this.handleOperations(OPERATIONS[i], AXES[j], 'Increase');
-        });
         const decrease = makeIcon({text: '-', title: `Decrease ${OPERATIONS[i]} on ${AXES[j]}`});
-        decrease.addEventListener('mousedown', () => {
-          this.handleOperations(OPERATIONS[i], AXES[j], 'Decrease');
-        });
         controlElement.appendChild(increase);
         controlElement.appendChild(decrease);
 
+        // Simulate click and long press for the buttons
+        let increaseInterval: number;
+        let increaseTimeout: number;
+        increase.addEventListener('mousedown', () => {
+          this.handleOperations(OPERATIONS[i], AXES[j], 'Increase');
+          increaseTimeout = setTimeout(() => {
+            increaseInterval = setInterval(() => {
+              this.handleOperations(OPERATIONS[i], AXES[j], 'Increase');
+            }, 100);
+          }, 1000);
+        });
+        increase.addEventListener('mouseup', () => {
+          clearInterval(increaseInterval);
+          clearTimeout(increaseTimeout);
+        });
+        let decreaseInterval: number;
+        let decreaseTimeout: number;
+        decrease.addEventListener('mousedown', () => {
+          this.handleOperations(OPERATIONS[i], AXES[j], 'Decrease');
+          decreaseTimeout = setTimeout(() => {
+            decreaseInterval = setInterval(() => {
+              this.handleOperations(OPERATIONS[i], AXES[j], 'Decrease');
+            }, 100);
+          }, 1000);
+        });
+        decrease.addEventListener('mouseup', () => {
+          clearInterval(decreaseInterval);
+          clearTimeout(decreaseTimeout);
+        });
+
         const cellElement = document.createElement('div');
         cellElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
-        cellElement.style.gridRow = `${12 + i}`;
+        cellElement.style.gridRow = `${LAST_ROW + 1 + i}`;
         cellElement.style.gridColumn = `sourceDim ${j + 1}`;
 
         cellElement.appendChild(inputElement);
@@ -1137,14 +1179,13 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   }
 
   private updateOperationInputs() {
-    this.offsets.map((offset, index) => {
+    this.operationOffsets.map((offset, index) => {
       this.operationInputElements[index].value = String(offset);
       return 0;
     });
   }
 
   private handleOperations(operation: string, axis: string, direction: string) {
-    console.log(operation, axis, direction);
     const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
     const DIRECTIONS = ['Increase', 'Decrease'];
 
@@ -1181,29 +1222,31 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
     this.transform.transform = newMatrix;
 
-    this.offsets[0] += xDiff;
-    this.offsets[1] += yDiff;
-    this.offsets[2] += zDiff;
+    // Update the offsets
+    this.operationOffsets[0] += xDiff;
+    this.operationOffsets[1] += yDiff;
+    this.operationOffsets[2] += zDiff;
   }
 
-  public handleRotationTransform(yawAngle: number, pitchAngle: number, rollAngle: number) {
+  public handleRotationTransform(xAngle: number, yAngle: number, zAngle: number) {
     // Rotate matrix
-    let newMatrix = rotateMatrix(this.transform.value.transform, yawAngle, pitchAngle, rollAngle);
+    let newMatrix = rotateMatrix(this.transform.value.transform, xAngle, yAngle, zAngle);
 
     // Around center point
     let scales = this.globalCombiner.combined.value.scales;
     newMatrix = offsetMatrix(newMatrix, this.rotPoint, scales[0], scales[1], scales[2]);
 
     // Taking translation into consideration
-    newMatrix[12] += this.offsets[0];
-    newMatrix[13] += this.offsets[1];
-    newMatrix[14] += this.offsets[2];
+    newMatrix[12] += this.operationOffsets[0];
+    newMatrix[13] += this.operationOffsets[1];
+    newMatrix[14] += this.operationOffsets[2];
 
     this.transform.transform = newMatrix;
 
-    this.offsets[3] += yawAngle;
-    this.offsets[4] += pitchAngle;
-    this.offsets[5] += rollAngle;
+    // Update the offsets
+    this.operationOffsets[3] += xAngle;
+    this.operationOffsets[4] += yAngle;
+    this.operationOffsets[5] += zAngle;
   }
 
   public handleScalingTransform(xScale: number, yScale: number, zScale: number) {
@@ -1215,15 +1258,23 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     newMatrix = offsetMatrix(newMatrix, this.rotPoint, scales[0], scales[1], scales[2]);
 
     // Taking translation into consideration
-    newMatrix[12] += this.offsets[0];
-    newMatrix[13] += this.offsets[1];
-    newMatrix[14] += this.offsets[2];
+    newMatrix[12] += this.operationOffsets[0];
+    newMatrix[13] += this.operationOffsets[1];
+    newMatrix[14] += this.operationOffsets[2];
 
     this.transform.transform = newMatrix;
 
-    this.offsets[6] *= zScale;
-    this.offsets[7] *= yScale;
-    this.offsets[8] *= xScale;
+    // Update the offsets
+    this.operationOffsets[6] *= xScale;
+    this.operationOffsets[7] *= yScale;
+    this.operationOffsets[8] *= zScale;
+  }
+
+  public resetOperationOffsets() {
+    this.operationOffsets.fill(0);
+    this.operationOffsets[6] = 1;
+    this.operationOffsets[7] = 1;
+    this.operationOffsets[8] = 1;
   }
 
   private resetTransform() {
@@ -1257,9 +1308,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     oldRotPoint.set(this.rotPoint);
 
     // Update the translation offsets
-    this.offsets[0] = newRotPoint[0] - oldRotPoint[0];
-    this.offsets[1] = newRotPoint[1] - oldRotPoint[1];
-    this.offsets[2] = newRotPoint[2] - oldRotPoint[2];
+    this.operationOffsets[0] = newRotPoint[0] - oldRotPoint[0];
+    this.operationOffsets[1] = newRotPoint[1] - oldRotPoint[1];
+    this.operationOffsets[2] = newRotPoint[2] - oldRotPoint[2];
 
     this.transform.transform = old_tform;
   }
