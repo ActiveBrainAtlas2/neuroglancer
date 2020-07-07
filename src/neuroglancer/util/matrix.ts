@@ -45,10 +45,10 @@ export function identity<T extends TypedArray>(a: T, lda: number, n: number): T 
   return a;
 }
 
-export function rotateMatrix(matrix: Float64Array, yawAngle: number, pitchAngle: number, rollAngle: number) {
-  let yawRot = yawMat(yawAngle);
-  let rollRot = rollMat(rollAngle);
-  let pitchRot = pitchMat(pitchAngle);
+export function rotateMatrix(matrix: Float64Array, xAngle: number, yAngle: number, zAngle: number) {
+  let rollRot = rollMat(xAngle);
+  let pitchRot = pitchMat(yAngle);
+  let yawRot = yawMat(zAngle);
 
   let temp1 = new Float64Array(16);
   multiply(temp1, 4, yawRot, 4, pitchRot, 4, 4, 4, 4);
