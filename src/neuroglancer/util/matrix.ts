@@ -45,91 +45,6 @@ export function identity<T extends TypedArray>(a: T, lda: number, n: number): T 
   return a;
 }
 
-export function rotateMatrix(matrix: Float64Array, xAngle: number, yAngle: number, zAngle: number) {
-  let rollRot = rollMat(xAngle);
-  let pitchRot = pitchMat(yAngle);
-  let yawRot = yawMat(zAngle);
-
-  let temp1 = new Float64Array(16);
-  multiply(temp1, 4, yawRot, 4, pitchRot, 4, 4, 4, 4);
-  let temp2 = new Float64Array(16);
-  multiply(temp2, 4, temp1, 4, rollRot, 4, 4, 4, 4);
-  let temp3 = new Float64Array(16);
-  multiply(temp3, 4, matrix, 4, temp2, 4, 4, 4, 4);
-
-  return temp3;
-}
-
-export function scaleMatrix(matrix: Float64Array, xScale: number, yScale: number, zScale:number) {
-  let scale_mat = createIdentity(Float64Array, 4);
-  scale_mat[0] = scale_mat[0] * xScale;
-  scale_mat[5] = scale_mat[5] * yScale;
-  scale_mat[10] = scale_mat[10] * zScale;
-  scale_mat[15] = 0;
-
-  let scaledMat = new Float64Array(16);
-  multiply(scaledMat, 4, matrix, 4, scale_mat, 4, 4, 4, 4);
-
-  return scaledMat;
-}
-
-export function offsetMatrix(matrix: Float64Array, rotPoint: Float64Array, scale_x: number, scale_y: number, scale_z: number) {
-  let rot_new = new Float64Array(3);
-  rot_new[0] = rotPoint[0] * scale_x;
-  rot_new[1] = rotPoint[1] * scale_y;
-  rot_new[2] = rotPoint[2] * scale_z;
-
-  let offset = calcOffset(matrix, rot_new);
-  matrix[12] = offset[0] / scale_x;
-  matrix[13] = offset[1] / scale_y;
-  matrix[14] = offset[2] / scale_z;
-
-  return matrix;
-}
-
-export function yawMat(yawAngle:number) {
-  return rotHelper(yawAngle, [0, 1, 4, 5, 10, 15]);
-}
-
-export function rollMat(rollAngle:number) {
-  return rotHelper(rollAngle, [5, 6, 9, 10, 0, 15]);
-}
-
-export function pitchMat(pitchAngle:number) {
-  return rotHelper(pitchAngle, [0, 8, 2, 10, 5, 15]);
-}
-
-export function rotHelper(degree:number, idxs:number[]) {
-  let sin_deg = Math.sin(degree * Math.PI / 180);
-  let cos_deg = Math.cos(degree * Math.PI / 180);
-
-  let rotMat = new Float64Array(16);
-
-  rotMat[idxs[0]] = cos_deg;
-  rotMat[idxs[1]] = sin_deg;
-  rotMat[idxs[2]] = -1*sin_deg;
-  rotMat[idxs[3]] = cos_deg;
-  rotMat[idxs[4]] = 1;
-  rotMat[idxs[5]] = 0;
-
-  return rotMat;
-}
-
-export function calcOffset<T extends TypedArray>(rotMat: T, rotPoint:Float64Array){
-  // New offset is going to be (I-R)*rotPoint
-  // Here R is the rotation matrix
-
-  const eye = identity(new Float64Array(16), 4, 16);
-  const diffMat = eye.map((a, i) => (a - rotMat[i]));
-  const offset = new Float64Array(4);
-
-  let point = new Float64Array(4);
-  point[0] = rotPoint[0]; point[1] = rotPoint[1]; point[2] = rotPoint[2];
-  point[3] = 1;
-
-  return multiply(offset, 4, diffMat, 4, point, 4, 4, 4, 1);
-}
-
 export function createIdentity<T extends TypedArray>(
     c: {new (n: number): T}, rows: number, cols: number = rows): T {
   return identity(new c(rows * cols), rows, Math.min(rows, cols));
@@ -331,3 +246,92 @@ transformVector<Out extends TypedArray, Matrix extends TypedArray, Vector extend
   }
   return out;
 }
+
+/* START OF CHANGE: matrix functions */
+export function rotateMatrix(matrix: Float64Array, xAngle: number, yAngle: number, zAngle: number) {
+  let rollRot = rotHelper('roll', xAngle);
+  let pitchRot = rotHelper('pitch', yAngle);
+  let yawRot = rotHelper('yaw', zAngle);
+
+  let temp1 = new Float64Array(16);
+  multiply(temp1, 4, yawRot, 4, pitchRot, 4, 4, 4, 4);
+  let temp2 = new Float64Array(16);
+  multiply(temp2, 4, temp1, 4, rollRot, 4, 4, 4, 4);
+  let temp3 = new Float64Array(16);
+  multiply(temp3, 4, matrix, 4, temp2, 4, 4, 4, 4);
+
+  return temp3;
+}
+
+export function scaleMatrix(matrix: Float64Array, xScale: number, yScale: number, zScale:number) {
+  let scale_mat = createIdentity(Float64Array, 4);
+  scale_mat[0] = scale_mat[0] * xScale;
+  scale_mat[5] = scale_mat[5] * yScale;
+  scale_mat[10] = scale_mat[10] * zScale;
+  scale_mat[15] = 0;
+
+  let scaledMat = new Float64Array(16);
+  multiply(scaledMat, 4, matrix, 4, scale_mat, 4, 4, 4, 4);
+
+  return scaledMat;
+}
+
+export function rotHelper(direction: string,  degree: number) {
+  let rotMat = new Float64Array(16);
+
+  let idxs: number[];
+  if (direction === 'yaw') {
+    idxs = [0, 1, 4, 5, 10, 15];
+  }
+  else if (direction === 'roll') {
+    idxs = [5, 6, 9, 10, 0, 15];
+  }
+  else if (direction === 'pitch') {
+    idxs = [0, 8, 2, 10, 5, 15];
+  }
+  else {
+    return rotMat;
+  }
+
+  let sin_deg = Math.sin(degree * Math.PI / 180);
+  let cos_deg = Math.cos(degree * Math.PI / 180);
+
+  rotMat[idxs[0]] = cos_deg;
+  rotMat[idxs[1]] = sin_deg;
+  rotMat[idxs[2]] = -1*sin_deg;
+  rotMat[idxs[3]] = cos_deg;
+  rotMat[idxs[4]] = 1;
+  rotMat[idxs[5]] = 0;
+
+  return rotMat;
+}
+
+export function offsetMatrix(matrix: Float64Array, rotPoint: Float64Array, scale_x: number, scale_y: number, scale_z: number) {
+  let rot_new = new Float64Array(3);
+  rot_new[0] = rotPoint[0] * scale_x;
+  rot_new[1] = rotPoint[1] * scale_y;
+  rot_new[2] = rotPoint[2] * scale_z;
+
+  let offset = calcOffset(matrix, rot_new);
+  matrix[12] = offset[0] / scale_x;
+  matrix[13] = offset[1] / scale_y;
+  matrix[14] = offset[2] / scale_z;
+
+  return matrix;
+}
+
+export function calcOffset<T extends TypedArray>(rotMat: T, rotPoint:Float64Array){
+  // New offset is going to be (I-R)*rotPoint
+  // Here R is the rotation matrix
+
+  const eye = identity(new Float64Array(16), 4, 16);
+  const diffMat = eye.map((a, i) => (a - rotMat[i]));
+  const offset = new Float64Array(4);
+
+  let point = new Float64Array(4);
+  point[0] = rotPoint[0]; point[1] = rotPoint[1]; point[2] = rotPoint[2];
+  point[3] = 1;
+
+  return multiply(offset, 4, diffMat, 4, point, 4, 4, 4, 1);
+}
+/* END OF CHANGE: matrix functions */
