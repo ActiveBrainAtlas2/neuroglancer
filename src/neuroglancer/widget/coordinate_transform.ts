@@ -207,7 +207,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
   /* START OF CHANGE: instance variables */
   public rotPoint: Float64Array;
-  private operationOffsets: Float64Array = new Float64Array(9);
+  private transitionOffsets: Float64Array = new Float64Array(3);
+  private operationDisplays: Float64Array = new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1]);
 
   private resetToIdentityButton = makeIcon({
     text: 'Set to identity',
@@ -445,7 +446,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
     this.updateRotPoint();
     this.updateOriginalRotPointAndOffsets();
-    this.resetOperationOffsets();
 
     this.makeOperationElement();
     /* END OF CHANGE: constructor*/
@@ -758,9 +758,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     }
 
     /* START CHANGE */
-    this.operationOffsets[0] += newTransform[12] - this.transform.value.transform[12];
-    this.operationOffsets[1] += newTransform[13] - this.transform.value.transform[13];
-    this.operationOffsets[2] += newTransform[14] - this.transform.value.transform[14];
+    this.operationDisplays[0] += newTransform[12] - this.transform.value.transform[12];
+    this.operationDisplays[1] += newTransform[13] - this.transform.value.transform[13];
+    this.operationDisplays[2] += newTransform[14] - this.transform.value.transform[14];
     /* END CHANGE */
 
     this.transform.transform = newTransform;
@@ -1151,6 +1151,10 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           clearInterval(increaseInterval);
           clearTimeout(increaseTimeout);
         });
+        increase.addEventListener('mouseout', () => {
+          clearInterval(increaseInterval);
+          clearTimeout(increaseTimeout);
+        });
         let decreaseInterval: number;
         let decreaseTimeout: number;
         decrease.addEventListener('mousedown', () => {
@@ -1162,6 +1166,10 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           }, 1000);
         });
         decrease.addEventListener('mouseup', () => {
+          clearInterval(decreaseInterval);
+          clearTimeout(decreaseTimeout);
+        });
+        decrease.addEventListener('mouseout', () => {
           clearInterval(decreaseInterval);
           clearTimeout(decreaseTimeout);
         });
@@ -1179,7 +1187,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   }
 
   private updateOperationInputs() {
-    this.operationOffsets.map((offset, index) => {
+    this.operationDisplays.map((offset, index) => {
       this.operationInputElements[index].value = String(offset);
       return 0;
     });
@@ -1222,10 +1230,15 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
     this.transform.transform = newMatrix;
 
+    // Update the transition offsets
+    this.transitionOffsets[0] += xDiff;
+    this.transitionOffsets[1] += yDiff;
+    this.transitionOffsets[2] += zDiff;
+
     // Update the offsets
-    this.operationOffsets[0] += xDiff;
-    this.operationOffsets[1] += yDiff;
-    this.operationOffsets[2] += zDiff;
+    this.operationDisplays[0] += xDiff;
+    this.operationDisplays[1] += yDiff;
+    this.operationDisplays[2] += zDiff;
   }
 
   public handleRotationTransform(xAngle: number, yAngle: number, zAngle: number) {
@@ -1237,16 +1250,16 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     newMatrix = offsetMatrix(newMatrix, this.rotPoint, scales[0], scales[1], scales[2]);
 
     // Taking translation into consideration
-    newMatrix[12] += this.operationOffsets[0];
-    newMatrix[13] += this.operationOffsets[1];
-    newMatrix[14] += this.operationOffsets[2];
+    newMatrix[12] += this.transitionOffsets[0];
+    newMatrix[13] += this.transitionOffsets[1];
+    newMatrix[14] += this.transitionOffsets[2];
 
     this.transform.transform = newMatrix;
 
-    // Update the offsets
-    this.operationOffsets[3] += xAngle;
-    this.operationOffsets[4] += yAngle;
-    this.operationOffsets[5] += zAngle;
+    // Update the displays
+    this.operationDisplays[3] += xAngle;
+    this.operationDisplays[4] += yAngle;
+    this.operationDisplays[5] += zAngle;
   }
 
   public handleScalingTransform(xScale: number, yScale: number, zScale: number) {
@@ -1258,32 +1271,27 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     newMatrix = offsetMatrix(newMatrix, this.rotPoint, scales[0], scales[1], scales[2]);
 
     // Taking translation into consideration
-    newMatrix[12] += this.operationOffsets[0];
-    newMatrix[13] += this.operationOffsets[1];
-    newMatrix[14] += this.operationOffsets[2];
+    newMatrix[12] += this.transitionOffsets[0];
+    newMatrix[13] += this.transitionOffsets[1];
+    newMatrix[14] += this.transitionOffsets[2];
 
     this.transform.transform = newMatrix;
 
-    // Update the offsets
-    this.operationOffsets[6] *= xScale;
-    this.operationOffsets[7] *= yScale;
-    this.operationOffsets[8] *= zScale;
+    // Update the displays
+    this.operationDisplays[6] *= xScale;
+    this.operationDisplays[7] *= yScale;
+    this.operationDisplays[8] *= zScale;
   }
 
   public resetOperationOffsets() {
-    this.operationOffsets.fill(0);
-    this.operationOffsets[6] = 1;
-    this.operationOffsets[7] = 1;
-    this.operationOffsets[8] = 1;
+    this.transitionOffsets.fill(0);
+
+    this.operationDisplays.fill(0);
+    this.operationDisplays[6] = 1;
+    this.operationDisplays[7] = 1;
+    this.operationDisplays[8] = 1;
   }
 
-  private resetTransform() {
-    const {transform} = this;
-    let old_transform = transform.value.transform;
-    const rank = transform.value.rank;
-    transform.transform = createIdentity(Float64Array, rank + 1);
-    return old_transform;
-  }
 
   private updateRotPoint() {
     let lowerBound = new Float64Array(3);
@@ -1294,13 +1302,15 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   }
 
   private updateOriginalRotPointAndOffsets() {
-    // Get the current rotation point
+    // Get the new rotation point
     this.updateRotPoint();
     let newRotPoint = new Float64Array(3);
     newRotPoint.set(this.rotPoint);
 
-    // Save a copy of the current transformation matrix and reset it
-    let old_tform = this.resetTransform();
+    // Save a copy of the new transformation matrix and reset it
+    let transform = this.transform.value.transform;
+    const rank = this.transform.value.rank;
+    this.transform.transform = createIdentity(Float64Array, rank + 1);
 
     // Get the rotation point after transformation matrix is reset
     this.updateRotPoint();
@@ -1308,11 +1318,12 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     oldRotPoint.set(this.rotPoint);
 
     // Update the translation offsets
-    this.operationOffsets[0] = newRotPoint[0] - oldRotPoint[0];
-    this.operationOffsets[1] = newRotPoint[1] - oldRotPoint[1];
-    this.operationOffsets[2] = newRotPoint[2] - oldRotPoint[2];
+    this.transitionOffsets[0] = newRotPoint[0] - oldRotPoint[0];
+    this.transitionOffsets[1] = newRotPoint[1] - oldRotPoint[1];
+    this.transitionOffsets[2] = newRotPoint[2] - oldRotPoint[2];
 
-    this.transform.transform = old_tform;
+    // Get back the new transformation matrix and rotation point
+    this.transform.transform = transform;
   }
   /* END OF CHANGE: functions */
 }
