@@ -209,6 +209,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   public rotPoint: Float64Array;
   private transitionOffsets: Float64Array = new Float64Array(3);
   private operationDisplays: Float64Array = new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1]);
+  private operationDisplaySteps: Float64Array = new Float64Array([1, 20, 0.5, 5, 0.01, 0.1]);
 
   private resetToIdentityButton = makeIcon({
     text: 'Set to identity',
@@ -248,7 +249,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         }
   });
 
-  private operationInputElements: HTMLInputElement[] = [];
+  private operationDisplayElements: HTMLInputElement[] = [];
+  private operationDisplayStepElements: HTMLInputElement[] = [];
   /* END OF CHANGE: instance variables */
 
   constructor(
@@ -404,52 +406,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerMoveUpDown('move-left', 0, -1);
     registerMoveUpDown('move-right', 0, +1);
 
-    /* START OF CHANGE: constructor*/
-    const registerMoveVol = (action: string, xDiff: number, yDiff: number, zDiff: number) => {
-      registerActionListener<Event>(element, action, () => {
-        this.handleTransitionTransform(xDiff, yDiff, zDiff);
-      });
-    };
-
-    const registerRotationVol = (action: string, yawAngle: number, pitchAngle: number, rollAngle: number) => {
-      registerActionListener<Event>(element, action, () => {
-        this.handleRotationTransform(yawAngle, pitchAngle, rollAngle);
-      });
-    };
-
-    const registerScaleVol = (action: string, xScale: number, yScale: number, zScale: number) => {
-      registerActionListener<Event>(element, action, () => {
-        this.handleScalingTransform(xScale, yScale, zScale);
-      });
-    };
-
-    registerMoveVol('move-vol-left', -100, 0, 0);
-    registerMoveVol('move-vol-right', 100, 0, 0);
-    registerMoveVol('move-vol-up', 0, -100, 0);
-    registerMoveVol('move-vol-down', 0, 100, 0);
-    registerMoveVol('move-vol-in', 0, 0, 100/43);
-    registerMoveVol('move-vol-out', 0, 0, -100/43);
-
-    registerRotationVol('yaw-left', -5, 0, 0);
-    registerRotationVol('yaw-right', 5, 0, 0);
-    registerRotationVol('pitch-left', 0, 5, 0);
-    registerRotationVol('pitch-right', 0, -5, 0);
-    registerRotationVol('roll-up', 0, 0, -5);
-    registerRotationVol('roll-down', 0, 0, 5);
-
-    registerScaleVol('z-inc-scale', 1/0.99, 1/0.99, 1);
-    registerScaleVol('z-dec-scale', 0.99, 0.99, 1);
-    registerScaleVol('y-inc-scale', 1/0.99, 1, 1/0.99);
-    registerScaleVol('y-dec-scale', 0.99, 1, 0.99);
-    registerScaleVol('x-inc-scale', 1, 1/0.99, 1/0.99);
-    registerScaleVol('x-dec-scale', 1, 0.99, 0.99);
-
-    this.updateRotPoint();
-    this.updateOriginalRotPointAndOffsets();
-
-    this.makeOperationElement();
-    /* END OF CHANGE: constructor*/
-
     const registerFocusout = (container: HTMLDivElement, handler: (event: FocusEvent) => void) => {
       container.addEventListener('focusout', (event: FocusEvent) => {
         const {relatedTarget} = event;
@@ -502,6 +458,53 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         target.select();
       }
     });
+
+    /* START OF CHANGE: constructor*/
+    const registerMoveVol = (action: string, xDiff: number, yDiff: number, zDiff: number) => {
+      registerActionListener<Event>(element, action, () => {
+        this.handleTransitionTransform(xDiff, yDiff, zDiff);
+      });
+    };
+
+    const registerRotationVol = (action: string, yawAngle: number, pitchAngle: number, rollAngle: number) => {
+      registerActionListener<Event>(element, action, () => {
+        this.handleRotationTransform(yawAngle, pitchAngle, rollAngle);
+      });
+    };
+
+    const registerScaleVol = (action: string, xScale: number, yScale: number, zScale: number) => {
+      registerActionListener<Event>(element, action, () => {
+        this.handleScalingTransform(xScale, yScale, zScale);
+      });
+    };
+
+    registerMoveVol('move-vol-left', -100, 0, 0);
+    registerMoveVol('move-vol-right', 100, 0, 0);
+    registerMoveVol('move-vol-up', 0, -100, 0);
+    registerMoveVol('move-vol-down', 0, 100, 0);
+    registerMoveVol('move-vol-in', 0, 0, 100/43);
+    registerMoveVol('move-vol-out', 0, 0, -100/43);
+
+    registerRotationVol('yaw-left', -5, 0, 0);
+    registerRotationVol('yaw-right', 5, 0, 0);
+    registerRotationVol('pitch-left', 0, 5, 0);
+    registerRotationVol('pitch-right', 0, -5, 0);
+    registerRotationVol('roll-up', 0, 0, -5);
+    registerRotationVol('roll-down', 0, 0, 5);
+
+    registerScaleVol('z-inc-scale', 1/0.99, 1/0.99, 1);
+    registerScaleVol('z-dec-scale', 0.99, 0.99, 1);
+    registerScaleVol('y-inc-scale', 1/0.99, 1, 1/0.99);
+    registerScaleVol('y-dec-scale', 0.99, 1, 0.99);
+    registerScaleVol('x-inc-scale', 1, 1/0.99, 1/0.99);
+    registerScaleVol('x-dec-scale', 1, 0.99, 0.99);
+
+    this.updateRotPoint();
+    this.updateOriginalRotPointAndOffsets();
+
+    this.makeOperationElement();
+    /* END OF CHANGE: constructor*/
+
     this.updateView();
   }
 
@@ -1085,7 +1088,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.updateResetButtonVisibility();
 
     /* START CHANGE: update operation matrix */
-    this.updateOperationInputs();
+    this.updateViewOperationDisplays();
+    this.updateViewOperationDisplaySteps();
     /* END CHANGE: update operation matrix */
   }
 
@@ -1099,14 +1103,35 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     const OPERATIONS = ['Translation', 'Rotation', 'Scaling'];
     const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
     const LAST_ROW = 12;
+    const LAST_COL = -2;
 
-    for(let i = 0; i < 3; i++) {
+    // Add operation step titles
+    const defaultStepNameElement = document.createElement('div');
+    defaultStepNameElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
+    defaultStepNameElement.textContent = 'step';
+    defaultStepNameElement.style.textAlign = `center`;
+
+    const shiftStepNameElement = document.createElement('div');
+    shiftStepNameElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
+    shiftStepNameElement.textContent = '(shift)';
+    shiftStepNameElement.style.textAlign = `center`;
+
+    const stepNameElement = document.createElement('div');
+    stepNameElement.style.gridRow = `${LAST_ROW}`;
+    stepNameElement.style.gridColumn = `${LAST_COL}`;
+
+    stepNameElement.appendChild(defaultStepNameElement);
+    stepNameElement.appendChild(shiftStepNameElement);
+    this.element.appendChild(stepNameElement);
+
+    for (let i = 0; i < 3; i++) {
       // Add operation axes
       const axisElement = document.createElement('div');
       axisElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
       axisElement.textContent = AXES[i];
       axisElement.style.gridRow = `${LAST_ROW}`;
       axisElement.style.gridColumn = `sourceDim ${i + 1}`;
+      axisElement.style.alignSelf = `center`;
       this.element.appendChild(axisElement);
 
       // Add operation names
@@ -1118,15 +1143,52 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       nameElement.style.textAlign = `center`;
       this.element.appendChild(nameElement);
 
+      // Add operation step sizes
+      const defaultStepElement = document.createElement('input');
+      defaultStepElement.spellcheck = false;
+      defaultStepElement.autocomplete = 'off';
+      defaultStepElement.size = 1;
+      defaultStepElement.style.textAlign = 'center';
+      defaultStepElement.addEventListener('input', () => {
+        const value = parseFloat(defaultStepElement.value);
+        if (Number.isFinite(value)) {
+          this.operationDisplaySteps[i * 2] = value;
+        }
+        // this.updateViewOperationDisplaySteps();
+      });
+      this.operationDisplayStepElements.push(defaultStepElement);
+
+      const shiftStepElement = document.createElement('input');
+      shiftStepElement.spellcheck = false;
+      shiftStepElement.autocomplete = 'off';
+      shiftStepElement.size = 1;
+      shiftStepElement.style.textAlign = 'center';
+      shiftStepElement.addEventListener('input', () => {
+        const value = parseFloat(shiftStepElement.value);
+        if (Number.isFinite(value)) {
+          this.operationDisplaySteps[i * 2 + 1] = value;
+        }
+        // this.updateViewOperationDisplaySteps();
+      });
+      this.operationDisplayStepElements.push(shiftStepElement);
+
+      const stepElement = document.createElement('div');
+      stepElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
+      stepElement.style.gridRow = `${LAST_ROW + 1 + i}`;
+      stepElement.style.gridColumn = `${LAST_COL}`;
+
+      stepElement.appendChild(defaultStepElement);
+      stepElement.appendChild(shiftStepElement);
+      this.element.appendChild(stepElement);
+
       // Add operation offsets
-      for(let j = 0; j < 3; j++) {
+      for (let j = 0; j < 3; j++) {
         const inputElement = document.createElement('input');
-        inputElement.classList.add(`neuroglancer-coordinate-space-transform-scale`);
         inputElement.spellcheck = false;
         inputElement.autocomplete = 'off';
         inputElement.size = 1;
         inputElement.style.textAlign = 'center';
-        this.operationInputElements.push(inputElement);
+        this.operationDisplayElements.push(inputElement);
 
         const controlElement = document.createElement(`div`);
         controlElement.style.display = 'flex';
@@ -1139,11 +1201,11 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         // Simulate click and long press for the buttons
         let increaseInterval: number;
         let increaseTimeout: number;
-        increase.addEventListener('mousedown', () => {
-          this.handleOperations(OPERATIONS[i], AXES[j], 'Increase');
+        increase.addEventListener('mousedown', event => {
+          this.handleOperations(i, j, true, event.shiftKey);
           increaseTimeout = setTimeout(() => {
             increaseInterval = setInterval(() => {
-              this.handleOperations(OPERATIONS[i], AXES[j], 'Increase');
+              this.handleOperations(i, j, true, event.shiftKey);
             }, 100);
           }, 1000);
         });
@@ -1157,11 +1219,11 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         });
         let decreaseInterval: number;
         let decreaseTimeout: number;
-        decrease.addEventListener('mousedown', () => {
-          this.handleOperations(OPERATIONS[i], AXES[j], 'Decrease');
+        decrease.addEventListener('mousedown', event => {
+          this.handleOperations(i, j, false, event.shiftKey);
           decreaseTimeout = setTimeout(() => {
             decreaseInterval = setInterval(() => {
-              this.handleOperations(OPERATIONS[i], AXES[j], 'Decrease');
+              this.handleOperations(i, j, false, event.shiftKey);
             }, 100);
           }, 1000);
         });
@@ -1186,38 +1248,38 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     }
   }
 
-  private updateOperationInputs() {
+  private updateViewOperationDisplays() {
     this.operationDisplays.map((offset, index) => {
-      this.operationInputElements[index].value = String(offset);
+      this.operationDisplayElements[index].value = String(offset);
       return 0;
     });
   }
 
-  private handleOperations(operation: string, axis: string, direction: string) {
-    const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
-    const DIRECTIONS = ['Increase', 'Decrease'];
+  private updateViewOperationDisplaySteps() {
+    this.operationDisplaySteps.map((step, index) => {
+      this.operationDisplayStepElements[index].value = String(step);
+      return 0;
+    });
+  }
 
-    let index = AXES.indexOf(axis) * 2 + DIRECTIONS.indexOf(direction);
-    if (operation === 'Translation') {
-      let params = [
-        [100, 0, 0], [-100, 0, 0], [0, 100, 0], [0, -100, 0], [0, 0, 1], [0, 0, -1]
-      ];
-
-      this.handleTransitionTransform(params[index][0], params[index][1], params[index][2]);
+  private handleOperations(operation: number, axis: number, isIncrease: boolean, isCoarse: boolean) {
+    if (operation === 0) {
+      let params = [0, 0, 0];
+      params[axis] = this.operationDisplaySteps[operation * 2 + Number(isCoarse)] *
+        (isIncrease ? 1 : -1);
+      this.handleTransitionTransform(params[0], params[1], params[2]);
     }
-    else if (operation === 'Rotation') {
-      let params = [
-        [5, 0, 0], [-5, 0, 0], [0, 5, 0], [0, -5, 0], [0, 0, 5], [0, 0, -5]
-      ];
-
-      this.handleRotationTransform(params[index][0], params[index][1], params[index][2]);
+    else if (operation === 1) {
+      let params = [0, 0, 0];
+      params[axis] = this.operationDisplaySteps[operation * 2 + Number(isCoarse)] *
+        (isIncrease ? 1 : -1);
+      this.handleRotationTransform(params[0], params[1], params[2]);
     }
-    else if (operation === 'Scaling') {
-      let params = [
-        [1.01, 1, 1], [0.99, 1, 1], [1, 1.01, 1], [1, 0.99, 1], [1, 1, 1.01], [1, 1, 0.99]
-      ];
-
-      this.handleScalingTransform(params[index][0], params[index][1], params[index][2]);
+    else if (operation === 2) {
+      let params = [1, 1, 1];
+      params[axis] = this.operationDisplaySteps[operation * 2 + Number(isCoarse)] *
+        (isIncrease ? 1 : -1) + 1;
+      this.handleScalingTransform(params[0], params[1], params[2]);
     }
   }
 
@@ -1291,7 +1353,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.operationDisplays[7] = 1;
     this.operationDisplays[8] = 1;
   }
-
 
   private updateRotPoint() {
     let lowerBound = new Float64Array(3);
