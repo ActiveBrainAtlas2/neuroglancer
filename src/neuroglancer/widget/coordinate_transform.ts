@@ -208,8 +208,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   /* START OF CHANGE: instance variables */
   public rotPoint: Float64Array;
   private transitionOffsets: Float64Array = new Float64Array(3);
-  private operationDisplays: Float64Array = new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1]);
-  private operationDisplaySteps: Float64Array = new Float64Array([1, 20, 0.5, 5, 0.01, 0.1]);
 
   private resetToIdentityButton = makeIcon({
     text: 'Set to identity',
@@ -221,7 +219,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           transform.transform = createIdentity(Float64Array, rank + 1);
 
           // Reset offsets and update rotation point
-          this.resetOperationOffsets();
+          this.transform.operations = this.transform.defaultOperations;
+          this.transitionOffsets.fill(0);
           this.updateRotPoint();
         }
   });
@@ -244,13 +243,13 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           };
 
           // Reset offsets and update rotation point
-          this.resetOperationOffsets();
+          this.transform.operations = this.transform.defaultOperations;
+          this.transitionOffsets.fill(0);
           this.updateRotPoint();
         }
   });
 
-  private operationDisplayElements: HTMLInputElement[] = [];
-  private operationDisplayStepElements: HTMLInputElement[] = [];
+  private operationElements: HTMLInputElement[] = [];
   /* END OF CHANGE: instance variables */
 
   constructor(
@@ -761,9 +760,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     }
 
     /* START CHANGE */
-    this.operationDisplays[0] += newTransform[12] - this.transform.value.transform[12];
-    this.operationDisplays[1] += newTransform[13] - this.transform.value.transform[13];
-    this.operationDisplays[2] += newTransform[14] - this.transform.value.transform[14];
+    this.transitionOffsets[0] += newTransform[12] - this.transform.value.transform[12];
+    this.transitionOffsets[1] += newTransform[13] - this.transform.value.transform[13];
+    this.transitionOffsets[2] += newTransform[14] - this.transform.value.transform[14];
     /* END CHANGE */
 
     this.transform.transform = newTransform;
@@ -1088,8 +1087,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.updateResetButtonVisibility();
 
     /* START CHANGE: update operation matrix */
-    this.updateViewOperationDisplays();
-    this.updateViewOperationDisplaySteps();
+    this.updateViewOperations();
     /* END CHANGE: update operation matrix */
   }
 
@@ -1104,25 +1102,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
     const LAST_ROW = 12;
     const LAST_COL = -2;
-
-    // Add operation step titles
-    const defaultStepNameElement = document.createElement('div');
-    defaultStepNameElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
-    defaultStepNameElement.textContent = 'step';
-    defaultStepNameElement.style.textAlign = `center`;
-
-    const shiftStepNameElement = document.createElement('div');
-    shiftStepNameElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
-    shiftStepNameElement.textContent = '(shift)';
-    shiftStepNameElement.style.textAlign = `center`;
-
-    const stepNameElement = document.createElement('div');
-    stepNameElement.style.gridRow = `${LAST_ROW}`;
-    stepNameElement.style.gridColumn = `${LAST_COL}`;
-
-    stepNameElement.appendChild(defaultStepNameElement);
-    stepNameElement.appendChild(shiftStepNameElement);
-    this.element.appendChild(stepNameElement);
 
     for (let i = 0; i < 3; i++) {
       // Add operation axes
@@ -1143,44 +1122,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       nameElement.style.textAlign = `center`;
       this.element.appendChild(nameElement);
 
-      // Add operation step sizes
-      const defaultStepElement = document.createElement('input');
-      defaultStepElement.spellcheck = false;
-      defaultStepElement.autocomplete = 'off';
-      defaultStepElement.size = 1;
-      defaultStepElement.style.textAlign = 'center';
-      defaultStepElement.addEventListener('input', () => {
-        const value = parseFloat(defaultStepElement.value);
-        if (Number.isFinite(value)) {
-          this.operationDisplaySteps[i * 2] = value;
-        }
-        // this.updateViewOperationDisplaySteps();
-      });
-      this.operationDisplayStepElements.push(defaultStepElement);
-
-      const shiftStepElement = document.createElement('input');
-      shiftStepElement.spellcheck = false;
-      shiftStepElement.autocomplete = 'off';
-      shiftStepElement.size = 1;
-      shiftStepElement.style.textAlign = 'center';
-      shiftStepElement.addEventListener('input', () => {
-        const value = parseFloat(shiftStepElement.value);
-        if (Number.isFinite(value)) {
-          this.operationDisplaySteps[i * 2 + 1] = value;
-        }
-        // this.updateViewOperationDisplaySteps();
-      });
-      this.operationDisplayStepElements.push(shiftStepElement);
-
-      const stepElement = document.createElement('div');
-      stepElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
-      stepElement.style.gridRow = `${LAST_ROW + 1 + i}`;
-      stepElement.style.gridColumn = `${LAST_COL}`;
-
-      stepElement.appendChild(defaultStepElement);
-      stepElement.appendChild(shiftStepElement);
-      this.element.appendChild(stepElement);
-
       // Add operation offsets
       for (let j = 0; j < 3; j++) {
         const inputElement = document.createElement('input');
@@ -1188,7 +1129,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         inputElement.autocomplete = 'off';
         inputElement.size = 1;
         inputElement.style.textAlign = 'center';
-        this.operationDisplayElements.push(inputElement);
+        this.operationElements.push(inputElement);
 
         const controlElement = document.createElement(`div`);
         controlElement.style.display = 'flex';
@@ -1246,18 +1187,70 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         this.element.appendChild(cellElement);
       }
     }
+
+    // Add operation step titles
+    const defaultStepNameElement = document.createElement('div');
+    defaultStepNameElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
+    defaultStepNameElement.textContent = 'step';
+    defaultStepNameElement.style.textAlign = `center`;
+
+    const shiftStepNameElement = document.createElement('div');
+    shiftStepNameElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
+    shiftStepNameElement.textContent = '(shift)';
+    shiftStepNameElement.style.textAlign = `center`;
+
+    const stepNameElement = document.createElement('div');
+    stepNameElement.style.gridRow = `${LAST_ROW}`;
+    stepNameElement.style.gridColumn = `${LAST_COL}`;
+
+    stepNameElement.appendChild(defaultStepNameElement);
+    stepNameElement.appendChild(shiftStepNameElement);
+    this.element.appendChild(stepNameElement);
+
+    // Add operation step sizes
+    for (let i = 0; i < 3; i++) {
+      const defaultStepElement = document.createElement('input');
+      defaultStepElement.spellcheck = false;
+      defaultStepElement.autocomplete = 'off';
+      defaultStepElement.size = 1;
+      defaultStepElement.style.textAlign = 'center';
+      defaultStepElement.addEventListener('input', () => {
+        const value = parseFloat(defaultStepElement.value);
+        if (Number.isFinite(value)) {
+          this.transform.operations[9 + i * 2] = value;
+        }
+        // this.updateViewOperationDisplaySteps();
+      });
+      this.operationElements.push(defaultStepElement);
+
+      const shiftStepElement = document.createElement('input');
+      shiftStepElement.spellcheck = false;
+      shiftStepElement.autocomplete = 'off';
+      shiftStepElement.size = 1;
+      shiftStepElement.style.textAlign = 'center';
+      shiftStepElement.addEventListener('input', () => {
+        const value = parseFloat(shiftStepElement.value);
+        if (Number.isFinite(value)) {
+          this.transform.operations[9 + i * 2 + 1] = value;
+        }
+        // this.updateViewOperationDisplaySteps();
+      });
+      this.operationElements.push(shiftStepElement);
+
+      const stepElement = document.createElement('div');
+      stepElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
+      stepElement.style.gridRow = `${LAST_ROW + 1 + i}`;
+      stepElement.style.gridColumn = `${LAST_COL}`;
+
+      stepElement.appendChild(defaultStepElement);
+      stepElement.appendChild(shiftStepElement);
+      this.element.appendChild(stepElement);
+    }
   }
 
-  private updateViewOperationDisplays() {
-    this.operationDisplays.map((offset, index) => {
-      this.operationDisplayElements[index].value = String(offset);
-      return 0;
-    });
-  }
-
-  private updateViewOperationDisplaySteps() {
-    this.operationDisplaySteps.map((step, index) => {
-      this.operationDisplayStepElements[index].value = String(step);
+  private updateViewOperations() {
+    this.transform.operations.map((operation, index) => {
+      this.operationElements[index].value = String(operation);
       return 0;
     });
   }
@@ -1265,19 +1258,19 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private handleOperations(operation: number, axis: number, isIncrease: boolean, isCoarse: boolean) {
     if (operation === 0) {
       let params = [0, 0, 0];
-      params[axis] = this.operationDisplaySteps[operation * 2 + Number(isCoarse)] *
+      params[axis] = this.transform.operations[9 + operation * 2 + Number(isCoarse)] *
         (isIncrease ? 1 : -1);
       this.handleTransitionTransform(params[0], params[1], params[2]);
     }
     else if (operation === 1) {
       let params = [0, 0, 0];
-      params[axis] = this.operationDisplaySteps[operation * 2 + Number(isCoarse)] *
+      params[axis] = this.transform.operations[9 + operation * 2 + Number(isCoarse)] *
         (isIncrease ? 1 : -1);
       this.handleRotationTransform(params[0], params[1], params[2]);
     }
     else if (operation === 2) {
       let params = [1, 1, 1];
-      params[axis] = this.operationDisplaySteps[operation * 2 + Number(isCoarse)] *
+      params[axis] = this.transform.operations[9 + operation * 2 + Number(isCoarse)] *
         (isIncrease ? 1 : -1) + 1;
       this.handleScalingTransform(params[0], params[1], params[2]);
     }
@@ -1298,9 +1291,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.transitionOffsets[2] += zDiff;
 
     // Update the offsets
-    this.operationDisplays[0] += xDiff;
-    this.operationDisplays[1] += yDiff;
-    this.operationDisplays[2] += zDiff;
+    this.transform.operations[0] += xDiff;
+    this.transform.operations[1] += yDiff;
+    this.transform.operations[2] += zDiff;
   }
 
   public handleRotationTransform(xAngle: number, yAngle: number, zAngle: number) {
@@ -1319,9 +1312,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.transform.transform = newMatrix;
 
     // Update the displays
-    this.operationDisplays[3] += xAngle;
-    this.operationDisplays[4] += yAngle;
-    this.operationDisplays[5] += zAngle;
+    this.transform.operations[3] += xAngle;
+    this.transform.operations[4] += yAngle;
+    this.transform.operations[5] += zAngle;
   }
 
   public handleScalingTransform(xScale: number, yScale: number, zScale: number) {
@@ -1340,18 +1333,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.transform.transform = newMatrix;
 
     // Update the displays
-    this.operationDisplays[6] *= xScale;
-    this.operationDisplays[7] *= yScale;
-    this.operationDisplays[8] *= zScale;
-  }
-
-  public resetOperationOffsets() {
-    this.transitionOffsets.fill(0);
-
-    this.operationDisplays.fill(0);
-    this.operationDisplays[6] = 1;
-    this.operationDisplays[7] = 1;
-    this.operationDisplays[8] = 1;
+    this.transform.operations[6] *= xScale;
+    this.transform.operations[7] *= yScale;
+    this.transform.operations[8] *= zScale;
   }
 
   private updateRotPoint() {
