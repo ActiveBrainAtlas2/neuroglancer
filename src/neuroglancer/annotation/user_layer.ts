@@ -374,6 +374,10 @@ export class AnnotationUserLayer extends Base {
           sourceRank: 3,
           transform: undefined,
           inputSpace,
+
+          /* START OF CHANGE: dummy operations for type check */
+          operations: new Float64Array([-1]),
+          /* END OF CHANGE: dummy operations for type check */
         };
       } else {
         legacyTransform = {

@@ -629,6 +629,7 @@ function normalizeCoordinateSpaceTransform(value: CoordinateSpaceTransform) {
   };
 }
 
+// TODO transform data source in Widget
 export class WatchableCoordinateSpaceTransform implements
     Trackable, WatchableValueInterface<CoordinateSpaceTransform> {
   private value_: CoordinateSpaceTransform|undefined = undefined;
@@ -637,6 +638,12 @@ export class WatchableCoordinateSpaceTransform implements
   changed = new NullarySignal();
   private inputSpaceChanged = new NullarySignal();
   readonly defaultTransform: CoordinateSpaceTransform;
+
+  /* START OF CHANGE: operation instance variable */
+  private operations_: Float64Array;
+  readonly defaultOperations: Float64Array =
+    new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 20, 0.5, 5, 0.01, 0.1]);
+  /* END OF CHANGE: operation instance variable */
 
   constructor(
       defaultTransform: CoordinateSpaceTransform,
@@ -736,6 +743,10 @@ export class WatchableCoordinateSpaceTransform implements
       transform: transformSame ? undefined : transform,
       outputSpace: value.outputSpace,
       inputSpace: inputSpaceSame ? undefined : inputSpace,
+
+      /* START OF CHANGE: get operations from JSON*/
+      operations: this.operations_,
+      /* END OF CHANGE: get operations from JSON*/
     };
   }
 
@@ -862,7 +873,7 @@ export class WatchableCoordinateSpaceTransform implements
       for (let newCol = 0; newCol < newRank; ++newCol) {
         const specCol = newToSpecDimensionIndices[newCol];
         let value: number;
-        if ((specRow === -1) != (specCol === -1)) {
+        if ((specRow === -1) !== (specCol === -1)) {
           value = 0;
         } else if (specRow === -1 || specTransformMatrix === undefined) {
           if (specRow >= defaultSourceRank || specCol >= defaultSourceRank) {
@@ -899,7 +910,31 @@ export class WatchableCoordinateSpaceTransform implements
         boundingBoxes,
       }),
     };
+
+    /* START OF CHANGE: set operations from JSON */
+    if (spec.operations !== undefined) {
+      this.operations = spec.operations;
+    }
+    /* END OF CHANGE: set operations from JSON */
   }
+
+  /* START OF CHANGE: setter/getter for operation */
+  set operations(operations: Float64Array) {
+    if (operations === this.operations_) {
+      return;
+    }
+    this.operations_ = new Float64Array(operations);
+
+    this.changed.dispatch();
+  }
+
+  get operations(): Float64Array {
+    if (this.operations_ === undefined) {
+      this.operations_ = new Float64Array(this.defaultOperations);
+    }
+    return this.operations_;
+  }
+  /* END OF CHANGE: setter/getter for operation */
 
   toJSON() {
     return coordinateTransformSpecificationToJson(this.spec);
@@ -1203,6 +1238,10 @@ export interface CoordinateTransformSpecification {
   transform: Float64Array|undefined;
   inputSpace: CoordinateSpace|undefined;
   outputSpace: CoordinateSpace;
+
+  /* START OF CHANGE: operations defined in the spec */
+  operations: Float64Array|undefined;
+  /* END OF CHANGE: operations defined in the spec */
 }
 
 export function coordinateTransformSpecificationFromLegacyJson(obj: unknown):
@@ -1254,6 +1293,10 @@ export function coordinateTransformSpecificationFromLegacyJson(obj: unknown):
       scales: Float64Array.of(1e-9, 1e-9, 1e-9)
     }),
     inputSpace: undefined,
+
+    /* START OF CHANGE: dummy operations for type check */
+    operations: new Float64Array([-1]),
+    /* END OF CHANGE: dummy operations for type check */
   };
 }
 
@@ -1294,13 +1337,23 @@ export function coordinateTransformSpecificationFromJson(j: unknown):
     }
     return transform;
   });
-  return {transform, outputSpace, inputSpace, sourceRank};
+
+  /* START OF CHANGE: operations from JSON */
+  const operations = verifyOptionalObjectProperty(obj, 'operations', inputOperationObj => {
+    const operations = new Float64Array(inputOperationObj);
+    if (operations.length !== 15) {
+      throw new Error(`Expected operation's length of 15, but received length of: ${operations.length}`);
+    }
+    return operations;
+  });
+  return {transform, outputSpace, inputSpace, sourceRank, operations: operations};
+  /* END OF CHANGE: operations from JSON */
 }
 
 export function coordinateTransformSpecificationToJson(spec: CoordinateTransformSpecification|
                                                        undefined) {
   if (spec === undefined) return undefined;
-  const {transform, outputSpace, inputSpace, sourceRank} = spec;
+  const {transform, outputSpace, inputSpace, sourceRank, operations} = spec;
   let m: number[][]|undefined;
   const rank = outputSpace.rank;
   if (transform !== undefined) {
@@ -1318,6 +1371,10 @@ export function coordinateTransformSpecificationToJson(spec: CoordinateTransform
     matrix: m,
     outputDimensions: coordinateSpaceToJson(outputSpace),
     inputDimensions: inputSpace === undefined ? undefined : coordinateSpaceToJson(inputSpace),
+
+    /* START OF CHANGE: operations to JSON */
+    operations: operations === undefined ? undefined : [].slice.call(operations),
+    /* END OF CHANGE: operations to JSON */
   };
 }
 
