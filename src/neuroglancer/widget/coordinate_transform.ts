@@ -67,21 +67,6 @@ const inputEventMap = EventActionMap.fromObject({
   'arrowright': {action: 'move-right', preventDefault: false},
   'enter': {action: 'commit'},
   'escape': {action: 'cancel'},
-
-  'control+arrowup':{action: 'move-vol-up'},
-  'control+arrowdown':{action: 'move-vol-down'},
-  'control+shift+arrowup':{action: 'move-vol-in'},
-  'control+shift+arrowdown':{action: 'move-vol-out'},
-  'control+arrowleft':{action: 'move-vol-left'},
-  'control+arrowright':{action: 'move-vol-right'},
-  'alt+arrowright':{action: 'yaw-right'},
-  'alt+arrowleft':{action: 'yaw-left'},
-  'alt+arrowup': {action: 'roll-up'},
-  'alt+arrowdown': {action: 'roll-down'},
-  'alt+shift+arrowleft':{action: 'pitch-left'},
-  'alt+shift+arrowright':{action: 'pitch-right'},
-  'alt+shift+arrowup':{action: 'inc-scale'},
-  'alt+shift+arrowdown':{action: 'dec-scale'},
 });
 
 function makeScaleElement() {
@@ -208,6 +193,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   /* START OF CHANGE: instance variables */
   public rotPoint: Float64Array;
   private transitionOffsets: Float64Array = new Float64Array(3);
+  private operationElements: HTMLInputElement[] = [];
 
   private resetToIdentityButton = makeIcon({
     text: 'Set to identity',
@@ -248,8 +234,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           this.updateRotPoint();
         }
   });
-
-  private operationElements: HTMLInputElement[] = [];
   /* END OF CHANGE: instance variables */
 
   constructor(
@@ -459,45 +443,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     });
 
     /* START OF CHANGE: constructor*/
-    const registerMoveVol = (action: string, xDiff: number, yDiff: number, zDiff: number) => {
-      registerActionListener<Event>(element, action, () => {
-        this.handleTransitionTransform(xDiff, yDiff, zDiff);
-      });
-    };
-
-    const registerRotationVol = (action: string, yawAngle: number, pitchAngle: number, rollAngle: number) => {
-      registerActionListener<Event>(element, action, () => {
-        this.handleRotationTransform(yawAngle, pitchAngle, rollAngle);
-      });
-    };
-
-    const registerScaleVol = (action: string, xScale: number, yScale: number, zScale: number) => {
-      registerActionListener<Event>(element, action, () => {
-        this.handleScalingTransform(xScale, yScale, zScale);
-      });
-    };
-
-    registerMoveVol('move-vol-left', -100, 0, 0);
-    registerMoveVol('move-vol-right', 100, 0, 0);
-    registerMoveVol('move-vol-up', 0, -100, 0);
-    registerMoveVol('move-vol-down', 0, 100, 0);
-    registerMoveVol('move-vol-in', 0, 0, 100/43);
-    registerMoveVol('move-vol-out', 0, 0, -100/43);
-
-    registerRotationVol('yaw-left', -5, 0, 0);
-    registerRotationVol('yaw-right', 5, 0, 0);
-    registerRotationVol('pitch-left', 0, 5, 0);
-    registerRotationVol('pitch-right', 0, -5, 0);
-    registerRotationVol('roll-up', 0, 0, -5);
-    registerRotationVol('roll-down', 0, 0, 5);
-
-    registerScaleVol('z-inc-scale', 1/0.99, 1/0.99, 1);
-    registerScaleVol('z-dec-scale', 0.99, 0.99, 1);
-    registerScaleVol('y-inc-scale', 1/0.99, 1, 1/0.99);
-    registerScaleVol('y-dec-scale', 0.99, 1, 0.99);
-    registerScaleVol('x-inc-scale', 1, 1/0.99, 1/0.99);
-    registerScaleVol('x-dec-scale', 1, 0.99, 0.99);
-
     this.updateRotPoint();
     this.updateOriginalRotPointAndOffsets();
 
@@ -1128,6 +1073,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         inputElement.spellcheck = false;
         inputElement.autocomplete = 'off';
         inputElement.size = 1;
+        inputElement.disabled = true;
         inputElement.style.textAlign = 'center';
         this.operationElements.push(inputElement);
 
@@ -1219,7 +1165,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         if (Number.isFinite(value)) {
           this.transform.operations[9 + i * 2] = value;
         }
-        // this.updateViewOperationDisplaySteps();
       });
       this.operationElements.push(defaultStepElement);
 
@@ -1233,7 +1178,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         if (Number.isFinite(value)) {
           this.transform.operations[9 + i * 2 + 1] = value;
         }
-        // this.updateViewOperationDisplaySteps();
       });
       this.operationElements.push(shiftStepElement);
 

@@ -629,7 +629,6 @@ function normalizeCoordinateSpaceTransform(value: CoordinateSpaceTransform) {
   };
 }
 
-// TODO transform data source in Widget
 export class WatchableCoordinateSpaceTransform implements
     Trackable, WatchableValueInterface<CoordinateSpaceTransform> {
   private value_: CoordinateSpaceTransform|undefined = undefined;
@@ -1353,7 +1352,7 @@ export function coordinateTransformSpecificationFromJson(j: unknown):
 export function coordinateTransformSpecificationToJson(spec: CoordinateTransformSpecification|
                                                        undefined) {
   if (spec === undefined) return undefined;
-  const {transform, outputSpace, inputSpace, sourceRank, operations} = spec;
+  const {transform, outputSpace, inputSpace, sourceRank} = spec;
   let m: number[][]|undefined;
   const rank = outputSpace.rank;
   if (transform !== undefined) {
@@ -1373,7 +1372,7 @@ export function coordinateTransformSpecificationToJson(spec: CoordinateTransform
     inputDimensions: inputSpace === undefined ? undefined : coordinateSpaceToJson(inputSpace),
 
     /* START OF CHANGE: operations to JSON */
-    operations: operations === undefined ? undefined : [].slice.call(operations),
+    operations: spec.operations === undefined ? undefined : [].slice.call(spec.operations),
     /* END OF CHANGE: operations to JSON */
   };
 }
