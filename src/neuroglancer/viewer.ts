@@ -64,6 +64,7 @@ import {NumberInputWidget} from 'neuroglancer/widget/number_input_widget';
 import {MousePositionWidget, PositionWidget} from 'neuroglancer/widget/position_widget';
 import {TrackableScaleBarOptions} from 'neuroglancer/widget/scale_bar';
 import {RPC} from 'neuroglancer/worker_rpc';
+import { StateLoaderDialog } from 'neuroglancer/ui/state_loader';
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any;
 
@@ -737,6 +738,7 @@ export class Viewer extends RefCounted implements ViewerState {
   }
 
   loadJsonState() {
+    /*
     let element = document.createElement('input');
     element.setAttribute('type', 'file');
     element.addEventListener('change', () => {
@@ -757,6 +759,8 @@ export class Viewer extends RefCounted implements ViewerState {
       }
     });
     element.dispatchEvent(new MouseEvent('click'));
+     */
+    new StateLoaderDialog();
   }
 
   showStatistics(value: boolean|undefined = undefined) {
