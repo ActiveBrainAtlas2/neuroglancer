@@ -15,31 +15,7 @@
  */
 
 .state-loader {
-  overflow-x: hidden;
-}
-
-.state-loader-container {
-  display: grid;
-  overflow-y: scroll;
-  max-height: 80vh;
-  overflow-x: hidden;
-  grid-template-columns: [dt-start] 0fr [dt-end] 1em [dd-start] 1fr [dd-end];
-  grid-auto-rows: auto;
-}
-
-.state-loader-container h2 {
-  grid-column-start: 1;
-  grid-column-end: -1;
-}
-
-.state-loader .dt {
-  grid-column: dt-start;
-  font-family: monospace;
-  font-weight: bold;
-  display: inline-block;
-}
-
-.state-loader .dd {
-  grid-column: dd-start;
-  display: inline-block;
+  width: 50vh;
+  background-color: #181818;
+  z-index: 1;
 }
