@@ -515,7 +515,7 @@ export class Viewer extends RefCounted implements ViewerState {
     this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
         this.uiControlVisibility.showAnnotationToolStatus, annotationToolStatus.element));
 
-    const stateLoader = new StateLoader();
+    const stateLoader = new StateLoader(this);
     topRow.appendChild(stateLoader.element);
 
     {
