@@ -6,10 +6,10 @@ import {AutocompleteTextInput} from 'neuroglancer/widget/multiline_autocomplete'
 import {CancellationToken} from 'neuroglancer/util/cancellation';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {fetchOk} from 'neuroglancer/util/http_request';
-import { Viewer } from 'neuroglancer/viewer';
-import { StatusMessage } from 'neuroglancer/status';
-import { makeIcon } from 'neuroglancer/widget/icon';
-import { getCachedJson } from 'neuroglancer/util/trackable';
+import {Viewer} from 'neuroglancer/viewer';
+import {StatusMessage} from 'neuroglancer/status';
+import {makeIcon} from 'neuroglancer/widget/icon';
+import {getCachedJson} from 'neuroglancer/util/trackable';
 
 /**
  * Fuzzy search algorithm from https://github.com/bevacqua/fuzzysearch in Typescript.
@@ -51,42 +51,28 @@ interface CompletionWithState extends Completion {
  */
 function makeCompletionElementWithState(completion: CompletionWithState) {
   let element = document.createElement('div');
-  element.textContent = completion.value;
+  element.textContent = completion.value || '';
   let dateElement = document.createElement('div');
   dateElement.textContent = completion.date || '';
   element.appendChild(dateElement);
   return element;
 }
 
-function makeid(length: number) {
-  let result = '';
-  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let charactersLength = characters.length;
-  for (let i = 0; i < length; i++ ) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
-
 export class StateAutocomplete extends AutocompleteTextInput {
-  public _results: any = [];
-  private completions: CompletionWithState[] = [];
+  public _allCompletions: CompletionWithState[] = [];
+  private curCompletions: CompletionWithState[] = [];
 
   constructor(private viewer: Viewer) {
     super({completer: (value: string, _cancellationToken: CancellationToken) => {
-      this.completions = [];
-      for(let result of this.results) {
+      this.curCompletions = [];
+      for(let result of this.allCompletions) {
         if (fuzzySearch(value, result['value'])) {
-          this.completions.push({
-            value: result['value'],
-            date: new Date(Number(result['date'])).toLocaleString(),
-            json: result['url']
-          });
+          this.curCompletions.push(result);
         }
       }
 
       return Promise.resolve({
-        completions: this.completions,
+        completions: this.curCompletions,
         offset: 0,
         showSingleResult: true,
         selectSingleResult: true,
@@ -94,80 +80,106 @@ export class StateAutocomplete extends AutocompleteTextInput {
       });
     }, delay: 0});
 
-    this.placeholder = 'Search saved state';
+    this.placeholder = 'Search or save a state by a comment';
   }
 
   selectCompletion(index: number) {
     try {
-      let stateJson = JSON.parse(this.completions[index].json);
+      let completion = this.curCompletions[index];
+      let stateJson = JSON.parse(completion.json);
       this.viewer.state.restoreState(stateJson);
-      StatusMessage.showTemporaryMessage('JSON file loaded successfully');
+      StatusMessage.showTemporaryMessage(`JSON file loaded successfully: ${completion.value}`);
     }
     catch (e) {
-      StatusMessage.showMessage('The selected file is not a valid json file');
+      StatusMessage.showTemporaryMessage('Internal error: invalid JSON');
     }
   }
 
-  set results(results: any) {
-    this._results = results;
+  set allCompletions(results: CompletionWithState[]) {
+    this._allCompletions = results;
   }
 
-  get results() {
-    return this._results;
+  get allCompletions() {
+    return this._allCompletions;
   }
 }
 
 export class StateLoader extends RefCounted {
   element = document.createElement('div');
 
-  // private ACTIVE_BRAIN_ATLAS_URL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/neuroglancer/';
-  private ACTIVE_BRAIN_ATLAS_URL = 'http://localhost:8000/neuroglancer/';
+  private ACTIVE_BRAIN_ATLAS_URL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/neuroglancer/';
+  // private ACTIVE_BRAIN_ATLAS_URL = 'http://localhost:8000/neuroglancer/';
   private input: StateAutocomplete;
 
   constructor(public viewer: Viewer) {
     super();
     this.element.classList.add('state-loader');
 
+    this.getAllCompletions();
+
     this.input = new StateAutocomplete(viewer);
-    this.get_states().then(results => {
-      this.input.results = results;
-    });
     this.input.element.classList.add('state-loader-input');
+    this.input.element.addEventListener('click', () => {
+      this.getAllCompletions();
+    });
 
     const button = makeIcon({text: 'save', title: 'Save JSON state'});
     this.registerEventListener(button, 'click', () => {
-      let state = JSON.stringify(getCachedJson(this.viewer.state).value, null, 0);
-      this.post_state(state);
+      this.saveState();
     });
 
     this.element.appendChild(this.input.element);
     this.element.appendChild(button);
   }
 
-  private get_states(): Promise<any> {
+  private getAllCompletions() {
+    this.getStates().then(json => {
+      let results: CompletionWithState[] = [];
+      for (let result of json['results']) {
+        results.push({
+          value: result['comments'],
+          date: new Date(Number(result['user_date'])).toLocaleString(),
+          json: result['url'],
+        });
+      }
+      this.input.allCompletions = results;
+    }).catch(() => {
+      StatusMessage.showTemporaryMessage(`Internal error: cannot get states from server`);
+      this.input.allCompletions = [];
+    });
+  }
+
+  private saveState() {
+    let comments = this.input.value;
+    if (comments.length === 0) {
+      StatusMessage.showTemporaryMessage(`State is uploaded unsuccessfully: the comment cannot be empty`);
+    }
+    else {
+      let state = JSON.stringify(getCachedJson(this.viewer.state).value, null, 0);
+      this.postState(comments, state).then(json => {
+        StatusMessage.showTemporaryMessage(`State is uploaded successfully: ${json['comments']}`);
+      }).catch(err => {
+        StatusMessage.showTemporaryMessage(`State is uploaded unsuccessfully: ${err}`);
+      });
+    }
+  }
+
+  private getStates(): Promise<any> {
     return fetchOk(this.ACTIVE_BRAIN_ATLAS_URL, {
       method: 'GET',
     }).then(response => {
       return response.json();
-    }).then(json => {
-      // return json['results'];
-      let test_results = json['results'];
-      for (let result of test_results) {
-        result['value'] = makeid(10);
-        result['date'] = String(Date.now());
-      }
-      return test_results;
     });
   }
 
-  private post_state(state: string) {
+  private postState(comments: string, state: string): Promise<any> {
     let body = {
-      value: makeid(10),
-      date: String(Date.now()),
+      comments: comments,
+      user_date: String(Date.now()),
       url: state,
     };
 
-    fetchOk(this.ACTIVE_BRAIN_ATLAS_URL, {
+    return fetchOk(this.ACTIVE_BRAIN_ATLAS_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -175,8 +187,6 @@ export class StateLoader extends RefCounted {
       body: JSON.stringify(body, null, 0),
     }).then(response => {
       return response.json();
-    }).then(json => {
-      console.log(json);
     });
   }
 }
