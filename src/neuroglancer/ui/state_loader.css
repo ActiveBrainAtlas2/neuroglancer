@@ -15,7 +15,12 @@
  */
 
 .state-loader {
-  width: 50vh;
   background-color: #181818;
   z-index: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.state-loader-input {
+  width: 300px;
 }
