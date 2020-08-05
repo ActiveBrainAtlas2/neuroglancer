@@ -484,15 +484,12 @@ export class AnnotationLayerView extends Tab {
         let coordinate2String = '';
         let ellipsoidDimensions = '';
         let stringType = '';
-        // let annotationType = ''
         // Coordinates
         switch (annotation.type) {
           case AnnotationType.POINT:
             stringType = 'Point';
             coordinate1String = formatIntegerPoint(annotation.point);
-            
-            // annotationType +=  'Point';
-            // console.log("point");
+          
             break;
           case AnnotationType.ELLIPSOID:
               stringType = 'Ellipsoid';
@@ -519,11 +516,12 @@ export class AnnotationLayerView extends Tab {
             annotationRow.push('');
           }
           // Segment IDs and Names, if available
+          console.log(annotation.relatedSegments);
           if (annotation.relatedSegments) {
             const annotationSegments: string[][] = [[]];
             const annotationSegmentNames: string[][] = [[]];
-
-            annotation.relatedSegments.forEach(segmentID => {
+            let segmentList = annotation.relatedSegments[0]; 
+            segmentList.forEach(segmentID => {
               annotationSegments[0].push(segmentID.toString());
              
               if (mapping) {
