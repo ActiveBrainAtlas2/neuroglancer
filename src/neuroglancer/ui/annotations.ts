@@ -62,6 +62,8 @@ import {makeMoveToButton} from 'neuroglancer/widget/move_to_button';
 import {Tab} from 'neuroglancer/widget/tab_view';
 import {VirtualList, VirtualListSource} from 'neuroglancer/widget/virtual_list';
 
+const Papa = require('papaparse');
+
 export class MergedAnnotationStates extends RefCounted implements
     WatchableValueInterface<readonly AnnotationLayerState[]> {
   changed = new NullarySignal();
@@ -461,8 +463,10 @@ export class AnnotationLayerView extends Tab {
     // console.log(AnnotationDisplayState);
     
     const filename = 'annotations.csv';
-    let csvString = 'Coordinates,Description,Segment IDs,Segment Names,Type\n';
-   
+    // let csvString = 'Coordinate 1,Coordinate 2,Description,Segment IDs,Segment Names,Type\n';
+    const columnHeaders = [
+      'Coordinate 1','Coordinate 2','Description','Segment IDs','Segment Names','Type']
+    const csvData: string[][] = [];
     const self = this;
   
     /// Get the segment label mapping
@@ -473,59 +477,82 @@ export class AnnotationLayerView extends Tab {
       // if (!state.source.readonly) isMutable = true;
       if (state.chunkTransform.value.error !== undefined) continue;
       for (const annotation of state.source) {
-        let annotationString = '';
-        let coordinatesString = '"';
-        let annotationType = ''
+        const annotationRow = [];
+
+        // let annotationString = '';
+        // let coordinatesString = '"';
+        let coordinate1String = '';
+        let coordinate2String = '';
+        let stringType = '';
+        // let annotationType = ''
         // Coordinates
         switch (annotation.type) {
           case AnnotationType.POINT:
             // console.log(annotation.point);
+            stringType = 'Point';
             const positionText = formatIntegerPoint(annotation.point);
-            coordinatesString += positionText;
-            annotationType +=  'Point';
+            coordinate1String += positionText;
+            // annotationType +=  'Point';
             // console.log("point");
             break;
+            case AnnotationType.LINE:
+              console.log("We have a line");
+              console.log(annotation);
           }
-          annotationString += coordinatesString + '",';
+          annotationRow.push(coordinate1String);
+          annotationRow.push(coordinate2String);
           // Description
           if (annotation.description) {
-            annotationString+=annotation.description;
+            annotationRow.push(annotation.description);
           }
-          annotationString += ',';
+          else {
+            annotationRow.push('');
+          }
           // Segment IDs and Names, if available
           if (annotation.relatedSegments) {
-            let segmentString = '"';
-            let segmentNameString = '"';
-            let firstSegment = true;
+            const annotationSegments: string[][] = [[]];
+            const annotationSegmentNames: string[][] = [[]];
+
             annotation.relatedSegments.forEach(segmentID => {
-              if (firstSegment) {
-                firstSegment = false;
-              } else {
-                segmentString += ',';
-              }
-              segmentString += segmentID.toString();
+              annotationSegments[0].push(segmentID.toString());
+             
               if (mapping) {
                 let segmentName = mapping.get(segmentID.toString());
                 if (segmentName) {
-                  segmentNameString += segmentName;
+                  annotationSegmentNames[0].push(segmentName);
                 }
                 else {
-                  segmentNameString += '';
+                  annotationSegmentNames[0].push('');
                 }
               }
               else {
-                segmentNameString = '';
+                annotationSegmentNames[0].push('');
               }
             });
-            annotationString += segmentString + '",' + segmentNameString + '",';
+            if (annotationSegments[0].length > 0) {
+              annotationRow.push(Papa.unparse(annotationSegments));
+              annotationRow.push(Papa.unparse(annotationSegmentNames));
+            }
+            else {
+              annotationRow.push('');
+              annotationRow.push('');
+            }
+            // annotationString += segmentString + '",' + segmentNameString + '",';
           }
-                        
-          annotationString += annotationType;
-          csvString += annotationString + '\n';
+          else {
+            annotationRow.push('');
+            annotationRow.push('');
+          }
+          annotationRow.push(stringType);
+          // annotationString += annotationType;
+          // csvString += annotationString + '\n';
+          csvData.push(annotationRow);
         }
     }
-    console.log(csvString)
-    const blob = new Blob([csvString],  { type: 'text/csv;charset=utf-8;'});
+    const papaString = Papa.unparse({'fields':columnHeaders,'data': csvData})
+    console.log(papaString);
+    // console.log(csvString)
+    const blob = new Blob([papaString],  { type: 'text/csv;charset=utf-8;'});
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
