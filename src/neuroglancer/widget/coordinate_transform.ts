@@ -29,7 +29,14 @@ import {arraysEqual} from 'neuroglancer/util/array';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren, removeFromParent} from 'neuroglancer/util/dom';
 import {ActionEvent, KeyboardEventBinder, registerActionListener} from 'neuroglancer/util/keyboard_bindings';
-import {createIdentity, extendHomogeneousTransform, isIdentity, matrixTransform, offsetTransform} from 'neuroglancer/util/matrix';
+import {
+  createIdentity,
+  dimensionTransform,
+  extendHomogeneousTransform,
+  isIdentity,
+  matrixTransform,
+  offsetTransform,
+} from 'neuroglancer/util/matrix';
 import {EventActionMap, MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
 import {formatScaleWithUnitAsString, parseScale} from 'neuroglancer/util/si_units';
 import {makeIcon} from 'neuroglancer/widget/icon';
@@ -191,7 +198,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private addingSourceDimension = false;
 
   /* START OF CHANGE: instance variables */
-  public rotPoint: Float64Array;
+  public centerPoint: Float64Array;
   private operationElements: HTMLInputElement[] = [];
 
   private resetToIdentityButton = makeIcon({
@@ -1209,21 +1216,21 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
   private updateTransformFromOperations() {
     let newMatrix = matrixTransform(this.transform.operations);
-    newMatrix = offsetTransform(newMatrix, this.rotPoint, this.globalCombiner.combined.value.scales);
+    newMatrix = offsetTransform(newMatrix, this.centerPoint, this.globalCombiner.combined.value.scales);
 
+    // Add translation offsets
     newMatrix[12] += this.transform.operations[0];
     newMatrix[13] += this.transform.operations[1];
     newMatrix[14] += this.transform.operations[2];
 
-    this.transform.transform = newMatrix;
+    // Map 3D transformation to higher dimension if needed
+    this.transform.transform = dimensionTransform(newMatrix, this.transform.value.rank);
   }
 
   private updateRotPoint() {
-    let lowerBound = new Float64Array(3);
-    lowerBound.set(this.transform.value.outputSpace.bounds.lowerBounds);
-    let upperBound = new Float64Array(3);
-    upperBound.set(this.transform.value.outputSpace.bounds.upperBounds);
-    this.rotPoint = lowerBound.map((a, i) => 0.5 * (a + upperBound[i]));
+    let {lowerBounds, upperBounds} = this.transform.value.outputSpace.bounds;
+    let center = Float64Array.from(lowerBounds);
+    this.centerPoint = center.map((value, index) => 0.5 * (value + upperBounds[index])).slice(0, 3);
   }
   /* END OF CHANGE: functions */
 }

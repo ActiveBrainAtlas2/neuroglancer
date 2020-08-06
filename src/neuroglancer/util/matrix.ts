@@ -297,9 +297,9 @@ export function matrixTransform(operations: Float64Array) {
 }
 
 /**
- * Calculate the translation offsets in order to transform(rotate/scale) around a point
+ * Making transformation(rotate/scale) around a point by calculating the translation offsets.
  * Offsets = (I - matrix) * point
- * @param matrix: the transformation matrix
+ * @param matrix: the transformation matrix, expected to be 4 by 4
  * @param point: the point that the matrix is transformed around
  * @param scales: the actual output space scales
  */
@@ -321,5 +321,25 @@ export function offsetTransform(matrix: Float64Array, point: Float64Array, scale
   matrix[14] = offset[2] / scales[2];
 
   return matrix;
+}
+
+/**
+ * Convert a transformation matrix of rank 3 to a new transformation matrix with a higher rank.
+ * Only the values in the upper left corner are retained in this process
+ * @param matrix: old transformation matrix
+ * @param newRank: new rank, should be larger than 3
+ */
+export function dimensionTransform(matrix: Float64Array, newRank: number) {
+  const oldRank = 3;
+
+  let newMatrix = createIdentity(Float64Array, (newRank + 1));
+  for (let i = 0; i < oldRank; i++) {
+    newMatrix[newRank * (newRank + 1) + i] = matrix[oldRank * (oldRank + 1) + i];
+    for (let j = 0; j < oldRank; j++) {
+      newMatrix[i * (newRank + 1) + j] = matrix[i * (oldRank + 1) + j];
+    }
+  }
+
+  return newMatrix;
 }
 /* END OF CHANGE: matrix functions */
