@@ -181,6 +181,7 @@ export class StateLoader extends RefCounted {
 
     return fetchOk(this.ACTIVE_BRAIN_ATLAS_URL, {
       method: 'POST',
+      credentials: 'omit', // Required to pass CSRF Failed error
       headers: {
         'Content-Type': 'application/json'
       },

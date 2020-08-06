@@ -55,7 +55,8 @@
 
 .neuroglancer-segment-list-entry[data-selected="true"],
 .neuroglancer-selection-details-segment[data-selected="true"] {
-  background-color: #222;
+  background-color: #fdffa1;
+  color: black;
 }
 
 .neuroglancer-segment-list-entry-id,
