@@ -107,29 +107,35 @@ export class StateAutocomplete extends AutocompleteTextInput {
 export class StateLoader extends RefCounted {
   element = document.createElement('div');
 
-  private ACTIVE_BRAIN_ATLAS_URL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/neuroglancer/';
-  // private ACTIVE_BRAIN_ATLAS_URL = 'http://localhost:8000/neuroglancer/';
+  private NG_URL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/neuroglancer/';
+  private SESSION_URL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/session';
   private input: StateAutocomplete;
+  private saveButton: HTMLElement;
 
   constructor(public viewer: Viewer) {
     super();
     this.element.classList.add('state-loader');
 
-    this.getAllCompletions();
 
     this.input = new StateAutocomplete(viewer);
     this.input.element.classList.add('state-loader-input');
     this.input.element.addEventListener('click', () => {
       this.getAllCompletions();
     });
+    this.getAllCompletions();
+    this.element.appendChild(this.input.element);
 
-    const button = makeIcon({text: 'save', title: 'Save JSON state'});
-    this.registerEventListener(button, 'click', () => {
-      this.saveState();
+    this.getSession().then(json => {
+      console.log(json['status']);
+      if (json['status'] !== 'not') {
+        this.saveButton = makeIcon({text: 'save', title: 'Save JSON state'});
+        this.registerEventListener(this.saveButton, 'click', () => {
+          this.saveState();
+        });
+        this.element.appendChild(this.saveButton);
+      }
     });
 
-    this.element.appendChild(this.input.element);
-    this.element.appendChild(button);
   }
 
   private getAllCompletions() {
@@ -164,8 +170,16 @@ export class StateLoader extends RefCounted {
     }
   }
 
+  private getSession(): Promise<any> {
+    return fetchOk(this.SESSION_URL, {
+      method: 'GET',
+    }).then(response => {
+      return response.json();
+    });
+  }
+
   private getStates(): Promise<any> {
-    return fetchOk(this.ACTIVE_BRAIN_ATLAS_URL, {
+    return fetchOk(this.NG_URL, {
       method: 'GET',
     }).then(response => {
       return response.json();
@@ -179,7 +193,7 @@ export class StateLoader extends RefCounted {
       url: state,
     };
 
-    return fetchOk(this.ACTIVE_BRAIN_ATLAS_URL, {
+    return fetchOk(this.NG_URL, {
       method: 'POST',
       credentials: 'omit', // Required to pass CSRF Failed error
       headers: {
