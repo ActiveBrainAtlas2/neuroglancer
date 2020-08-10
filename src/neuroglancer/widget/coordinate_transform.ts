@@ -1213,7 +1213,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   }
 
   private updateTransformFromOperations() {
-    console.log(this.centerPoint);
     let newMatrix = matrixTransform(this.transform.operations);
     newMatrix = offsetTransform(newMatrix, this.centerPoint, this.globalCombiner.combined.value.scales);
 
