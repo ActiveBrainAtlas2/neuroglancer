@@ -212,7 +212,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
           // Reset offsets and update rotation point
           this.transform.operations = this.transform.defaultOperations;
-          this.updateRotPoint();
         }
   });
   private resetToDefaultButton = makeIcon({
@@ -235,7 +234,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
           // Reset offsets and update rotation point
           this.transform.operations = this.transform.defaultOperations;
-          this.updateRotPoint();
         }
   });
   /* END OF CHANGE: instance variables */
@@ -447,7 +445,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     });
 
     /* START OF CHANGE: constructor*/
-    this.updateRotPoint();
+    this.setOriginalCenterPoint();
     this.makeOperationElement();
     /* END OF CHANGE: constructor*/
 
@@ -1041,7 +1039,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     const OPERATIONS = ['Translation', 'Rotation', 'Scaling'];
     const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
     const LAST_ROW = 12;
-    const LAST_COL = -2;
+    const LAST_COL = 7;
 
     for (let i = 0; i < 3; i++) {
       // Add operation axes
@@ -1215,6 +1213,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   }
 
   private updateTransformFromOperations() {
+    console.log(this.centerPoint);
     let newMatrix = matrixTransform(this.transform.operations);
     newMatrix = offsetTransform(newMatrix, this.centerPoint, this.globalCombiner.combined.value.scales);
 
@@ -1227,10 +1226,19 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.transform.transform = dimensionTransform(newMatrix, this.transform.value.rank);
   }
 
-  private updateRotPoint() {
+  private setOriginalCenterPoint() {
+    // Save a copy of the current transformation matrix and reset it
+    let transform = this.transform.value.transform;
+    this.transform.transform = createIdentity(Float64Array, this.transform.value.rank + 1);
+
+    // Get the rotation point after transformation matrix is reset
     let {lowerBounds, upperBounds} = this.transform.value.outputSpace.bounds;
     let center = Float64Array.from(lowerBounds);
-    this.centerPoint = center.map((value, index) => 0.5 * (value + upperBounds[index])).slice(0, 3);
+    this.centerPoint = center.map((value, index) => 0.5 * (upperBounds[index] - value)).slice(0, 3);
+
+    // Get back the new transformation matrix and rotation point
+    this.transform.transform = transform;
   }
+
   /* END OF CHANGE: functions */
 }
