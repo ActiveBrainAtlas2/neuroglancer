@@ -29,16 +29,14 @@ import {arraysEqual} from 'neuroglancer/util/array';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren, removeFromParent} from 'neuroglancer/util/dom';
 import {ActionEvent, KeyboardEventBinder, registerActionListener} from 'neuroglancer/util/keyboard_bindings';
-import {
-  createIdentity,
-  dimensionTransform,
-  extendHomogeneousTransform,
-  isIdentity,
-  matrixTransform,
-  offsetTransform,
-} from 'neuroglancer/util/matrix';
+import {createIdentity, extendHomogeneousTransform, isIdentity} from 'neuroglancer/util/matrix';
 import {EventActionMap, MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
-import {formatScaleWithUnitAsString, parseScale} from 'neuroglancer/util/si_units';
+import {
+  formatMeterWithUnitAsString,
+  formatScaleWithUnitAsString,
+  parseMeter,
+  parseScale,
+} from 'neuroglancer/util/si_units';
 import {makeIcon} from 'neuroglancer/widget/icon';
 
 function updateInputFieldWidth(element: HTMLInputElement, value: string = element.value) {
@@ -198,7 +196,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private addingSourceDimension = false;
 
   /* START OF CHANGE: instance variables */
-  public centerPoint: Float64Array;
   private operationElements: HTMLInputElement[] = [];
 
   private resetToIdentityButton = makeIcon({
@@ -445,7 +442,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     });
 
     /* START OF CHANGE: constructor*/
-    this.setOriginalCenterPoint();
     this.makeOperationElement();
     /* END OF CHANGE: constructor*/
 
@@ -1047,7 +1043,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       axisElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
       axisElement.textContent = AXES[i];
       axisElement.style.gridRow = `${LAST_ROW}`;
-      axisElement.style.gridColumn = `sourceDim ${i + 1}`;
+      axisElement.style.gridColumn = `${3 + i}`;
       axisElement.style.alignSelf = `center`;
       this.element.appendChild(axisElement);
 
@@ -1056,7 +1052,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       nameElement.classList.add(`neuroglancer-coordinate-space-transform-label`);
       nameElement.textContent = OPERATIONS[i];
       nameElement.style.gridRow = `${LAST_ROW + 1 + i}`;
-      nameElement.style.gridColumn = `2 / 4`;
+      nameElement.style.gridColumn = `2 / 3`;
       nameElement.style.textAlign = `center`;
       this.element.appendChild(nameElement);
 
@@ -1068,14 +1064,25 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         inputElement.size = 1;
         inputElement.style.textAlign = 'center';
         registerActionListener(inputElement, 'commit', () => {
-          const value = parseFloat(inputElement.value);
-          if (Number.isFinite(value)) {
-            this.transform.operations[i * 3 + j] = value;
+          let operations = this.transform.operations;
+
+          if (i === 0) {
+            const value = parseMeter(inputElement.value);
+            if (value !== undefined) {
+              operations[i * 3 + j] = value;
+            }
           }
-          else if (isNaN(value)) {
-            this.transform.operations[i * 3 + j] = i === 2 ? 1 : 0;
+          else {
+            const value = parseFloat(inputElement.value);
+            if (Number.isFinite(value)) {
+              operations[i * 3 + j] = value;
+            }
+            else if (isNaN(value)) {
+              operations[i * 3 + j] = i === 2 ? 1 : 0;
+            }
           }
-          this.updateTransformFromOperations();
+
+          this.transform.operations = operations;
         });
         inputElement.addEventListener('focusout', () => {
           this.updateViewOperations();
@@ -1085,45 +1092,24 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         const controlElement = document.createElement(`div`);
         controlElement.style.display = 'flex';
         controlElement.style.justifyContent = 'center';
-        const increase = makeIcon({text: '+', title: `Increase ${OPERATIONS[i]} on ${AXES[j]}`});
         const decrease = makeIcon({text: '-', title: `Decrease ${OPERATIONS[i]} on ${AXES[j]}`});
-        controlElement.appendChild(increase);
+        const increase = makeIcon({text: '+', title: `Increase ${OPERATIONS[i]} on ${AXES[j]}`});
         controlElement.appendChild(decrease);
+        controlElement.appendChild(increase);
 
         // Simulate click and long press for the buttons
-        let increaseInterval: number;
-        let increaseTimeout: number;
-        increase.addEventListener('mousedown', event => {
-          let delta = this.transform.operations[9 + i * 2 + Number(event.shiftKey)];
-
-          this.transform.operations[i * 3 + j] += delta;
-          this.updateTransformFromOperations();
-          increaseTimeout = setTimeout(() => {
-            increaseInterval = setInterval(() => {
-              this.transform.operations[i * 3 + j] += delta;
-              this.updateTransformFromOperations();
-            }, 100);
-          }, 1000);
-        });
-        increase.addEventListener('mouseup', () => {
-          clearInterval(increaseInterval);
-          clearTimeout(increaseTimeout);
-        });
-        increase.addEventListener('mouseout', () => {
-          clearInterval(increaseInterval);
-          clearTimeout(increaseTimeout);
-        });
         let decreaseInterval: number;
         let decreaseTimeout: number;
         decrease.addEventListener('mousedown', event => {
-          let delta = this.transform.operations[9 + i * 2 + Number(event.shiftKey)];
+          let operations = this.transform.operations;
+          let delta = operations[9 + i * 2 + Number(event.shiftKey)];
 
-          this.transform.operations[i * 3 + j] -= delta;
-          this.updateTransformFromOperations();
+          operations[i * 3 + j] -= delta;
+          this.transform.operations = operations;
           decreaseTimeout = setTimeout(() => {
             decreaseInterval = setInterval(() => {
-              this.transform.operations[i * 3 + j] -= delta;
-              this.updateTransformFromOperations();
+              operations[i * 3 + j] -= delta;
+              this.transform.operations = operations;
             }, 100);
           }, 1000);
         });
@@ -1135,11 +1121,34 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           clearInterval(decreaseInterval);
           clearTimeout(decreaseTimeout);
         });
+        let increaseInterval: number;
+        let increaseTimeout: number;
+        increase.addEventListener('mousedown', event => {
+          let operations = this.transform.operations;
+          let delta = operations[9 + i * 2 + Number(event.shiftKey)];
+
+          operations[i * 3 + j] += delta;
+          this.transform.operations = operations;
+          increaseTimeout = setTimeout(() => {
+            increaseInterval = setInterval(() => {
+              operations[i * 3 + j] += delta;
+              this.transform.operations = operations;
+            }, 100);
+          }, 1000);
+        });
+        increase.addEventListener('mouseup', () => {
+          clearInterval(increaseInterval);
+          clearTimeout(increaseTimeout);
+        });
+        increase.addEventListener('mouseout', () => {
+          clearInterval(increaseInterval);
+          clearTimeout(increaseTimeout);
+        });
 
         const cellElement = document.createElement('div');
         cellElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
         cellElement.style.gridRow = `${LAST_ROW + 1 + i}`;
-        cellElement.style.gridColumn = `sourceDim ${j + 1}`;
+        cellElement.style.gridColumn = `${3 + j}`;
 
         cellElement.appendChild(inputElement);
         cellElement.appendChild(controlElement);
@@ -1173,11 +1182,26 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       defaultStepElement.autocomplete = 'off';
       defaultStepElement.size = 1;
       defaultStepElement.style.textAlign = 'center';
-      defaultStepElement.addEventListener('input', () => {
-        const value = parseFloat(defaultStepElement.value);
-        if (Number.isFinite(value)) {
-          this.transform.operations[9 + i * 2] = value;
+      registerActionListener(defaultStepElement, 'commit', () => {
+        let operations = this.transform.operations;
+
+        if (i === 0) {
+          const value = parseMeter(defaultStepElement.value);
+          if (value !== undefined) {
+            operations[9 + i * 2] = value;
+          }
         }
+        else {
+          const value = parseFloat(defaultStepElement.value);
+          if (Number.isFinite(value)) {
+            operations[9 + i * 2] = value;
+          }
+        }
+
+        this.transform.operations = operations;
+      });
+      defaultStepElement.addEventListener('focusout', () => {
+        this.updateViewOperations();
       });
       this.operationElements.push(defaultStepElement);
 
@@ -1186,11 +1210,25 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       shiftStepElement.autocomplete = 'off';
       shiftStepElement.size = 1;
       shiftStepElement.style.textAlign = 'center';
-      shiftStepElement.addEventListener('input', () => {
-        const value = parseFloat(shiftStepElement.value);
-        if (Number.isFinite(value)) {
-          this.transform.operations[9 + i * 2 + 1] = value;
+      registerActionListener(shiftStepElement, 'commit', () => {
+        let operations = this.transform.operations;
+
+        if (i === 0) {
+          const value = parseMeter(shiftStepElement.value);
+          if (value !== undefined) {
+            operations[9 + i * 2 + 1] = value;
+          }
         }
+        else {
+          const value = parseFloat(shiftStepElement.value);
+          if (Number.isFinite(value)) {
+            operations[9 + i * 2 + 1] = value;
+          }
+        }
+        this.transform.operations = operations;
+      });
+      shiftStepElement.addEventListener('focusout', () => {
+        this.updateViewOperations();
       });
       this.operationElements.push(shiftStepElement);
 
@@ -1207,37 +1245,14 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
   private updateViewOperations() {
     this.transform.operations.map((operation, index) => {
-      this.operationElements[index].value = String(operation);
+      if (index < 3 || index === 9 || index === 10) {
+        this.operationElements[index].value = formatMeterWithUnitAsString(operation);
+      }
+      else {
+        this.operationElements[index].value = String(operation);
+      }
       return 0;
     });
   }
-
-  private updateTransformFromOperations() {
-    let newMatrix = matrixTransform(this.transform.operations);
-    newMatrix = offsetTransform(newMatrix, this.centerPoint, this.globalCombiner.combined.value.scales);
-
-    // Add translation offsets
-    newMatrix[12] += this.transform.operations[0];
-    newMatrix[13] += this.transform.operations[1];
-    newMatrix[14] += this.transform.operations[2];
-
-    // Map 3D transformation to higher dimension if needed
-    this.transform.transform = dimensionTransform(newMatrix, this.transform.value.rank);
-  }
-
-  private setOriginalCenterPoint() {
-    // Save a copy of the current transformation matrix and reset it
-    let transform = this.transform.value.transform;
-    this.transform.transform = createIdentity(Float64Array, this.transform.value.rank + 1);
-
-    // Get the rotation point after transformation matrix is reset
-    let {lowerBounds, upperBounds} = this.transform.value.outputSpace.bounds;
-    let center = Float64Array.from(lowerBounds);
-    this.centerPoint = center.map((value, index) => 0.5 * (upperBounds[index] - value)).slice(0, 3);
-
-    // Get back the new transformation matrix and rotation point
-    this.transform.transform = transform;
-  }
-
   /* END OF CHANGE: functions */
 }

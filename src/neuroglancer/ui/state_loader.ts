@@ -111,6 +111,7 @@ export class StateLoader extends RefCounted {
   private SESSION_URL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/session';
   private input: StateAutocomplete;
   private saveButton: HTMLElement;
+  private person_id: number;
 
   constructor(public viewer: Viewer) {
     super();
@@ -126,8 +127,9 @@ export class StateLoader extends RefCounted {
     this.element.appendChild(this.input.element);
 
     this.getSession().then(json => {
-      console.log(json['status']);
-      if (json['status'] !== 'not') {
+      this.person_id = json['person_id'];
+
+      if (this.person_id !== 0) {
         this.saveButton = makeIcon({text: 'save', title: 'Save JSON state'});
         this.registerEventListener(this.saveButton, 'click', () => {
           this.saveState();
@@ -149,8 +151,9 @@ export class StateLoader extends RefCounted {
         });
       }
       this.input.allCompletions = results;
-    }).catch(() => {
-      StatusMessage.showTemporaryMessage(`Internal error: cannot get states from server`);
+    }).catch(err => {
+      StatusMessage.showTemporaryMessage(`Internal error: please see debug message`);
+      console.log(err);
       this.input.allCompletions = [];
     });
   }
@@ -161,11 +164,18 @@ export class StateLoader extends RefCounted {
       StatusMessage.showTemporaryMessage(`State is uploaded unsuccessfully: the comment cannot be empty`);
     }
     else {
-      let state = JSON.stringify(getCachedJson(this.viewer.state).value, null, 0);
-      this.postState(comments, state).then(json => {
-        StatusMessage.showTemporaryMessage(`State is uploaded successfully: ${json['comments']}`);
+      let body = {
+        comments: comments,
+        user_date: String(Date.now()),
+        url: JSON.stringify(getCachedJson(this.viewer.state).value, null, 0),
+        person_id: this.person_id
+      };
+
+      this.postState(body).then(() => {
+        StatusMessage.showTemporaryMessage(`State is uploaded successfully`);
       }).catch(err => {
-        StatusMessage.showTemporaryMessage(`State is uploaded unsuccessfully: ${err}`);
+        StatusMessage.showTemporaryMessage(`Internal error: please see debug message`);
+        console.log(err);
       });
     }
   }
@@ -186,13 +196,7 @@ export class StateLoader extends RefCounted {
     });
   }
 
-  private postState(comments: string, state: string): Promise<any> {
-    let body = {
-      comments: comments,
-      user_date: String(Date.now()),
-      url: state,
-    };
-
+  private postState(body: object): Promise<any> {
     return fetchOk(this.NG_URL, {
       method: 'POST',
       credentials: 'omit', // Required to pass CSRF Failed error

@@ -96,6 +96,9 @@ export function getDefaultRenderedDataPanelBindings() {
           'at:touchhold1': 'move-to-mouse-position',
           'at:touchtap1x2': 'select',
           'at:touchtap2x3': 'snap',
+          /* START OF CHANGE: new key binding */
+          'at:alt+mousedown2': 'move-layer',
+          /* END OF CHANGE: new key binding */
         },
         {
           label: 'All Data Panels',

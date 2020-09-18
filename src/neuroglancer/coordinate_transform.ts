@@ -23,6 +23,7 @@ import {scaleByExp10, supportedUnits, unitFromJson} from 'neuroglancer/util/si_u
 import {NullarySignal} from 'neuroglancer/util/signal';
 import {Trackable} from 'neuroglancer/util/trackable';
 import * as vector from 'neuroglancer/util/vector';
+import {matrixTransform,  offsetTransform, dimensionTransform, createIdentity} from 'neuroglancer/util/matrix';
 
 export type DimensionId = number;
 
@@ -642,6 +643,8 @@ export class WatchableCoordinateSpaceTransform implements
   private operations_: Float64Array;
   readonly defaultOperations: Float64Array =
     new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 20, 0.5, 5, 0.01, 0.1]);
+  private centerPoint: Float64Array;
+  private mouseMode_: boolean;
   /* END OF CHANGE: operation instance variable */
 
   constructor(
@@ -917,12 +920,22 @@ export class WatchableCoordinateSpaceTransform implements
     /* END OF CHANGE: set operations from JSON */
   }
 
-  /* START OF CHANGE: setter/getter for operation */
+  /* START OF CHANGE: functions */
   set operations(operations: Float64Array) {
-    if (operations === this.operations_) {
-      return;
-    }
     this.operations_ = new Float64Array(operations);
+
+    this.setOriginalCenterPoint();
+
+    let newMatrix = matrixTransform(this.operations_);
+    newMatrix = offsetTransform(newMatrix, this.centerPoint, this.outputSpace.value.scales);
+
+    // Add translation offsets
+    newMatrix[12] += this.operations_[0] / this.outputSpace.value.scales[0];
+    newMatrix[13] += this.operations_[1] / this.outputSpace.value.scales[1];
+    newMatrix[14] += this.operations_[2] / this.outputSpace.value.scales[2];
+
+    // Map 3D transformation to higher dimension if needed
+    this.transform = dimensionTransform(newMatrix, this.value.rank);
 
     this.changed.dispatch();
   }
@@ -933,7 +946,34 @@ export class WatchableCoordinateSpaceTransform implements
     }
     return this.operations_;
   }
-  /* END OF CHANGE: setter/getter for operation */
+
+  private setOriginalCenterPoint() {
+    // Save a copy of the current transformation matrix and reset it
+    let transform = this.value.transform;
+    this.transform = createIdentity(Float64Array, this.value.rank + 1);
+
+    // Get the rotation point after transformation matrix is reset
+    let {lowerBounds, upperBounds} = this.outputSpace.value.bounds;
+    let center = Float64Array.from(lowerBounds);
+    this.centerPoint = center.map((value, index) => 0.5 * (upperBounds[index] - value)).slice(0, 3);
+
+    // Get back the new transformation matrix and rotation point
+    this.transform = transform;
+  }
+
+  set mouseMode(mode: boolean) {
+    this.mouseMode_ = mode;
+    if (this.mouseMode_) {
+    }
+  }
+
+  get mouseMode(): boolean {
+    if (this.mouseMode_ === undefined) {
+      this.mouseMode_ = false;
+    }
+    return this.mouseMode_;
+  }
+  /* END OF CHANGE: functions */
 
   toJSON() {
     return coordinateTransformSpecificationToJson(this.spec);
@@ -1178,7 +1218,7 @@ export class CoordinateSpaceCombiner {
   private handleCombinedChanged = () => {
     if (this.combined.value === this.prevCombined) return;
     this.update();
-  };
+  }
 
   retain() {
     ++this.retainCount;
