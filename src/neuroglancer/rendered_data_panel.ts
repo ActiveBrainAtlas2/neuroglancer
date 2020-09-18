@@ -34,6 +34,7 @@ import {startRelativeMouseDrag} from 'neuroglancer/util/mouse_drag';
 import {TouchEventBinder, TouchPinchInfo, TouchTranslateInfo} from 'neuroglancer/util/touch_bindings';
 import {getWheelZoomAmount} from 'neuroglancer/util/wheel_zoom';
 import {ViewerState} from 'neuroglancer/viewer_state';
+import { LoadedLayerDataSource } from 'neuroglancer/layer_data_source';
 
 const tempVec3 = vec3.create();
 
@@ -605,6 +606,34 @@ export abstract class RenderedDataPanel extends RenderedPanel {
         this.zoomByMouse(ratio);
       }
     });
+
+    /* START OF CHANGE: move selected layer */
+    registerActionListener(element, 'move-layer', (e: ActionEvent<MouseEvent>) => {
+      const {mouseState} = this.viewer;
+      if (mouseState.updateUnconditionally()) {
+        let loadState = this.viewer.selectedLayer.layer_?.layer?.dataSources[0].loadState;
+        if (loadState instanceof LoadedLayerDataSource) {
+          let operations = loadState.transform.operations;
+          const scales = loadState.transform.outputSpace.value.scales;
+
+          let point = vec3.create();
+          point[0] = operations[0] / scales[0];
+          point[1] = operations[1] / scales[1];
+          point[2] = operations[2] / scales[2];
+          startRelativeMouseDrag(e.detail, (_event, deltaX, deltaY) => {
+            this.translateDataPointByViewportPixels(point, point, deltaX, deltaY);
+
+            operations[0] = point[0] * scales[0];
+            operations[1] = point[1] * scales[1];
+            operations[2] = point[2] * scales[2];
+            if (loadState instanceof LoadedLayerDataSource) {
+              loadState.transform.operations = operations;
+            }
+          });
+        }
+      }
+    });
+    /* END OF CHANGE: move selected layer */
   }
 
   onMouseout() {

@@ -154,6 +154,55 @@ export function parseScale(s: string) {
   return {scale, unit};
 }
 
+/* START OF CHANGE: parseMeter */
+export function parseMeter(s: string) {
+  if (s === '') {
+    return 0;
+  }
+
+  const match = s.match(/^(-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)?([YZEPTGMkcmµunpfazy]?m)?$/);
+  if (match === null) {
+    return undefined;
+  }
+
+  const valueString = match[1];
+  if (valueString === undefined) {
+    return undefined;
+  }
+  let value = Number(valueString);
+
+  if (match[2] !== undefined) {
+    const result = supportedUnits.get(match[2]);
+    if (result === undefined) {
+      return undefined;
+    }
+    if (result.exponent > 0) {
+      value *= 10 ** result.exponent;
+    } else {
+      value /= 10 ** (-result.exponent);
+    }
+  }
+  if (!Number.isFinite(value)) {
+    return undefined;
+  }
+
+  return value;
+}
+
+export function formatMeterWithUnitAsString(value: number): string {
+  if (value === 0) {
+    return '0m';
+  }
+
+  const {scale: formattedValue, unit: formattedUnit, prefix} = formatScaleWithUnit(value, 'm');
+  if (formattedValue === '') {
+    return `1${prefix}${formattedUnit}`;
+  }
+  let fixedFormattedValue = parseFloat(formattedValue).toFixed(2);
+  return `${fixedFormattedValue}${prefix}${formattedUnit}`;
+}
+/* END OF CHANGE: parseMeter */
+
 export function unitFromJson(x: unknown) {
   const result = supportedUnits.get(x as string);
   if (result === undefined) {
