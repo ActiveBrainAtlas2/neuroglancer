@@ -187,11 +187,19 @@ class LayerWidget extends RefCounted {
     layerNumberElement.className = 'neuroglancer-layer-item-number';
     valueElement.className = 'neuroglancer-layer-item-value';
     const closeElement = makeCloseButton();
-    closeElement.title = 'Remove layer from this layer group';
+    /* START OF CHANGE: remapping */
+    // closeElement.title = 'Remove layer from this layer group';
+    closeElement.title = 'Hide layer from this layer group';
     this.registerEventListener(closeElement, 'click', (event: MouseEvent) => {
-      this.panel.layerManager.removeManagedLayer(this.layer);
-      event.stopPropagation();
+      if (event.ctrlKey) {
+        this.panel.layerManager.removeManagedLayer(this.layer);
+        event.stopPropagation();
+      }
+      else {
+        layer.setVisible(!layer.visible);
+      }
     });
+    /* END OF CHANGE: remapping */
     element.appendChild(layerNumberElement);
     element.appendChild(labelElement);
     element.appendChild(valueElement);
@@ -206,14 +214,20 @@ class LayerWidget extends RefCounted {
     });
     element.appendChild(closeElement);
     this.registerEventListener(element, 'click', (event: MouseEvent) => {
+      /* START OF CHANGE: remapping */
       if (event.ctrlKey) {
-        panel.selectedLayer.layer = layer;
-        panel.selectedLayer.visible = true;
+        // panel.selectedLayer.layer = layer;
+        // panel.selectedLayer.visible = true;
+        this.panel.layerManager.removeManagedLayer(this.layer);
+        event.stopPropagation();
       } else if (event.altKey) {
         layer.pickEnabled = !layer.pickEnabled;
       } else {
-        layer.setVisible(!layer.visible);
+        // layer.setVisible(!layer.visible);
+        panel.selectedLayer.layer = layer;
+        panel.selectedLayer.visible = true;
       }
+      /* END OF CHANGE: remapping */
     });
 
     this.registerEventListener(element, 'contextmenu', (event: MouseEvent) => {
