@@ -1034,16 +1034,16 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private makeOperationElement() {
     const OPERATIONS = ['Translation', 'Rotation', 'Scaling'];
     const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
-    const LAST_ROW = 12;
-    const LAST_COL = 7;
+    const FIRST_ROW = 12;
+    const FIRST_COL = 4;
 
     for (let i = 0; i < 3; i++) {
       // Add operation axes
       const axisElement = document.createElement('div');
       axisElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
       axisElement.textContent = AXES[i];
-      axisElement.style.gridRow = `${LAST_ROW}`;
-      axisElement.style.gridColumn = `${3 + i}`;
+      axisElement.style.gridRow = `${FIRST_ROW}`;
+      axisElement.style.gridColumn = `${FIRST_COL + i}`;
       axisElement.style.alignSelf = `center`;
       this.element.appendChild(axisElement);
 
@@ -1051,8 +1051,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       const nameElement = document.createElement('div');
       nameElement.classList.add(`neuroglancer-coordinate-space-transform-label`);
       nameElement.textContent = OPERATIONS[i];
-      nameElement.style.gridRow = `${LAST_ROW + 1 + i}`;
-      nameElement.style.gridColumn = `2 / 3`;
+      nameElement.style.gridRow = `${FIRST_ROW + 1 + i}`;
+      nameElement.style.gridColumn = `1 / ${FIRST_COL}`;
       nameElement.style.textAlign = `center`;
       this.element.appendChild(nameElement);
 
@@ -1147,8 +1147,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
         const cellElement = document.createElement('div');
         cellElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
-        cellElement.style.gridRow = `${LAST_ROW + 1 + i}`;
-        cellElement.style.gridColumn = `${3 + j}`;
+        cellElement.style.gridRow = `${FIRST_ROW + 1 + i}`;
+        cellElement.style.gridColumn = `${FIRST_COL + j}`;
 
         cellElement.appendChild(inputElement);
         cellElement.appendChild(controlElement);
@@ -1168,8 +1168,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     shiftStepNameElement.style.textAlign = `center`;
 
     const stepNameElement = document.createElement('div');
-    stepNameElement.style.gridRow = `${LAST_ROW}`;
-    stepNameElement.style.gridColumn = `${LAST_COL}`;
+    stepNameElement.style.gridRow = `${FIRST_ROW}`;
+    stepNameElement.style.gridColumn = `${FIRST_COL + 3}`;
 
     stepNameElement.appendChild(defaultStepNameElement);
     stepNameElement.appendChild(shiftStepNameElement);
@@ -1234,8 +1234,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
 
       const stepElement = document.createElement('div');
       stepElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
-      stepElement.style.gridRow = `${LAST_ROW + 1 + i}`;
-      stepElement.style.gridColumn = `${LAST_COL}`;
+      stepElement.style.gridRow = `${FIRST_ROW + 1 + i}`;
+      stepElement.style.gridColumn = `${FIRST_COL + 3}`;
 
       stepElement.appendChild(defaultStepElement);
       stepElement.appendChild(shiftStepElement);
