@@ -258,7 +258,10 @@ class LayerWidget extends RefCounted {
     element.dataset.visible = layer.visible.toString();
     element.dataset.selected = (layer === this.panel.selectedLayer.layer).toString();
     element.dataset.pick = layer.pickEnabled.toString();
-    let title = `Click to ${layer.visible ? 'hide' : 'show'}, control+click to show side panel`;
+    /* START OF CHANGE: remapping */
+    // let title = `Click to ${layer.visible ? 'hide' : 'show'}, control+click to show side panel`;
+    let title = `Click to show side panel, control+click to delete layer`;
+    /* END OF CHANGE: remapping */
     if (layer.supportsPickOption) {
       title += `, alt+click to ${layer.pickEnabled ? 'disable' : 'enable'} spatial object selection`;
     }
