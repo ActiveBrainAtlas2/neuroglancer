@@ -25,10 +25,53 @@ import {makeTrackableFragmentMain, shaderCodeWithLineDirective, WatchableShaderE
 import {ShaderBuilder, ShaderProgram} from 'neuroglancer/webgl/shader';
 import {addControlsToBuilder, parseShaderUiControls, setControlsInShader, ShaderControlsParseResult, ShaderControlState} from 'neuroglancer/webgl/shader_ui_controls';
 
+/* START OF CHANGE: default rendering image layer */
+/*
 const DEFAULT_FRAGMENT_MAIN = `void main() {
   emitGrayscale(toNormalized(getDataValue()));
 }
 `;
+ */
+const DEFAULT_FRAGMENT_MAIN = `
+#uicontrol float min slider(min=0, max=1, default=0)
+#uicontrol float max slider(min=0, max=1, default=1)
+#uicontrol float invert slider(min=0, max=1, default=0, step=1)
+#uicontrol float brightness slider(min=-1, max=1)
+#uicontrol float contrast slider(min=-3, max=3, step=0.01)
+#uicontrol float gamma slider(min=0.05, max=2.5, default=1, step=0.05)
+#uicontrol float linlog slider(min=0, max=1, default=0, step=1)
+void main() {
+  float limit = 45000.0;
+  float pix_val = float(toRaw(getDataValue()));
+
+  if (linlog==1.0) {
+  	pix_val = log(pix_val);
+   	limit = 10.0;
+  } else {
+    pix_val = pow(pix_val,gamma);
+    limit = 45000.0;
+  }
+
+
+  pix_val = pix_val/limit;
+
+  if(pix_val < min){
+  	pix_val = 0.0;
+  }
+  if(pix_val > max){
+    pix_val = 1.0;
+  }
+
+  if(invert==1.0){
+    emitRGB(vec3(0,(1.0 -(pix_val - brightness)) * exp(contrast),0));
+  }
+  else{
+     emitRGB(vec3(0, (pix_val + brightness) * exp(contrast),0));
+  }
+
+}
+`;
+/* END OF CHANGE: default rendering image layer */
 
 export function getTrackableFragmentMain(value = DEFAULT_FRAGMENT_MAIN) {
   return makeTrackableFragmentMain(value);
