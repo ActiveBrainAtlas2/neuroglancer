@@ -441,9 +441,9 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       }
     });
 
-    /* START OF CHANGE: constructor*/
+    /* START OF CHANGE: operation matrix constructor*/
     this.makeOperationElement();
-    /* END OF CHANGE: constructor*/
+    /* END OF CHANGE: operation matrix constructor*/
 
     this.updateView();
   }
@@ -1030,7 +1030,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     super.disposed();
   }
 
-  /* START OF CHANGE: functions */
+  /* START OF CHANGE: operation matrix functions */
   private makeOperationElement() {
     const OPERATIONS = ['Translation', 'Rotation', 'Scaling'];
     const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
@@ -1254,5 +1254,5 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       return 0;
     });
   }
-  /* END OF CHANGE: functions */
+  /* END OF CHANGE: operation matrix functions */
 }
