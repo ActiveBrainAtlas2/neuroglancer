@@ -642,7 +642,7 @@ export class WatchableCoordinateSpaceTransform implements
   /* START OF CHANGE: operation instance variable */
   private operations_: Float64Array;
   readonly defaultOperations: Float64Array =
-    new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 20, 0.5, 5, 0.01, 0.1]);
+    new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1e-5, 1e-4, 0.5, 5, 0.01, 0.1]);
   private centerPoint: Float64Array;
   private mouseMode_: boolean;
   /* END OF CHANGE: operation instance variable */
