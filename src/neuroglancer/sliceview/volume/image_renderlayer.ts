@@ -26,12 +26,11 @@ import {ShaderBuilder, ShaderProgram} from 'neuroglancer/webgl/shader';
 import {addControlsToBuilder, parseShaderUiControls, setControlsInShader, ShaderControlsParseResult, ShaderControlState} from 'neuroglancer/webgl/shader_ui_controls';
 
 /* START OF CHANGE: default rendering image layer */
-/*
 const DEFAULT_FRAGMENT_MAIN = `void main() {
   emitGrayscale(toNormalized(getDataValue()));
 }
 `;
- */
+/*
 const DEFAULT_FRAGMENT_MAIN = `
 #uicontrol float min slider(min=0, max=1, default=0)
 #uicontrol float max slider(min=0, max=1, default=1)
@@ -71,6 +70,7 @@ void main() {
 
 }
 `;
+ */
 /* END OF CHANGE: default rendering image layer */
 
 export function getTrackableFragmentMain(value = DEFAULT_FRAGMENT_MAIN) {
