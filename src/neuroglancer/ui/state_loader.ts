@@ -80,7 +80,7 @@ export class StateAutocomplete extends AutocompleteTextInput {
       });
     }, delay: 0});
 
-    this.placeholder = 'Search or save a state by a comment';
+    this.placeholder = 'State comment';
   }
 
   selectCompletion(index: number) {
@@ -229,11 +229,6 @@ export class StateLoader extends RefCounted {
     super();
     this.element.classList.add('state-loader');
 
-    this.input = new StateAutocomplete(viewer);
-    this.input.disableCompletions();
-    this.input.element.classList.add('state-loader-input');
-    this.element.appendChild(this.input.element);
-
     this.stateAPI = new StateAPI(
       'https://activebrainatlas.ucsd.edu/activebrainatlas/session',
       'https://activebrainatlas.ucsd.edu/activebrainatlas/neuroglancer'
@@ -243,6 +238,11 @@ export class StateLoader extends RefCounted {
       this.userID = userID;
 
       if (this.userID !== 0) {
+        this.input = new StateAutocomplete(viewer);
+        this.input.disableCompletions();
+        this.input.element.classList.add('state-loader-input');
+        this.element.appendChild(this.input.element);
+
         this.saveButton = makeIcon({text: 'save', title: 'Save to the current JSON state'});
         this.registerEventListener(this.saveButton, 'click', () => {
           this.saveState();
