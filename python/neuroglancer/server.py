@@ -19,6 +19,7 @@ import json
 import multiprocessing
 import re
 import socket
+import sys
 import threading
 import weakref
 
@@ -30,6 +31,11 @@ import tornado.web
 
 import sockjs.tornado
 
+try:
+    # Newer versions of tornado do not have the asynchronous decorator
+    from sockjs.tornado.util import asynchronous
+except ImportError:
+    from tornado.web import asynchronous
 
 from . import local_volume, static
 from . import skeleton
@@ -47,6 +53,8 @@ SKELETON_PATH_REGEX = r'^/neuroglancer/skeleton/(?P<key>[^/]+)/(?P<object_id>[0-
 MESH_PATH_REGEX = r'^/neuroglancer/mesh/(?P<key>[^/]+)/(?P<object_id>[0-9]+)$'
 
 STATIC_PATH_REGEX = r'^/v/(?P<viewer_token>[^/]+)/(?P<path>(?:[a-zA-Z0-9_\-][a-zA-Z0-9_\-.]*)?)$'
+
+ACTION_PATH_REGEX = r'^/action/(?P<viewer_token>[^/]+)$'
 
 global_static_content_source = None
 
@@ -78,12 +86,17 @@ class Server(object):
                 (DATA_PATH_REGEX, SubvolumeHandler, dict(server=self)),
                 (SKELETON_PATH_REGEX, SkeletonHandler, dict(server=self)),
                 (MESH_PATH_REGEX, MeshHandler, dict(server=self)),
+                (ACTION_PATH_REGEX, ActionHandler, dict(server=self)),
             ] + sockjs_router.urls,
             log_function=log_function,
             # Set a large maximum message size to accommodate large screenshot
             # messages.
             websocket_max_message_size=100 * 1024 * 1024)
-        http_server = tornado.httpserver.HTTPServer(app)
+        http_server = tornado.httpserver.HTTPServer(
+            app,
+            # Allow very large requests to accommodate large screenshots.
+            max_buffer_size=1024**3,
+        )
         sockets = tornado.netutil.bind_sockets(port=bind_port, address=bind_address)
         http_server.add_sockets(sockets)
         actual_port = sockets[0].getsockname()[1]
@@ -128,6 +141,15 @@ class StaticPathHandler(BaseRequestHandler):
         self.set_header('Content-type', content_type)
         self.finish(data)
 
+class ActionHandler(BaseRequestHandler):
+    def post(self, viewer_token):
+        viewer = self.server.viewers.get(viewer_token)
+        if viewer is None:
+            self.send_error(404)
+            return
+        action = json.loads(self.request.body)
+        self.server.ioloop.add_callback(viewer.actions.invoke, action['action'], action['state'])
+        self.finish('')
 
 class VolumeInfoHandler(BaseRequestHandler):
     def get(self, token):
@@ -146,7 +168,7 @@ class SkeletonInfoHandler(BaseRequestHandler):
         self.finish(json.dumps(vol.info(), default=json_encoder_default).encode())
 
 class SubvolumeHandler(BaseRequestHandler):
-    @tornado.web.asynchronous
+    @asynchronous
     def get(self, data_format, token, scale_key, start, end):
         start_pos = np.array(start.split(','), dtype=np.int64)
         end_pos = np.array(end.split(','), dtype=np.int64)
@@ -172,7 +194,7 @@ class SubvolumeHandler(BaseRequestHandler):
 
 
 class MeshHandler(BaseRequestHandler):
-    @tornado.web.asynchronous
+    @asynchronous
     def get(self, key, object_id):
         object_id = int(object_id)
         vol = self.server.get_volume(key)
@@ -204,7 +226,7 @@ class MeshHandler(BaseRequestHandler):
 
 
 class SkeletonHandler(BaseRequestHandler):
-    @tornado.web.asynchronous
+    @asynchronous
     def get(self, key, object_id):
         object_id = int(object_id)
         vol = self.server.get_volume(key)
@@ -273,11 +295,20 @@ def get_server_url():
 
 _global_server_lock = threading.Lock()
 
+
 def start():
     global global_server
     with _global_server_lock:
         if global_server is not None: return
+
+        # Workaround https://bugs.python.org/issue37373
+        # https://www.tornadoweb.org/en/stable/index.html#installation
+        if sys.platform == 'win32' and sys.version_info >= (3, 8):
+            import asyncio
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
         done = threading.Event()
+
         def start_server():
             global global_server
             ioloop = tornado.ioloop.IOLoop()
@@ -285,10 +316,12 @@ def start():
             global_server = Server(ioloop=ioloop, **global_server_args)
             done.set()
             ioloop.start()
+
         thread = threading.Thread(target=start_server)
         thread.daemon = True
         thread.start()
         done.wait()
+
 
 def register_viewer(viewer):
     start()

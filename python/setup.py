@@ -26,6 +26,7 @@ static_files = [
     'async_computation.bundle.js',
     'draco.bundle.js',
     'index.html',
+    'blosc.bundle.js',
 ]
 
 
@@ -108,7 +109,7 @@ if platform.system() == 'Darwin':
 
 setup(
     name='neuroglancer',
-    version='2.6',
+    version='2.15',
     description='Python data backend for neuroglancer, a WebGL-based viewer for volumetric data',
     author='Jeremy Maitin-Shepard, Jan Funke',
     author_email='jbms@google.com, jfunke@iri.upc.edu',
@@ -125,7 +126,7 @@ setup(
         "Pillow>=3.2.0",
         "numpy>=1.11.0",
         'requests',
-        'tornado<6',
+        'tornado',
         'sockjs-tornado',
         'six',
         'google-apitools',

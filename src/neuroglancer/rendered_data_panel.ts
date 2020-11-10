@@ -130,13 +130,6 @@ export abstract class RenderedDataPanel extends RenderedPanel {
   mouseY = -1;
 
   /**
-   * Equal to last-seen value of `this.element.clientWidth` and `this.element.clientHeight`.  If the
-   * size changed since the last frame, may not correspond to the last frame.
-   */
-  width: number;
-  height: number;
-
-  /**
    * If `false`, either the mouse is not within the viewport, or a picking request was already
    * issued for the current mouseX and mouseY after the most recent frame was rendered; when the
    * current pick requests complete, no additional pick requests will be issued.
@@ -151,7 +144,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
 
   inputEventMap: EventActionMap;
 
-  navigationState: NavigationState;
+  abstract navigationState: NavigationState;
 
   pickingData = [new FramePickingData(), new FramePickingData()];
   pickRequests = [new PickRequest(), new PickRequest()];
@@ -180,17 +173,6 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     this.pickTimerId = -1;
   }
 
-  checkForResize() {
-    const {clientWidth, clientHeight} = this.element;
-    if (clientWidth !== this.width || clientHeight !== this.height) {
-      this.width = clientWidth;
-      this.height = clientHeight;
-      this.panelSizeChanged();
-    }
-  }
-
-  abstract panelSizeChanged(): void;
-
   private issuePickRequestInternal(pickRequest: PickRequest) {
     const {gl} = this;
     let {buffer} = pickRequest;
@@ -203,8 +185,10 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     } else {
       gl.bindBuffer(WebGL2RenderingContext.PIXEL_PACK_BUFFER, buffer);
     }
-    let glWindowX = this.mouseX;
-    let glWindowY = this.height - this.mouseY;
+    const {renderViewport} = this;
+    let glWindowX = this.mouseX - renderViewport.visibleLeftFraction * renderViewport.logicalWidth;
+    let glWindowY = renderViewport.height -
+        (this.mouseY - renderViewport.visibleTopFraction * renderViewport.logicalHeight);
     this.issuePickRequest(glWindowX, glWindowY);
     pickRequest.sync = gl.fenceSync(WebGL2RenderingContext.SYNC_GPU_COMMANDS_COMPLETE, 0);
     pickRequest.frameNumber = this.context.frameNumber;
@@ -243,7 +227,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
   }
 
   private scheduleCheckForPickRequestCompletion() {
-    this.pickTimerId = setTimeout(() => {
+    this.pickTimerId = window.setTimeout(() => {
       this.pickTimerId = -1;
       this.checkForPickRequestCompletion();
     }, 0);
@@ -284,7 +268,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     if (remaining && pickTimerId === -1) {
       this.scheduleCheckForPickRequestCompletion();
     } else if (!remaining && pickTimerId !== -1) {
-      clearTimeout(pickTimerId);
+      window.clearTimeout(pickTimerId);
       this.pickTimerId = -1;
     }
     if (!checkingBeforeDraw && available !== undefined && this.pickRequestPending &&
@@ -303,9 +287,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
   }
 
   draw() {
-    this.checkForResize();
-    const {width, height} = this;
-    if (width === 0 || height === 0) return;
+    const {width, height} = this.renderViewport;
     this.checkForPickRequestCompletion(true);
     const {pickingData} = this;
     pickingData[0] = pickingData[1];
@@ -321,7 +303,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     }
     // For the new frame, allow new pick requests regardless of interval since last request.
     this.nextPickRequestTime = 0;
-    if (this.mouseX > 0) {
+    if (this.mouseX >= 0) {
       this.attemptToIssuePickRequest();
     }
   }
@@ -343,7 +325,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     if (time < nextPickRequestTime) {
       if (pendingPickRequestTimerId == -1) {
         this.pendingPickRequestTimerId =
-            setTimeout(this.pendingPickRequestTimerExpired, nextPickRequestTime - time);
+            window.setTimeout(this.pendingPickRequestTimerExpired, nextPickRequestTime - time);
       }
       return false;
     }
@@ -391,7 +373,8 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     const currentFrameNumber = this.context.frameNumber;
     const pickingData = this.pickingData[1];
     if (pickingData.frameNumber !== currentFrameNumber ||
-        this.width !== pickingData.viewportWidth || this.height !== pickingData.viewportHeight) {
+        this.renderViewport.width !== pickingData.viewportWidth ||
+        this.renderViewport.height !== pickingData.viewportHeight) {
       // Viewport size has changed since the last frame, which means a redraw is pending.  Don't
       // issue pick request now.  Once will be issued automatically after the redraw.
       return;
@@ -636,6 +619,9 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     /* END OF CHANGE: move selected layer */
   }
 
+  abstract translateDataPointByViewportPixels(
+      out: vec3, orig: vec3, deltaX: number, deltaY: number): vec3;
+
   onMouseout() {
     this.updateMousePosition(-1, -1);
     this.viewer.mouseState.setForcer(undefined);
@@ -679,7 +665,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     this.cancelPickRequests();
     const {pendingPickRequestTimerId} = this;
     if (pendingPickRequestTimerId !== -1) {
-      clearTimeout(pendingPickRequestTimerId);
+      window.clearTimeout(pendingPickRequestTimerId);
     }
     for (const request of this.pickRequests) {
       gl.deleteBuffer(request.buffer);

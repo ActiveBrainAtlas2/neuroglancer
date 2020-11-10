@@ -17,26 +17,26 @@
 import './image_user_layer.css';
 
 import {CoordinateSpace, CoordinateSpaceCombiner, isChannelDimension, isLocalDimension, TrackableCoordinateSpace} from 'neuroglancer/coordinate_transform';
-import {ManagedUserLayer, registerLayerType, registerVolumeLayerType, UserLayer, UserLayerSelectionState} from 'neuroglancer/layer';
+import {ManagedUserLayer, registerLayerType, registerLayerTypeDetector, registerVolumeLayerType, UserLayer, UserLayerSelectionState} from 'neuroglancer/layer';
 import {LoadedDataSubsource} from 'neuroglancer/layer_data_source';
 import {Overlay} from 'neuroglancer/overlay';
 import {getChannelSpace} from 'neuroglancer/render_coordinate_transform';
 import {RenderScaleHistogram, trackableRenderScaleTarget} from 'neuroglancer/render_scale_statistics';
 import {DataType, VolumeType} from 'neuroglancer/sliceview/volume/base';
 import {MultiscaleVolumeChunkSource} from 'neuroglancer/sliceview/volume/frontend';
-import {getTrackableFragmentMain, ImageRenderLayer} from 'neuroglancer/sliceview/volume/image_renderlayer';
+import {defineImageLayerShader, getTrackableFragmentMain, ImageRenderLayer} from 'neuroglancer/sliceview/volume/image_renderlayer';
 import {trackableAlphaValue} from 'neuroglancer/trackable_alpha';
 import {trackableBlendModeValue} from 'neuroglancer/trackable_blend';
 import {TrackableBoolean, TrackableBooleanCheckbox} from 'neuroglancer/trackable_boolean';
-import {makeCachedLazyDerivedWatchableValue, registerNested, WatchableValueInterface} from 'neuroglancer/trackable_value';
+import {makeCachedDerivedWatchableValue, makeCachedLazyDerivedWatchableValue, registerNested, WatchableValue, WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {UserLayerWithAnnotationsMixin} from 'neuroglancer/ui/annotations';
 import {setClipboard} from 'neuroglancer/util/clipboard';
 import {Borrowed, RefCounted} from 'neuroglancer/util/disposable';
 import {makeValueOrError} from 'neuroglancer/util/error';
 import {verifyOptionalObjectProperty} from 'neuroglancer/util/json';
 import {VolumeRenderingRenderLayer} from 'neuroglancer/volume_rendering/volume_render_layer';
-import {makeWatchableShaderError} from 'neuroglancer/webgl/dynamic_shader';
-import {ShaderControlState} from 'neuroglancer/webgl/shader_ui_controls';
+import {makeWatchableShaderError, ParameterizedShaderGetterResult} from 'neuroglancer/webgl/dynamic_shader';
+import {setControlsInShader, ShaderControlsBuilderState, ShaderControlState} from 'neuroglancer/webgl/shader_ui_controls';
 import {ChannelDimensionsWidget} from 'neuroglancer/widget/channel_dimensions_widget';
 import {makeCopyButton} from 'neuroglancer/widget/copy_button';
 import {DependentViewWidget} from 'neuroglancer/widget/dependent_view_widget';
@@ -46,7 +46,7 @@ import {makeMaximizeButton} from 'neuroglancer/widget/maximize_button';
 import {RangeWidget} from 'neuroglancer/widget/range';
 import {RenderScaleWidget} from 'neuroglancer/widget/render_scale_widget';
 import {ShaderCodeWidget} from 'neuroglancer/widget/shader_code_widget';
-import {ShaderControls} from 'neuroglancer/widget/shader_controls';
+import {LegendShaderOptions, ShaderControls} from 'neuroglancer/widget/shader_controls';
 import {Tab} from 'neuroglancer/widget/tab_view';
 
 const OPACITY_JSON_KEY = 'opacity';
@@ -67,7 +67,7 @@ export class ImageUserLayer extends Base {
   blendMode = trackableBlendModeValue();
   fragmentMain = getTrackableFragmentMain();
   shaderError = makeWatchableShaderError();
-  shaderControlState = new ShaderControlState(this.fragmentMain);
+  dataType = new WatchableValue<DataType|undefined>(undefined);
   sliceViewRenderScaleHistogram = new RenderScaleHistogram();
   sliceViewRenderScaleTarget = trackableRenderScaleTarget(1);
   volumeRenderingRenderScaleHistogram = new RenderScaleHistogram();
@@ -81,6 +81,17 @@ export class ImageUserLayer extends Base {
       channelCoordinateSpace => makeValueOrError(() => getChannelSpace(channelCoordinateSpace)),
       this.channelCoordinateSpace));
   volumeRendering = new TrackableBoolean(false, false);
+
+  shaderControlState = this.registerDisposer(new ShaderControlState(
+      this.fragmentMain,
+      this.registerDisposer(makeCachedDerivedWatchableValue(
+          (dataType: DataType|undefined, channelCoordinateSpace: CoordinateSpace) => {
+            if (dataType === undefined) return null;
+            return {imageData: {dataType, channelRank: channelCoordinateSpace.rank}};
+          },
+          [this.dataType, this.channelCoordinateSpace],
+          (a, b) => JSON.stringify(a) === JSON.stringify(b))),
+      this.channelCoordinateSpaceCombiner));
 
   markLoading() {
     const baseDisposer = super.markLoading();
@@ -163,6 +174,7 @@ export class ImageUserLayer extends Base {
         this.shaderError.changed.dispatch();
       });
     }
+    this.dataType.value = dataType;
   }
 
   restoreState(specification: any) {
@@ -206,7 +218,7 @@ export class ImageUserLayer extends Base {
     for (let channelIndex = 0; channelIndex < numChannels; ++channelIndex) {
       const x = rank === 0 ? value : value[channelIndex];
       // TODO(jbms): do data type-specific formatting
-      const valueString = x.toString();
+      const valueString = x == null ? '' : x.toString();
       const copyButton = makeCopyButton({
         title: `Copy value`,
         onClick: () => {
@@ -322,8 +334,32 @@ class RenderingOptionsTab extends Tab {
         this.registerDisposer(new ChannelDimensionsWidget(layer.channelCoordinateSpaceCombiner))
             .element);
     element.appendChild(this.codeWidget.element);
+    const legendShaderOptions: LegendShaderOptions = {
+      memoizeKey: `ImageUserLayer`,
+      parameters: layer.shaderControlState.builderState,
+      // fixme: support fallback
+      encodeParameters: p => p.key,
+      defineShader: (builder, shaderBuilderState: ShaderControlsBuilderState) => {
+        builder.addFragmentCode(`
+#define uOpacity 1.0
+`);
+        defineImageLayerShader(builder, shaderBuilderState);
+      },
+      initializeShader:
+          (shaderResult: ParameterizedShaderGetterResult<ShaderControlsBuilderState>) => {
+            const shader = shaderResult.shader!;
+            setControlsInShader(
+                layer.manager.root.display.gl, shader, layer.shaderControlState,
+                shaderResult.parameters.parseResult.controls);
+          },
+    };
     element.appendChild(
-        this.registerDisposer(new ShaderControls(layer.shaderControlState)).element);
+        this.registerDisposer(
+                new ShaderControls(layer.shaderControlState, this.layer.manager.root.display, {
+                  visibility: this.visibility,
+                  legendShaderOptions,
+                }))
+            .element);
   }
 }
 
@@ -339,3 +375,10 @@ class ShaderCodeOverlay extends Overlay {
 
 registerLayerType('image', ImageUserLayer);
 registerVolumeLayerType(VolumeType.IMAGE, ImageUserLayer);
+// Use ImageUserLayer as a fallback layer type if there is a `volume` subsource.
+registerLayerTypeDetector(subsource => {
+  const {volume} = subsource;
+  if (volume === undefined) return undefined;
+  if (volume.volumeType !== VolumeType.UNKNOWN) return undefined;
+  return {layerConstructor: ImageUserLayer, priority: -100};
+});

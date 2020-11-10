@@ -14,21 +14,42 @@
  * limitations under the License.
  */
 
+import './shader_controls.css';
+
 import debounce from 'lodash/debounce';
+import {DisplayContext} from 'neuroglancer/display_context';
 import {TrackableRGB} from 'neuroglancer/util/color';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren} from 'neuroglancer/util/dom';
+import {WatchableVisibilityPriority} from 'neuroglancer/visibility_priority/frontend';
+import {ParameterizedEmitterDependentShaderOptions, ParameterizedShaderGetterResult} from 'neuroglancer/webgl/dynamic_shader';
 import {ShaderControlState} from 'neuroglancer/webgl/shader_ui_controls';
 import {ColorWidget} from 'neuroglancer/widget/color';
+import {InvlerpWidget} from 'neuroglancer/widget/invlerp';
 import {RangeWidget} from 'neuroglancer/widget/range';
+import {Tab} from 'neuroglancer/widget/tab_view';
+import { Position } from '../navigation_state';
+import { PositionWidget } from './position_widget';
+import { arraysEqual } from '../util/array';
 
+export interface LegendShaderOptions extends ParameterizedEmitterDependentShaderOptions {
+  initializeShader: (shaderResult: ParameterizedShaderGetterResult) => void;
+}
 
-export class ShaderControls extends RefCounted {
-  element = document.createElement('div');
+export interface ShaderControlsOptions {
+  legendShaderOptions?: LegendShaderOptions;
+  visibility?: WatchableVisibilityPriority;
+}
+
+export class ShaderControls extends Tab {
   private controlDisposer: RefCounted|undefined = undefined;
 
-  constructor(public state: ShaderControlState) {
-    super();
+  constructor(
+      public state: ShaderControlState, public display: DisplayContext,
+      public options: ShaderControlsOptions = {}) {
+    super(options.visibility);
+    const {element} = this;
+    element.classList.add('neuroglancer-shader-controls');
     const {controls} = state;
     this.registerDisposer(
         controls.changed.add(this.registerCancellable(debounce(() => this.updateControls(), 0))));
@@ -36,28 +57,67 @@ export class ShaderControls extends RefCounted {
   }
 
   updateControls() {
+    const {element} = this;
     if (this.controlDisposer !== undefined) {
       this.controlDisposer.dispose();
-      removeChildren(this.element);
+      removeChildren(element);
     }
     const controlDisposer = this.controlDisposer = new RefCounted();
+    let histogramIndex = 0;
     for (const [name, controlState] of this.state.state) {
       const {control} = controlState;
+      const labelDiv = document.createElement('div');
+      const label = document.createElement('label');
+      label.textContent = name;
+      labelDiv.appendChild(label);
+      element.appendChild(labelDiv);
       switch (control.type) {
         case 'slider': {
           const widget = controlDisposer.registerDisposer(new RangeWidget(
               controlState.trackable, {min: control.min, max: control.max, step: control.step}));
-          widget.promptElement.textContent = name;
-          this.element.appendChild(widget.element);
+          element.appendChild(widget.element);
           break;
         }
         case 'color': {
-          const label = document.createElement('label');
-          label.textContent = name;
           const widget = controlDisposer.registerDisposer(
               new ColorWidget(controlState.trackable as TrackableRGB));
-          this.element.appendChild(label);
-          label.appendChild(widget.element);
+          element.appendChild(widget.element);
+          break;
+        }
+        case 'invlerp': {
+          const {channelCoordinateSpaceCombiner} = this.state;
+          if (channelCoordinateSpaceCombiner !== undefined &&
+              control.default.channel.length !== 0) {
+            const position = controlDisposer.registerDisposer(
+                new Position(channelCoordinateSpaceCombiner.combined));
+            const positionWidget = controlDisposer.registerDisposer(
+              new PositionWidget(position, channelCoordinateSpaceCombiner, {copyButton: false}));
+            const {trackable} = controlState;
+            controlDisposer.registerDisposer(position.changed.add(() => {
+              const value = position.value;
+              const newChannel = Array.from(value, x => Math.floor(x));
+              const oldParams = trackable.value;
+              if (!arraysEqual(oldParams.channel, newChannel)) {
+                trackable.value = {...trackable.value, channel: newChannel};
+              }
+            }));
+            const updatePosition = () => {
+              const value = position.value;
+              const params = trackable.value;
+              if (!arraysEqual(value, params.channel)) {
+                value.set(params.channel);
+                position.changed.dispatch();
+              }
+            };
+            updatePosition();
+            controlDisposer.registerDisposer(trackable.changed.add(updatePosition));
+            labelDiv.appendChild(positionWidget.element);
+          }
+          const widget = controlDisposer.registerDisposer(new InvlerpWidget(
+              this.visibility, this.display, control, controlState.trackable,
+              this.state.histogramSpecifications, histogramIndex, this.options));
+          element.appendChild(widget.element);
+          ++histogramIndex;
           break;
         }
       }
@@ -65,10 +125,7 @@ export class ShaderControls extends RefCounted {
   }
 
   disposed() {
-    const {controlDisposer} = this;
-    if (controlDisposer !== undefined) {
-      controlDisposer.dispose();
-    }
+    this.controlDisposer?.dispose();
     super.disposed();
   }
 }

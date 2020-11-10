@@ -17,23 +17,25 @@
 import debounce from 'lodash/debounce';
 import {ChunkState} from 'neuroglancer/chunk_manager/base';
 import {Chunk, ChunkManager, ChunkSource} from 'neuroglancer/chunk_manager/frontend';
+import {applyRenderViewportToProjectionMatrix} from 'neuroglancer/display_context';
 import {LayerManager} from 'neuroglancer/layer';
 import {DisplayDimensionRenderInfo, NavigationState} from 'neuroglancer/navigation_state';
 import {updateProjectionParametersFromInverseViewAndProjection} from 'neuroglancer/projection_parameters';
 import {ChunkDisplayTransformParameters, ChunkTransformParameters, getChunkDisplayTransformParameters, getChunkTransformParameters, getLayerDisplayDimensionMapping, RenderLayerTransformOrError} from 'neuroglancer/render_coordinate_transform';
 import {DerivedProjectionParameters, SharedProjectionParameters} from 'neuroglancer/renderlayer';
-import {forEachPlaneIntersectingVolumetricChunk, SLICEVIEW_ADD_VISIBLE_LAYER_RPC_ID, SLICEVIEW_REMOVE_VISIBLE_LAYER_RPC_ID, SLICEVIEW_RPC_ID, SliceViewBase, SliceViewChunkSource as SliceViewChunkSourceInterface, SliceViewChunkSpecification, SliceViewProjectionParameters, SliceViewSourceOptions, TransformedSource, VisibleLayerSources} from 'neuroglancer/sliceview/base';
+import {forEachPlaneIntersectingVolumetricChunk, getNormalizedChunkLayout, SLICEVIEW_ADD_VISIBLE_LAYER_RPC_ID, SLICEVIEW_REMOVE_VISIBLE_LAYER_RPC_ID, SLICEVIEW_RPC_ID, SliceViewBase, SliceViewChunkSource as SliceViewChunkSourceInterface, SliceViewChunkSpecification, SliceViewProjectionParameters, SliceViewSourceOptions, TransformedSource, VisibleLayerSources} from 'neuroglancer/sliceview/base';
 import {ChunkLayout} from 'neuroglancer/sliceview/chunk_layout';
 import {SliceViewRenderLayer} from 'neuroglancer/sliceview/renderlayer';
 import {WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {Borrowed, Disposer, invokeDisposers, Owned, RefCounted} from 'neuroglancer/util/disposable';
-import {kOneVec, mat4, vec3, vec4} from 'neuroglancer/util/geom';
+import {kOneVec, kZeroVec4, mat4, vec3, vec4} from 'neuroglancer/util/geom';
 import {MessageList, MessageSeverity} from 'neuroglancer/util/message_list';
 import {getObjectId} from 'neuroglancer/util/object_id';
 import {NullarySignal} from 'neuroglancer/util/signal';
 import {withSharedVisibility} from 'neuroglancer/visibility_priority/frontend';
 import {GL} from 'neuroglancer/webgl/context';
-import {FramebufferConfiguration, makeTextureBuffers, StencilBuffer} from 'neuroglancer/webgl/offscreen';
+import {HistogramSpecifications, TextureHistogramGenerator} from 'neuroglancer/webgl/empirical_cdf';
+import {DepthTextureBuffer, FramebufferConfiguration, makeTextureBuffers, TextureBuffer} from 'neuroglancer/webgl/offscreen';
 import {ShaderBuilder, ShaderModule, ShaderProgram} from 'neuroglancer/webgl/shader';
 import {getSquareCornersBuffer} from 'neuroglancer/webgl/square_corners_buffer';
 import {registerSharedObjectOwner, RPC} from 'neuroglancer/worker_rpc';
@@ -96,11 +98,12 @@ function disposeTransformedSources(
   }
 }
 
-
 @registerSharedObjectOwner(SLICEVIEW_RPC_ID)
 export class SliceView extends Base {
   gl = this.chunkManager.gl;
   viewChanged = new NullarySignal();
+  rpc: RPC;
+  rpcId: number;
 
   renderingStale = true;
 
@@ -110,9 +113,25 @@ export class SliceView extends Base {
 
   visibleLayers: Map<SliceViewRenderLayer, FrontendVisibleLayerSources>;
 
-  offscreenFramebuffer = this.registerDisposer(new FramebufferConfiguration(
-      this.gl,
-      {colorBuffers: makeTextureBuffers(this.gl, 1), depthBuffer: new StencilBuffer(this.gl)}));
+  offscreenFramebuffer = this.registerDisposer(new FramebufferConfiguration(this.gl, {
+    colorBuffers: makeTextureBuffers(this.gl, 1),
+    depthBuffer: new DepthTextureBuffer(this.gl)
+  }));
+  histogramInputTextures: TextureBuffer[] = [];
+  offscreenFramebuffersWithHistograms = [this.offscreenFramebuffer];
+
+  get displayDimensionRenderInfo() {
+    return this.navigationState.displayDimensionRenderInfo;
+  }
+
+  private histogramGenerator = TextureHistogramGenerator.get(this.gl);
+
+  computeHistograms(count: number, histogramSpecifications: HistogramSpecifications) {
+    this.histogramGenerator.compute(
+        count, this.offscreenFramebuffer.depthBuffer!.texture, this.histogramInputTextures,
+        histogramSpecifications,
+        this.chunkManager.chunkQueueManager.frameNumberCounter.frameNumber);
+  }
 
   projectionParameters: Owned<DerivedProjectionParameters<SliceViewProjectionParameters>>;
 
@@ -137,16 +156,17 @@ export class SliceView extends Base {
           centerDataPosition[i] = invViewMatrix[12 + i];
         }
         const {
-          width,
-          height,
+          logicalWidth,
+          logicalHeight,
           projectionMat,
           viewportNormalInGlobalCoordinates,
           viewportNormalInCanonicalCoordinates
         } = out;
         const {relativeDepthRange} = navigationState;
         mat4.ortho(
-            projectionMat, -width / 2, width / 2, height / 2, -height / 2, -relativeDepthRange,
-            relativeDepthRange);
+            projectionMat, -logicalWidth / 2, logicalWidth / 2, logicalHeight / 2,
+            -logicalHeight / 2, -relativeDepthRange, relativeDepthRange);
+        applyRenderViewportToProjectionMatrix(out, projectionMat);
         updateProjectionParametersFromInverseViewAndProjection(out);
         const {viewMatrix} = out;
         for (let i = 0; i < 3; ++i) {
@@ -194,9 +214,12 @@ export class SliceView extends Base {
     this.updateVisibleLayers();
   }
 
-  forEachVisibleChunk(tsource: FrontendTransformedSource, callback: (key: string) => void) {
+  forEachVisibleChunk(
+      tsource: FrontendTransformedSource, chunkLayout: ChunkLayout,
+      callback: (key: string) => void) {
     forEachPlaneIntersectingVolumetricChunk(
-        this.projectionParameters.value, tsource.renderLayer.localPosition.value, tsource, () => {
+        this.projectionParameters.value, tsource.renderLayer.localPosition.value, tsource,
+        chunkLayout, () => {
           callback(tsource.curPositionInChunks.join());
         });
   }
@@ -211,9 +234,11 @@ export class SliceView extends Base {
     let totalChunks = 0;
     for (const {visibleSources} of this.visibleLayers.values()) {
       for (const tsource of visibleSources) {
+        const chunkLayout =
+            getNormalizedChunkLayout(this.projectionParameters.value, tsource.chunkLayout);
         const {source} = tsource;
         const {chunks} = source;
-        this.forEachVisibleChunk(tsource, key => {
+        this.forEachVisibleChunk(tsource, chunkLayout, key => {
           const chunk = chunks.get(key);
           ++totalChunks;
           if (chunk && chunk.state === ChunkState.GPU_MEMORY) {
@@ -244,6 +269,7 @@ export class SliceView extends Base {
     if (renderScaleHistogram !== undefined) {
       disposers.push(renderScaleHistogram.visibility.add(this.visibility));
     }
+    disposers.push(renderLayer.dataHistogramSpecifications.producerVisibility.add(this.visibility));
   }
 
   private updateVisibleLayersNow() {
@@ -327,6 +353,27 @@ export class SliceView extends Base {
     return this.navigationState.valid;
   }
 
+  private getOffscreenFramebufferWithHistograms(count: number) {
+    const {offscreenFramebuffersWithHistograms} = this;
+    let framebuffer = offscreenFramebuffersWithHistograms[count];
+    if (framebuffer === undefined) {
+      const {gl, histogramInputTextures, offscreenFramebuffer} = this;
+      if (histogramInputTextures.length < count) {
+        histogramInputTextures.push(...makeTextureBuffers(
+            gl, count - histogramInputTextures.length, WebGL2RenderingContext.R8,
+          WebGL2RenderingContext.RED));
+      }
+      let colorBuffers = [offscreenFramebuffer.colorBuffers[0].addRef()];
+      for (let i = 0; i < count; ++i) {
+        colorBuffers.push(histogramInputTextures[i].addRef());
+      }
+      framebuffer = this.registerDisposer(new FramebufferConfiguration(
+          gl, {colorBuffers, depthBuffer: offscreenFramebuffer.depthBuffer!.addRef()}));
+      offscreenFramebuffersWithHistograms[count] = framebuffer;
+    }
+    return framebuffer;
+  }
+
   updateRendering() {
     const projectionParameters = this.projectionParameters.value;
     const {width, height} = projectionParameters;
@@ -339,38 +386,32 @@ export class SliceView extends Base {
 
     let {gl, offscreenFramebuffer} = this;
 
-    offscreenFramebuffer.bind(width!, height!);
+    offscreenFramebuffer.bind(width, height);
     gl.disable(gl.SCISSOR_TEST);
 
-    // we have viewportToData
-    // we need: matrix that maps input x to the output x axis, scaled by
-
-    gl.clearStencil(0);
     gl.clearColor(0, 0, 0, 0);
     gl.colorMask(true, true, true, true);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.enable(gl.STENCIL_TEST);
-    gl.disable(gl.DEPTH_TEST);
-    gl.stencilOpSeparate(
-        /*face=*/ gl.FRONT_AND_BACK, /*sfail=*/ gl.KEEP, /*dpfail=*/ gl.KEEP,
-        /*dppass=*/ gl.REPLACE);
-
+    gl.clear(WebGL2RenderingContext.COLOR_BUFFER_BIT);
     let renderLayerNum = 0;
-    const renderContext = {sliceView: this, projectionParameters, wireFrame: this.wireFrame.value};
+    const wireFrame = this.wireFrame.value;
+    const renderContext = {sliceView: this, projectionParameters, wireFrame};
     for (let renderLayer of this.visibleLayerList) {
-      gl.clear(gl.STENCIL_BUFFER_BIT);
-      gl.stencilFuncSeparate(
-          /*face=*/ gl.FRONT_AND_BACK,
-          /*func=*/ gl.GREATER,
-          /*ref=*/ 1,
-          /*mask=*/ 1);
-
+      const histogramCount = wireFrame ? 0 : renderLayer.getDataHistogramCount();
+      let framebuffer = this.getOffscreenFramebufferWithHistograms(histogramCount);
+      framebuffer.bind(width, height);
+      for (let i = 0; i < histogramCount; ++i) {
+        gl.clearBufferfv(WebGL2RenderingContext.COLOR, 1 + i, kZeroVec4);
+      }
+      gl.enable(WebGL2RenderingContext.DEPTH_TEST);
+      gl.depthFunc(WebGL2RenderingContext.LESS);
+      gl.clearDepth(1);
+      gl.clear(WebGL2RenderingContext.DEPTH_BUFFER_BIT);
       renderLayer.setGLBlendMode(gl, renderLayerNum);
       renderLayer.draw(renderContext);
       ++renderLayerNum;
     }
-    gl.disable(gl.BLEND);
-    gl.disable(gl.STENCIL_TEST);
+    gl.disable(WebGL2RenderingContext.BLEND);
+    gl.disable(WebGL2RenderingContext.DEPTH_TEST);
     offscreenFramebuffer.unbind();
   }
 
@@ -503,6 +544,7 @@ gl_Position = uProjectionMatrix * aVertexPosition;
     shader.bind();
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.disable(WebGL2RenderingContext.BLEND);
     gl.uniformMatrix4fv(shader.uniform('uProjectionMatrix'), false, projectionMatrix);
     gl.uniform4fv(shader.uniform('uColorFactor'), colorFactor);
     gl.uniform4fv(shader.uniform('uBackgroundColor'), backgroundColor);
