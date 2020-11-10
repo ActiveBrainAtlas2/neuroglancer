@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {decodeBlosc} from 'neuroglancer/async_computation/decode_blosc_request';
 import {decodeGzip} from 'neuroglancer/async_computation/decode_gzip_request';
 import {requestAsyncComputation} from 'neuroglancer/async_computation/request';
 import {WithParameters} from 'neuroglancer/chunk_manager/backend';
@@ -22,7 +23,7 @@ import {decodeRawChunk} from 'neuroglancer/sliceview/backend_chunk_decoders/raw'
 import {VolumeChunk, VolumeChunkSource} from 'neuroglancer/sliceview/volume/backend';
 import {CancellationToken} from 'neuroglancer/util/cancellation';
 import {Endianness} from 'neuroglancer/util/endian';
-import {cancellableFetchOk, responseArrayBuffer} from 'neuroglancer/util/http_request';
+import {cancellableFetchSpecialOk, responseArrayBuffer} from 'neuroglancer/util/http_request';
 import {registerSharedObject} from 'neuroglancer/worker_rpc';
 
 async function decodeChunk(
@@ -45,8 +46,15 @@ async function decodeChunk(
   }
   chunk.chunkDataSize = shape;
   let buffer = new Uint8Array(response, offset);
-  if (encoding === VolumeChunkEncoding.GZIP) {
-    buffer = await requestAsyncComputation(decodeGzip, cancellationToken, [buffer.buffer], buffer);
+  switch (encoding) {
+    case VolumeChunkEncoding.GZIP:
+      buffer =
+          await requestAsyncComputation(decodeGzip, cancellationToken, [buffer.buffer], buffer);
+      break;
+    case VolumeChunkEncoding.BLOSC:
+      buffer =
+          await requestAsyncComputation(decodeBlosc, cancellationToken, [buffer.buffer], buffer);
+      break;
   }
   await decodeRawChunk(
       chunk, cancellationToken, buffer.buffer, Endianness.BIG, buffer.byteOffset,
@@ -64,7 +72,8 @@ async function decodeChunk(
     for (let i = 0; i < rank; ++i) {
       url += `/${chunkGridPosition[i]}`;
     }
-    const response = await cancellableFetchOk(url, {}, responseArrayBuffer, cancellationToken);
+    const response =
+        await cancellableFetchSpecialOk(url, {}, responseArrayBuffer, cancellationToken);
     await decodeChunk(chunk, cancellationToken, response, parameters.encoding);
   }
 }

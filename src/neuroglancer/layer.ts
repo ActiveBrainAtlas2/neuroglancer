@@ -21,12 +21,13 @@ import {ChunkManager} from 'neuroglancer/chunk_manager/frontend';
 import {CoordinateSpace, CoordinateSpaceCombiner, CoordinateTransformSpecification, coordinateTransformSpecificationFromLegacyJson, emptyInvalidCoordinateSpace, isGlobalDimension, isLocalDimension, isLocalOrChannelDimension, TrackableCoordinateSpace} from 'neuroglancer/coordinate_transform';
 import {DataSourceSpecification, makeEmptyDataSourceSpecification} from 'neuroglancer/datasource';
 import {DataSourceProviderRegistry, DataSubsource} from 'neuroglancer/datasource';
-import {RenderedPanel} from 'neuroglancer/display_context';
+import {DisplayContext, RenderedPanel} from 'neuroglancer/display_context';
 import {LayerDataSource, layerDataSourceSpecificationFromJson, LoadedDataSubsource} from 'neuroglancer/layer_data_source';
 import {DisplayDimensions, Position, WatchableDisplayDimensionRenderInfo} from 'neuroglancer/navigation_state';
 import {RENDERED_VIEW_ADD_LAYER_RPC_ID, RENDERED_VIEW_REMOVE_LAYER_RPC_ID} from 'neuroglancer/render_layer_common';
 import {RenderLayer, RenderLayerRole, VisibilityTrackedRenderLayer} from 'neuroglancer/renderlayer';
 import {VolumeType} from 'neuroglancer/sliceview/volume/base';
+import {TrackableBoolean} from 'neuroglancer/trackable_boolean';
 import {registerNested, TrackableRefCounted, TrackableValue, TrackableValueInterface, WatchableSet, WatchableValue, WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {LayerDataSourcesTab} from 'neuroglancer/ui/layer_data_sources_tab';
 import {restoreTool, Tool} from 'neuroglancer/ui/tool';
@@ -41,7 +42,6 @@ import {kEmptyFloat32Vec} from 'neuroglancer/util/vector';
 import {WatchableVisibilityPriority} from 'neuroglancer/visibility_priority/frontend';
 import {TabSpecification} from 'neuroglancer/widget/tab_view';
 import {RPC} from 'neuroglancer/worker_rpc';
-import { TrackableBoolean } from './trackable_boolean';
 
 const TAB_JSON_KEY = 'tab';
 const TOOL_JSON_KEY = 'tool';
@@ -357,6 +357,7 @@ export class UserLayer extends RefCounted {
     this.renderLayers.push(layer);
     const {layersChanged} = this;
     layer.layerChanged.add(layersChanged.dispatch);
+    layer.userLayer = this;
     layersChanged.dispatch();
     return () => this.removeRenderLayer(layer);
   }
@@ -369,6 +370,7 @@ export class UserLayer extends RefCounted {
     }
     renderLayers.splice(index, 1);
     layer.layerChanged.remove(layersChanged.dispatch);
+    layer.userLayer = undefined;
     layer.dispose();
     layersChanged.dispatch();
   }
@@ -1423,15 +1425,14 @@ export abstract class LayerListSpecification extends RefCounted {
     return this.rpc;
   }
 
-  rpc: RPC;
+  abstract rpc: RPC;
 
-  dataSourceProviderRegistry: Borrowed<DataSourceProviderRegistry>;
-  layerManager: Borrowed<LayerManager>;
-  chunkManager: Borrowed<ChunkManager>;
-  layerSelectedValues: Borrowed<LayerSelectedValues>;
-  coordinateSpace: WatchableValueInterface<CoordinateSpace|undefined>;
+  abstract dataSourceProviderRegistry: Borrowed<DataSourceProviderRegistry>;
+  abstract layerManager: Borrowed<LayerManager>;
+  abstract chunkManager: Borrowed<ChunkManager>;
+  abstract layerSelectedValues: Borrowed<LayerSelectedValues>;
 
-  readonly root: TopLevelLayerListSpecification;
+  abstract readonly root: TopLevelLayerListSpecification;
 
   abstract initializeLayerFromSpec(managedLayer: ManagedUserLayer, spec: any): void;
 
@@ -1439,7 +1440,7 @@ export abstract class LayerListSpecification extends RefCounted {
 
   abstract add(layer: Owned<ManagedUserLayer>, index?: number|undefined): void;
 
-  rootLayers: Borrowed<LayerManager>;
+  abstract rootLayers: Borrowed<LayerManager>;
 }
 
 export class TopLevelLayerListSpecification extends LayerListSpecification {
@@ -1456,7 +1457,7 @@ export class TopLevelLayerListSpecification extends LayerListSpecification {
   layerSelectedValues = this.selectionState.layerSelectedValues;
 
   constructor(
-      public dataSourceProviderRegistry: DataSourceProviderRegistry,
+      public display: DisplayContext, public dataSourceProviderRegistry: DataSourceProviderRegistry,
       public layerManager: LayerManager, public chunkManager: ChunkManager,
       public selectionState: Borrowed<TrackableDataSelectionState>,
       public selectedLayer: Borrowed<SelectedLayerState>,
@@ -1623,8 +1624,22 @@ export type UserLayerConstructor = typeof UserLayer;
 
 export const layerTypes = new Map<string, UserLayerConstructor>();
 const volumeLayerTypes = new Map<VolumeType, UserLayerConstructor>();
-export type LayerTypeDetector = (subsource: DataSubsource) => (UserLayerConstructor|undefined);
-const layerTypeDetectors: LayerTypeDetector[] = [];
+export interface LayerTypeGuess {
+  // Layer constructor
+  layerConstructor: UserLayerConstructor;
+  // Priority of the guess.  Higher values take precedence.
+  priority: number;
+}
+export type LayerTypeDetector = (subsource: DataSubsource) => (LayerTypeGuess|undefined);
+const layerTypeDetectors: LayerTypeDetector[] = [
+  subsource => {
+    const {volume} = subsource;
+    if (volume === undefined) return undefined;
+    const layerConstructor = volumeLayerTypes.get(volume.volumeType);
+    if (layerConstructor === undefined) return undefined;
+    return {layerConstructor, priority: 0};
+  },
+];
 
 export function registerLayerType(name: string, layerConstructor: UserLayerConstructor) {
   layerTypes.set(name, layerConstructor);
@@ -1669,25 +1684,30 @@ export function deleteLayer(managedLayer: Borrowed<ManagedUserLayer>) {
   }
 }
 
-export function detectLayerTypeFromDataSubsource(subsource: DataSubsource): UserLayerConstructor|
+function getMaxPriorityGuess(a: LayerTypeGuess|undefined, b: LayerTypeGuess|undefined) {
+  if (a === undefined) return b;
+  if (b === undefined) return a;
+  return (a.priority < b.priority) ? b : a;
+}
+
+export function detectLayerTypeFromDataSubsource(subsource: DataSubsource): LayerTypeGuess|
     undefined {
+  let bestGuess: LayerTypeGuess|undefined;
   for (const detector of layerTypeDetectors) {
-    const layerConstructor = detector(subsource);
-    if (layerConstructor !== undefined) {
-      return layerConstructor;
-    }
+    bestGuess = getMaxPriorityGuess(bestGuess, detector(subsource));
   }
   const {volume} = subsource;
   if (volume !== undefined) {
     const layerConstructor = volumeLayerTypes.get(volume.volumeType);
     if (layerConstructor !== undefined) {
-      return layerConstructor;
+      bestGuess = getMaxPriorityGuess(bestGuess, {layerConstructor, priority: 0});
     }
   }
-  return undefined;
+  return bestGuess;
 }
 
 export function detectLayerType(userLayer: UserLayer): UserLayerConstructor|undefined {
+  let guess: LayerTypeGuess|undefined;
   for (const dataSource of userLayer.dataSources) {
     const {loadState} = dataSource;
     if (loadState === undefined || loadState.error !== undefined) continue;
@@ -1695,24 +1715,21 @@ export function detectLayerType(userLayer: UserLayer): UserLayerConstructor|unde
       const {subsourceEntry} = loadedSubsource;
       const {subsource} = subsourceEntry;
       if (!loadedSubsource.enabled) continue;
-      const layerConstructor = detectLayerTypeFromDataSubsource(subsource);
-      if (layerConstructor !== undefined) return layerConstructor;
+      guess = getMaxPriorityGuess(guess, detectLayerTypeFromDataSubsource(subsource));
     }
   }
-  return undefined;
+  return guess?.layerConstructor;
 }
 
-function detectLayerTypeFromSubsources(subsources: Iterable<LoadedDataSubsource>):
-    UserLayerConstructor|undefined {
+function detectLayerTypeFromSubsources(subsources: Iterable<LoadedDataSubsource>): LayerTypeGuess|
+    undefined {
+  let guess: LayerTypeGuess|undefined;
   for (const loadedSubsource of subsources) {
     const {subsourceEntry} = loadedSubsource;
     const {subsource} = subsourceEntry;
-    const layerConstructor = detectLayerTypeFromDataSubsource(subsource);
-    if (layerConstructor !== undefined) {
-      return layerConstructor;
-    }
+    guess = getMaxPriorityGuess(guess, detectLayerTypeFromDataSubsource(subsource));
   }
-  return undefined;
+  return guess;
 }
 
 /**
@@ -1723,7 +1740,7 @@ export class NewUserLayer extends UserLayer {
   detectedLayerConstructor: UserLayerConstructor|undefined;
 
   activateDataSubsources(subsources: Iterable<LoadedDataSubsource>) {
-    this.detectedLayerConstructor = detectLayerTypeFromSubsources(subsources);
+    this.detectedLayerConstructor = detectLayerTypeFromSubsources(subsources)?.layerConstructor;
   }
 }
 
@@ -1734,7 +1751,7 @@ export class AutoUserLayer extends UserLayer {
   static type = 'auto';
 
   activateDataSubsources(subsources: Iterable<LoadedDataSubsource>) {
-    const layerConstructor = detectLayerTypeFromSubsources(subsources);
+    const layerConstructor = detectLayerTypeFromSubsources(subsources)?.layerConstructor;
     if (layerConstructor !== undefined) {
       changeLayerType(this.managedLayer, layerConstructor);
     }

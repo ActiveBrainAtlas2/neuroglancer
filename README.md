@@ -35,6 +35,7 @@ Neuroglancer itself is purely a client-side program, but it depends on data bein
 - Single NIfTI files <https://www.nitrc.org/projects/nifti>
 - [Python in-memory volumes](python/README.md) (with automatic mesh generation)
 - N5 <https://github.com/saalfeldlab/n5>
+- [Zarr](src/neuroglancer/datasource/zarr)
 
 # Supported browsers
 
@@ -44,7 +45,7 @@ Neuroglancer itself is purely a client-side program, but it depends on data bein
 # Keyboard and mouse bindings
 
 For the complete set of bindings, see
-[src/neuroglancer/ui/default_input_event_bindings.ts](src/neuroglancer/default_input_event_bindings.ts),
+[src/neuroglancer/ui/default_input_event_bindings.ts](src/neuroglancer/ui/default_input_event_bindings.ts),
 or within Neuroglancer, press `h` or click on the button labeled `?` in the upper right corner.
 
 - Click on a layer name to toggle its visibility.
@@ -155,9 +156,8 @@ There is a Google Group/mailing list for discussion related to Neuroglancer:
 <https://groups.google.com/forum/#!forum/neuroglancer>.
 
 # Related Projects
-
-- [nyroglancer](https://github.com/funkey/nyroglancer) - Jupyter notebook extension for visualizing
-  Numpy arrays with Neuroglancer.
+- [TensorStore](https://github.com/google/tensorstore) - C++ and Python library for efficiently
+  reading and writing multi-dimensional arrays in formats supported by Neuroglancer.
 - [4Quant/neuroglancer-docker](https://github.com/4Quant/neuroglancer-docker) - Example setup for
   Docker deployment of the [Neuroglancer Python integration](python/README.md).
 - [FZJ-INM1-BDA/neuroglancer-scripts](https://github.com/FZJ-INM1-BDA/neuroglancer-scripts) -
@@ -172,7 +172,8 @@ There is a Google Group/mailing list for discussion related to Neuroglancer:
 Want to contribute?  Great!  First, read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 # Acknowledgements
-Cross-browser Testing Platform Provided by [Sauce Labs](https://saucelabs.com)
+[<img src="https://neuroglancer-public-data.storage.googleapis.com/website/powered-by-sauce-labs-gray.svg" alt="Powered by Sauce Labs" width=300 align="center">](https://saucelabs.com)
+Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs](https://saucelabs.com)
 
 # License
 

@@ -31,10 +31,12 @@ import six
 
 from . import local_volume
 from . import skeleton
+from . import segment_colors
 from .equivalence_map import EquivalenceMap
 from .json_utils import encode_json_for_repr
 from .json_wrappers import (JsonObjectWrapper, array_wrapper, optional, text_type, typed_list,
-                            typed_set, typed_string_map, wrapped_property)
+                            typed_map, typed_set, typed_string_map, wrapped_property,
+                            number_or_string)
 
 __all__ = []
 
@@ -410,6 +412,8 @@ class SegmentationLayer(Layer, _AnnotationLayerOptions):
     selected_alpha = selectedAlpha = wrapped_property('selectedAlpha', optional(float, 0.5))
     not_selected_alpha = notSelectedAlpha = wrapped_property('notSelectedAlpha', optional(float, 0))
     object_alpha = objectAlpha = wrapped_property('objectAlpha', optional(float, 1.0))
+    saturation = wrapped_property('saturation', optional(float, 1.0))
+    ignore_null_visible_set = ignoreNullVisibleSet = wrapped_property('ignoreNullVisibleSet', optional(bool, True))
     skeleton_rendering = skeletonRendering = wrapped_property('skeletonRendering', SkeletonRenderingOptions)
 
     @property
@@ -428,6 +432,21 @@ class SegmentationLayer(Layer, _AnnotationLayerOptions):
     mesh_render_scale = meshRenderScale = wrapped_property('meshRenderScale', optional(float, 10))
     mesh_silhouette_rendering = meshSilhouetteRendering = wrapped_property('meshSilhouetteRendering', optional(float, 0))
     segment_query = segmentQuery = wrapped_property('segmentQuery', optional(text_type))
+    segment_colors = segmentColors = wrapped_property(
+        'segmentColors', typed_map(key_type=np.uint64, value_type=text_type))
+
+    @property
+    def segment_html_color_dict(self):
+        """Returns a dictionary whose keys are segments and values are the 6-digit hex
+        strings representing the colors of those segments given the current
+        color seed
+        """
+        d = {}
+        for segment in self.segments:
+            hex_string = segment_colors.hex_string_from_segment_id(color_seed=self.color_seed,
+                                                                   segment_id=segment)
+            d[segment] = hex_string
+        return d
 
     @staticmethod
     def interpolate(a, b, t):
@@ -460,6 +479,7 @@ class AnnotationBase(JsonObjectWrapper):
     type = wrapped_property('type', text_type)
     description = wrapped_property('description', optional(text_type))
     segments = wrapped_property('segments', optional(typed_list(typed_list(np.uint64))))
+    props = wrapped_property('props', optional(typed_list(number_or_string)))
 
 
 @export
@@ -469,7 +489,7 @@ class PointAnnotation(AnnotationBase):
     def __init__(self, *args, **kwargs):
         super(PointAnnotation, self).__init__(*args, type='point', **kwargs)
 
-    point = wrapped_property('point', array_wrapper(np.float32, 3))
+    point = wrapped_property('point', array_wrapper(np.float32))
 
 
 @export
@@ -479,8 +499,8 @@ class LineAnnotation(AnnotationBase):
     def __init__(self, *args, **kwargs):
         super(LineAnnotation, self).__init__(*args, type='line', **kwargs)
 
-    point_a = pointA = wrapped_property('pointA', array_wrapper(np.float32, 3))
-    point_b = pointB = wrapped_property('pointB', array_wrapper(np.float32, 3))
+    point_a = pointA = wrapped_property('pointA', array_wrapper(np.float32))
+    point_b = pointB = wrapped_property('pointB', array_wrapper(np.float32))
 
 
 @export
@@ -491,8 +511,8 @@ class AxisAlignedBoundingBoxAnnotation(AnnotationBase):
         super(AxisAlignedBoundingBoxAnnotation, self).__init__(
             *args, type='axis_aligned_bounding_box', **kwargs)
 
-    point_a = pointA = wrapped_property('pointA', array_wrapper(np.float32, 3))
-    point_b = pointB = wrapped_property('pointB', array_wrapper(np.float32, 3))
+    point_a = pointA = wrapped_property('pointA', array_wrapper(np.float32))
+    point_b = pointB = wrapped_property('pointB', array_wrapper(np.float32))
 
 
 @export
@@ -502,8 +522,8 @@ class EllipsoidAnnotation(AnnotationBase):
     def __init__(self, *args, **kwargs):
         super(EllipsoidAnnotation, self).__init__(*args, type='ellipsoid', **kwargs)
 
-    center = wrapped_property('center', array_wrapper(np.float32, 3))
-    radii = wrapped_property('radii', array_wrapper(np.float32, 3))
+    center = wrapped_property('center', array_wrapper(np.float32))
+    radii = wrapped_property('radii', array_wrapper(np.float32))
 
 
 annotation_types = {
@@ -525,6 +545,13 @@ def annotation(obj, _readonly=False):
 
 annotation.supports_readonly = True
 
+@export
+class AnnotationPropertySpec(JsonObjectWrapper):
+    __slots__ = ()
+    id = wrapped_property('id', text_type)
+    type = wrapped_property('type', text_type)
+    description = wrapped_property('description', optional(text_type))
+    default = wrapped_property('default', optional(number_or_string))
 
 @export
 class AnnotationLayer(Layer, _AnnotationLayerOptions):
@@ -535,6 +562,8 @@ class AnnotationLayer(Layer, _AnnotationLayerOptions):
 
     source = wrapped_property('source', LayerDataSources)
     annotations = wrapped_property('annotations', typed_list(annotation))
+    annotation_properties = annotationProperties = wrapped_property('annotationProperties', typed_list(AnnotationPropertySpec))
+    annotation_relationships = annotationRelationships = wrapped_property('annotationRelationships', typed_list(text_type))
     linked_segmentation_layer = linkedSegmentationLayer = wrapped_property('linkedSegmentationLayer', typed_string_map(text_type))
     filter_by_segmentation = filterBySegmentation = wrapped_property('filterBySegmentation', typed_list(text_type))
     ignore_null_segment_filter = ignoreNullSegmentFilter = wrapped_property('ignoreNullSegmentFilter', optional(bool, True))
@@ -613,7 +642,7 @@ class ManagedLayer(JsonObjectWrapper):
         object.__setattr__(self, 'layer', layer)
         super(ManagedLayer, self).__init__(json_data, _readonly=_readonly, **kwargs)
 
-    visible = wrapped_property('visible', optional(bool))
+    visible = wrapped_property('visible', optional(bool, True))
 
     def __getattr__(self, key):
         return getattr(self.layer, key)
@@ -634,8 +663,10 @@ class ManagedLayer(JsonObjectWrapper):
         r = self.layer.to_json()
         r['name'] = self.name
         visible = self.visible
-        if visible is not None:
-            r['visible'] = visible
+        if visible:
+            r.pop('visible', None)
+        else:
+            r['visible'] = False
         return r
 
     def __deepcopy__(self, memo):
@@ -885,7 +916,7 @@ def data_panel_layout_wrapper(default_value='xy'):
     return wrapper
 
 
-data_panel_layout_types = frozenset(['xy', 'yz', 'yz', 'xy-3d', 'yz-3d', 'yz-3d', '4panel', '3d'])
+data_panel_layout_types = frozenset(['xy', 'yz', 'xz', 'xy-3d', 'yz-3d', 'xz-3d', '4panel', '3d'])
 
 
 def layout_specification(x, _readonly=False):
@@ -1020,8 +1051,8 @@ class StatisticsDisplayState(JsonObjectWrapper):
 class ViewerState(JsonObjectWrapper):
     __slots__ = ()
     dimensions = wrapped_property('dimensions', CoordinateSpace)
-    dimensionRenderScales = dimension_render_scales = wrapped_property('dimensionRenderScales', optional(typed_string_map(float)))
-    render_dimensions = renderDimensions = wrapped_property('renderDimensions', optional(typed_list(text_type)))
+    relative_display_scales = relativeDisplayScales = wrapped_property('relativeDisplayScales', optional(typed_string_map(float)))
+    display_dimensions = displayDimensions = wrapped_property('displayDimensions', optional(typed_list(text_type)))
     position = voxel_coordinates = wrapped_property('position', optional(array_wrapper(np.float32)))
     cross_section_orientation = crossSectionOrientation = wrapped_property(
         'crossSectionOrientation', optional(array_wrapper(np.float32, 4)))
@@ -1047,6 +1078,9 @@ class ViewerState(JsonObjectWrapper):
         'projectionBackgroundColor', optional(text_type))
     selected_layer = selectedLayer = wrapped_property('selectedLayer', SelectedLayerState)
     statistics = wrapped_property('statistics', StatisticsDisplayState)
+    partial_viewport = partialViewport = wrapped_property(
+        'partialViewport',
+        optional(array_wrapper(np.float64, 4), np.array([0, 0, 1, 1], dtype=np.float64)))
 
     @staticmethod
     def interpolate(a, b, t):

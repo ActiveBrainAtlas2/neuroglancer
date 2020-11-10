@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AnnotationPropertySpec, annotationPropertyTypeHandlers, AnnotationType, makeDataBoundsBoundingBoxAnnotationSet} from 'neuroglancer/annotation';
+import {AnnotationPropertySpec, AnnotationType, ensureUniqueAnnotationPropertyIds, makeDataBoundsBoundingBoxAnnotationSet, parseAnnotationPropertyId, parseAnnotationPropertyType} from 'neuroglancer/annotation';
 import {AnnotationGeometryChunkSpecification} from 'neuroglancer/annotation/base';
 import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
 import {AnnotationGeometryChunkSource} from 'neuroglancer/annotation/frontend_source';
@@ -36,7 +36,7 @@ import {transposeNestedArrays} from 'neuroglancer/util/array';
 import {Borrowed} from 'neuroglancer/util/disposable';
 import {mat4, vec3} from 'neuroglancer/util/geom';
 import {completeHttpPath} from 'neuroglancer/util/http_path_completion';
-import {fetchOk, HttpError, parseSpecialUrl} from 'neuroglancer/util/http_request';
+import {fetchSpecialOk, isNotFoundError} from 'neuroglancer/util/http_request';
 import {parseArray, parseFixedLengthArray, parseQueryStringParameters, unparseQueryStringParameters, verifyEnumString, verifyFiniteFloat, verifyFinitePositiveFloat, verifyInt, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyOptionalString, verifyPositiveInt, verifyString, verifyStringArray} from 'neuroglancer/util/json';
 import * as matrix from 'neuroglancer/util/matrix';
 
@@ -331,7 +331,7 @@ async function getMeshMetadata(
   try {
     metadata = await getJsonMetadata(chunkManager, url);
   } catch (e) {
-    if (e instanceof HttpError && (e.status === 404 || e.status === 403)) {
+    if (isNotFoundError(e)) {
       // If we fail to fetch the info file, assume it is the legacy
       // single-resolution mesh format.
       return {metadata: undefined};
@@ -458,9 +458,8 @@ async function getSkeletonSource(chunkManager: ChunkManager, url: string) {
 }
 
 function getJsonMetadata(chunkManager: ChunkManager, url: string): Promise<any> {
-  url = parseSpecialUrl(url);
   return chunkManager.memoize.getUncounted({'type': 'precomputed:metadata', url}, async () => {
-    const response = await fetchOk(`${url}/info`);
+    const response = await fetchSpecialOk(`${url}/info`);
     return response.json();
   });
 }
@@ -475,11 +474,9 @@ function getSubsourceToModelSubspaceTransform(info: MultiscaleVolumeInfo) {
 }
 
 async function getVolumeDataSource(
-    options: GetDataSourceOptions, url: string, normalizedUrl: string,
-    metadata: any): Promise<DataSource> {
+    options: GetDataSourceOptions, url: string, metadata: any): Promise<DataSource> {
   const info = parseMultiscaleVolumeInfo(metadata);
-  const volume =
-      new PrecomputedMultiscaleVolumeChunkSource(options.chunkManager, normalizedUrl, info);
+  const volume = new PrecomputedMultiscaleVolumeChunkSource(options.chunkManager, url, info);
   const {modelSpace} = info;
   const subsources: DataSubsourceEntry[] = [
     {
@@ -497,10 +494,8 @@ async function getVolumeDataSource(
   ];
   if (info.segmentPropertyMap !== undefined) {
     const mapUrl = resolvePath(url, info.segmentPropertyMap);
-    const normalizedMapUrl = parseSpecialUrl(mapUrl);
-    const metadata = await getJsonMetadata(options.chunkManager, normalizedMapUrl);
-    const segmentPropertyMap =
-        getSegmentPropertyMap(options.chunkManager, metadata, normalizedMapUrl);
+    const metadata = await getJsonMetadata(options.chunkManager, mapUrl);
+    const segmentPropertyMap = getSegmentPropertyMap(options.chunkManager, metadata, mapUrl);
     subsources.push({
       id: 'properties',
       default: true,
@@ -509,8 +504,7 @@ async function getVolumeDataSource(
   }
   if (info.mesh !== undefined) {
     const meshUrl = resolvePath(url, info.mesh);
-    const {source: meshSource, transform} =
-        await getMeshSource(options.chunkManager, parseSpecialUrl(meshUrl));
+    const {source: meshSource, transform} = await getMeshSource(options.chunkManager, meshUrl);
     const subsourceToModelSubspaceTransform = getSubsourceToModelSubspaceTransform(info);
     mat4.multiply(subsourceToModelSubspaceTransform, subsourceToModelSubspaceTransform, transform);
     subsources.push({
@@ -523,7 +517,7 @@ async function getVolumeDataSource(
   if (info.skeletons !== undefined) {
     const skeletonsUrl = resolvePath(url, info.skeletons);
     const {source: skeletonSource, transform} =
-        await getSkeletonSource(options.chunkManager, parseSpecialUrl(skeletonsUrl));
+        await getSkeletonSource(options.chunkManager, skeletonsUrl);
     const subsourceToModelSubspaceTransform = getSubsourceToModelSubspaceTransform(info);
     mat4.multiply(subsourceToModelSubspaceTransform, subsourceToModelSubspaceTransform, transform);
     subsources.push({
@@ -550,10 +544,8 @@ async function getSkeletonsDataSource(
   ];
   if (segmentPropertyMap !== undefined) {
     const mapUrl = resolvePath(url, segmentPropertyMap);
-    const normalizedMapUrl = parseSpecialUrl(mapUrl);
-    const metadata = await getJsonMetadata(options.chunkManager, normalizedMapUrl);
-    const segmentPropertyMapData =
-        getSegmentPropertyMap(options.chunkManager, metadata, normalizedMapUrl);
+    const metadata = await getJsonMetadata(options.chunkManager, mapUrl);
+    const segmentPropertyMapData = getSegmentPropertyMap(options.chunkManager, metadata, mapUrl);
     subsources.push({
       id: 'properties',
       default: true,
@@ -574,36 +566,18 @@ function parseKeyAndShardingSpec(url: string, obj: any) {
   };
 }
 
-function parseAnnotationProperty(obj: unknown): AnnotationPropertySpec {
+function parseAnnotationPropertySpec(obj: unknown): AnnotationPropertySpec {
   verifyObject(obj);
-  const identifier = verifyObjectProperty(obj, 'id', idJson => {
-    const s = verifyString(idJson);
-    if (s.match(/^[a-z][a-zA-Z0-9_]*$/) === null) {
-      throw new Error(`Invalid property identifier: ${JSON.stringify(idJson)}`);
-    }
-    return s;
-  });
-  const type = verifyObjectProperty(obj, 'type', tJson => {
-                 verifyString(tJson);
-                 if (!Object.prototype.hasOwnProperty.call(annotationPropertyTypeHandlers, tJson)) {
-                   throw new Error(`Unsupported property type: $JSON.stringify(tJson)}`);
-                 }
-                 return tJson;
-               }) as AnnotationPropertySpec['type'];
+  const identifier = verifyObjectProperty(obj, 'id', parseAnnotationPropertyId);
+  const type = verifyObjectProperty(obj, 'type', parseAnnotationPropertyType);
   const description = verifyOptionalObjectProperty(obj, 'description', verifyString);
   let defaultValue = 0;
   return {type, identifier, description, default: defaultValue} as AnnotationPropertySpec;
 }
 
-function parseAnnotationProperties(obj: unknown) {
-  const properties = parseArray(obj, parseAnnotationProperty);
-  const ids = new Set<string>();
-  for (const p of properties) {
-    if (ids.has(p.identifier)) {
-      throw new Error(`Duplicate property identifier: ${p.identifier}`);
-    }
-    ids.add(p.identifier);
-  }
+function parseAnnotationPropertySpecs(obj: unknown) {
+  const properties = parseArray(obj, parseAnnotationPropertySpec);
+  ensureUniqueAnnotationPropertyIds(properties);
   return properties;
 }
 
@@ -648,7 +622,7 @@ class AnnotationMetadata {
                 const name = verifyObjectProperty(relObj, 'id', verifyString);
                 return {...common, name};
               })),
-      properties: verifyObjectProperty(metadata, 'properties', parseAnnotationProperties),
+      properties: verifyObjectProperty(metadata, 'properties', parseAnnotationPropertySpecs),
       byId: verifyObjectProperty(metadata, 'by_id', obj => parseKeyAndShardingSpec(url, obj)),
     };
     this.spatialIndices = verifyObjectProperty(
@@ -725,10 +699,8 @@ async function getMeshDataSource(options: GetDataSourceOptions, url: string): Pr
   ];
   if (segmentPropertyMap !== undefined) {
     const mapUrl = resolvePath(url, segmentPropertyMap);
-    const normalizedMapUrl = parseSpecialUrl(mapUrl);
-    const metadata = await getJsonMetadata(options.chunkManager, normalizedMapUrl);
-    const segmentPropertyMapData =
-        getSegmentPropertyMap(options.chunkManager, metadata, normalizedMapUrl);
+    const metadata = await getJsonMetadata(options.chunkManager, mapUrl);
+    const segmentPropertyMapData = getSegmentPropertyMap(options.chunkManager, metadata, mapUrl);
     subsources.push({
       id: 'properties',
       default: true,
@@ -813,7 +785,7 @@ function getSegmentPropertyMap(
 }
 
 async function getSegmentPropertyMapDataSource(
-    options: GetDataSourceOptions, normalizedUrl: string, metadata: unknown): Promise<DataSource> {
+    options: GetDataSourceOptions, url: string, metadata: unknown): Promise<DataSource> {
   options;
   return {
     modelTransform: makeIdentityTransform(emptyValidCoordinateSpace),
@@ -821,9 +793,7 @@ async function getSegmentPropertyMapDataSource(
       {
         id: 'default',
         default: true,
-        subsource: {
-          segmentPropertyMap: getSegmentPropertyMap(options.chunkManager, metadata, normalizedUrl)
-        },
+        subsource: {segmentPropertyMap: getSegmentPropertyMap(options.chunkManager, metadata, url)},
       },
     ],
   };
@@ -870,14 +840,13 @@ export class PrecomputedDataSource extends DataSourceProvider {
     const {url, parameters} = parseProviderUrl(options.providerUrl);
     return options.chunkManager.memoize.getUncounted(
         {'type': 'precomputed:get', url}, async(): Promise<DataSource> => {
-          const normalizedUrl = parseSpecialUrl(url);
           let metadata: any;
           try {
-            metadata = await getJsonMetadata(options.chunkManager, normalizedUrl);
+            metadata = await getJsonMetadata(options.chunkManager, url);
           } catch (e) {
-            if (e instanceof HttpError && e.status === 404) {
+            if (isNotFoundError(e)) {
               if (parameters['type'] === 'mesh') {
-                return await getMeshDataSource(options, normalizedUrl);
+                return await getMeshDataSource(options, url);
               }
             }
             throw e;
@@ -890,17 +859,17 @@ export class PrecomputedDataSource extends DataSourceProvider {
           const t = verifyOptionalObjectProperty(metadata, '@type', verifyString);
           switch (t) {
             case 'neuroglancer_skeletons':
-              return await getSkeletonsDataSource(options, normalizedUrl);
+              return await getSkeletonsDataSource(options, url);
             case 'neuroglancer_multilod_draco':
             case 'neuroglancer_legacy_mesh':
-              return await getMeshDataSource(options, normalizedUrl);
+              return await getMeshDataSource(options, url);
             case 'neuroglancer_annotations_v1':
-              return await getAnnotationDataSource(options, normalizedUrl, metadata);
+              return await getAnnotationDataSource(options, url, metadata);
             case 'neuroglancer_segment_properties':
-              return await getSegmentPropertyMapDataSource(options, normalizedUrl, metadata);
+              return await getSegmentPropertyMapDataSource(options, url, metadata);
             case 'neuroglancer_multiscale_volume':
             case undefined:
-              return await getVolumeDataSource(options, url, normalizedUrl, metadata);
+              return await getVolumeDataSource(options, url, metadata);
             default:
               throw new Error(`Invalid type: ${JSON.stringify(t)}`);
           }

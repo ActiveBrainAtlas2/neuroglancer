@@ -84,14 +84,6 @@ class PythonMeshSource extends
 export function computeNearIsotropicDownsamplingLevels(
     shape: Float32Array, downsampleDims: readonly number[], effectiveVoxelSize: Float32Array,
     maxDownsampling: number, maxDownsamplingScales: number, maxDownsampledSize: number) {
-  console.log({
-    shape,
-    downsampleDims,
-    effectiveVoxelSize,
-    maxDownsampling,
-    maxDownsamplingScales,
-    maxDownsampledSize
-  });
   const rank = shape.length;
   const curDownsampleFactors = new Float32Array(rank);
   curDownsampleFactors.fill(1);
@@ -348,7 +340,7 @@ function getVolumeDataSource(
     dataSourceProvider: PythonDataSource, options: GetDataSourceOptions, key: string) {
   return options.chunkManager.memoize.getUncounted(
       {'type': 'python:VolumeDataSource', key}, async () => {
-        const response = await (await fetchOk(`/neuroglancer/info/${key}`)).json();
+        const response = await (await fetchOk(`../../neuroglancer/info/${key}`)).json();
         const volume = new PythonMultiscaleVolumeChunkSource(
             dataSourceProvider, options.chunkManager, key, response);
         const dataSource: DataSource = {
@@ -399,7 +391,7 @@ function getSkeletonDataSource(
     dataSourceProvider: PythonDataSource, options: GetDataSourceOptions, key: string) {
   return options.chunkManager.memoize.getUncounted(
       {'type': 'python:SkeletonDataSource', key}, async () => {
-        const response = await (await fetchOk(`/neuroglancer/skeletoninfo/${key}`)).json();
+        const response = await (await fetchOk(`../../neuroglancer/skeletoninfo/${key}`)).json();
         const {baseModelSpace, subsourceToModelTransform} =
             parseCoordinateSpaceAndVoxelOffset(response);
         const vertexAttributes = verifyObjectProperty(

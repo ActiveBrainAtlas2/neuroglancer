@@ -78,6 +78,14 @@ const DEFAULT_DATA_SOURCES = exports.DEFAULT_DATA_SOURCES = [
     source: 'neuroglancer/datasource/n5',
     asyncComputation: [
       'neuroglancer/async_computation/decode_gzip',
+      'neuroglancer/async_computation/decode_blosc',
+    ],
+  },
+  {
+    source: 'neuroglancer/datasource/zarr',
+    asyncComputation: [
+      'neuroglancer/async_computation/decode_gzip',
+      'neuroglancer/async_computation/decode_blosc',
     ],
   },
   // 'neuroglancer/datasource/computed',
@@ -87,6 +95,12 @@ const DEFAULT_DATA_SOURCES = exports.DEFAULT_DATA_SOURCES = [
     source: 'neuroglancer/datasource/vtk',
     asyncComputation: [
       'neuroglancer/async_computation/vtk_mesh',
+    ],
+  },
+  {
+    source: 'neuroglancer/datasource/obj',
+    asyncComputation: [
+      'neuroglancer/async_computation/obj_mesh',
     ],
   },
 ];
@@ -397,10 +411,12 @@ function getViewerConfig(options) {
             ...extraFrontendPlugins,
             ...commonPlugins,
             ...extraCommonPlugins,
-            new CopyWebpackPlugin([{
-              from: resolveReal(srcDir, 'neuroglancer/datasource/boss/bossauth.html'),
-              to: 'bossauth.html'
-            }]),
+            new CopyWebpackPlugin({
+              patterns: [{
+                from: resolveReal(srcDir, 'neuroglancer/datasource/boss/bossauth.html'),
+                to: 'bossauth.html'
+              }],
+            }),
           ],
         },
         baseConfig),

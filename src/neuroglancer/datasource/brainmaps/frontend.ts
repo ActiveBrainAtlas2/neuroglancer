@@ -623,8 +623,7 @@ export class BrainmapsDataSource extends DataSourceProvider {
         parameters, 'encoding', x => verifyEnumString(x, VolumeChunkEncoding));
     const chunkLayoutPreference = verifyOptionalObjectProperty(
         parameters, 'chunkLayout', x => verifyEnumString(x, ChunkLayoutPreference));
-    const brainmapsOptions:
-        GetBrainmapsVolumeOptions = {...options, encoding, chunkLayoutPreference};
+    const brainmapsOptions: GetBrainmapsVolumeOptions = {encoding, chunkLayoutPreference};
     return options.chunkManager.memoize.getUncounted(
         {type: 'brainmaps:get', instance: this.instance, volumeId, changeSpec, brainmapsOptions},
         async () => {
@@ -732,6 +731,7 @@ export class BrainmapsDataSource extends DataSourceProvider {
             dataSource.subsources.push({
               id: 'spatials',
               default: true,
+              modelSubspaceDimensionIndices: [0, 1, 2],
               subsource: {
                 annotation: options.chunkManager.getChunkSource(BrainmapsAnnotationSource, {
                   parameters: {

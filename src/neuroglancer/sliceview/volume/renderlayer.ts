@@ -30,6 +30,8 @@ import {mat4, vec3} from 'neuroglancer/util/geom';
 import {getObjectId} from 'neuroglancer/util/object_id';
 import {GL} from 'neuroglancer/webgl/context';
 import {makeWatchableShaderError, ParameterizedContextDependentShaderGetter, parameterizedContextDependentShaderGetter, ParameterizedShaderGetterResult, WatchableShaderError} from 'neuroglancer/webgl/dynamic_shader';
+import {HistogramChannelSpecification} from 'neuroglancer/webgl/empirical_cdf';
+import {defineInvlerpShaderFunction, enableLerpShaderFunction} from 'neuroglancer/webgl/lerp';
 import {defineLineShader, drawLines, initializeLineShader, VERTICES_PER_LINE} from 'neuroglancer/webgl/lines';
 import {ShaderBuilder, ShaderProgram} from 'neuroglancer/webgl/shader';
 import {defineVertexId, VertexIdHelper} from 'neuroglancer/webgl/vertex_id';
@@ -87,9 +89,14 @@ emit(vec4(1.0, 1.0, 1.0, getLineAlpha()));
   // Position within chunk of vertex, in floating point range [0, chunkDataSize].
   builder.addVarying('highp vec3', 'vChunkPosition');
 
+  // Set gl_Position.z = 0 since we use the depth buffer as a stencil buffer to avoid overwriting
+  // higher-resolution data with lower-resolution data.  The depth buffer is used rather than the
+  // stencil buffer because for computing data distributions we need to read from it, and WebGL2
+  // does not support reading from the stencil component of a depth-stencil texture.
   builder.setVertexMain(`
 vec3 position = getBoundingBoxPlaneIntersectionVertexPosition(uChunkDataSize, uTranslation, uLowerClipBound, uUpperClipBound, gl_VertexID);
 gl_Position = uProjectionMatrix * vec4(position, 1.0);
+gl_Position.z = 0.0;
 vChunkPosition = (position - uTranslation) +
     ${CHUNK_POSITION_EPSILON} * abs(uPlaneNormal);
 `);
@@ -210,14 +217,21 @@ function medianOf3(a: number, b: number, c: number) {
   return a > b ? (c > a ? a : (b > c ? b : c)) : (c > b ? b : (a > c ? a : c));
 }
 
+interface ShaderContext {
+  numChannelDimensions: number;
+  dataHistogramChannelSpecifications: HistogramChannelSpecification[];
+}
+
 export abstract class SliceViewVolumeRenderLayer<ShaderParameters = any> extends
     SliceViewRenderLayer<VolumeChunkSource, VolumeSourceOptions> {
   multiscaleSource: MultiscaleVolumeChunkSource;
-  protected shaderGetter:
-      ParameterizedContextDependentShaderGetter<ChunkFormat|null, ShaderParameters, number>;
+  protected shaderGetter: ParameterizedContextDependentShaderGetter<
+      {chunkFormat: ChunkFormat | null, dataHistogramsEnabled: boolean}, ShaderParameters,
+      ShaderContext>;
   private tempChunkPosition: Float32Array;
   shaderParameters: WatchableValueInterface<ShaderParameters>;
   private vertexIdHelper: VertexIdHelper;
+
   constructor(
       multiscaleSource: MultiscaleVolumeChunkSource,
       options: RenderLayerOptions<ShaderParameters>) {
@@ -232,20 +246,26 @@ export abstract class SliceViewVolumeRenderLayer<ShaderParameters = any> extends
         channelCoordinateSpace;
     this.registerDisposer(shaderParameters.changed.add(this.redrawNeeded.dispatch));
     // The shader depends on the `ChunkFormat` (which is a property of the `VolumeChunkSource`), the
-    // `ShaderParameters` (which are determined by the derived RenderLayer class), and the number of
-    // channel dimensions.
-    const numChannelDimensions = this.registerDisposer(
-        makeCachedDerivedWatchableValue(space => space.rank, [this.channelCoordinateSpace]));
+    // `ShaderParameters` (which are determined by the derived RenderLayer class), the number of
+    // channel dimensions, and the data histogram channel specifications.
+    const extraParameters = this.registerDisposer(makeCachedDerivedWatchableValue(
+        (space: CoordinateSpace,
+         dataHistogramChannelSpecifications: HistogramChannelSpecification[]) =>
+            ({numChannelDimensions: space.rank, dataHistogramChannelSpecifications}),
+        [this.channelCoordinateSpace, this.dataHistogramSpecifications.channels]));
     this.shaderGetter = parameterizedContextDependentShaderGetter(this, gl, {
       memoizeKey: `volume/RenderLayer:${getObjectId(this.constructor)}`,
       fallbackParameters: options.fallbackShaderParameters,
       parameters: shaderParameters,
       encodeParameters: options.encodeShaderParameters,
       shaderError,
-      extraParameters: numChannelDimensions,
+      extraParameters,
       defineShader: (
-          builder: ShaderBuilder, chunkFormat: ChunkFormat|null, parameters: ShaderParameters,
-          numChannelDimensions: number) => {
+          builder: ShaderBuilder,
+          context: {chunkFormat: ChunkFormat|null, dataHistogramsEnabled: boolean},
+          parameters: ShaderParameters, extraParameters: ShaderContext) => {
+        const {chunkFormat, dataHistogramsEnabled} = context;
+        const {dataHistogramChannelSpecifications, numChannelDimensions} = extraParameters;
         defineVolumeShader(builder, chunkFormat === null);
         builder.addOutputBuffer('vec4', 'v4f_fragData0', 0);
         builder.addFragmentCode(`
@@ -257,9 +277,42 @@ void emit(vec4 color) {
           return;
         }
         defineChunkDataShaderAccess(builder, chunkFormat, numChannelDimensions, `vChunkPosition`);
+        const numHistograms = dataHistogramChannelSpecifications.length;
+        if (dataHistogramsEnabled && numHistograms > 0) {
+          let histogramCollectionCode = '';
+          const {dataType} = chunkFormat;
+          for (let i = 0; i < numHistograms; ++i) {
+            const {channel} = dataHistogramChannelSpecifications[i];
+            const outputName = `out_histogram${i}`;
+            builder.addOutputBuffer('vec4', outputName, 1 + i);
+            const getDataValueExpr = `getDataValue(${channel.join(',')})`;
+            const invlerpName = `invlerpForHistogram${i}`;
+            builder.addFragmentCode(
+                defineInvlerpShaderFunction(builder, invlerpName, dataType, /*clamp=*/ false));
+            builder.addFragmentCode(`
+float getHistogramValue${i}() {
+  return invlerpForHistogram${i}(${getDataValueExpr});
+}
+`);
+            histogramCollectionCode += `{
+float x = getHistogramValue${i}();
+if (x < 0.0) x = 0.0;
+else if (x > 1.0) x = 1.0;
+else x = (1.0 + x * 253.0) / 255.0;
+${outputName} = vec4(x, x, x, 1.0);
+}`;
+          }
+          builder.addFragmentCode(`void userMain();
+void main() {
+  ${histogramCollectionCode}
+  userMain();
+}
+#define main userMain\n`);
+        }
         this.defineShader(builder, parameters);
       },
-      getContextKey: context => context === null ? null : context.shaderKey,
+      getContextKey: context =>
+          `${context.chunkFormat?.shaderKey}/${context.dataHistogramsEnabled}`,
     });
     this.tempChunkPosition = new Float32Array(multiscaleSource.rank);
     this.initializeCounterpart();
@@ -288,15 +341,25 @@ void emit(vec4 color) {
   beginChunkFormat(
       sliceView: SliceView, chunkFormat: ChunkFormat|null,
       projectionParameters: ProjectionParameters):
-      ParameterizedShaderGetterResult<ShaderParameters, number> {
+      ParameterizedShaderGetterResult<ShaderParameters, ShaderContext> {
     const {gl} = this;
-    const shaderResult = this.shaderGetter(chunkFormat);
+    const dataHistogramsEnabled = this.dataHistogramSpecifications.visibility.visible;
+    const shaderResult = this.shaderGetter({chunkFormat, dataHistogramsEnabled});
     const {shader, parameters, fallback} = shaderResult;
     if (shader !== null) {
       shader.bind();
       initializeShader(shader, projectionParameters, chunkFormat === null);
       if (chunkFormat !== null) {
+        if (dataHistogramsEnabled) {
+          const {dataHistogramChannelSpecifications} = shaderResult.extraParameters;
+          const numHistograms = dataHistogramChannelSpecifications.length;
+          const bounds = this.dataHistogramSpecifications.bounds.value;
+          for (let i = 0; i < numHistograms; ++i) {
+            enableLerpShaderFunction(shader, `invlerpForHistogram${i}`, chunkFormat.dataType, bounds[i]);
+          }
+        }
         this.initializeShader(sliceView, shader, parameters, fallback);
+        // FIXME: may need to fix wire frame rendering
         chunkFormat.beginDrawing(gl, shader);
       }
     }
@@ -337,7 +400,7 @@ void emit(vec4 color) {
           this.chunkManager.chunkQueueManager.frameNumberCounter.frameNumber);
     }
 
-    let shaderResult: ParameterizedShaderGetterResult<ShaderParameters, number>;
+    let shaderResult: ParameterizedShaderGetterResult<ShaderParameters, ShaderContext>;
     let shader: ShaderProgram|null = null;
     let prevChunkFormat: ChunkFormat|undefined|null;
     // Size of chunk (in voxels) in the "display" subspace of the chunk coordinate space.
@@ -385,7 +448,7 @@ void emit(vec4 color) {
       }
       newSource = true;
       let presentCount = 0, notPresentCount = 0;
-      sliceView.forEachVisibleChunk(transformedSource, key => {
+      sliceView.forEachVisibleChunk(transformedSource, chunkLayout, key => {
         let chunk = chunks.get(key);
         if (chunk && chunk.state === ChunkState.GPU_MEMORY) {
           let newChunkDataSize = chunk.chunkDataSize;
@@ -431,5 +494,11 @@ void emit(vec4 color) {
     }
     endShader();
     this.vertexIdHelper.disable();
+    if (!renderContext.wireFrame) {
+      const dataHistogramCount = this.getDataHistogramCount();
+      if (dataHistogramCount > 0) {
+        sliceView.computeHistograms(dataHistogramCount, this.dataHistogramSpecifications);
+      }
+    }
   }
 }

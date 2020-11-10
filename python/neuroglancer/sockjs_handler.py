@@ -135,12 +135,13 @@ class SockJSHandler(sockjs.tornado.SockJSConnection):
                 dict(key='s', state=viewer.shared_state, send_updates=True, receive_updates=True))
 
         self._state_handlers = dict()
-        from .default_credentials_manager import default_credentials_manager
-        self._credentials_handler = ClientCredentialsHandler(io_loop=self.io_loop,
-                                                             private_state=private_state,
-                                                             config_state=viewer.config_state,
-                                                             credentials_manager=default_credentials_manager)
-        self._next_action_id = 0
+        if viewer.allow_credentials:
+            from .default_credentials_manager import default_credentials_manager
+            self._credentials_handler = ClientCredentialsHandler(
+                io_loop=self.io_loop,
+                private_state=private_state,
+                config_state=viewer.config_state,
+                credentials_manager=default_credentials_manager)
 
         def make_state_handler(key, state, send_updates, receive_updates):
             def send_update(raw_state, generation):
@@ -176,19 +177,6 @@ class SockJSHandler(sockjs.tornado.SockJSConnection):
                     handler = self._state_handlers[message['k']]
                     handler.receive_update(message['s'], six.text_type(message['g']))
                     return
-                if t == 'action':
-                    new_next_action_id = int(message['id']) + 1
-                    next_action_id = self._next_action_id
-                    self._next_action_id = new_next_action_id
-                    max_actions = new_next_action_id - next_action_id
-                    actions = message['actions']
-                    if max_actions == 0:
-                        actions = []
-                    else:
-                        actions = actions[-max_actions:]
-                    self.io_loop.add_callback(self.send, json.dumps({'t': 'ackAction', 'id': message['id']}))
-                    for i, action in enumerate(actions):
-                        self.io_loop.add_callback(self.viewer.actions.invoke, action['action'], action['state'])
         except:
             # import pdb
             # pdb.post_mortem()
@@ -202,5 +190,6 @@ class SockJSHandler(sockjs.tornado.SockJSConnection):
         if viewer is not None:
             for state_handler in six.itervalues(self._state_handlers):
                 state_handler.close()
-            self._credentials_handler.close()
+            if self._credentials_handler is not None:
+                self._credentials_handler.close()
         del self._state_handlers

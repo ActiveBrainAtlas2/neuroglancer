@@ -17,12 +17,63 @@
 from __future__ import absolute_import
 
 import time
+import threading
 
 class Webdriver(object):
 
-    def __init__(self, viewer=None, headless=True, window_size=(1920, 1080)):
+    def __init__(self,
+                 viewer=None,
+                 headless=True,
+                 window_size=(1920, 1080),
+                 debug=False,
+                 docker=False,
+                 print_logs=True):
+        if viewer is None:
+            from .viewer import Viewer
+            viewer = Viewer()
+        self.viewer = viewer
+        self.headless = headless
+        self.window_size = window_size
+        self.headless = headless
+        self.docker = docker
+        self.debug = debug
+        self._init_driver()
+        self._pending_logs = []
+        self._pending_logs_to_print = []
+        self._logs_lock = threading.Lock()
+        self._closed = False
+        def print_log_handler():
+            while True:
+                logs_to_print = self._get_logs_to_print()
+                if logs_to_print:
+                    print('\n'.join(x['message'] for x in logs_to_print))
+                if self._closed:
+                    break
+                time.sleep(1)
+        t = threading.Thread(target = print_log_handler)
+        t.daemon = True
+        t.start()
+
+    def _init_driver(self):
         import selenium.webdriver
         import selenium.webdriver.chrome.options
+        import selenium.webdriver.common.service
+        import selenium.webdriver.chrome.service
+
+        def patched_init(self, executable_path, port=0, service_args=None, log_path=None, env=None):
+            log_path = '/dev/stderr'
+            self.service_args = service_args or []
+            if log_path:
+                self.service_args.append('--log-path=%s' % log_path)
+            selenium.webdriver.common.service.Service.__init__(
+                self,
+                executable_path,
+                port=port,
+                env=env,
+                log_file=None,
+                start_error_message=
+                "Please see https://sites.google.com/a/chromium.org/chromedriver/home")
+
         import selenium.webdriver.common.desired_capabilities
         try:
             # Use chromedriver_binary package if available
@@ -30,27 +81,57 @@ class Webdriver(object):
         except ImportError:
             # Fallback to system chromedriver
             pass
-        if viewer is None:
-            from .viewer import Viewer
-            viewer = Viewer()
-        self.viewer = viewer
         chrome_options = selenium.webdriver.chrome.options.Options()
-        if headless:
+        if self.headless:
             chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--window_size=%dx%d' % (window_size[0], window_size[1]))
+        if self.docker:
+            # https://www.intricatecloud.io/2019/05/running-webdriverio-tests-using-headless-chrome-inside-a-container/
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument('--disable-gpu')
+            chrome_options.add_argument('--disable-setuid-sandbox')
+            chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--window_size=%dx%d' %
+                                    (self.window_size[0], self.window_size[1]))
         caps = selenium.webdriver.common.desired_capabilities.DesiredCapabilities.CHROME.copy()
         caps['goog:loggingPrefs'] = {'browser': 'ALL'}
-        self.driver = selenium.webdriver.Chrome(options=chrome_options, desired_capabilities=caps)
-        self.driver.get(viewer.get_viewer_url())
+        try:
+            orig_init = selenium.webdriver.chrome.service.Service.__init__
+            if self.debug:
+                selenium.webdriver.chrome.service.Service.__init__ = patched_init
+            self.driver = selenium.webdriver.Chrome(options=chrome_options, desired_capabilities=caps)
+        finally:
+            if self.debug:
+                selenium.webdriver.chrome.service.Service.__init__ = orig_init
+        self.driver.get(self.viewer.get_viewer_url())
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.driver.close()
+        self.driver.quit()
+        self._closed = True
+
+    def _get_new_logs(self):
+        new_logs = self.driver.get_log('browser')
+        self._pending_logs.extend(new_logs)
+        self._pending_logs_to_print.extend(new_logs)
+
+    def _get_logs_to_print(self):
+        with self._logs_lock:
+            self._get_new_logs()
+            new_logs = self._pending_logs_to_print
+            self._pending_logs_to_print = []
+            return new_logs
 
     def get_log(self):
-        return self.driver.get_log('browser')
+        with self._logs_lock:
+            self._get_new_logs()
+            new_logs = self._pending_logs
+            self._pending_logs = []
+            return new_logs
+
+    def get_log_messages(self):
+        return '\n'.join(x['message'] for x in self.get_log())
 
     def sync(self):
         """Wait until client is ready."""
@@ -61,6 +142,15 @@ class Webdriver(object):
             if new_state == self.viewer.state:
                 return new_state
             time.sleep(0.1)
+
+    def reload_browser(self):
+        """Reloads the browser (useful if it crashes/becomes unresponsive)."""
+        with self._logs_lock:
+            try:
+                self.driver.quit()
+            except:
+                pass
+            self._init_driver()
 
     @property
     def root_element(self):
