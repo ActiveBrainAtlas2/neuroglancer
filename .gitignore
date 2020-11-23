@@ -9,4 +9,6 @@
 __pycache__
 *.sw[pmn]
 .vscode
+tsconfig.tsbuildinfo
+
 .idea/
