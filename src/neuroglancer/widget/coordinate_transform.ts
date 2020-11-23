@@ -1098,8 +1098,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         controlElement.appendChild(increase);
 
         // Simulate click and long press for the buttons
-        let decreaseInterval: number;
-        let decreaseTimeout: number;
+        let decreaseInterval: NodeJS.Timeout;
+        let decreaseTimeout: NodeJS.Timeout;
         decrease.addEventListener('mousedown', event => {
           let operations = this.transform.operations;
           let delta = operations[9 + i * 2 + Number(event.shiftKey)];
@@ -1121,8 +1121,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           clearInterval(decreaseInterval);
           clearTimeout(decreaseTimeout);
         });
-        let increaseInterval: number;
-        let increaseTimeout: number;
+        let increaseInterval: NodeJS.Timeout;
+        let increaseTimeout: NodeJS.Timeout;
         increase.addEventListener('mousedown', event => {
           let operations = this.transform.operations;
           let delta = operations[9 + i * 2 + Number(event.shiftKey)];
