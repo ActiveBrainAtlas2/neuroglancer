@@ -395,7 +395,9 @@ export abstract class RenderedDataPanel extends RenderedPanel {
 
     this.registerDisposer(new AutomaticallyFocusedElement(element));
     this.registerDisposer(new KeyboardEventBinder(element, this.inputEventMap));
-    this.registerDisposer(new MouseEventBinder(element, this.inputEventMap));
+    this.registerDisposer(new MouseEventBinder(element, this.inputEventMap, event => {
+      this.onMousemove(event);
+    }));
     this.registerDisposer(new TouchEventBinder(element, this.inputEventMap));
 
     this.registerEventListener(element, 'mousemove', this.onMousemove.bind(this));
@@ -430,10 +432,6 @@ export abstract class RenderedDataPanel extends RenderedPanel {
 
     registerActionListener(element, 'depth-range-increase', () => {
       this.navigationState.depthRange.value *= 2;
-    });
-
-    registerActionListener(element, 'highlight', () => {
-      this.viewer.layerManager.invokeAction('highlight');
     });
 
     for (let axis = 0; axis < 3; ++axis) {
