@@ -357,7 +357,6 @@ export class AnnotationLayerView extends Tab {
       });
 
     const importCSVButton = document.createElement('button');
-    // const importCSVForm = document.createElement('form');
     const importCSVFileSelect = document.createElement('input');
     importCSVButton.id = 'importCSVButton';
     importCSVButton.textContent = 'Import from CSV';
@@ -367,15 +366,11 @@ export class AnnotationLayerView extends Tab {
     importCSVButton.addEventListener('click', () => {
         importCSVFileSelect.click();
       });
-    // importCSVForm.appendChild(importCSVFileSelect);
     importCSVFileSelect.addEventListener('change', () => {
       this.importCSV(importCSVFileSelect.files);
-    //   importCSVForm.reset();
     });
-    // importCSVFileSelect.classList.add('neuroglancer-hidden-button');
     const csvContainer = document.createElement('span');
     csvContainer.append(exportToCSVButton, importCSVButton);
-    // this.groupAnnotations.appendFixedChild(csvContainer);
 
     layer.initializeAnnotationLayerViewTab(this);
     const colorPicker = this.registerDisposer(new ColorWidget(this.displayState.color));
@@ -484,8 +479,8 @@ export class AnnotationLayerView extends Tab {
       'Coordinate 1','Coordinate 2','Ellipsoid Dimensions','Description','Segment IDs','Segment Names','Type']
     const csvData: string[][] = [];
     const self = this;
-  
-    /// Try to get the segment label mapping
+
+    // Try to get the segment label mapping
     let annotationLayer = this.annotationStates.states[0];
     let segmentationState = annotationLayer.displayState.relationshipStates.get("segments").segmentationState
     let mapping = segmentationState.value?.segmentLabelMap.value;
@@ -532,10 +527,10 @@ export class AnnotationLayerView extends Tab {
         if (annotation.relatedSegments) {
           const annotationSegments: string[][] = [[]];
           const annotationSegmentNames: string[][] = [[]];
-          let segmentList = annotation.relatedSegments[0]; 
+          let segmentList = annotation.relatedSegments[0];
           segmentList.forEach(segmentID => {
             annotationSegments[0].push(segmentID.toString());
-            
+
             if (mapping) {
               let segmentName = mapping.get(segmentID.toString());
               if (segmentName) {
@@ -598,16 +593,7 @@ export class AnnotationLayerView extends Tab {
     let list = raw.join('');
     let val = list.split(',').map(v => parseInt(v, 10));
     return vec3.fromValues(val[0], val[1], val[2]);
-  } 
-  // private stringToUint64array = (input: string): Uint64 => {
-  //   // format: [24, 25, 18]
-  //   let raw = input.split('');
-  //   raw.shift();
-  //   raw.pop();
-  //   let list = raw.join('');
-  //   let val = list.split(';').map(v => parseInt(v, 10));
-  //   return vec3.fromValues(val[0], val[1], val[2]);
-  // } 
+  }
 
   private async importCSV(files: FileList|null) {
     const rawAnnotations = <Annotation[]>[];
@@ -626,7 +612,7 @@ export class AnnotationLayerView extends Tab {
       }
       const annStrings = rawData.data;
       for (let row=1; row<annStrings.length; ++row) {
-        const annProps = annStrings[row]; 
+        const annProps = annStrings[row];
         const segmentIDstr = annProps[4];
         const type = annProps[6];
         let raw = <Annotation>{id: makeAnnotationId(), description: annProps[3]};
@@ -662,11 +648,11 @@ export class AnnotationLayerView extends Tab {
           let segmentList = clean.split('; ');
           const relatedSegments: Uint64[][] = [];
           const segments: Uint64[] = [];
-          let counter = 0; 
+          let counter = 0;
           segmentList.forEach((idString: any) => {
-            let idUint64 = Uint64.parseString(String(idString));  
+            let idUint64 = Uint64.parseString(String(idString));
             segments[counter] = idUint64;
-            ++counter  
+            ++counter
           });
           relatedSegments[0] = segments;
           raw.relatedSegments = relatedSegments;
@@ -676,7 +662,7 @@ export class AnnotationLayerView extends Tab {
       let annotationLayer = this.annotationStates.states[0];
       for (const ann of rawAnnotations) {
         annotationLayer.source.add(ann, true);
-      } 
+      }
     }
   }
 
