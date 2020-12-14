@@ -6,10 +6,9 @@ import { fetchOk } from "../util/http_request";
 import { makeIcon } from "./icon";
 
 const rotationMatrixURL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/alignatlas?animal='
-const pattern_C1 = /precomputed:\/\/https:\/\/activebrainatlas.ucsd.edu\/data\/([A-Za-z0-9]+)\/neuroglancer_data\/C1/g
-const atlasURL = 'precomputed://https://activebrainatlas.ucsd.edu/data/structures/atlasV7'
-const buttonText = 'Fetch rotation matrix from the Active Brain Atlas server'
-const buttonTitle = 'Please ensure that exactly one C1 layer is in neuroglancer as we use it to determine which animal to match.'
+const pattern_animal = /precomputed:\/\/https:\/\/activebrainatlas.ucsd.edu\/data\/([A-Z0-9]+)\//g
+const buttonText = 'Fetch rotation matrix for this layer'
+const buttonTitle = 'Please note that the rotation matrix will only be applied for the current layer. To rotate other layers, switch to that layer and click this button.'
 
 interface remoteRotationMatrix {
   rotation: Array<Array<any>>,
@@ -18,12 +17,18 @@ interface remoteRotationMatrix {
 
 export class FetchRotationMatrixWidget extends RefCounted{
   element: HTMLElement
+  animal: string|null
 
   constructor(public transform: WatchableCoordinateSpaceTransform, private url: string) {
     super();
     this.transform = transform;
     this.url = url;
-    if (url === atlasURL) {
+    this.animal = null
+  
+    const animals = [...this.url.matchAll(pattern_animal)]
+    const animalNames = [...new Set(animals.map(m => m[1]))]
+    if (animalNames.length === 1) {
+      this.animal = animalNames[0]
       this.element = makeIcon({
         text: buttonText,
         title: buttonTitle,
@@ -33,22 +38,15 @@ export class FetchRotationMatrixWidget extends RefCounted{
     }
   };
 
-  isAtlas(): boolean {
-    return this.url === atlasURL;
+  isAnimal(): boolean {
+    return this.animal !== null;
   }
 
   async fetchRotationMatrix() {
-    const animals = [...window.document.URL.matchAll(pattern_C1)]
-    const animalNames = [...new Set(animals.map(m => m[1]))]
-    if (animalNames.length !== 1) {
-      StatusMessage.showTemporaryMessage('Failed to determine the animal. Current animal(s): ' + animalNames.join(', '));
-      return
-    }
-    const animal = animalNames[0]
-    StatusMessage.showTemporaryMessage('Fetching rotation matrix for ' + animal);
+    StatusMessage.showTemporaryMessage('Fetching rotation matrix for ' + this.animal);
 
     try {
-      const rotationJSON:remoteRotationMatrix = await fetchOk(rotationMatrixURL + animal, {
+      const rotationJSON:remoteRotationMatrix = await fetchOk(rotationMatrixURL + this.animal, {
         method: 'GET',
       }).then(response => {
         return response.json();
@@ -61,7 +59,7 @@ export class FetchRotationMatrixWidget extends RefCounted{
         rotation[0][2], rotation[1][2], rotation[2][2], 0,
         translation[0][0], translation[1][0], translation[2][0], 1
       ])
-      StatusMessage.showTemporaryMessage('Fetched rotation matrix for ' + animal);
+      StatusMessage.showTemporaryMessage('Fetched rotation matrix for ' + this.animal);
     } catch (e) {
       StatusMessage.showTemporaryMessage('Unable to get rotation matirx.');
       throw e;

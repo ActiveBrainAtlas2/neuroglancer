@@ -298,7 +298,7 @@ export class DataSourceView extends RefCounted {
       this.element.appendChild(loadedView.element);
       /* START OF CHANGE: Retrieve Matrix Button */
       const fetchMatrixWidget = new FetchRotationMatrixWidget(loadState.transform, this.urlInput.value);
-      if (fetchMatrixWidget.isAtlas()) {
+      if (fetchMatrixWidget.isAnimal()) {
         this.element.appendChild(fetchMatrixWidget.element)
       }
       /* END OF CHANGE: Retrieve Matrix Button */
