@@ -3,6 +3,7 @@ import { StatusMessage } from "../status";
 import { RefCounted } from "../util/disposable";
 import { removeFromParent } from "../util/dom";
 import { fetchOk } from "../util/http_request";
+import { dimensionTransform } from "../util/matrix";
 import { makeIcon } from "./icon";
 
 const rotationMatrixURL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/alignatlas?animal='
@@ -53,12 +54,14 @@ export class FetchRotationMatrixWidget extends RefCounted{
       })
       const {rotation, translation} = rotationJSON;
 
-      this.transform.transform = Float64Array.from([
+      const rank = this.transform.value.rank
+      const newTransform = Float64Array.from([
         rotation[0][0], rotation[1][0], rotation[2][0], 0,
         rotation[0][1], rotation[1][1], rotation[2][1], 0,
         rotation[0][2], rotation[1][2], rotation[2][2], 0,
         translation[0][0], translation[1][0], translation[2][0], 1
       ])
+      this.transform.transform = dimensionTransform(newTransform, rank)
       StatusMessage.showTemporaryMessage('Fetched rotation matrix for ' + this.animal);
     } catch (e) {
       StatusMessage.showTemporaryMessage('Unable to get rotation matirx.');
