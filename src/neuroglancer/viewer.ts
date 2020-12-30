@@ -64,6 +64,8 @@ import {StateLoader} from 'neuroglancer/ui/state_loader';
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any;
 
+const WIKI_ADDRESS="https://github.com/ActiveBrainAtlasPipeline/neuroglancer/wiki/Help"
+
 export class DataManagementContext extends RefCounted {
   worker: Worker;
   chunkQueueManager: ChunkQueueManager;
@@ -540,6 +542,16 @@ export class Viewer extends RefCounted implements ViewerState {
       topRow.appendChild(button);
     }
 
+    {
+      const button = makeIcon({text: 'Wiki', title: 'Wiki'});
+      this.registerEventListener(button, 'click', () => {
+        this.showWiki();
+      });
+      this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
+          this.uiControlVisibility.showHelpButton, button));
+      topRow.appendChild(button);
+    }
+
     this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
         makeDerivedWatchableValue(
             (...values: boolean[]) => values.reduce((a, b) => a || b, false),
@@ -703,6 +715,10 @@ export class Viewer extends RefCounted implements ViewerState {
       ['Cross section view', inputEventBindings.sliceView],
       ['3-D projection view', inputEventBindings.perspectiveView],
     ]);
+  }
+
+  showWiki() {
+    window.open(WIKI_ADDRESS)
   }
 
   editJsonState() {
