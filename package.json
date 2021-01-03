@@ -76,6 +76,7 @@
     "nifti-reader-js": "^0.5.4",
     "numcodecs": "^0.1.1",
     "pako": "^2.0.1",
+    "papaparse": "^5.0.1",
     "resize-observer-polyfill": "^1.5.1",
     "sockjs-client": "^1.5.0",
     "svg-inline-loader": "^0.8.2",
