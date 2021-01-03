@@ -20,7 +20,7 @@
 
 import './annotations.css';
 
-import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Ellipsoid, Line} from 'neuroglancer/annotation';
+import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Ellipsoid, Line, makeAnnotationId, Point} from 'neuroglancer/annotation';
 import {AnnotationDisplayState, AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
 import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
 import {AnnotationLayer, PerspectiveViewAnnotationLayer, SliceViewAnnotationLayer} from 'neuroglancer/annotation/renderlayer';
@@ -61,6 +61,8 @@ import {makeIcon} from 'neuroglancer/widget/icon';
 import {makeMoveToButton} from 'neuroglancer/widget/move_to_button';
 import {Tab} from 'neuroglancer/widget/tab_view';
 import {VirtualList, VirtualListSource} from 'neuroglancer/widget/virtual_list';
+
+const Papa = require('papaparse');
 
 export class MergedAnnotationStates extends RefCounted implements
     WatchableValueInterface<readonly AnnotationLayerState[]> {
@@ -347,6 +349,29 @@ export class AnnotationLayerView extends Tab {
     const toolbox = document.createElement('div');
     toolbox.className = 'neuroglancer-annotation-toolbox';
 
+    const exportToCSVButton = document.createElement('button');
+    exportToCSVButton.id = 'exportToCSVButton';
+    exportToCSVButton.textContent = 'Export to CSV';
+    exportToCSVButton.addEventListener('click', () => {
+        this.exportToCSV();
+      });
+
+    const importCSVButton = document.createElement('button');
+    const importCSVFileSelect = document.createElement('input');
+    importCSVButton.id = 'importCSVButton';
+    importCSVButton.textContent = 'Import from CSV';
+    importCSVFileSelect.type = 'file';
+    importCSVFileSelect.accept = 'text/csv';
+    importCSVFileSelect.multiple = true;
+    importCSVButton.addEventListener('click', () => {
+        importCSVFileSelect.click();
+      });
+    importCSVFileSelect.addEventListener('change', () => {
+      this.importCSV(importCSVFileSelect.files);
+    });
+    const csvContainer = document.createElement('span');
+    csvContainer.append(exportToCSVButton, importCSVButton);
+
     layer.initializeAnnotationLayerViewTab(this);
     const colorPicker = this.registerDisposer(new ColorWidget(this.displayState.color));
     colorPicker.element.title = 'Change annotation display color';
@@ -394,6 +419,7 @@ export class AnnotationLayerView extends Tab {
     mutableControls.appendChild(ellipsoidButton);
     toolbox.appendChild(mutableControls);
     this.element.appendChild(toolbox);
+    this.element.appendChild(csvContainer);
 
     this.element.appendChild(this.headerRow);
     const {virtualList} = this;
@@ -444,6 +470,199 @@ export class AnnotationLayerView extends Tab {
         this.getRenderedAnnotationListElement(state.annotationLayerState, state.annotationId);
     if (element !== undefined) {
       element.classList.remove('neuroglancer-annotation-selected');
+    }
+  }
+
+  private exportToCSV() {
+    const filename = 'annotations.csv';
+    const columnHeaders = [
+      'Coordinate 1','Coordinate 2','Ellipsoid Dimensions','Description','Segment IDs','Segment Names','Type']
+    const csvData: string[][] = [];
+    const self = this;
+
+    // Try to get the segment label mapping
+    let annotationLayer = this.annotationStates.states[0];
+    let segmentationState = annotationLayer.displayState.relationshipStates.get("segments").segmentationState
+    let mapping = segmentationState.value?.segmentLabelMap.value;
+
+    // Loop over annotations
+    for (const [state, ] of self.attachedAnnotationStates) {
+      if (state.chunkTransform.value.error !== undefined) continue;
+      for (const annotation of state.source) {
+        const annotationRow = [];
+        let coordinate1String = '';
+        let coordinate2String = '';
+        let ellipsoidDimensions = '';
+        let stringType = '';
+        // Coordinates and annotation type
+        switch (annotation.type) {
+          case AnnotationType.POINT:
+            stringType = 'Point';
+            coordinate1String = formatIntegerPoint(annotation.point);
+            break;
+          case AnnotationType.ELLIPSOID:
+              stringType = 'Ellipsoid';
+              coordinate1String =
+                  formatIntegerPoint(annotation.center);
+              ellipsoidDimensions = formatIntegerPoint(annotation.radii);
+              break;
+            case AnnotationType.AXIS_ALIGNED_BOUNDING_BOX:
+            case AnnotationType.LINE:
+              stringType = annotation.type === AnnotationType.LINE ? 'Line' : 'Bounding Box';
+              coordinate1String = formatIntegerPoint(annotation.pointA);
+              coordinate2String = formatIntegerPoint(annotation.pointB);
+              break;
+        }
+        annotationRow.push(coordinate1String);
+        annotationRow.push(coordinate2String);
+        annotationRow.push(ellipsoidDimensions);
+        // Description
+        if (annotation.description) {
+          annotationRow.push(annotation.description);
+        }
+        else {
+          annotationRow.push('');
+        }
+        // Segment IDs and Names, if available
+        if (annotation.relatedSegments) {
+          const annotationSegments: string[][] = [[]];
+          const annotationSegmentNames: string[][] = [[]];
+          let segmentList = annotation.relatedSegments[0];
+          segmentList.forEach(segmentID => {
+            annotationSegments[0].push(segmentID.toString());
+
+            if (mapping) {
+              let segmentName = mapping.get(segmentID.toString());
+              if (segmentName) {
+                annotationSegmentNames[0].push(segmentName);
+              }
+              else {
+                annotationSegmentNames[0].push('');
+              }
+            }
+            else {
+              annotationSegmentNames[0].push('');
+            }
+          });
+          if (annotationSegments[0].length > 0) {
+            annotationRow.push(Papa.unparse(annotationSegments,{delimiter: "; "}));
+            annotationRow.push(Papa.unparse(annotationSegmentNames,{delimiter: "; "}));
+          }
+          else {
+            annotationRow.push('');
+            annotationRow.push('');
+          }
+        }
+        else {
+          annotationRow.push('');
+          annotationRow.push('');
+        }
+        // push the type of annotation and then push the whole row
+        annotationRow.push(stringType);
+        csvData.push(annotationRow);
+      }
+    }
+    // remove duplicates from csvData - often happens with points
+    var uniqueData = csvData.map(ar=>JSON.stringify(ar))
+      .filter((itm, idx, arr) => arr.indexOf(itm) === idx)
+      .map(str=>JSON.parse(str));
+    const papaString = Papa.unparse({'fields':columnHeaders,'data': uniqueData})
+    const blob = new Blob([papaString],  { type: 'text/csv;charset=utf-8;'});
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  private betterPapa = (inputFile: File|Blob): Promise<any> => {
+    return new Promise((resolve) => {
+      Papa.parse(inputFile, {
+        complete: (results: any) => {
+          resolve(results);
+        }
+      });
+    });
+  }
+  private stringToVec3 = (input: string): vec3 => {
+    // format: (x, y, z)
+    let raw = input.split('');
+    raw.shift();
+    raw.pop();
+    let list = raw.join('');
+    let val = list.split(',').map(v => parseInt(v, 10));
+    return vec3.fromValues(val[0], val[1], val[2]);
+  }
+
+  private async importCSV(files: FileList|null) {
+    const rawAnnotations = <Annotation[]>[];
+    const textToPoint = (point: string) => {
+      return this.stringToVec3(point);
+    };
+    if (!files) {
+      return;
+    }
+
+    for (const file of files) {
+      const rawData = await this.betterPapa(file);
+      rawData.data = rawData.data.filter((v: any) => v.join('').length);
+      if (!rawData.data.length) {
+        continue;
+      }
+      const annStrings = rawData.data;
+      for (let row=1; row<annStrings.length; ++row) {
+        const annProps = annStrings[row];
+        const segmentIDstr = annProps[4];
+        const type = annProps[6];
+        let raw = <Annotation>{id: makeAnnotationId(), description: annProps[3]};
+
+        switch (type) {
+          case 'AABB':
+          case 'Line':
+            raw.type =
+                type === 'Line' ? AnnotationType.LINE : AnnotationType.AXIS_ALIGNED_BOUNDING_BOX;
+            (<Line>raw).pointA = textToPoint(annProps[0]);
+            (<Line>raw).pointB = textToPoint(annProps[1]);
+            break;
+          case 'Point':
+            raw.type = AnnotationType.POINT;
+            (<Point>raw).point = textToPoint(annProps[0]);
+            break;
+          case 'Ellipsoid':
+            raw.type = AnnotationType.ELLIPSOID;
+            (<Ellipsoid>raw).center = textToPoint(annProps[0]);
+            (<Ellipsoid>raw).radii =
+                textToPoint(annProps[2]);
+            break;
+          default:
+            // Do not add annotation row, if it has unexpected type
+            console.error(
+                `No annotation of type ${type}. Cannot parse ${file.name}:${row} ${annProps}`);
+            continue;
+          }
+        // segment IDs
+        if (segmentIDstr) {
+          let rawstr = segmentIDstr.split('');
+          let clean = rawstr.join('');
+          let segmentList = clean.split('; ');
+          const relatedSegments: Uint64[][] = [];
+          const segments: Uint64[] = [];
+          let counter = 0;
+          segmentList.forEach((idString: any) => {
+            let idUint64 = Uint64.parseString(String(idString));
+            segments[counter] = idUint64;
+            ++counter
+          });
+          relatedSegments[0] = segments;
+          raw.relatedSegments = relatedSegments;
+        }
+        rawAnnotations.push(raw);
+        }
+      let annotationLayer = this.annotationStates.states[0];
+      for (const ann of rawAnnotations) {
+        annotationLayer.source.add(ann, true);
+      }
     }
   }
 
