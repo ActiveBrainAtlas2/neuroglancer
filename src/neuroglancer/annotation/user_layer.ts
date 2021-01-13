@@ -44,6 +44,7 @@ import {RenderScaleWidget} from 'neuroglancer/widget/render_scale_widget';
 import {ShaderCodeWidget} from 'neuroglancer/widget/shader_code_widget';
 import {ShaderControls} from 'neuroglancer/widget/shader_controls';
 import {Tab} from 'neuroglancer/widget/tab_view';
+import {createIdentity} from '../util/matrix';
 
 const POINTS_JSON_KEY = 'points';
 const ANNOTATIONS_JSON_KEY = 'annotations';
@@ -385,6 +386,7 @@ export class AnnotationUserLayer extends Base {
 
           /* START OF CHANGE: dummy operations for type check */
           operations: new Float64Array([-1]),
+          rawRotationMatrix: createIdentity(Float64Array, 4),
           /* END OF CHANGE: dummy operations for type check */
         };
       } else {
