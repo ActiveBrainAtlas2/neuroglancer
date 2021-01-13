@@ -62,6 +62,7 @@ export class FetchRotationMatrixWidget extends RefCounted{
         translation[0][0], translation[1][0], translation[2][0], 1
       ])
       this.transform.transform = dimensionTransform(newTransform, rank)
+      this.transform.operations = this.transform.defaultOperations;
       StatusMessage.showTemporaryMessage('Fetched rotation matrix for ' + this.animal);
     } catch (e) {
       StatusMessage.showTemporaryMessage('Unable to get rotation matirx.');
