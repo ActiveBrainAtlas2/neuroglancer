@@ -23,6 +23,8 @@ import {scaleByExp10, supportedUnits, unitFromJson} from 'neuroglancer/util/si_u
 import {NullarySignal} from 'neuroglancer/util/signal';
 import {Trackable} from 'neuroglancer/util/trackable';
 import * as vector from 'neuroglancer/util/vector';
+import {matrixTransform,  offsetTransform, dimensionTransform, createIdentity} from 'neuroglancer/util/matrix';
+import {getCombinedTransform64} from 'neuroglancer/sliceview/base';
 
 export type DimensionId = number;
 
@@ -739,10 +741,24 @@ export class WatchableCoordinateSpaceTransform implements
   private inputSpaceChanged = new NullarySignal();
   readonly defaultTransform: CoordinateSpaceTransform;
 
+  /* START OF CHANGE: operation instance variable */
+  private operations_: Float64Array;
+  readonly defaultOperations: Float64Array =
+    new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1e-5, 1e-4, 0.5, 5, 0.01, 0.1]);
+  private rawRotationMatrix: Float64Array;
+  private rawOperationMatrix: Float64Array;
+  private centerPoint: Float64Array;
+  private mouseMode_: boolean;
+  /* END OF CHANGE: operation instance variable */
+
   constructor(
       defaultTransform: CoordinateSpaceTransform,
       public readonly mutableSourceRank: boolean = false) {
     this.defaultTransform = normalizeCoordinateSpaceTransform(defaultTransform);
+    /* START OF CHANGE: operation instance variable */
+    this.rawRotationMatrix = this.defaultTransform.transform;
+    this.rawOperationMatrix = this.defaultTransform.transform;
+    /* END OF CHANGE: operation instance variable */
     const self = this;
     this.outputSpace = {
       changed: self.changed,
@@ -836,6 +852,10 @@ export class WatchableCoordinateSpaceTransform implements
       transform: transformSame ? undefined : transform,
       outputSpace: value.outputSpace,
       inputSpace: inputSpaceSame ? undefined : inputSpace,
+      /* START OF CHANGE: get operations from JSON*/
+      operations: this.operations_,
+      rawRotationMatrix: this.rawRotationMatrix,
+      /* END OF CHANGE: get operations from JSON*/
     };
   }
 
@@ -1043,7 +1063,108 @@ export class WatchableCoordinateSpaceTransform implements
         boundingBoxes,
       }),
     };
+
+    /* START OF CHANGE: set operations from JSON */
+    if (spec.operations !== undefined) {
+      this.operations_ = new Float64Array(spec.operations);
+      this.setOriginalCenterPoint();
+
+      let newMatrix = matrixTransform(spec.operations);
+      newMatrix = offsetTransform(newMatrix, this.centerPoint, newOutputScales);
+
+      // Add translation offsets
+      newMatrix[12] += spec.operations[0] / newOutputScales[0];
+      newMatrix[13] += spec.operations[1] / newOutputScales[1];
+      newMatrix[14] += spec.operations[2] / newOutputScales[2];
+
+      // Map 3D transformation to higher dimension if needed
+      this.rawOperationMatrix = dimensionTransform(newMatrix, newRank);
+      if (spec.rawRotationMatrix !== undefined) {
+        this.rawRotationMatrix = spec.rawRotationMatrix;
+      } else {
+        this.rawRotationMatrix = this.defaultTransform.transform;
+      }
+    } else {
+      this.operations_ = this.defaultOperations;
+      this.rawOperationMatrix = this.defaultTransform.transform;
+      this.rawRotationMatrix = this.defaultTransform.transform;
+    }
+    /* END OF CHANGE: set operations from JSON */
   }
+
+  /* START OF CHANGE: functions */
+  set operations(operations: Float64Array) {
+    this.operations_ = new Float64Array(operations);
+    const {
+      rawOperationMatrix: prevOperation,
+      rawRotationMatrix: prevRotation,
+      value: {rank, transform: prevTransform},
+      outputSpace: {value: {scales}},
+    } = this;
+
+    this.setOriginalCenterPoint();
+
+    let newMatrix = matrixTransform(operations);
+    newMatrix = offsetTransform(newMatrix, this.centerPoint, scales);
+
+    // Add translation offsets
+    newMatrix[12] += operations[0] / scales[0];
+    newMatrix[13] += operations[1] / scales[1];
+    newMatrix[14] += operations[2] / scales[2];
+
+    // Map 3D transformation to higher dimension if needed
+    this.rawOperationMatrix = dimensionTransform(newMatrix, rank);
+
+    if (prevTransform === undefined){
+      this.rawRotationMatrix = this.defaultTransform.transform;
+    } else {
+      if (!this.matrixEquals(getCombinedTransform64(rank, prevRotation, prevOperation), prevTransform)) {
+        this.rawRotationMatrix = prevTransform;
+      }
+    }
+    this.transform = getCombinedTransform64(rank, this.rawRotationMatrix, this.rawOperationMatrix)
+
+    this.changed.dispatch();
+  }
+
+  get operations(): Float64Array {
+    if (this.operations_ === undefined) {
+      this.operations_ = new Float64Array(this.defaultOperations);
+    }
+    return this.operations_;
+  }
+
+  private matrixEquals(m1: Float64Array, m2: Float64Array): boolean {
+    return m1.length === m2.length && m1.every(function(v, i) { return v === m2[i]})
+  }
+
+  private setOriginalCenterPoint() {
+    // Save a copy of the current transformation matrix and reset it
+    let transform = this.value.transform;
+    this.transform = createIdentity(Float64Array, this.value.rank + 1);
+
+    // Get the rotation point after transformation matrix is reset
+    let {lowerBounds, upperBounds} = this.outputSpace.value.bounds;
+    let center = Float64Array.from(lowerBounds);
+    this.centerPoint = center.map((value, index) => 0.5 * (upperBounds[index] - value)).slice(0, 3);
+
+    // Get back the new transformation matrix and rotation point
+    this.transform = transform;
+  }
+
+  set mouseMode(mode: boolean) {
+    this.mouseMode_ = mode;
+    if (this.mouseMode_) {
+    }
+  }
+
+  get mouseMode(): boolean {
+    if (this.mouseMode_ === undefined) {
+      this.mouseMode_ = false;
+    }
+    return this.mouseMode_;
+  }
+  /* END OF CHANGE: functions */
 
   toJSON() {
     return coordinateTransformSpecificationToJson(this.spec);
@@ -1374,6 +1495,11 @@ export interface CoordinateTransformSpecification {
   transform: Float64Array|undefined;
   inputSpace: CoordinateSpace|undefined;
   outputSpace: CoordinateSpace;
+
+  /* START OF CHANGE: operations defined in the spec */
+  operations: Float64Array|undefined;
+  rawRotationMatrix: Float64Array|undefined;
+  /* END OF CHANGE: operations defined in the spec */
 }
 
 export function coordinateTransformSpecificationFromLegacyJson(obj: unknown):
@@ -1425,6 +1551,10 @@ export function coordinateTransformSpecificationFromLegacyJson(obj: unknown):
       scales: Float64Array.of(1e-9, 1e-9, 1e-9)
     }),
     inputSpace: undefined,
+    /* START OF CHANGE: dummy operations for type check */
+    operations: new Float64Array([-1]),
+    rawRotationMatrix: matrix.createIdentity(Float64Array, 4),
+    /* END OF CHANGE: dummy operations for type check */
   };
 }
 
@@ -1465,13 +1595,38 @@ export function coordinateTransformSpecificationFromJson(j: unknown):
     }
     return transform;
   });
-  return {transform, outputSpace, inputSpace, sourceRank};
+  /* START OF CHANGE: operations from JSON */
+  const operations = verifyOptionalObjectProperty(obj, 'operations', inputOperationObj => {
+    const operations = new Float64Array(inputOperationObj);
+    if (operations.length !== 15) {
+      throw new Error(`Expected operation's length of 15, but received length of: ${operations.length}`);
+    }
+    return operations;
+  });
+  const rawRotationMatrix = verifyOptionalObjectProperty(obj, 'rawRotationMatrix', x => {
+    const transform = new Float64Array((rank + 1) ** 2);
+    const a = expectArray(x, rank);
+    transform[transform.length - 1] = 1;
+    for (let i = 0; i < rank; ++i) {
+      try {
+        const row = expectArray(a[i], rank + 1);
+        for (let j = 0; j <= rank; ++j) {
+          transform[(rank + 1) * j + i] = verifyFiniteFloat(row[j]);
+        }
+      } catch (e) {
+        return matrix.createIdentity(Float64Array, rank);
+      }
+    }
+    return transform;
+  });
+  return {transform, outputSpace, inputSpace, sourceRank, operations, rawRotationMatrix};
+  /* END OF CHANGE: operations from JSON */
 }
 
 export function coordinateTransformSpecificationToJson(spec: CoordinateTransformSpecification|
                                                        undefined) {
   if (spec === undefined) return undefined;
-  const {transform, outputSpace, inputSpace, sourceRank} = spec;
+  const {transform, rawRotationMatrix, outputSpace, inputSpace, sourceRank} = spec;
   let m: number[][]|undefined;
   const rank = outputSpace.rank;
   if (transform !== undefined) {
@@ -1484,11 +1639,26 @@ export function coordinateTransformSpecificationToJson(spec: CoordinateTransform
       }
     }
   }
+  let rm: number[][]|undefined;
+  if (rawRotationMatrix !== undefined) {
+    rm = [];
+    for (let i = 0; i < rank; ++i) {
+      const row: number[] = [];
+      rm[i] = row;
+      for (let j = 0; j <= rank; ++j) {
+        row[j] = rawRotationMatrix[(rank + 1) * j + i];
+      }
+    }
+  }
   return {
     sourceRank: sourceRank === rank ? undefined : sourceRank,
     matrix: m,
     outputDimensions: coordinateSpaceToJson(outputSpace),
     inputDimensions: inputSpace === undefined ? undefined : coordinateSpaceToJson(inputSpace),
+    /* START OF CHANGE: operations to JSON */
+    operations: spec.operations === undefined ? undefined : [].slice.call(spec.operations),
+    rawRotationMatrix: rm,
+    /* END OF CHANGE: operations to JSON */
   };
 }
 
