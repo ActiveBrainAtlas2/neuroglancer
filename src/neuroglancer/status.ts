@@ -52,6 +52,13 @@ export class StatusMessage {
     element.className = 'container';
     this.element = element;
     container.appendChild(element);
+    let button = document.createElement('button');
+    button.className = 'close';
+    button.innerHTML = '&times;';
+    button.addEventListener('click', () => {
+      this.dispose();
+    });
+    container.appendChild(button);
     statusContainer.appendChild(container);
   }
   dispose() {
