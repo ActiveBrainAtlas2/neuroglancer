@@ -8,7 +8,9 @@ import {fetchOk} from 'neuroglancer/util/http_request';
 import {Viewer} from 'neuroglancer/viewer';
 import {StatusMessage} from 'neuroglancer/status';
 import {makeIcon} from 'neuroglancer/widget/icon';
+import {makeText} from 'neuroglancer/widget/textbox';
 import {getCachedJson} from 'neuroglancer/util/trackable';
+import {AppSettings} from 'neuroglancer/services/service';
 
 /**
  * Fuzzy search algorithm from https://github.com/bevacqua/fuzzysearch in Typescript.
@@ -107,7 +109,7 @@ export class StateAutocomplete extends AutocompleteTextInput {
   }
 }
 
-interface State {
+export interface State {
   state_id: number;
   person_id: number;
   comments: string;
@@ -115,7 +117,7 @@ interface State {
   url: string;
 }
 
-class StateAPI {
+export class StateAPI {
   constructor (private userUrl: string, private stateUrl: string) {}
 
   getUser(): Promise<any> {
@@ -221,20 +223,25 @@ export class StateLoader extends RefCounted {
   private newButton: HTMLElement;
   private userID: number;
   private stateID: number;
+  private listUsers: HTMLElement;
+  private currentUsers:string;
 
   constructor(public viewer: Viewer) {
     super();
     this.element.classList.add('state-loader');
 
     this.stateAPI = new StateAPI(
-      'https://activebrainatlas.ucsd.edu/activebrainatlas/session',
-      'https://activebrainatlas.ucsd.edu/activebrainatlas/neuroglancer'
+      AppSettings.API_ENDPOINT + '/session',
+      AppSettings.API_ENDPOINT + '/neuroglancer'
     );
 
     this.stateAPI.getUser().then(userID => {
       this.userID = userID;
 
       if (this.userID !== 0) {
+        this.listUsers = makeText({text: this.currentUsers, title: 'Current users.'});
+        this.element.appendChild(this.listUsers);
+
         this.input = new StateAutocomplete(viewer);
         this.input.disableCompletions();
         this.input.element.classList.add('state-loader-input');
