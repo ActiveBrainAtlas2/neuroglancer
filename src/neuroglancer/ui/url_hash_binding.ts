@@ -16,26 +16,17 @@
 
 import debounce from 'lodash/debounce';
 import {CredentialsManager} from 'neuroglancer/credentials_provider';
-import {StatusMessage} from 'neuroglancer/status';
 import {WatchableValue} from 'neuroglancer/trackable_value';
 import {RefCounted} from 'neuroglancer/util/disposable';
-import {responseJson} from 'neuroglancer/util/http_request';
-import {urlSafeParse, verifyObject} from 'neuroglancer/util/json';
-import {cancellableFetchSpecialOk, parseSpecialUrl} from 'neuroglancer/util/special_protocol_request';
-import {getCachedJson, Trackable} from 'neuroglancer/util/trackable';
+import {verifyObject} from 'neuroglancer/util/json';
+import {Trackable} from 'neuroglancer/util/trackable';
+import {StateAPI, State} from 'neuroglancer/ui/state_loader';
+import {AppSettings} from 'neuroglancer/services/service';
 
 /**
  * @file Implements a binding between a Trackable value and the URL hash state.
  */
 
-/**
- * Encodes a fragment string robustly.
- */
-function encodeFragment(fragment: string) {
-  return encodeURI(fragment).replace(/[!'()*;,]/g, function(c) {
-    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
-  });
-}
 
 /**
  * An instance of this class manages a binding between a Trackable value and the URL hash state.
@@ -48,14 +39,17 @@ export class UrlHashBinding extends RefCounted {
   private prevStateString: string|undefined;
 
   /**
-   * Generation number of previous state set.
-   */
-  private prevStateGeneration: number|undefined;
-
-  /**
    * Most recent error parsing URL hash.
    */
   parseError = new WatchableValue<Error|undefined>(undefined);
+
+  /**
+   * ActiveBrainAtlas fork:
+   * Create ActiveBrainAtlas state API endpoint.
+   */
+  private stateAPI: StateAPI;
+  private stateData: State;
+  private stateID: string;
 
   constructor(
       public root: Trackable, public credentialsManager: CredentialsManager,
@@ -65,75 +59,42 @@ export class UrlHashBinding extends RefCounted {
     const throttledSetUrlHash = debounce(() => this.setUrlHash(), updateDelayMilliseconds);
     this.registerDisposer(root.changed.add(throttledSetUrlHash));
     this.registerDisposer(() => throttledSetUrlHash.cancel());
+    this.stateAPI = new StateAPI(
+      AppSettings.API_ENDPOINT + '/session',
+      AppSettings.API_ENDPOINT + '/neuroglancer'
+    );
   }
 
   /**
-   * Sets the URL hash to match the current state.
+   * ActiveBrainAtlas fork:
+   * Do not change URL when the current state changes.
    */
   setUrlHash() {
-    const cacheState = getCachedJson(this.root);
-    const {generation} = cacheState;
-    if (generation !== this.prevStateGeneration) {
-      this.prevStateGeneration = cacheState.generation;
-      let stateString = encodeFragment(JSON.stringify(cacheState.value));
-      if (stateString !== this.prevStateString) {
-        this.prevStateString = stateString;
-        if (decodeURIComponent(stateString) === '{}') {
-          history.replaceState(null, '', '#');
-        } else {
-          history.replaceState(null, '', '#!' + stateString);
-        }
-      }
-    }
+    history.replaceState(null, '', '');
   }
 
   /**
-   * Sets the current state to match the URL hash.  If it is desired to initialize the state based
-   * on the URL hash, then this should be called immediately after construction.
+   * ActiveBrainAtlas fork:
+   * Fetch the state from ActiveBrainAtlas server according to the ID.
    */
   updateFromUrlHash() {
-    try {
-      let s = location.href.replace(/^[^#]+/, '');
-      if (s === '' || s === '#' || s === '#!') {
-        s = '#!{}';
-      }
-      // Handle remote JSON state
-      if (s.match(/^#!([a-z][a-z\d+-.]*):\/\//)) {
-        const url = s.substring(2);
-        const {url: parsedUrl, credentialsProvider} = parseSpecialUrl(url, this.credentialsManager);
-        StatusMessage.forPromise(
-            cancellableFetchSpecialOk(credentialsProvider, parsedUrl, {}, responseJson)
-                .then(json => {
-                  verifyObject(json);
-                  this.root.reset();
-                  this.root.restoreState(json);
-                }),
-            {initialMessage: `Loading state from ${url}`, errorPrefix: `Error loading state:`});
-      } else if (s.startsWith('#!+')) {
-        s = s.slice(3);
-        // Firefox always %-encodes the URL even if it is not typed that way.
-        s = decodeURIComponent(s);
-        let state = urlSafeParse(s);
-        verifyObject(state);
-        this.root.restoreState(state);
-        this.prevStateString = undefined;
-      } else if (s.startsWith('#!')) {
-        s = s.slice(2);
-        s = decodeURIComponent(s);
-        if (s === this.prevStateString) {
+    const id_match = location.href.match(/(?<=(\?id=))(.*?)\d*/);
+    if ((id_match !== null) && (typeof id_match[0] !== 'undefined')) {
+      this.stateID = id_match[0];
+
+      this.stateAPI.getState(this.stateID).then(jsonState => {
+        this.stateData = jsonState;
+        let state = this.stateData.url;
+        state = JSON.parse(state);
+        if (state === this.prevStateString) {
+          console.log('State has not changed.')
           return;
         }
-        this.prevStateString = s;
+        this.prevStateString = state;
         this.root.reset();
-        let state = urlSafeParse(s);
         verifyObject(state);
         this.root.restoreState(state);
-      } else {
-        throw new Error(`URL hash is expected to be of the form "#!{...}" or "#!+{...}".`);
-      }
-      this.parseError.value = undefined;
-    } catch (parseError) {
-      this.parseError.value = parseError;
+      });
     }
   }
 }
