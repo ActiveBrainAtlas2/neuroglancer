@@ -10,6 +10,8 @@ import {Viewer} from 'neuroglancer/viewer';
 import {StatusMessage} from 'neuroglancer/status';
 import {makeIcon} from 'neuroglancer/widget/icon';
 import {getCachedJson} from 'neuroglancer/util/trackable';
+import {AppSettings} from "neuroglancer/services/service";
+
 
 /**
  * Fuzzy search algorithm from https://github.com/bevacqua/fuzzysearch in Typescript.
@@ -108,7 +110,7 @@ export class StateAutocomplete extends AutocompleteTextInput {
   }
 }
 
-interface State {
+export interface State {
   state_id: number;
   person_id: number;
   comments: string;
@@ -116,10 +118,10 @@ interface State {
   url: string;
 }
 
-class StateAPI {
+export class StateAPI {
   constructor (private userUrl: string, private stateUrl: string) {}
 
-   getUser(): Promise<any> {
+  getUser(): Promise<any> {
     const url = this.userUrl;
 
     return fetchOk(url, {
@@ -140,7 +142,6 @@ class StateAPI {
     }).then(response => {
       return response.json();
     }).then(json => {
-      console.log('getState', json);
       return {
         state_id: json['id'],
         person_id: json['person_id'],
@@ -171,7 +172,6 @@ class StateAPI {
     }).then(response => {
       return response.json();
     }).then(json => {
-      console.log('newState', json);
       return {
         state_id: json['id'],
         person_id: json['person_id'],
@@ -230,8 +230,8 @@ export class StateLoader extends RefCounted {
     this.element.classList.add('state-loader');
 
     this.stateAPI = new StateAPI(
-      'https://activebrainatlas.ucsd.edu/activebrainatlas/session',
-      'https://activebrainatlas.ucsd.edu/activebrainatlas/neuroglancer'
+      AppSettings.API_ENDPOINT + '/session',
+      AppSettings.API_ENDPOINT + '/neuroglancer'
     );
 
     this.stateAPI.getUser().then(userID => {
@@ -243,25 +243,29 @@ export class StateLoader extends RefCounted {
         this.input.element.classList.add('state-loader-input');
         this.element.appendChild(this.input.element);
 
-        this.saveButton = makeIcon({text: 'save', title: 'Save to the current JSON state'});
+        this.saveButton = makeIcon({text: 'Save', title: 'Save to the current JSON state'});
         this.registerEventListener(this.saveButton, 'click', () => {
           this.saveState();
         });
         this.element.appendChild(this.saveButton);
 
-        this.newButton = makeIcon({text: 'new', title: 'Save to a new JSON state'});
+        this.newButton = makeIcon({text: 'New', title: 'Save to a new JSON state'});
         this.registerEventListener(this.newButton, 'click', () => {
           this.newState();
         });
         this.element.appendChild(this.newButton);
 
+
+
         this.stateID = -1;
-        this.input.value = 'uncommented state';
+        this.input.value = 'type url name here';
         this.saveButton.style.display = 'none';
 
-        let id_match = location.href.match(/(?<=(\?id=))(.*?)(?=\&)/);
-        if(id_match !== null) {
-          this.stateID = Number(id_match[0]);
+        // const id_match = location.href.match(/(?<=(\?id=))(.*?)(?=\&)/);
+        const id_match = location.href.match(/(?<=(\?id=))(.*?)\d*/);
+
+        if ((id_match !== null) && (typeof id_match[0] !== 'undefined')) {
+            this.stateID = Number(id_match[0]);
           this.getState();
         }
       }
@@ -272,7 +276,7 @@ export class StateLoader extends RefCounted {
     if (state !== null) {
       this.stateID = state['state_id'];
       this.input.value = state['comments'];
-      this.saveButton.style.display = 'initial';
+      this.saveButton.style.display = 'inline';
     }
   }
 
@@ -280,19 +284,19 @@ export class StateLoader extends RefCounted {
     this.stateAPI.getState(this.stateID).then(state => {
       this.validateState(state);
     }).catch(err => {
-      StatusMessage.showTemporaryMessage(`Internal error: please see debug message`);
+      StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
       console.log(err);
     });
   }
 
   private saveState() {
-    let comments = this.input.value;
+    const comments = this.input.value;
     if (comments.length === 0) {
-      StatusMessage.showTemporaryMessage(`State is uploaded unsuccessfully: the comment cannot be empty`);
+      StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
       return;
     }
 
-    let state = {
+    const state = {
       state_id: this.stateID,
       person_id: this.userID,
       comments: comments,
@@ -301,21 +305,21 @@ export class StateLoader extends RefCounted {
     };
 
     this.stateAPI.saveState(this.stateID, state).then(() => {
-      StatusMessage.showTemporaryMessage(`State is saved successfully`);
+      StatusMessage.showTemporaryMessage(`The data was saved successfully.`);
     }).catch(err => {
-      StatusMessage.showTemporaryMessage(`Internal error: please see debug message`);
+      StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
       console.log(err);
     });
   }
 
   private newState() {
-    let comments = this.input.value;
+    const comments = this.input.value;
     if (comments.length === 0) {
-      StatusMessage.showTemporaryMessage(`State is uploaded unsuccessfully: the comment cannot be empty`);
+      StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
       return;
     }
 
-    let state = {
+    const state = {
       state_id: this.stateID,
       person_id: this.userID,
       comments: comments,
@@ -325,9 +329,9 @@ export class StateLoader extends RefCounted {
 
     this.stateAPI.newState(state).then((newState) => {
       this.validateState(newState);
-      StatusMessage.showTemporaryMessage(`A new state is created`);
+      StatusMessage.showTemporaryMessage(`A new data state has been created.`);
     }).catch(err => {
-      StatusMessage.showTemporaryMessage(`Internal error: please see debug message`);
+      StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
       console.log(err);
     });
   }
