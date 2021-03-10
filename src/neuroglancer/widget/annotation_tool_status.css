@@ -17,4 +17,6 @@
 .neuroglancer-annotation-tool-status-widget {
   color: #3c3;
   font: 10pt sans-serif;
+  display: inline-flex;
+  align-items: center;
 }
