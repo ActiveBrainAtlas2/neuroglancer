@@ -38,7 +38,7 @@ export function setupDefaultViewer() {
     }
     hashBinding.parseError;
   }));
-  hashBinding.fetchState();
+  hashBinding.updateFromUrlHash();
 
   bindDefaultCopyHandler(viewer);
   bindDefaultPasteHandler(viewer);

@@ -15,29 +15,65 @@
  */
 
 import debounce from 'lodash/debounce';
-import {CredentialsManager} from 'neuroglancer/credentials_provider';
-import {StatusMessage} from 'neuroglancer/status';
-import {WatchableValue} from 'neuroglancer/trackable_value';
-import {RefCounted} from 'neuroglancer/util/disposable';
-import {responseJson} from 'neuroglancer/util/http_request';
-import {urlSafeParse, verifyObject} from 'neuroglancer/util/json';
-import {cancellableFetchSpecialOk, parseSpecialUrl} from 'neuroglancer/util/special_protocol_request';
-import {getCachedJson, Trackable} from 'neuroglancer/util/trackable';
-import {StateAPI, State} from 'neuroglancer/ui/state_loader';
-import {AppSettings} from "neuroglancer/services/service";
-import {neuroglancerDataRef} from "neuroglancer/services/firebase";
+import { CredentialsManager } from 'neuroglancer/credentials_provider';
+import { WatchableValue } from 'neuroglancer/trackable_value';
+import { RefCounted } from 'neuroglancer/util/disposable';
+import { verifyObject } from 'neuroglancer/util/json';
+import { getCachedJson, Trackable } from 'neuroglancer/util/trackable';
+import { StateAPI, State } from 'neuroglancer/services/state_loader';
+// import { StatusMessage } from 'neuroglancer/status';
+import { AppSettings } from "neuroglancer/services/service";
+import { neuroglancerDataRef, databaseRef } from "neuroglancer/services/firebase";
+import {User} from "neuroglancer/services/user";
+
 
 /**
  * @file Implements a binding between a Trackable value and the URL hash state.
  */
-
 /**
  * Encodes a fragment string robustly.
  */
-function encodeFragment(fragment: string) {
+/*
+ function encodeFragment(fragment: string) {
   return encodeURI(fragment).replace(/[!'()*;,]/g, function(c) {
     return '%' + c.charCodeAt(0).toString(16).toUpperCase();
   });
+}
+*/
+
+/**
+ * Setup for initial firebase connection with data and user info
+ * @param uid 
+ * @param username 
+ * @param picture 
+ * @param title 
+ * @param body 
+ * @returns 
+ */
+function setupUserData(comments: string, person_id: number, 
+  state_id: number, url: string, user_date: string) {
+  const urlData = {
+    comments: comments,
+    person_id: person_id,
+    state_id: state_id,
+    url: url,
+    user_date: user_date
+  };
+
+  // Write the new url's data simultaneously in the neuroglancer list and the user's list.
+  const updates: any = {};
+  updates["/neuroglancer/" + state_id] = urlData;
+  return databaseRef.update(updates);
+}
+/**
+ * Setup for initial user info
+ * @param uid 
+ * @returns 
+ */
+ function setupUser(state_id: number, user: User) {
+  const updates: any = {};
+  updates["/users/" + state_id + "/" + user.user_id] = user.username;
+  return databaseRef.update(updates);
 }
 
 /**
@@ -48,31 +84,20 @@ export class UrlHashBinding extends RefCounted {
   /**
    * Most recently parsed or set state string.
    */
-  private prevStateString: string|undefined;
-
-  /**
-   * Generation number of previous state set.
-   */
-  private prevStateGeneration: number|undefined;
-
   /**
    * Most recent error parsing URL hash.
    */
-  parseError = new WatchableValue<Error|undefined>(undefined);
-
-  /**
-   * Create state api endpoint
-   */
+  parseError = new WatchableValue<Error | undefined>(undefined);
   private stateAPI: StateAPI;
   private stateData: State;
   private stateID: string;
-  private multiUserMode: string; /* set to 1 if true, else undefined */
-
+  private user: User;
+  private multiUserMode: string; /* set to 1 if true, else 0 */
   constructor(
-      public root: Trackable, public credentialsManager: CredentialsManager,
-      updateDelayMilliseconds = 200) {
+    public root: Trackable, public credentialsManager: CredentialsManager,
+    updateDelayMilliseconds = 200) {
     super();
-    // this.registerEventListener(window, 'hashchange', () => this.updateFromUrlHash());
+    this.registerEventListener(window, 'hashchange', () => this.updateFromUrlHash());
     const throttledSetUrlHash = debounce(() => this.setUrlHash(), updateDelayMilliseconds);
     this.registerDisposer(root.changed.add(throttledSetUrlHash));
     this.registerDisposer(() => throttledSetUrlHash.cancel());
@@ -83,157 +108,114 @@ export class UrlHashBinding extends RefCounted {
 
   }
 
-
   /**
-   * This is the initial fetch from the REST API. It queries the database
+   * This gets fired once when the page initally loads.
+   * It the initial fetch from the REST API. It queries the database
    * from the primary key in the url: id=XXX where XXX is the primary key
+   * The 2nd variable: multi is either 0 for single user mode, or 1 for multi user mode
    */
-  public fetchState() {
+  public updateFromUrlHash() {
     const id_match = location.href.match(/(?<=(\?id=))(.*?\d*)\&multi=(\d*)/);
-    if ((id_match !== null) 
-      && (typeof id_match[2] !== 'undefined') 
+    if ((id_match !== null)
+      && (typeof id_match[2] !== 'undefined')
       && (typeof id_match[3] !== 'undefined')) {
+
       this.stateID = id_match[2];
       this.multiUserMode = id_match[3];
 
-      this.stateAPI.getState(this.stateID).then(jsonState => {
-        this.stateData = jsonState;
-        let state = this.stateData.url;
-        state = JSON.parse(state);
-        if (state === this.prevStateString) {
-          console.log('State has not changed.')
-          return;
+      this.stateAPI.getUser().then(jsonUser => {
+        this.user = jsonUser;
+      })
+
+
+      neuroglancerDataRef.child(this.stateID).once('value', (snapshot) => {
+        if (snapshot.exists()) {
+          console.log('child exists with ' + this.stateID);
+          this.stateData = snapshot.val();
+          const jsonStateUrl = this.stateData.url;
+          this.root.reset();
+          verifyObject(jsonStateUrl);
+          this.root.restoreState(jsonStateUrl);
+        } else {
+          this.stateAPI.getState(this.stateID).then(jsonState => {
+            this.stateData = jsonState;
+            if (this.stateData.state_id > 0) {
+              let jsonStateUrl = this.stateData.url;
+              jsonStateUrl = JSON.parse(jsonStateUrl);
+              this.root.reset();
+              verifyObject(jsonStateUrl);
+              this.root.restoreState(jsonStateUrl);
+              this.stateData.url = jsonStateUrl;
+              setupUserData(this.stateData.comments,
+                this.stateData.person_id, 
+                this.stateData.state_id,
+                this.stateData.url,
+                this.stateData.user_date);
+            }
+          });
         }
-        this.root.reset();
-        verifyObject(state);
-        this.stateData.url = state;
-        this.root.restoreState(state);
-        const cacheState = getCachedJson(this.root);
-        const stateString = encodeFragment(JSON.stringify(cacheState.value));
-        this.prevStateString = stateString;
+        if ((this.stateData !== undefined) && (this.stateData.state_id !== undefined)) {
+          setupUser(this.stateData.state_id, this.user);
+        }
+      });
+      this.setStateFromFirebase();
+    } /* finished if valid stateID */
+
+  }
+
+
+
+  /** this needs to fire when in multi-user mode and the firebase object changes 
+   * This should only fire when another users updates state
+   */
+  private setStateFromFirebase() {
+    if ((this.stateID !== undefined)
+      && (this.multiUserMode !== undefined)
+      && (this.multiUserMode === '1')) {
+
+      let testUser = 0;
+
+      neuroglancerDataRef.child(this.stateID)
+        .on("child_changed", (snapshot) => {
+          const jsonState = snapshot.val();
+
+          if (snapshot.key === 'updated_by') {
+            testUser = jsonState;
+          }
+
+          if ((snapshot.key === 'url') && (this.user.user_id !== testUser)) {
+            const message = "child url changed by another browser " + jsonState;
+            console.log(message);
+            this.root.reset();
+            verifyObject(jsonState);
+            this.root.restoreState(jsonState);
+          }
         });
     }
   }
 
-  /* this gets fired whenever state changes. We then do a merge into the firebase */
+  /* experiment with the two methods */
+  /** This gets fired in an interval defined in the constructor above
+   * if a user does anything.
+   * Sets the firebase state to match the current state.
+   */
   setUrlHash() {
-    if (this.stateID !== undefined) {
-      neuroglancerDataRef.child(this.stateID).set({ state: this.stateData });
-      const message = this.stateID + ' was changed at ' + new Date();
-      console.log(message);
-    }
-  }
+    if ((this.stateID !== undefined)
+      && (this.multiUserMode !== undefined)
+      && (this.multiUserMode === '1')) {
 
-  async setStateFromFirebase() {
-    if ((this.stateID !== undefined) && (this.multiUserMode === '1')){
-      const firebaseString = await this.fetchStateFromFirebase();
-      const stateString = encodeFragment(JSON.stringify(firebaseString));
-      this.prevStateString = stateString;
-    }
-  }
-
-  /* this needs to fire when in multi-user mode and the firebase object changes */
-  fetchStateFromFirebase(): Promise<any> {
-      return neuroglancerDataRef.child(this.stateID).get();
-  }
-
-
-
-  /**
-   * This is unused
-   */
-  public updateFromUrlHash() {
-    const cacheState = getCachedJson(this.root);
-    const {generation} = cacheState;
-    if (generation !== this.prevStateGeneration) {
-      console.log('generation is NOT equal to prevSateGeneration');
-      this.prevStateGeneration = cacheState.generation;
-      const stateString = encodeFragment(JSON.stringify(cacheState.value));
-      if (stateString !== this.prevStateString) {
-        this.prevStateString = stateString;
-        console.log('prevStateString NOT equal to  stateString');
-      } else {
-        console.log('prevStateString equal to  stateString');
+      const cacheState = getCachedJson(this.root);
+      const stateString = JSON.stringify(cacheState.value);
+      // this part gets fired when a user changes something
+      const urlData = JSON.parse(stateString);
+      const layerType = urlData.layers[0].type;
+      if (layerType !== 'new') {
+        console.log('updating state from user browser')
+        neuroglancerDataRef.child(this.stateID).update({ url: urlData, updated_by: this.user.user_id });
       }
-    } else {
-      console.log('generation is equal to prevSateGeneration');
+
     }
   }
 
 
-
-
-  /**
-   * Sets the URL hash to match the current state.
-   * Original version, also unused
-   */
-  setUrlHashXXX() {
-    const cacheState = getCachedJson(this.root);
-    const {generation} = cacheState;
-    if (generation !== this.prevStateGeneration) {
-      this.prevStateGeneration = cacheState.generation;
-      const stateString = encodeFragment(JSON.stringify(cacheState.value));
-      if (stateString !== this.prevStateString) {
-        this.prevStateString = stateString;
-        if (decodeURIComponent(stateString) === '{}') {
-          history.replaceState(null, '', '#');
-        } else {
-          history.replaceState(null, '', '#!' + stateString);
-          // history.replaceState(null, '', '#!XXXXXXXXX');
-        }
-      }
-    }
-  }
-
-  /**
-   * Sets the current state to match the URL hash.  If it is desired to initialize the state based
-   * on the URL hash, then this should be called immediately after construction.
-   * Original version, also unused
-   */
-  updateFromUrlHashXXX() {
-    try {
-      let s = location.href.replace(/^[^#]+/, '');
-      if (s === '' || s === '#' || s === '#!') {
-        s = '#!{}';
-      }
-      // Handle remote JSON state
-      if (s.match(/^#!(http|https|gs):\/\//)) {
-        const url = s.substring(2);
-        const {url: parsedUrl, credentialsProvider} = parseSpecialUrl(url, this.credentialsManager);
-        StatusMessage.forPromise(
-            cancellableFetchSpecialOk(credentialsProvider, parsedUrl, {}, responseJson)
-                .then(json => {
-                  verifyObject(json);
-                  this.root.reset();
-                  this.root.restoreState(json);
-                }),
-            {initialMessage: `Loading state from ${url}`, errorPrefix: `Error loading state:`});
-      } else if (s.startsWith('#!+')) {
-        s = s.slice(3);
-        // Firefox always %-encodes the URL even if it is not typed that way.
-        s = decodeURIComponent(s);
-        const state = urlSafeParse(s);
-        verifyObject(state);
-        this.root.restoreState(state);
-        this.prevStateString = undefined;
-      } else if (s.startsWith('#!')) {
-        s = s.slice(2);
-        s = decodeURIComponent(s);
-        if (s === this.prevStateString) {
-          return;
-        }
-        this.prevStateString = s;
-        this.root.reset();
-        const state = urlSafeParse(s);
-        verifyObject(state);
-        console.log(state);
-        this.root.restoreState(state);
-      } else {
-        throw new Error(`URL hash is expected to be of the form "#!{...}" or "#!+{...}".`);
-      }
-      this.parseError.value = undefined;
-    } catch (parseError) {
-      this.parseError.value = parseError;
-    }
-  }
 }

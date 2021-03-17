@@ -925,11 +925,15 @@ export class WatchableCoordinateSpaceTransform implements
     if (spec.operations !== undefined) {
       this.operations = spec.operations;
     }
+    
+    
     if (spec.rawRotationMatrix !== undefined) {
       this.rawRotationMatrix = spec.rawRotationMatrix;
     } else {
       this.rawRotationMatrix = this.transform;
     }
+    
+    
     /* END OF CHANGE: set operations from JSON */
   }
 
@@ -1419,9 +1423,18 @@ export function coordinateTransformSpecificationFromJson(j: unknown):
     }
     return operations;
   });
+  
+  /** 17 Mar 2021, EOD
+   * I put in this check as sometimes it throws an error where the array is = [[1]]
+   * When that happens, the expectArray fails. If that happens, I set x to 
+   * the identityMatrix
+   */
   const rawRotationMatrix = verifyOptionalObjectProperty(obj, 'rawRotationMatrix', x => {
     const transform = new Float64Array((rank + 1) ** 2);
-    const a = expectArray(x, rank);
+    if (x.length !== rank) {
+      x = matrix.createIdentity(Float64Array, 3);
+    }
+    const a = expectArray(x, rank); //TODO an error occurs here when creating a new annotation layer
     transform[transform.length - 1] = 1;
     for (let i = 0; i < rank; ++i) {
       try {
@@ -1435,6 +1448,7 @@ export function coordinateTransformSpecificationFromJson(j: unknown):
     }
     return transform;
   });
+  
   return {transform, outputSpace, inputSpace, sourceRank, operations, rawRotationMatrix};
   /* END OF CHANGE: operations from JSON */
 }
@@ -1456,6 +1470,7 @@ export function coordinateTransformSpecificationToJson(spec: CoordinateTransform
     }
   }
   let rm: number[][]|undefined;
+  
   if (rawRotationMatrix !== undefined) {
     rm = [];
     for (let i = 0; i < rank; ++i) {
@@ -1466,6 +1481,7 @@ export function coordinateTransformSpecificationToJson(spec: CoordinateTransform
       }
     }
   }
+  
   return {
     sourceRank: sourceRank === rank ? undefined : sourceRank,
     matrix: m,
