@@ -15,6 +15,7 @@
  */
 
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 import { CredentialsManager } from 'neuroglancer/credentials_provider';
 import { WatchableValue } from 'neuroglancer/trackable_value';
 import { RefCounted } from 'neuroglancer/util/disposable';
@@ -23,7 +24,7 @@ import { getCachedJson, Trackable } from 'neuroglancer/util/trackable';
 import { StateAPI, State } from 'neuroglancer/services/state_loader';
 // import { StatusMessage } from 'neuroglancer/status';
 import { AppSettings } from "neuroglancer/services/service";
-import { neuroglancerDataRef, databaseRef } from "neuroglancer/services/firebase";
+import { neuroglancerDataRef, databaseRef, updatesDataRef } from "neuroglancer/services/firebase";
 import {User} from "neuroglancer/services/user";
 
 
@@ -75,6 +76,34 @@ function setupUserData(comments: string, person_id: number,
   updates["/users/" + state_id + "/" + user.user_id] = user.username;
   return databaseRef.update(updates);
 }
+/**
+ * track who is updating which set of data
+ * @param uid 
+ * @returns 
+ */
+ function setUpdatedBy(state_id: number, user: User) {
+  return databaseRef.child("updates").child("" + state_id).set(user.user_id);
+}
+/**
+ * compare two json state objects
+ * @param stringified object 1
+ * @param stringified object 2
+ * @returns boolean
+ */
+ function compareState(stringObject1:any, stringObject2:any):boolean {
+  try {
+    JSON.parse(stringObject1);
+  } catch (e) {
+    return false;
+  }
+  try {
+    JSON.parse(stringObject2);
+  } catch (e) {
+    return false;
+  }
+  return isEqual(JSON.parse(stringObject1), JSON.parse(stringObject2));
+
+}
 
 /**
  * An instance of this class manages a binding between a Trackable value and the URL hash state.
@@ -92,6 +121,8 @@ export class UrlHashBinding extends RefCounted {
   private stateData: State;
   private stateID: string;
   private user: User;
+  private updatedBy = 0;
+  private prevStateString = "";
   private multiUserMode: string; /* set to 1 if true, else 0 */
   constructor(
     public root: Trackable, public credentialsManager: CredentialsManager,
@@ -136,6 +167,9 @@ export class UrlHashBinding extends RefCounted {
           this.root.reset();
           verifyObject(jsonStateUrl);
           this.root.restoreState(jsonStateUrl);
+          setupUser(this.stateData.state_id, this.user);
+          setUpdatedBy(this.stateData.state_id, this.user);
+          this.updatedBy = this.user.user_id;
         } else {
           this.stateAPI.getState(this.stateID).then(jsonState => {
             this.stateData = jsonState;
@@ -151,11 +185,11 @@ export class UrlHashBinding extends RefCounted {
                 this.stateData.state_id,
                 this.stateData.url,
                 this.stateData.user_date);
+              setupUser(this.stateData.state_id, this.user);
+              setUpdatedBy(this.stateData.state_id, this.user);
+              this.updatedBy = this.user.user_id;
             }
           });
-        }
-        if ((this.stateData !== undefined) && (this.stateData.state_id !== undefined)) {
-          setupUser(this.stateData.state_id, this.user);
         }
       });
       this.setStateFromFirebase();
@@ -173,19 +207,25 @@ export class UrlHashBinding extends RefCounted {
       && (this.multiUserMode !== undefined)
       && (this.multiUserMode === '1')) {
 
-      let testUser = 0;
+      updatesDataRef.child(this.stateID)
+        .on("value", (snapshot) => {
+          this.updatedBy = snapshot.val();
+          console.log('#1, key ' + snapshot.key + ' value ' + snapshot.val());
+        });
 
       neuroglancerDataRef.child(this.stateID)
         .on("child_changed", (snapshot) => {
           const jsonState = snapshot.val();
+          const stateString = JSON.stringify(jsonState);
+          const sameState = compareState(this.prevStateString, stateString);
+    
 
-          if (snapshot.key === 'updated_by') {
-            testUser = jsonState;
-          }
-
-          if ((snapshot.key === 'url') && (this.user.user_id !== testUser)) {
-            const message = "child url changed by another browser " + jsonState;
+          // if ((snapshot.key === 'url') && (this.user.user_id !== this.updatedBy)) {
+          if ((snapshot.key === 'url') && (!sameState)) {
+              const message = "2 changed by another browser " + this.user.user_id 
+            + ' updatedBy ' + this.updatedBy + ' same state ' + sameState;
             console.log(message);
+            this.prevStateString = stateString;
             this.root.reset();
             verifyObject(jsonState);
             this.root.restoreState(jsonState);
@@ -194,7 +234,7 @@ export class UrlHashBinding extends RefCounted {
     }
   }
 
-  /* experiment with the two methods */
+  //TODO use just one state ID !!!
   /** This gets fired in an interval defined in the constructor above
    * if a user does anything.
    * Sets the firebase state to match the current state.
@@ -204,14 +244,26 @@ export class UrlHashBinding extends RefCounted {
       && (this.multiUserMode !== undefined)
       && (this.multiUserMode === '1')) {
 
+        updatesDataRef.child(this.stateID)
+        .on("value", (snapshot) => {
+          this.updatedBy = snapshot.val();
+          console.log('#3, key ' + snapshot.key + ' value ' + snapshot.val());
+        });
+
+
       const cacheState = getCachedJson(this.root);
       const stateString = JSON.stringify(cacheState.value);
       // this part gets fired when a user changes something
       const urlData = JSON.parse(stateString);
       const layerType = urlData.layers[0].type;
-      if (layerType !== 'new') {
+      const sameState = compareState(this.prevStateString, stateString);
+      if ((layerType !== 'new') && (!sameState)) {
         console.log('updating state from user browser')
-        neuroglancerDataRef.child(this.stateID).update({ url: urlData, updated_by: this.user.user_id });
+        neuroglancerDataRef.child(this.stateID).update({ url: urlData });
+        console.log('#4 updatedBy ' + this.updatedBy + ' userid ' + this.user.user_id);
+        setUpdatedBy(this.stateData.state_id, this.user);
+        this.updatedBy = this.user.user_id;
+        this.prevStateString = stateString;
       }
 
     }
