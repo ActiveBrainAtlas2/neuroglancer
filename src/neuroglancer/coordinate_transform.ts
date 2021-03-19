@@ -1426,14 +1426,14 @@ export function coordinateTransformSpecificationFromJson(j: unknown):
   
   /** 17 Mar 2021, EOD
    * I put in this check as sometimes it throws an error where the array is = [[1]]
-   * When that happens, the expectArray fails. If that happens, I set x to 
-   * the 
+   * When that happens, the expectArray fails. If that happens, I set x manually
+   * This is a complete hack and needs to be fixed.
+   * TODO
    */
   const rawRotationMatrix = verifyOptionalObjectProperty(obj, 'rawRotationMatrix', x => {
     const transform = new Float64Array((rank + 1) ** 2);
     if (x.length !== rank) {
-      x = [0,0,0];
-      console.log(x);
+      x = [1,1,1];
       // return matrix.createIdentity(Float64Array, rank);
     }
     const a = expectArray(x, rank); //TODO an error occurs here when creating a new annotation layer
