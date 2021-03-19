@@ -21,7 +21,7 @@ import { WatchableValue } from 'neuroglancer/trackable_value';
 import { RefCounted } from 'neuroglancer/util/disposable';
 import { verifyObject } from 'neuroglancer/util/json';
 import { getCachedJson, Trackable } from 'neuroglancer/util/trackable';
-import { StateAPI, State } from 'neuroglancer/services/state_loader';
+import { StateAPI, State, getLocationBar } from 'neuroglancer/services/state_loader';
 // import { StatusMessage } from 'neuroglancer/status';
 import { AppSettings } from "neuroglancer/services/service";
 import { neuroglancerDataRef, databaseRef } from "neuroglancer/services/firebase";
@@ -82,7 +82,7 @@ function setupUserData(comments: string, person_id: number,
  * @param stringified object 2
  * @returns boolean
  */
- function compareState(stringObject1:any, stringObject2:any):boolean {
+ function compareState(stringObject1:string, stringObject2:string):boolean {
   try {
     JSON.parse(stringObject1);
   } catch (e) {
@@ -114,7 +114,7 @@ export class UrlHashBinding extends RefCounted {
   private stateID: string;
   private user: User;
   private prevStateString = "";
-  private multiUserMode: string; /* set to 1 if true, else 0 */
+  private multiUserMode: false; /* boolean */
   constructor(
     public root: Trackable, public credentialsManager: CredentialsManager,
     updateDelayMilliseconds = 200) {
@@ -137,13 +137,14 @@ export class UrlHashBinding extends RefCounted {
    * The 2nd variable: multi is either 0 for single user mode, or 1 for multi user mode
    */
   public updateFromUrlHash() {
-    const id_match = location.href.match(/(?<=(\?id=))(.*?\d*)\&multi=(\d*)/);
-    if ((id_match !== null)
-      && (typeof id_match[2] !== 'undefined')
-      && (typeof id_match[3] !== 'undefined')) {
+    const id_match = getLocationBar();
 
-      this.stateID = id_match[2];
-      this.multiUserMode = id_match[3];
+    if ((id_match !== undefined)
+      && (typeof id_match['stateID'] !== 'undefined')
+      && (typeof id_match['multiUserMode'] !== 'undefined')) {
+
+      this.stateID = id_match['stateID'];
+      this.multiUserMode = id_match['multiUserMode'];
 
       this.stateAPI.getUser().then(jsonUser => {
         this.user = jsonUser;
@@ -180,7 +181,7 @@ export class UrlHashBinding extends RefCounted {
         }
       });
       this.setStateFromFirebase();
-    } /* finished if valid stateID */
+    } /* finished if valid stateID */ 
 
   }
 
@@ -191,8 +192,7 @@ export class UrlHashBinding extends RefCounted {
    */
   private setStateFromFirebase() {
     if ((this.stateID !== undefined)
-      && (this.multiUserMode !== undefined)
-      && (this.multiUserMode === '1')) {
+      && (this.multiUserMode)) {
 
       neuroglancerDataRef.child(this.stateID)
         .on("child_changed", (snapshot) => {
@@ -217,8 +217,7 @@ export class UrlHashBinding extends RefCounted {
    */
   setUrlHash() {
     if ((this.stateID !== undefined)
-      && (this.multiUserMode !== undefined)
-      && (this.multiUserMode === '1')) {
+      && (this.multiUserMode)) {
     
       const cacheState = getCachedJson(this.root);
       const stateString = JSON.stringify(cacheState.value);
