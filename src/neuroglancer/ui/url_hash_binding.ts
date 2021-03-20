@@ -21,7 +21,7 @@ import { WatchableValue } from 'neuroglancer/trackable_value';
 import { RefCounted } from 'neuroglancer/util/disposable';
 import { verifyObject } from 'neuroglancer/util/json';
 import { getCachedJson, Trackable } from 'neuroglancer/util/trackable';
-import { StateAPI, State, getLocationBar } from 'neuroglancer/services/state_loader';
+import { getLocationBar, StateAPI, State } from 'neuroglancer/services/state_loader';
 // import { StatusMessage } from 'neuroglancer/status';
 import { AppSettings } from "neuroglancer/services/service";
 import { neuroglancerDataRef, databaseRef } from "neuroglancer/services/firebase";
@@ -137,14 +137,14 @@ export class UrlHashBinding extends RefCounted {
    * The 2nd variable: multi is either 0 for single user mode, or 1 for multi user mode
    */
   public updateFromUrlHash() {
-    const id_match = getLocationBar();
+    const locationVariables = getLocationBar();
 
-    if ((id_match !== undefined)
-      && (typeof id_match['stateID'] !== 'undefined')
-      && (typeof id_match['multiUserMode'] !== 'undefined')) {
+    if (('stateID' in locationVariables)
+      && (typeof locationVariables['stateID'] !== 'undefined')
+      && (typeof locationVariables['multiUserMode'] !== 'undefined')) {
 
-      this.stateID = id_match['stateID'];
-      this.multiUserMode = id_match['multiUserMode'];
+      this.stateID = locationVariables['stateID'];
+      this.multiUserMode = locationVariables['multiUserMode'];
 
       this.stateAPI.getUser().then(jsonUser => {
         this.user = jsonUser;
