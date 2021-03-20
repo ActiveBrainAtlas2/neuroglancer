@@ -50,15 +50,19 @@ export class WatchableAnnotationRelationshipStates extends
       context.registerDisposer(segmentationState.changed.add(this.changed.dispatch));
       context.registerDisposer(registerNested((nestedContext, segmentationState) => {
         if (segmentationState == null) return;
-        const {visibleSegments} = segmentationState;
-        let wasEmpty = visibleSegments.size === 0;
-        nestedContext.registerDisposer(segmentationState.visibleSegments.changed.add(() => {
-          const isEmpty = visibleSegments.size === 0;
-          if (isEmpty !== wasEmpty) {
-            wasEmpty = isEmpty;
-            this.changed.dispatch();
-          }
-        }));
+        const {segmentationGroupState} = segmentationState;
+        nestedContext.registerDisposer(segmentationGroupState.changed.add(this.changed.dispatch));
+        nestedContext.registerDisposer(registerNested((groupContext, groupState) => {
+          const {visibleSegments} = groupState;
+          let wasEmpty = visibleSegments.size === 0;
+          groupContext.registerDisposer(visibleSegments.changed.add(() => {
+            const isEmpty = visibleSegments.size === 0;
+            if (isEmpty !== wasEmpty) {
+              wasEmpty = isEmpty;
+              this.changed.dispatch();
+            }
+          }));
+        }, segmentationGroupState));
       }, segmentationState));
     });
   }
@@ -76,15 +80,11 @@ export class WatchableAnnotationRelationshipStates extends
   }
 }
 
-/* START OF CHANGE: default rendering annotation layer */
 const DEFAULT_FRAGMENT_MAIN = `
-#uicontrol float size slider(min=0, max=10, default=1)
 void main() {
   setColor(defaultColor());
-  setPointMarkerSize(size);
 }
 `;
-/* END OF CHANGE: default rendering annotation layer */
 
 export class AnnotationDisplayState extends RefCounted {
   shader = makeTrackableFragmentMain(DEFAULT_FRAGMENT_MAIN);
@@ -101,7 +101,7 @@ export class AnnotationDisplayState extends RefCounted {
         if (!ignoreNullSegmentFilter) return false;
         const segmentationState = state.segmentationState.value;
         if (segmentationState != null) {
-          if (segmentationState.visibleSegments.size > 0) {
+          if (segmentationState.segmentationGroupState.value.visibleSegments.size > 0) {
             return false;
           }
         }

@@ -31,19 +31,15 @@ import {removeChildren, removeFromParent} from 'neuroglancer/util/dom';
 import {ActionEvent, KeyboardEventBinder, registerActionListener} from 'neuroglancer/util/keyboard_bindings';
 import {createIdentity, extendHomogeneousTransform, isIdentity} from 'neuroglancer/util/matrix';
 import {EventActionMap, MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
-import {
-  formatMeterWithUnitAsString,
-  formatScaleWithUnitAsString,
-  parseMeter,
-  parseScale,
-} from 'neuroglancer/util/si_units';
+// import {formatMeterWithUnitAsString,formatScaleWithUnitAsString, parseMeter, parseScale} from 'neuroglancer/util/si_units';
+import {formatScaleWithUnitAsString, parseScale} from 'neuroglancer/util/si_units';
 import {makeIcon} from 'neuroglancer/widget/icon';
 
 function updateInputFieldWidth(element: HTMLInputElement, value: string = element.value) {
   element.style.minWidth = (value.length + 1) + 'ch';
 
   /* START OF CHANGE: fix matrix width */
-  element.style.minWidth = '4ch';
+  // element.style.minWidth = '4ch';
   /* END OF CHANGE: fix matrix width */
 }
 
@@ -196,7 +192,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private addingSourceDimension = false;
 
   /* START OF CHANGE: instance variables */
-  private operationElements: HTMLInputElement[] = [];
+  // private operationElements: HTMLInputElement[] = [];
 
   private resetToIdentityButton = makeIcon({
     text: 'Set to identity',
@@ -208,7 +204,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           transform.transform = createIdentity(Float64Array, rank + 1);
 
           // Reset offsets and update rotation point
-          this.transform.operations = this.transform.defaultOperations;
+          // this.transform.operations = this.transform.defaultOperations;
         }
   });
   private resetToDefaultButton = makeIcon({
@@ -230,7 +226,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           };
 
           // Reset offsets and update rotation point
-          this.transform.operations = this.transform.defaultOperations;
+          // this.transform.operations = this.transform.defaultOperations;
         }
   });
   /* END OF CHANGE: instance variables */
@@ -280,6 +276,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     resetButtons.appendChild(resetToDefaultButton);
     element.appendChild(resetButtons);
 
+    
     for (const [className, textContent] of [
              ['source', 'Source dimensions'],
              ['output', 'Output dimensions'],
@@ -314,6 +311,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     addSourceDimensionIcon.addEventListener('click', () => {
       this.addingSourceDimension = true;
       this.addOutputDimensionInput.title = extendSourceDimensionsTitle;
+      
       this.addOutputDimensionCell.dataset.isActive = 'true';
       this.addOutputDimensionInput.focus();
     });
@@ -387,7 +385,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     registerMoveUpDown('move-down', +1, 0);
     registerMoveUpDown('move-left', 0, -1);
     registerMoveUpDown('move-right', 0, +1);
-
     const registerFocusout = (container: HTMLDivElement, handler: (event: FocusEvent) => void) => {
       container.addEventListener('focusout', (event: FocusEvent) => {
         const {relatedTarget} = event;
@@ -442,7 +439,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     });
 
     /* START OF CHANGE: operation matrix constructor*/
-    this.makeOperationElement();
+    // this.makeOperationElement();
     /* END OF CHANGE: operation matrix constructor*/
 
     this.updateView();
@@ -1021,7 +1018,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.updateResetButtonVisibility();
 
     /* START CHANGE: update operation matrix */
-    this.updateViewOperations();
+    // this.updateViewOperations();
     /* END CHANGE: update operation matrix */
   }
 
@@ -1031,6 +1028,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   }
 
   /* START OF CHANGE: operation matrix functions */
+  /*
   private makeOperationElement() {
     const OPERATIONS = ['Translation', 'Rotation', 'Scaling'];
     const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
@@ -1254,5 +1252,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
       return 0;
     });
   }
+  */
   /* END OF CHANGE: operation matrix functions */
 }
