@@ -17,14 +17,12 @@
 import {WatchableValue, WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {arraysEqual, arraysEqualWithPredicate, getInsertPermutation, TypedArray} from 'neuroglancer/util/array';
 import {getDependentTransformInputDimensions, mat4, quat, vec3} from 'neuroglancer/util/geom';
-import {expectArray, parseArray, parseFiniteVec, parseFixedLengthArray, verifyFiniteFloat, verifyFinitePositiveFloat, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyString} from 'neuroglancer/util/json';
+import {expectArray, parseArray, parseFiniteVec, parseFixedLengthArray, verifyFiniteFloat, verifyFinitePositiveFloat, verifyIntegerArray, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyString, verifyStringArray} from 'neuroglancer/util/json';
 import * as matrix from 'neuroglancer/util/matrix';
 import {scaleByExp10, supportedUnits, unitFromJson} from 'neuroglancer/util/si_units';
 import {NullarySignal} from 'neuroglancer/util/signal';
 import {Trackable} from 'neuroglancer/util/trackable';
 import * as vector from 'neuroglancer/util/vector';
-import {matrixTransform,  offsetTransform, dimensionTransform, createIdentity} from 'neuroglancer/util/matrix';
-import {getCombinedTransform64} from './sliceview/base';
 
 export type DimensionId = number;
 
@@ -32,6 +30,16 @@ let nextDimensionId = 0;
 
 export function newDimensionId(): DimensionId {
   return ++nextDimensionId;
+}
+
+export interface CoordinateArray {
+  // Indicates whether this coordinate array was specified explicitly, in which case it will be
+  // encoded in the JSON representation.
+  explicit: boolean;
+  // Specifies the coordinates.  Must be montonically increasing integers.
+  coordinates: number[];
+  // Specifies the label for each coordinate in `coordinates`.
+  labels: string[];
 }
 
 export interface CoordinateSpace {
@@ -69,10 +77,55 @@ export interface CoordinateSpace {
 
   readonly bounds: BoundingBox;
   readonly boundingBoxes: readonly TransformedBoundingBox[];
+
+  readonly coordinateArrays: (CoordinateArray|undefined)[];
 }
 
 export function boundingBoxesEqual(a: BoundingBox, b: BoundingBox) {
   return arraysEqual(a.lowerBounds, b.lowerBounds) && arraysEqual(a.upperBounds, b.upperBounds);
+}
+
+export function coordinateArraysEqual(a: CoordinateArray|undefined, b: CoordinateArray|undefined) {
+  if (a === undefined) return b === undefined;
+  if (b === undefined) return false;
+  return a.explicit === b.explicit && arraysEqual(a.coordinates, b.coordinates) &&
+      arraysEqual(a.labels, b.labels);
+}
+
+export function normalizeCoordinateArray(coordinates: number[], labels: string[]) {
+  const map = new Map<number, string>();
+  for (let i = 0, length = coordinates.length; i < length; ++i) {
+    map.set(coordinates[i], labels[i]);
+  }
+  coordinates = Array.from(map.keys());
+  coordinates.sort((a, b) => a - b);
+  labels = Array.from(coordinates, x => map.get(x)!);
+  return {coordinates, labels};
+}
+
+export function mergeCoordinateArrays(coordinateArrays: ReadonlyArray<CoordinateArray>):
+    CoordinateArray {
+  if (coordinateArrays.length === 1) return coordinateArrays[0];
+  const map = new Map<number, string>();
+  let explicit = false;
+  for (const x of coordinateArrays) {
+    if (x.explicit) explicit = true;
+    const {coordinates, labels} = x;
+    for (let i = 0, length = coordinates.length; i < length; ++i) {
+      map.set(coordinates[i], labels[i]);
+    }
+  }
+  const coordinates = Array.from(map.keys());
+  coordinates.sort((a, b) => a - b);
+  const labels = Array.from(coordinates, x => map.get(x)!);
+  return {explicit, coordinates, labels};
+}
+
+export function mergeOptionalCoordinateArrays(
+    coordinateArrays: ReadonlyArray<CoordinateArray|undefined>): CoordinateArray|undefined {
+  coordinateArrays = coordinateArrays.filter(x => x !== undefined);
+  if (coordinateArrays.length === 0) return undefined;
+  return mergeCoordinateArrays(coordinateArrays as ReadonlyArray<CoordinateArray>);
 }
 
 export function transformedBoundingBoxesEqual(
@@ -85,7 +138,8 @@ export function coordinateSpacesEqual(a: CoordinateSpace, b: CoordinateSpace) {
       a.valid === b.valid && a.rank === b.rank && arraysEqual(a.names, b.names) &&
       arraysEqual(a.ids, b.ids) && arraysEqual(a.timestamps, b.timestamps) &&
       arraysEqual(a.units, b.units) && arraysEqual(a.scales, b.scales) &&
-      arraysEqualWithPredicate(a.boundingBoxes, b.boundingBoxes, transformedBoundingBoxesEqual));
+      arraysEqualWithPredicate(a.boundingBoxes, b.boundingBoxes, transformedBoundingBoxesEqual) &&
+      arraysEqualWithPredicate(a.coordinateArrays, b.coordinateArrays, coordinateArraysEqual));
 }
 
 export function unitsFromJson(units: string[], scaleExponents: Float64Array, obj: any) {
@@ -105,7 +159,8 @@ export function makeCoordinateSpace(space: {
   readonly timestamps?: readonly number[],
   readonly ids?: readonly DimensionId[],
   readonly boundingBoxes?: readonly TransformedBoundingBox[],
-  readonly bounds?: BoundingBox
+  readonly bounds?: BoundingBox,
+  readonly coordinateArrays?: (CoordinateArray|undefined)[],
 }): CoordinateSpace {
   const {names, units, scales} = space;
   const {
@@ -113,10 +168,22 @@ export function makeCoordinateSpace(space: {
     rank = names.length,
     timestamps = names.map(() => Number.NEGATIVE_INFINITY),
     ids = names.map((_, i) => -i),
-    boundingBoxes = []
+    boundingBoxes = [],
   } = space;
+  const {coordinateArrays = new Array<CoordinateArray|undefined>(rank)} = space;
   const {bounds = computeCombinedBounds(boundingBoxes, rank)} = space;
-  return {valid, rank, names, timestamps, ids, units, scales, boundingBoxes, bounds};
+  return {
+    valid,
+    rank,
+    names,
+    timestamps,
+    ids,
+    units,
+    scales,
+    boundingBoxes,
+    bounds,
+    coordinateArrays
+  };
 }
 
 export const emptyInvalidCoordinateSpace = makeCoordinateSpace({
@@ -152,23 +219,50 @@ export function coordinateSpaceFromJson(
   const rank = names.length;
   const units = new Array<string>(rank);
   const scales = new Float64Array(rank);
+  const coordinateArrays = new Array<CoordinateArray|undefined>(rank);
   for (let i = 0; i < rank; ++i) {
     verifyObjectProperty(obj, names[i], mem => {
-      const {unit, scale} = unitAndScaleFromJson(mem);
-      units[i] = unit;
-      scales[i] = scale;
+      if (Array.isArray(mem)) {
+        // Normal unit-scale dimension.
+        const {unit, scale} = unitAndScaleFromJson(mem);
+        units[i] = unit;
+        scales[i] = scale;
+      } else {
+        // Coordinate array dimension.
+        verifyObject(mem);
+        let coordinates = verifyObjectProperty(mem, 'coordinates', verifyIntegerArray);
+        let labels = verifyObjectProperty(mem, 'labels', verifyStringArray);
+        let length = coordinates.length;
+        if (length !== labels.length) {
+          throw new Error(
+              `Length of coordinates array (${length}) ` +
+              `does not match length of labels array (${labels.length})`);
+        }
+        units[i] = '';
+        scales[i] = 1;
+        coordinateArrays[i] = {explicit: true, ...normalizeCoordinateArray(coordinates, labels)};
+      }
     });
   }
-  return makeCoordinateSpace({valid: false, names, units, scales});
+  return makeCoordinateSpace({valid: false, names, units, scales, coordinateArrays});
 }
 
 export function coordinateSpaceToJson(coordinateSpace: CoordinateSpace): any {
   const {rank} = coordinateSpace;
   if (rank === 0) return undefined;
-  const {names, units, scales} = coordinateSpace;
+  const {names, units, scales, coordinateArrays} = coordinateSpace;
   const json: any = {};
   for (let i = 0; i < rank; ++i) {
-    json[names[i]] = [scales[i], units[i]];
+    const name = names[i];
+    const coordinateArray = coordinateArrays[i];
+    if (coordinateArray?.explicit) {
+      json[name] = {
+        coordinates: Array.from(coordinateArray.coordinates),
+        labels: coordinateArray.labels
+      };
+    } else {
+      json[name] = [scales[i], units[i]];
+    }
   }
   return json;
 }
@@ -417,6 +511,7 @@ export function getOutputSpaceWithTransformedBoundingBoxes(
     scales: oldOutputSpace.scales,
     units: oldOutputSpace.units,
     boundingBoxes: getTransformedBoundingBoxes(inputSpace, transform, oldOutputSpace.scales),
+    coordinateArrays: oldOutputSpace.coordinateArrays,
   });
   if (coordinateSpacesEqual(newSpace, oldOutputSpace)) return oldOutputSpace;
   return newSpace;
@@ -561,7 +656,8 @@ export function remapTransformInputSpace(
     units: oldOutputUnits,
     scales: oldOutputScales,
     ids: oldOutputDimensionIds,
-    timestamps: oldOutputTimestamps
+    timestamps: oldOutputTimestamps,
+    coordinateArrays: oldOutputCoordinateArrays,
   } = oldOutputSpace;
   // For now just use a simple mapping.
   const removedOldOutputIndices = removedOldInputIndices;
@@ -570,6 +666,7 @@ export function remapTransformInputSpace(
   const outputScales = new Float64Array(newRank);
   const outputDimensionIds: DimensionId[] = [];
   const outputDimensionTimestamps: number[] = [];
+  const outputCoordinateArrays = new Array<CoordinateArray|undefined>(newRank);
   let newOutputDim = 0;
   const newTransform = new Float64Array((newRank + 1) ** 2);
   newTransform[newTransform.length - 1] = 1;
@@ -580,6 +677,7 @@ export function remapTransformInputSpace(
     outputUnits[newOutputDim] = oldOutputUnits[oldOutputDim];
     outputScales[newOutputDim] = oldOutputScales[oldOutputDim];
     outputDimensionTimestamps[newOutputDim] = oldOutputTimestamps[oldOutputDim];
+    outputCoordinateArrays[newOutputDim] = oldOutputCoordinateArrays[oldOutputDim];
     for (let newInputDim = 0; newInputDim < newRank; ++newInputDim) {
       const oldInputDim = newToOldInputDimensionIndices[newInputDim];
       if (oldInputDim === -1) continue;
@@ -608,6 +706,7 @@ export function remapTransformInputSpace(
     units: outputUnits,
     scales: outputScales,
     boundingBoxes: getTransformedBoundingBoxes(inputSpace, newTransform, outputScales),
+    coordinateArrays: outputCoordinateArrays,
   });
   return {
     rank: newRank,
@@ -640,24 +739,10 @@ export class WatchableCoordinateSpaceTransform implements
   private inputSpaceChanged = new NullarySignal();
   readonly defaultTransform: CoordinateSpaceTransform;
 
-  /* START OF CHANGE: operation instance variable */
-  private operations_: Float64Array;
-  readonly defaultOperations: Float64Array =
-    new Float64Array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1e-5, 1e-4, 0.5, 5, 0.01, 0.1]);
-  private rawRotationMatrix: Float64Array;
-  private rawOperationMatrix: Float64Array;
-  private centerPoint: Float64Array;
-  private mouseMode_: boolean;
-  /* END OF CHANGE: operation instance variable */
-
   constructor(
       defaultTransform: CoordinateSpaceTransform,
       public readonly mutableSourceRank: boolean = false) {
     this.defaultTransform = normalizeCoordinateSpaceTransform(defaultTransform);
-    /* START OF CHANGE: operation instance variable */
-    this.rawRotationMatrix = this.defaultTransform.transform;
-    this.rawOperationMatrix = this.defaultTransform.transform;
-    /* END OF CHANGE: operation instance variable */
     const self = this;
     this.outputSpace = {
       changed: self.changed,
@@ -717,7 +802,6 @@ export class WatchableCoordinateSpaceTransform implements
   reset() {
     if (this.value_ === this.defaultTransform) return;
     this.value_ = this.defaultTransform;
-    console.log('newValue', this.value_);
     this.inputSpaceChanged.dispatch();
     this.changed.dispatch();
   }
@@ -752,11 +836,6 @@ export class WatchableCoordinateSpaceTransform implements
       transform: transformSame ? undefined : transform,
       outputSpace: value.outputSpace,
       inputSpace: inputSpaceSame ? undefined : inputSpace,
-
-      /* START OF CHANGE: get operations from JSON*/
-      operations: this.operations_,
-      rawRotationMatrix: this.rawRotationMatrix,
-      /* END OF CHANGE: get operations from JSON*/
     };
   }
 
@@ -787,6 +866,7 @@ export class WatchableCoordinateSpaceTransform implements
         names: origInputSpace.names.map((_, i) => `${i}`),
         units: origInputSpace.units,
         scales: origInputSpace.scales,
+        coordinateArrays: origInputSpace.coordinateArrays,
       });
       this.value = {
         rank,
@@ -824,20 +904,26 @@ export class WatchableCoordinateSpaceTransform implements
       newToSpecDimensionIndices[defaultSourceRank + i - specSourceRank] = i;
     }
     const newInputScales = new Float64Array(newRank);
+    const newInputCoordinateArrays = new Array<CoordinateArray|undefined>(newRank);
     const newInputUnits: string[] = [];
     for (let newDim = 0; newDim < defaultSourceRank; ++newDim) {
       const specDim = newToSpecDimensionIndices[newDim];
       if (specDim === -1 || specInputSpace === undefined) {
         newInputScales[newDim] = defaultInputSpace.scales[newDim];
         newInputUnits[newDim] = defaultInputSpace.units[newDim];
+        newInputCoordinateArrays[newDim] = defaultInputSpace.coordinateArrays[newDim];
       } else {
         newInputScales[newDim] = specInputSpace.scales[specDim];
         newInputUnits[newDim] = specInputSpace.units[specDim];
+        newInputCoordinateArrays[newDim] = mergeOptionalCoordinateArrays(
+            [defaultInputSpace.coordinateArrays[newDim], specInputSpace.coordinateArrays[specDim]]);
       }
     }
     const specInputOrOutputSpace = specInputSpace || specOutputSpace;
     const newInputNames = defaultInputNames.slice(0, defaultSourceRank);
     const newOutputNames = defaultOutputSpace.names.slice(0, defaultSourceRank);
+    const newOutputCoordinateArrays =
+        defaultOutputSpace.coordinateArrays.slice(0, defaultSourceRank);
     const newOutputScales = new Float64Array(newRank);
     const newOutputUnits: string[] = [];
     for (let newDim = 0; newDim < newRank; ++newDim) {
@@ -845,10 +931,12 @@ export class WatchableCoordinateSpaceTransform implements
       if (specDim === -1) {
         newOutputScales[newDim] = defaultOutputSpace.scales[newDim];
         newOutputUnits[newDim] = defaultOutputSpace.units[newDim];
+        newOutputCoordinateArrays[newDim] = defaultOutputSpace.coordinateArrays[newDim];
       } else {
         newOutputNames[newDim] = specOutputSpace.names[specDim];
         newOutputUnits[newDim] = specOutputSpace.units[specDim];
         newOutputScales[newDim] = specOutputSpace.scales[specDim];
+        newOutputCoordinateArrays[newDim] = specOutputSpace.coordinateArrays[specDim];
       }
     }
     if (!validateDimensionNames(newOutputNames)) {
@@ -883,7 +971,7 @@ export class WatchableCoordinateSpaceTransform implements
       for (let newCol = 0; newCol < newRank; ++newCol) {
         const specCol = newToSpecDimensionIndices[newCol];
         let value: number;
-        if ((specRow === -1) !== (specCol === -1)) {
+        if ((specRow === -1) != (specCol === -1)) {
           value = 0;
         } else if (specRow === -1 || specTransformMatrix === undefined) {
           if (specRow >= defaultSourceRank || specCol >= defaultSourceRank) {
@@ -902,6 +990,39 @@ export class WatchableCoordinateSpaceTransform implements
     for (let i = defaultSourceRank; i < newRank; ++i) {
       boundingBoxes.push(makeSingletonDimTransformedBoundingBox(newRank, i));
     }
+    // Propagate coordinate arrays from input dimensions to output dimensions.
+    for (let outputDim = 0; outputDim < newRank; ++outputDim) {
+      // Check if this output dimension is identity mapped from a single input dimension.
+      const translation = newTransform[newRank * (newRank + 1) + outputDim];
+      if (translation !== 0) continue;
+      let singleInputDim: number|undefined|null = undefined;
+      for (let inputDim = 0; inputDim < newRank; ++inputDim) {
+        const factor = newTransform[inputDim * (newRank + 1) + outputDim];
+        if (factor === 0) continue;
+        if (factor === 1) {
+          if (singleInputDim === undefined) {
+            // First input dimension that maps to this output dimension.
+            singleInputDim = inputDim;
+          } else {
+            // Multiple input dimensions map to this output dimension.
+            singleInputDim = null;
+            break;
+          }
+        } else {
+          // Non-identity mapping.
+          singleInputDim = null;
+          break;
+        }
+      }
+      if (singleInputDim == null) continue;
+      let coordinateArray = newInputCoordinateArrays[singleInputDim];
+      if (coordinateArray === undefined) continue;
+      if (coordinateArray.explicit) {
+        coordinateArray = {...coordinateArray, explicit: false};
+      }
+      newOutputCoordinateArrays[outputDim] =
+          mergeOptionalCoordinateArrays([coordinateArray, newOutputCoordinateArrays[outputDim]]);
+    }
     this.value = {
       rank: newRank,
       transform: newTransform,
@@ -911,105 +1032,18 @@ export class WatchableCoordinateSpaceTransform implements
         names: newOutputNames,
         scales: newOutputScales,
         units: newOutputUnits,
+        coordinateArrays: newOutputCoordinateArrays,
       }),
       inputSpace: makeCoordinateSpace({
         rank: newRank,
         names: newInputNames,
         scales: newInputScales,
         units: newInputUnits,
+        coordinateArrays: newInputCoordinateArrays,
         boundingBoxes,
       }),
     };
-
-    /* START OF CHANGE: set operations from JSON */
-    if (spec.operations !== undefined) {
-      this.operations = spec.operations;
-    }
-    
-    
-    if (spec.rawRotationMatrix !== undefined) {
-      this.rawRotationMatrix = spec.rawRotationMatrix;
-    } else {
-      this.rawRotationMatrix = this.transform;
-    }
-    
-    
-    /* END OF CHANGE: set operations from JSON */
   }
-
-  /* START OF CHANGE: functions */
-  set operations(operations: Float64Array) {
-    this.operations_ = new Float64Array(operations);
-    const {
-      rawOperationMatrix: prevOperation,
-      rawRotationMatrix: prevRotation,
-      value: {rank, transform: prevTransform},
-      outputSpace: {value: {scales}},
-    } = this;
-
-    this.setOriginalCenterPoint();
-
-    let newMatrix = matrixTransform(operations);
-    newMatrix = offsetTransform(newMatrix, this.centerPoint, scales);
-
-    // Add translation offsets
-    newMatrix[12] += operations[0] / scales[0];
-    newMatrix[13] += operations[1] / scales[1];
-    newMatrix[14] += operations[2] / scales[2];
-
-    // Map 3D transformation to higher dimension if needed
-    this.rawOperationMatrix = dimensionTransform(newMatrix, rank);
-
-    if (prevTransform === undefined){
-      this.rawRotationMatrix = this.defaultTransform.transform;
-    } else {
-      if (!this.matrixEquals(getCombinedTransform64(rank, prevRotation, prevOperation), prevTransform)) {
-        this.rawRotationMatrix = prevTransform;
-      }
-    }
-    this.transform = getCombinedTransform64(rank, this.rawRotationMatrix, this.rawOperationMatrix)
-
-    this.changed.dispatch();
-  }
-
-  get operations(): Float64Array {
-    if (this.operations_ === undefined) {
-      this.operations_ = new Float64Array(this.defaultOperations);
-    }
-    return this.operations_;
-  }
-
-  private matrixEquals(m1: Float64Array, m2: Float64Array): boolean {
-    return m1.length === m2.length && m1.every(function(v, i) { return v === m2[i]})
-  }
-
-  private setOriginalCenterPoint() {
-    // Save a copy of the current transformation matrix and reset it
-    let transform = this.value.transform;
-    this.transform = createIdentity(Float64Array, this.value.rank + 1);
-
-    // Get the rotation point after transformation matrix is reset
-    let {lowerBounds, upperBounds} = this.outputSpace.value.bounds;
-    let center = Float64Array.from(lowerBounds);
-    this.centerPoint = center.map((value, index) => 0.5 * (upperBounds[index] - value)).slice(0, 3);
-
-    // Get back the new transformation matrix and rotation point
-    this.transform = transform;
-  }
-
-  set mouseMode(mode: boolean) {
-    this.mouseMode_ = mode;
-    if (this.mouseMode_) {
-    }
-  }
-
-  get mouseMode(): boolean {
-    if (this.mouseMode_ === undefined) {
-      this.mouseMode_ = false;
-    }
-    return this.mouseMode_;
-  }
-  /* END OF CHANGE: functions */
 
   toJSON() {
     return coordinateTransformSpecificationToJson(this.spec);
@@ -1164,7 +1198,6 @@ export class CoordinateSpaceCombiner {
     const {dimensionRefCounts} = this;
     dimensionRefCounts.clear();
     let bindingIndex = 0;
-    const mergedBoundingBoxes: TransformedBoundingBox[] = [];
     let newRank = mergedNames.length;
     for (const binding of bindings) {
       const {space: {value: space}} = binding;
@@ -1201,6 +1234,7 @@ export class CoordinateSpaceCombiner {
           names,
           timestamps,
           boundingBoxes: space.boundingBoxes,
+          coordinateArrays: space.coordinateArrays,
         });
         binding.prevValue = newSpace;
         binding.space.value = newSpace;
@@ -1223,14 +1257,40 @@ export class CoordinateSpaceCombiner {
       newRank = mergedNames.length;
     }
 
+    const mergedBoundingBoxes: TransformedBoundingBox[] = [];
+    const allCoordinateArrays = new Array<CoordinateArray[]|undefined>(newRank);
+    // Include any explicit coordinate arrays from `existing`.
+    for (let i = 0, existingRank = existing.rank; i < existingRank; ++i) {
+      const coordinateArray = existing.coordinateArrays[i];
+      if (!coordinateArray?.explicit) continue;
+      const newDim = mergedIds.indexOf(existing.ids[i]);
+      if (newDim === -1) continue;
+      allCoordinateArrays[newDim] = [coordinateArray];
+    }
     for (const binding of bindings) {
       const {space: {value: space}} = binding;
-      const {boundingBoxes} = space;
-      if (boundingBoxes.length === 0) continue;
+      const {rank, boundingBoxes, coordinateArrays} = space;
       const newDims = space.names.map(x => mergedNames.indexOf(x));
       for (const oldBoundingBox of boundingBoxes) {
         mergedBoundingBoxes.push(extendTransformedBoundingBox(oldBoundingBox, newRank, newDims));
       }
+      for (let i = 0; i < rank; ++i) {
+        const coordinateArray = coordinateArrays[i];
+        if (coordinateArray === undefined) continue;
+        const newDim = newDims[i];
+        const mergedList = allCoordinateArrays[newDim];
+        if (mergedList === undefined) {
+          allCoordinateArrays[newDim] = [coordinateArray];
+        } else {
+          mergedList.push(coordinateArray);
+        }
+      }
+    }
+    const mergedCoordinateArrays = new Array<CoordinateArray|undefined>(newRank);
+    for (let i = 0; i < newRank; ++i) {
+      const mergedList = allCoordinateArrays[i];
+      if (mergedList === undefined) continue;
+      mergedCoordinateArrays[i] = mergeCoordinateArrays(mergedList);
     }
     const newCombined = makeCoordinateSpace({
       valid,
@@ -1239,6 +1299,7 @@ export class CoordinateSpaceCombiner {
       units: mergedUnits,
       scales: new Float64Array(mergedScales),
       boundingBoxes: mergedBoundingBoxes,
+      coordinateArrays: mergedCoordinateArrays,
     });
     if (retainExisting) {
       for (let i = 0; i < newRank; ++i) {
@@ -1254,7 +1315,7 @@ export class CoordinateSpaceCombiner {
   private handleCombinedChanged = () => {
     if (this.combined.value === this.prevCombined) return;
     this.update();
-  }
+  };
 
   retain() {
     ++this.retainCount;
@@ -1313,11 +1374,6 @@ export interface CoordinateTransformSpecification {
   transform: Float64Array|undefined;
   inputSpace: CoordinateSpace|undefined;
   outputSpace: CoordinateSpace;
-
-  /* START OF CHANGE: operations defined in the spec */
-  operations: Float64Array|undefined;
-  rawRotationMatrix: Float64Array|undefined;
-  /* END OF CHANGE: operations defined in the spec */
 }
 
 export function coordinateTransformSpecificationFromLegacyJson(obj: unknown):
@@ -1369,11 +1425,6 @@ export function coordinateTransformSpecificationFromLegacyJson(obj: unknown):
       scales: Float64Array.of(1e-9, 1e-9, 1e-9)
     }),
     inputSpace: undefined,
-
-    /* START OF CHANGE: dummy operations for type check */
-    operations: new Float64Array([-1]),
-    rawRotationMatrix: matrix.createIdentity(Float64Array, 4),
-    /* END OF CHANGE: dummy operations for type check */
   };
 }
 
@@ -1414,51 +1465,13 @@ export function coordinateTransformSpecificationFromJson(j: unknown):
     }
     return transform;
   });
-
-  /* START OF CHANGE: operations from JSON */
-  const operations = verifyOptionalObjectProperty(obj, 'operations', inputOperationObj => {
-    const operations = new Float64Array(inputOperationObj);
-    if (operations.length !== 15) {
-      throw new Error(`Expected operation's length of 15, but received length of: ${operations.length}`);
-    }
-    return operations;
-  });
-  
-  /** 17 Mar 2021, EOD
-   * I put in this check as sometimes it throws an error where the array is = [[1]]
-   * When that happens, the expectArray fails. If that happens, I set x manually
-   * This is a complete hack and needs to be fixed.
-   * TODO
-   */
-  const rawRotationMatrix = verifyOptionalObjectProperty(obj, 'rawRotationMatrix', x => {
-    const transform = new Float64Array((rank + 1) ** 2);
-    if (x.length !== rank) {
-      x = [1,1,1];
-      // return matrix.createIdentity(Float64Array, rank);
-    }
-    const a = expectArray(x, rank); //TODO an error occurs here when creating a new annotation layer
-    transform[transform.length - 1] = 1;
-    for (let i = 0; i < rank; ++i) {
-      try {
-        const row = expectArray(a[i], rank + 1);
-        for (let j = 0; j <= rank; ++j) {
-          transform[(rank + 1) * j + i] = verifyFiniteFloat(row[j]);
-        }
-      } catch (e) {
-        return matrix.createIdentity(Float64Array, rank);
-      }
-    }
-    return transform;
-  });
-  
-  return {transform, outputSpace, inputSpace, sourceRank, operations, rawRotationMatrix};
-  /* END OF CHANGE: operations from JSON */
+  return {transform, outputSpace, inputSpace, sourceRank};
 }
 
 export function coordinateTransformSpecificationToJson(spec: CoordinateTransformSpecification|
                                                        undefined) {
   if (spec === undefined) return undefined;
-  const {transform, rawRotationMatrix, outputSpace, inputSpace, sourceRank} = spec;
+  const {transform, outputSpace, inputSpace, sourceRank} = spec;
   let m: number[][]|undefined;
   const rank = outputSpace.rank;
   if (transform !== undefined) {
@@ -1471,29 +1484,11 @@ export function coordinateTransformSpecificationToJson(spec: CoordinateTransform
       }
     }
   }
-  let rm: number[][]|undefined;
-  
-  if (rawRotationMatrix !== undefined) {
-    rm = [];
-    for (let i = 0; i < rank; ++i) {
-      const row: number[] = [];
-      rm[i] = row;
-      for (let j = 0; j <= rank; ++j) {
-        row[j] = rawRotationMatrix[(rank + 1) * j + i];
-      }
-    }
-  }
-  
   return {
     sourceRank: sourceRank === rank ? undefined : sourceRank,
     matrix: m,
     outputDimensions: coordinateSpaceToJson(outputSpace),
     inputDimensions: inputSpace === undefined ? undefined : coordinateSpaceToJson(inputSpace),
-
-    /* START OF CHANGE: operations to JSON */
-    operations: spec.operations === undefined ? undefined : [].slice.call(spec.operations),
-    rawRotationMatrix: rm,
-    /* END OF CHANGE: operations to JSON */
   };
 }
 
@@ -1519,7 +1514,7 @@ export function permuteTransformedBoundingBox(
 }
 
 export function permuteCoordinateSpace(existing: CoordinateSpace, newToOld: readonly number[]) {
-  const {ids, names, scales, units, timestamps} = existing;
+  const {ids, names, scales, units, timestamps, coordinateArrays} = existing;
   return makeCoordinateSpace({
     rank: newToOld.length,
     valid: existing.valid,
@@ -1528,6 +1523,7 @@ export function permuteCoordinateSpace(existing: CoordinateSpace, newToOld: read
     timestamps: newToOld.map(i => timestamps[i]),
     scales: Float64Array.from(newToOld, i => scales[i]),
     units: newToOld.map(i => units[i]),
+    coordinateArrays: newToOld.map(i => coordinateArrays[i]),
     boundingBoxes:
         existing.boundingBoxes.map(b => permuteTransformedBoundingBox(b, newToOld, existing.rank))
             .filter(b => b !== undefined) as TransformedBoundingBox[],

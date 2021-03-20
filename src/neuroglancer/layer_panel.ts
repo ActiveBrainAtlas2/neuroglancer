@@ -19,7 +19,7 @@ import './layer_panel.css';
 
 import svg_plus from 'ikonate/icons/plus.svg';
 import {DisplayContext} from 'neuroglancer/display_context';
-import {addNewLayer, LayerListSpecification, ManagedUserLayer, SelectedLayerState,} from 'neuroglancer/layer';
+import {addNewLayer, LayerListSpecification, makeLayer, ManagedUserLayer, SelectedLayerState} from 'neuroglancer/layer';
 import {LinkedViewerNavigationState} from 'neuroglancer/layer_group_viewer';
 import {NavigationLinkType} from 'neuroglancer/navigation_state';
 import {WatchableValueInterface} from 'neuroglancer/trackable_value';
@@ -187,19 +187,11 @@ class LayerWidget extends RefCounted {
     layerNumberElement.className = 'neuroglancer-layer-item-number';
     valueElement.className = 'neuroglancer-layer-item-value';
     const closeElement = makeCloseButton();
-    /* START OF CHANGE: remapping */
-    // closeElement.title = 'Remove layer from this layer group';
-    closeElement.title = 'Hide layer from this layer group';
+    closeElement.title = 'Remove layer from this layer group';
     this.registerEventListener(closeElement, 'click', (event: MouseEvent) => {
-      if (event.ctrlKey) {
-        this.panel.layerManager.removeManagedLayer(this.layer);
-        event.stopPropagation();
-      }
-      else {
-        layer.setVisible(!layer.visible);
-      }
+      this.panel.layerManager.removeManagedLayer(this.layer);
+      event.stopPropagation();
     });
-    /* END OF CHANGE: remapping */
     element.appendChild(layerNumberElement);
     element.appendChild(labelElement);
     element.appendChild(valueElement);
@@ -214,20 +206,14 @@ class LayerWidget extends RefCounted {
     });
     element.appendChild(closeElement);
     this.registerEventListener(element, 'click', (event: MouseEvent) => {
-      /* START OF CHANGE: remapping */
       if (event.ctrlKey) {
-        // panel.selectedLayer.layer = layer;
-        // panel.selectedLayer.visible = true;
-        this.panel.layerManager.removeManagedLayer(this.layer);
-        event.stopPropagation();
+        panel.selectedLayer.layer = layer;
+        panel.selectedLayer.visible = true;
       } else if (event.altKey) {
         layer.pickEnabled = !layer.pickEnabled;
       } else {
-        // layer.setVisible(!layer.visible);
-        panel.selectedLayer.layer = layer;
-        panel.selectedLayer.visible = true;
+        layer.setVisible(!layer.visible);
       }
-      /* END OF CHANGE: remapping */
     });
 
     this.registerEventListener(element, 'contextmenu', (event: MouseEvent) => {
@@ -258,10 +244,7 @@ class LayerWidget extends RefCounted {
     element.dataset.visible = layer.visible.toString();
     element.dataset.selected = (layer === this.panel.selectedLayer.layer).toString();
     element.dataset.pick = layer.pickEnabled.toString();
-    /* START OF CHANGE: remapping */
-    // let title = `Click to ${layer.visible ? 'hide' : 'show'}, control+click to show side panel`;
-    let title = `Click to show side panel, control+click to delete layer`;
-    /* END OF CHANGE: remapping */
+    let title = `Click to ${layer.visible ? 'hide' : 'show'}, control+click to show side panel`;
     if (layer.supportsPickOption) {
       title += `, alt+click to ${layer.pickEnabled ? 'disable' : 'enable'} spatial object selection`;
     }
@@ -329,9 +312,8 @@ export class LayerPanel extends RefCounted {
 
     const addLayer = (event: MouseEvent) => {
       if (event.ctrlKey || event.metaKey || event.type === 'contextmenu') {
-        const layer = new ManagedUserLayer('annotation', {}, this.manager);
-        this.manager.initializeLayerFromSpec(
-            layer, {type: 'annotation', 'source': 'local://annotations'});
+        const layer = makeLayer(
+            this.manager, 'annotation', {type: 'annotation', 'source': 'local://annotations'});
         this.manager.add(layer);
         this.selectedLayer.layer = layer;
         this.selectedLayer.visible = true;

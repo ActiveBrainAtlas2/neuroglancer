@@ -5,8 +5,9 @@ import { removeFromParent } from "../util/dom";
 import { fetchOk } from "../util/http_request";
 import { dimensionTransform } from "../util/matrix";
 import { makeIcon } from "./icon";
+import {AppSettings} from "neuroglancer/services/service";
 
-const rotationMatrixURL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/alignatlas?animal='
+const rotationMatrixURL = AppSettings.API_ENDPOINT + '/alignatlas?animal='
 const pattern_animal = /precomputed:\/\/https:\/\/activebrainatlas.ucsd.edu\/data\/([A-Z0-9]+)\//g
 const buttonText = 'Fetch rotation matrix for this layer'
 const buttonTitle = 'Please note that the rotation matrix will only be applied for the current layer. To rotate other layers, switch to that layer and click this button.'
@@ -62,7 +63,7 @@ export class FetchRotationMatrixWidget extends RefCounted{
         translation[0][0], translation[1][0], translation[2][0], 1
       ])
       this.transform.transform = dimensionTransform(newTransform, rank)
-      this.transform.operations = this.transform.defaultOperations;
+      // this.transform.operations = this.transform.defaultOperations;
       StatusMessage.showTemporaryMessage('Fetched rotation matrix for ' + this.animal);
     } catch (e) {
       StatusMessage.showTemporaryMessage('Unable to get rotation matirx.');

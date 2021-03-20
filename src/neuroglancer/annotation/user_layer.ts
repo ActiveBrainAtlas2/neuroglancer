@@ -44,7 +44,6 @@ import {RenderScaleWidget} from 'neuroglancer/widget/render_scale_widget';
 import {ShaderCodeWidget} from 'neuroglancer/widget/shader_code_widget';
 import {ShaderControls} from 'neuroglancer/widget/shader_controls';
 import {Tab} from 'neuroglancer/widget/tab_view';
-import {createIdentity} from '../util/matrix';
 
 const POINTS_JSON_KEY = 'points';
 const ANNOTATIONS_JSON_KEY = 'annotations';
@@ -332,13 +331,21 @@ export class AnnotationUserLayer extends Base {
     super.disposed();
   }
 
-  constructor(managedLayer: Borrowed<ManagedUserLayer>, specification: any) {
-    super(managedLayer, specification);
-    this.linkedSegmentationLayers.restoreState(specification);
+  constructor(managedLayer: Borrowed<ManagedUserLayer>) {
+    super(managedLayer);
     this.linkedSegmentationLayers.changed.add(this.specificationChanged.dispatch);
     this.annotationDisplayState.ignoreNullSegmentFilter.changed.add(
         this.specificationChanged.dispatch);
     this.annotationCrossSectionRenderScaleTarget.changed.add(this.specificationChanged.dispatch);
+    this.tabs.add(
+        'rendering',
+        {label: 'Rendering', order: -100, getter: () => new RenderingOptionsTab(this)});
+    this.tabs.default = 'annotations';
+  }
+
+  restoreState(specification: any) {
+    super.restoreState(specification);
+    this.linkedSegmentationLayers.restoreState(specification);
     this.localAnnotationsJson = specification[ANNOTATIONS_JSON_KEY];
     this.localAnnotationProperties = verifyOptionalObjectProperty(
         specification, ANNOTATION_PROPERTIES_JSON_KEY, parseAnnotationPropertySpecs);
@@ -351,14 +358,6 @@ export class AnnotationUserLayer extends Base {
         specification[PROJECTION_RENDER_SCALE_JSON_KEY]);
     this.annotationDisplayState.ignoreNullSegmentFilter.restoreState(
         specification[IGNORE_NULL_SEGMENT_FILTER_JSON_KEY]);
-    this.tabs.add(
-        'rendering',
-        {label: 'Rendering', order: -100, getter: () => new RenderingOptionsTab(this)});
-    this.tabs.default = 'annotations';
-  }
-
-  restoreState(specification: any) {
-    super.restoreState(specification);
     this.annotationDisplayState.shader.restoreState(specification[SHADER_JSON_KEY]);
     this.annotationDisplayState.shaderControls.restoreState(
         specification[SHADER_CONTROLS_JSON_KEY]);
@@ -383,11 +382,6 @@ export class AnnotationUserLayer extends Base {
           sourceRank: 3,
           transform: undefined,
           inputSpace,
-
-          /* START OF CHANGE: dummy operations for type check */
-          operations: new Float64Array([-1]),
-          rawRotationMatrix: createIdentity(Float64Array, 4),
-          /* END OF CHANGE: dummy operations for type check */
         };
       } else {
         legacyTransform = {
@@ -575,6 +569,7 @@ class RenderingOptionsTab extends Tab {
   constructor(public layer: AnnotationUserLayer) {
     super();
     const {element} = this;
+    element.classList.add('neuroglancer-annotation-rendering-tab');
     element.appendChild(
         this
             .registerDisposer(new DependentViewWidget(
