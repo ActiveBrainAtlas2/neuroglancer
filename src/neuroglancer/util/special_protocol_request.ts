@@ -23,14 +23,22 @@ export type SpecialProtocolCredentials = OAuth2Credentials|undefined;
 export type SpecialProtocolCredentialsProvider =
   MaybeOptionalCredentialsProvider<SpecialProtocolCredentials>;
 
+function getMiddleAuthCredentialsProvider(
+    credentialsManager: CredentialsManager, url: string): SpecialProtocolCredentialsProvider {
+  return credentialsManager.getCredentialsProvider(
+    'middleauthapp', new URL(url).origin);
+}
+
 function getNgauthCredentialsProvider(
     credentialsManager: CredentialsManager, serverUrl: string,
     path: string): SpecialProtocolCredentialsProvider {
   const bucketPattern = /^\/([^\/]+)/;
   const m = path.match(bucketPattern);
   if (m === null) return undefined;
-  return credentialsManager.getCredentialsProvider(
-      'ngauth_gcs', {authServer: serverUrl, bucket: m[1]});
+  return typeof NEUROGLANCER_PYTHON_INTEGRATION !== 'undefined' ?
+      credentialsManager.getCredentialsProvider('gcs', {bucket: m[1]}) :
+      credentialsManager.getCredentialsProvider(
+          'ngauth_gcs', {authServer: serverUrl, bucket: m[1]});
 }
 
 export function parseSpecialUrl(url: string, credentialsManager: CredentialsManager):
@@ -41,7 +49,7 @@ export function parseSpecialUrl(url: string, credentialsManager: CredentialsMana
     case 'gs+xml':
       return {
         credentialsProvider: typeof NEUROGLANCER_PYTHON_INTEGRATION !== 'undefined' ?
-            credentialsManager.getCredentialsProvider('gcs') :
+            credentialsManager.getCredentialsProvider('gcs', {bucket: u.host}) :
             undefined,
         url,
       };
@@ -64,6 +72,12 @@ export function parseSpecialUrl(url: string, credentialsManager: CredentialsMana
       return {
         credentialsProvider: getNgauthCredentialsProvider(credentialsManager, `https://${u.host}`, u.path),
         url: 'gs+xml:/' + u.path,
+      };
+    case 'middleauth+https':
+      url = url.substr('middleauth+'.length);
+      return {
+        credentialsProvider: getMiddleAuthCredentialsProvider(credentialsManager, url),
+        url: url,
       };
     default:
       return {

@@ -506,24 +506,6 @@ export function getCombinedTransform(
   }
 }
 
-export function getCombinedTransform64(
-  rank: number, bToC: Float64Array, aToB: Float64Array|undefined) {
-  if (aToB === undefined) {
-    return bToC;
-  } else {
-    var prod = matrix.multiply(
-      new Float64Array((rank + 1) * (rank + 1)), rank + 1, bToC, rank + 1, aToB, rank + 1,
-      rank + 1, rank + 1, rank + 1);
-      var shiftVecOffset = (rank + 1) * (rank + 1);
-      for (let idx = 0; idx < rank; ++idx) {
-        var shiftIdx = shiftVecOffset + idx;
-        prod[shiftIdx] = aToB[shiftIdx] + bToC[shiftIdx];
-      }
-    return prod;
-  }
-}
-
-
 /**
  * Specifies parameters for getChunkDataSizes.
  */

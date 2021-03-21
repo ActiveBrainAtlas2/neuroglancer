@@ -50,6 +50,7 @@ export function createIdentity<T extends TypedArray>(
   return identity(new c(rows * cols), rows, Math.min(rows, cols));
 }
 
+
 export function createHomogeneousScaleMatrix<T extends TypedArray>(
     c: {new (length: number): T}, scales: ArrayLike<number>, square = true): T {
   const rank = scales.length;
@@ -246,100 +247,3 @@ transformVector<Out extends TypedArray, Matrix extends TypedArray, Vector extend
   }
   return out;
 }
-
-/* START OF CHANGE: matrix functions */
-/**
- * Translate the operations matrix into the transform matrix.
- * The Operations matrix stores the translations/rotations/scalings history on an identity matrix.
- * The transform matrix is assumed to be 4 by 4 for 3D transformation, and is represented by 1d list
- * [ 0  4  8 12
- *   1  5  9 13
- *   2  6 10 14
- *   3  7 11 15]
- * @param operations: operations matrix
- * @param center: center of the 3D shape
- */
-export function matrixTransform(operations: Float64Array) {
-  let rotHelper = (index: number,  degree: number) => {
-    let rotMat = new Float64Array(16);
-
-    let idxs: number[] = [[5, 6, 9, 10, 0, 15], [0, 8, 2, 10, 5, 15], [0, 1, 4, 5, 10, 15]][index];
-    let sinDegree = Math.sin(degree * Math.PI / 180);
-    let cosDegree = Math.cos(degree * Math.PI / 180);
-
-    rotMat[idxs[0]] = cosDegree;
-    rotMat[idxs[1]] = sinDegree;
-    rotMat[idxs[2]] = -sinDegree;
-    rotMat[idxs[3]] = cosDegree;
-    rotMat[idxs[4]] = 1;
-    rotMat[idxs[5]] = 1;
-
-    return rotMat;
-  };
-
-  // Rotation matrix
-  let temp = new Float64Array(16);
-  multiply(temp, 4, rotHelper(2, operations[5]), 4, rotHelper(1, operations[4]), 4, 4, 4, 4);
-  let rotationMat = new Float64Array(16);
-  multiply(rotationMat, 4, temp, 4, rotHelper(0, operations[3]), 4, 4, 4, 4);
-
-  // Scaling matrix
-  let scalingMat = createIdentity(Float64Array, 4);
-  scalingMat[0] = operations[6];
-  scalingMat[5] = operations[7];
-  scalingMat[10] = operations[8];
-  scalingMat[15] = 1;
-
-  // Transformation matrix
-  let transformationMat = new Float64Array(16);
-  multiply(transformationMat, 4, rotationMat, 4, scalingMat, 4, 4, 4, 4);
-  return transformationMat;
-}
-
-/**
- * Making transformation(rotate/scale) around a point by calculating the translation offsets.
- * Offsets = (I - matrix) * point
- * @param matrix: the transformation matrix, expected to be 4 by 4
- * @param point: the point that the matrix is transformed around
- * @param scales: the actual output space scales
- */
-export function offsetTransform(matrix: Float64Array, point: Float64Array, scales: Float64Array) {
-  let newPoint = new Float64Array(4);
-  newPoint[0] = point[0] * scales[0];
-  newPoint[1] = point[1] * scales[1];
-  newPoint[2] = point[2] * scales[2];
-  newPoint[3] = 1;
-
-  const eye = identity(new Float64Array(16), 4, 16);
-  const diffMat = eye.map((a, i) => (a - matrix[i]));
-
-  const offset = new Float64Array(4);
-  multiply(offset, 4, diffMat, 4, newPoint, 4, 4, 4, 1);
-
-  matrix[12] = offset[0] / scales[0];
-  matrix[13] = offset[1] / scales[1];
-  matrix[14] = offset[2] / scales[2];
-
-  return matrix;
-}
-
-/**
- * Convert a transformation matrix of rank 3 to a new transformation matrix with a higher rank.
- * Only the values in the upper left corner are retained in this process
- * @param matrix: old transformation matrix
- * @param newRank: new rank, should be larger than 3
- */
-export function dimensionTransform(matrix: Float64Array, newRank: number) {
-  const oldRank = 3;
-
-  let newMatrix = createIdentity(Float64Array, (newRank + 1));
-  for (let i = 0; i < oldRank; i++) {
-    newMatrix[newRank * (newRank + 1) + i] = matrix[oldRank * (oldRank + 1) + i];
-    for (let j = 0; j < oldRank; j++) {
-      newMatrix[i * (newRank + 1) + j] = matrix[i * (oldRank + 1) + j];
-    }
-  }
-
-  return newMatrix;
-}
-/* END OF CHANGE: matrix functions */
