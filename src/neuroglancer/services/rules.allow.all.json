@@ -1,0 +1,35 @@
+{
+    "rules": {
+      ".read": "now < 1616914800000",  // 2021-3-28
+      ".write": "now < 1616914800000",  // 2021-3-28
+    }
+  }
+
+
+  {
+    "rules": { 
+        "neuroglancer": {
+          ".read": true,
+          ".write": true,  
+            },
+        "users": { 
+          ".read": true,
+          ".write": true,  
+        }
+    }
+  }
+
+  {
+    "rules": { 
+      ".read": false,
+      ".write": false,
+        "neuroglancer": {
+          ".read": true,
+          ".write": true,  
+            },
+        "users": { 
+          ".read": true,
+          ".write": true,  
+        }
+    }
+  } 

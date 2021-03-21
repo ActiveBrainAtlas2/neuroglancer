@@ -3,7 +3,7 @@ import { StatusMessage } from "../status";
 import { RefCounted } from "../util/disposable";
 import { removeFromParent } from "../util/dom";
 import { fetchOk } from "../util/http_request";
-import { dimensionTransform } from "../util/matrix";
+import { createIdentity } from "../util/matrix";
 import { makeIcon } from "./icon";
 import {AppSettings} from "neuroglancer/services/service";
 
@@ -11,6 +11,27 @@ const rotationMatrixURL = AppSettings.API_ENDPOINT + '/alignatlas?animal='
 const pattern_animal = /precomputed:\/\/https:\/\/activebrainatlas.ucsd.edu\/data\/([A-Z0-9]+)\//g
 const buttonText = 'Fetch rotation matrix for this layer'
 const buttonTitle = 'Please note that the rotation matrix will only be applied for the current layer. To rotate other layers, switch to that layer and click this button.'
+
+/**
+ * Convert a transformation matrix of rank 3 to a new transformation matrix with a higher rank.
+ * Only the values in the upper left corner are retained in this process
+ * @param matrix: old transformation matrix
+ * @param newRank: new rank, should be larger than 3
+ */
+ export function dimensionTransform(matrix: Float64Array, newRank: number) {
+  const oldRank = 3;
+
+  const newMatrix = createIdentity(Float64Array, (newRank + 1));
+  for (let i = 0; i < oldRank; i++) {
+    newMatrix[newRank * (newRank + 1) + i] = matrix[oldRank * (oldRank + 1) + i];
+    for (let j = 0; j < oldRank; j++) {
+      newMatrix[i * (newRank + 1) + j] = matrix[i * (oldRank + 1) + j];
+    }
+  }
+
+  return newMatrix;
+}
+
 
 interface remoteRotationMatrix {
   rotation: Array<Array<any>>,
@@ -38,7 +59,7 @@ export class FetchRotationMatrixWidget extends RefCounted{
       });
       this.registerDisposer(() => removeFromParent(this.element));
     }
-  };
+  }
 
   isAnimal(): boolean {
     return this.animal !== null;

@@ -31,16 +31,11 @@ import {removeChildren, removeFromParent} from 'neuroglancer/util/dom';
 import {ActionEvent, KeyboardEventBinder, registerActionListener} from 'neuroglancer/util/keyboard_bindings';
 import {createIdentity, extendHomogeneousTransform, isIdentity} from 'neuroglancer/util/matrix';
 import {EventActionMap, MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
-// import {formatMeterWithUnitAsString,formatScaleWithUnitAsString, parseMeter, parseScale} from 'neuroglancer/util/si_units';
 import {formatScaleWithUnitAsString, parseScale} from 'neuroglancer/util/si_units';
 import {makeIcon} from 'neuroglancer/widget/icon';
 
 function updateInputFieldWidth(element: HTMLInputElement, value: string = element.value) {
   element.style.minWidth = (value.length + 1) + 'ch';
-
-  /* START OF CHANGE: fix matrix width */
-  // element.style.minWidth = '4ch';
-  /* END OF CHANGE: fix matrix width */
 }
 
 const singletonClassName = 'neuroglancer-coordinate-space-transform-singleton';
@@ -143,7 +138,8 @@ function updateCoordinateSpaceScales(
     timestamps,
     ids: existing.ids,
     names: existing.names,
-    boundingBoxes: existing.boundingBoxes
+    boundingBoxes: existing.boundingBoxes,
+    coordinateArrays: existing.coordinateArrays,
   });
   watchable.value = newSpace;
   return true;
@@ -190,10 +186,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
   private curRank: number = -1;
   private curTransform: CoordinateSpaceTransform|undefined = undefined;
   private addingSourceDimension = false;
-
-  /* START OF CHANGE: instance variables */
-  // private operationElements: HTMLInputElement[] = [];
-
   private resetToIdentityButton = makeIcon({
     text: 'Set to identity',
     title: 'Reset to identity transform',
@@ -202,9 +194,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
           const {transform} = this;
           const rank = transform.value.rank;
           transform.transform = createIdentity(Float64Array, rank + 1);
-
-          // Reset offsets and update rotation point
-          // this.transform.operations = this.transform.defaultOperations;
         }
   });
   private resetToDefaultButton = makeIcon({
@@ -224,13 +213,8 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
               ids,
             },
           };
-
-          // Reset offsets and update rotation point
-          // this.transform.operations = this.transform.defaultOperations;
         }
   });
-  /* END OF CHANGE: instance variables */
-
   constructor(
       public transform: WatchableCoordinateSpaceTransform,
       public localCombiner: CoordinateSpaceCombiner,
@@ -276,7 +260,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     resetButtons.appendChild(resetToDefaultButton);
     element.appendChild(resetButtons);
 
-    
+
     for (const [className, textContent] of [
              ['source', 'Source dimensions'],
              ['output', 'Output dimensions'],
@@ -311,7 +295,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     addSourceDimensionIcon.addEventListener('click', () => {
       this.addingSourceDimension = true;
       this.addOutputDimensionInput.title = extendSourceDimensionsTitle;
-      
+      ;
       this.addOutputDimensionCell.dataset.isActive = 'true';
       this.addOutputDimensionInput.focus();
     });
@@ -437,11 +421,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         target.select();
       }
     });
-
-    /* START OF CHANGE: operation matrix constructor*/
-    // this.makeOperationElement();
-    /* END OF CHANGE: operation matrix constructor*/
-
     this.updateView();
   }
 
@@ -627,6 +606,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         scales: Float64Array.from([...newInputSpace.scales, scale]),
         units: [...newInputSpace.units, unit],
         boundingBoxes,
+        coordinateArrays: [...newInputSpace.coordinateArrays, undefined],
       });
 
       newOutputSpace = makeCoordinateSpace({
@@ -637,6 +617,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         timestamps: [...outputSpace.timestamps, Date.now()],
         scales: Float64Array.from([...outputSpace.scales, scale]),
         units: [...outputSpace.units, unit],
+        coordinateArrays: [...outputSpace.coordinateArrays, undefined],
       });
       newTransform = extendHomogeneousTransform(
           new Float64Array((rank + 2) ** 2), rank + 1, newTransform, rank);
@@ -721,9 +702,6 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     for (let outputDim = 0; outputDim < rank; ++outputDim) {
       for (let inputDim = 0; inputDim <= rank; ++inputDim) {
         const coeffElement = coefficientElements[inputDim * rank + outputDim];
-        /* START OF CHANGE: round the matrix numbers */
-        // coeffElement.value = (Math.round(transform[inputDim * (rank + 1) + outputDim] * 1000) / 1000).toString();
-        /* END OF CHANGE: round the matrix numbers */
         coeffElement.value = transform[inputDim * (rank + 1) + outputDim].toString();
         coeffElement.dataset.isValid = 'true';
         updateInputFieldWidth(coeffElement);
@@ -849,7 +827,7 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
         coefficientElements[inputDim * rank + outputDim] = cellElement;
         if (inputDim === rank) {
           cellElement.classList.add('neuroglancer-coordinate-space-transform-translation-coeff');
-        } else if (inputDim === sourceRank) {
+        } else if (inputDim == sourceRank) {
           cellElement.classList.add(singletonClassName);
         }
 
@@ -1016,242 +994,10 @@ export class CoordinateSpaceTransformWidget extends RefCounted {
     this.updateViewOutputScales();
     this.updateAddOutputDimensionCellStyle();
     this.updateResetButtonVisibility();
-
-    /* START CHANGE: update operation matrix */
-    // this.updateViewOperations();
-    /* END CHANGE: update operation matrix */
   }
 
   disposed() {
     removeFromParent(this.element);
     super.disposed();
   }
-
-  /* START OF CHANGE: operation matrix functions */
-  /*
-  private makeOperationElement() {
-    const OPERATIONS = ['Translation', 'Rotation', 'Scaling'];
-    const AXES = ['X-axis', 'Y-axis', 'Z-axis'];
-    const FIRST_ROW = 12;
-    const FIRST_COL = 4;
-
-    for (let i = 0; i < 3; i++) {
-      // Add operation axes
-      const axisElement = document.createElement('div');
-      axisElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
-      axisElement.textContent = AXES[i];
-      axisElement.style.gridRow = `${FIRST_ROW}`;
-      axisElement.style.gridColumn = `${FIRST_COL + i}`;
-      axisElement.style.alignSelf = `center`;
-      this.element.appendChild(axisElement);
-
-      // Add operation names
-      const nameElement = document.createElement('div');
-      nameElement.classList.add(`neuroglancer-coordinate-space-transform-label`);
-      nameElement.textContent = OPERATIONS[i];
-      nameElement.style.gridRow = `${FIRST_ROW + 1 + i}`;
-      nameElement.style.gridColumn = `1 / ${FIRST_COL}`;
-      nameElement.style.textAlign = `center`;
-      this.element.appendChild(nameElement);
-
-      // Add operation offsets
-      for (let j = 0; j < 3; j++) {
-        const inputElement = document.createElement('input');
-        inputElement.spellcheck = false;
-        inputElement.autocomplete = 'off';
-        inputElement.size = 1;
-        inputElement.style.textAlign = 'center';
-        registerActionListener(inputElement, 'commit', () => {
-          let operations = this.transform.operations;
-
-          if (i === 0) {
-            const value = parseMeter(inputElement.value);
-            if (value !== undefined) {
-              operations[i * 3 + j] = value;
-            }
-          }
-          else {
-            const value = parseFloat(inputElement.value);
-            if (Number.isFinite(value)) {
-              operations[i * 3 + j] = value;
-            }
-            else if (isNaN(value)) {
-              operations[i * 3 + j] = i === 2 ? 1 : 0;
-            }
-          }
-
-          this.transform.operations = operations;
-        });
-        inputElement.addEventListener('focusout', () => {
-          this.updateViewOperations();
-        });
-        this.operationElements.push(inputElement);
-
-        const controlElement = document.createElement(`div`);
-        controlElement.style.display = 'flex';
-        controlElement.style.justifyContent = 'center';
-        const decrease = makeIcon({text: '-', title: `Decrease ${OPERATIONS[i]} on ${AXES[j]}`});
-        const increase = makeIcon({text: '+', title: `Increase ${OPERATIONS[i]} on ${AXES[j]}`});
-        controlElement.appendChild(decrease);
-        controlElement.appendChild(increase);
-
-        // Simulate click and long press for the buttons
-        let decreaseInterval: NodeJS.Timeout;
-        let decreaseTimeout: NodeJS.Timeout;
-        decrease.addEventListener('mousedown', event => {
-          let operations = this.transform.operations;
-          let delta = operations[9 + i * 2 + Number(event.shiftKey)];
-
-          operations[i * 3 + j] -= delta;
-          this.transform.operations = operations;
-          decreaseTimeout = setTimeout(() => {
-            decreaseInterval = setInterval(() => {
-              operations[i * 3 + j] -= delta;
-              this.transform.operations = operations;
-            }, 100);
-          }, 1000);
-        });
-        decrease.addEventListener('mouseup', () => {
-          clearInterval(decreaseInterval);
-          clearTimeout(decreaseTimeout);
-        });
-        decrease.addEventListener('mouseout', () => {
-          clearInterval(decreaseInterval);
-          clearTimeout(decreaseTimeout);
-        });
-        let increaseInterval: NodeJS.Timeout;
-        let increaseTimeout: NodeJS.Timeout;
-        increase.addEventListener('mousedown', event => {
-          let operations = this.transform.operations;
-          let delta = operations[9 + i * 2 + Number(event.shiftKey)];
-
-          operations[i * 3 + j] += delta;
-          this.transform.operations = operations;
-          increaseTimeout = setTimeout(() => {
-            increaseInterval = setInterval(() => {
-              operations[i * 3 + j] += delta;
-              this.transform.operations = operations;
-            }, 100);
-          }, 1000);
-        });
-        increase.addEventListener('mouseup', () => {
-          clearInterval(increaseInterval);
-          clearTimeout(increaseTimeout);
-        });
-        increase.addEventListener('mouseout', () => {
-          clearInterval(increaseInterval);
-          clearTimeout(increaseTimeout);
-        });
-
-        const cellElement = document.createElement('div');
-        cellElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
-        cellElement.style.gridRow = `${FIRST_ROW + 1 + i}`;
-        cellElement.style.gridColumn = `${FIRST_COL + j}`;
-
-        cellElement.appendChild(inputElement);
-        cellElement.appendChild(controlElement);
-        this.element.appendChild(cellElement);
-      }
-    }
-
-    // Add operation step titles
-    const defaultStepNameElement = document.createElement('div');
-    defaultStepNameElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
-    defaultStepNameElement.textContent = 'step';
-    defaultStepNameElement.style.textAlign = `center`;
-
-    const shiftStepNameElement = document.createElement('div');
-    shiftStepNameElement.classList.add('neuroglancer-coordinate-space-transform-input-name');
-    shiftStepNameElement.textContent = '(shift)';
-    shiftStepNameElement.style.textAlign = `center`;
-
-    const stepNameElement = document.createElement('div');
-    stepNameElement.style.gridRow = `${FIRST_ROW}`;
-    stepNameElement.style.gridColumn = `${FIRST_COL + 3}`;
-
-    stepNameElement.appendChild(defaultStepNameElement);
-    stepNameElement.appendChild(shiftStepNameElement);
-    this.element.appendChild(stepNameElement);
-
-    // Add operation step sizes
-    for (let i = 0; i < 3; i++) {
-      const defaultStepElement = document.createElement('input');
-      defaultStepElement.spellcheck = false;
-      defaultStepElement.autocomplete = 'off';
-      defaultStepElement.size = 1;
-      defaultStepElement.style.textAlign = 'center';
-      registerActionListener(defaultStepElement, 'commit', () => {
-        let operations = this.transform.operations;
-
-        if (i === 0) {
-          const value = parseMeter(defaultStepElement.value);
-          if (value !== undefined) {
-            operations[9 + i * 2] = value;
-          }
-        }
-        else {
-          const value = parseFloat(defaultStepElement.value);
-          if (Number.isFinite(value)) {
-            operations[9 + i * 2] = value;
-          }
-        }
-
-        this.transform.operations = operations;
-      });
-      defaultStepElement.addEventListener('focusout', () => {
-        this.updateViewOperations();
-      });
-      this.operationElements.push(defaultStepElement);
-
-      const shiftStepElement = document.createElement('input');
-      shiftStepElement.spellcheck = false;
-      shiftStepElement.autocomplete = 'off';
-      shiftStepElement.size = 1;
-      shiftStepElement.style.textAlign = 'center';
-      registerActionListener(shiftStepElement, 'commit', () => {
-        let operations = this.transform.operations;
-
-        if (i === 0) {
-          const value = parseMeter(shiftStepElement.value);
-          if (value !== undefined) {
-            operations[9 + i * 2 + 1] = value;
-          }
-        }
-        else {
-          const value = parseFloat(shiftStepElement.value);
-          if (Number.isFinite(value)) {
-            operations[9 + i * 2 + 1] = value;
-          }
-        }
-        this.transform.operations = operations;
-      });
-      shiftStepElement.addEventListener('focusout', () => {
-        this.updateViewOperations();
-      });
-      this.operationElements.push(shiftStepElement);
-
-      const stepElement = document.createElement('div');
-      stepElement.classList.add('neuroglancer-coordinate-space-transform-scale-container');
-      stepElement.style.gridRow = `${FIRST_ROW + 1 + i}`;
-      stepElement.style.gridColumn = `${FIRST_COL + 3}`;
-
-      stepElement.appendChild(defaultStepElement);
-      stepElement.appendChild(shiftStepElement);
-      this.element.appendChild(stepElement);
-    }
-  }
-
-  private updateViewOperations() {
-    this.transform.operations.map((operation, index) => {
-      if (index < 3 || index === 9 || index === 10) {
-        this.operationElements[index].value = formatMeterWithUnitAsString(operation);
-      }
-      else {
-        this.operationElements[index].value = String(operation);
-      }
-      return 0;
-    });
-  }
-  */
-  /* END OF CHANGE: operation matrix functions */
 }
