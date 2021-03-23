@@ -14,18 +14,47 @@
  * limitations under the License.
  */
 
-#statusContainer {
+ #statusContainer {
   position: absolute;
-  bottom: 0px;
+  top: 65px;
   z-index: 100;
-  background-color: grey;
   color: white;
   margin: 0px;
   padding: 0px;
+  left: 50%;
+  width: 60vw;
+  max-width: 900px;
+  min-width: min(600px, 100vw);
+  transform: translate(-50%, 0);
 }
 
 #statusContainer li {
-  width: 100vw;
   max-height: 25vh;
   overflow-y: auto;
+  color: #383d41;
+  background-color: #e2e3e5;
+  border-color: #d6d8db;
+  position: relative;
+  padding: .4em .5rem;
+  margin-bottom: .5rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+#statusContainer .container{
+  display: inline-block;
+}
+
+#statusContainer .close {
+  float: right;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .5;
+  cursor: pointer;
+}
+
+#statusContainer .close :hover{
+  opacity: 1;
 }

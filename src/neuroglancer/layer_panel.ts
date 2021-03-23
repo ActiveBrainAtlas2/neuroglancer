@@ -187,11 +187,18 @@ class LayerWidget extends RefCounted {
     layerNumberElement.className = 'neuroglancer-layer-item-number';
     valueElement.className = 'neuroglancer-layer-item-value';
     const closeElement = makeCloseButton();
-    closeElement.title = 'Remove layer from this layer group';
+    /* START OF CHANGE: Action remapping */
+    closeElement.title = 'Hide layer from this layer group';
     this.registerEventListener(closeElement, 'click', (event: MouseEvent) => {
-      this.panel.layerManager.removeManagedLayer(this.layer);
-      event.stopPropagation();
+      if (event.ctrlKey) {
+        this.panel.layerManager.removeManagedLayer(this.layer);
+        event.stopPropagation();
+      }
+      else {
+        layer.setVisible(!layer.visible);
+      }
     });
+    /* END OF CHANGE: Action remapping */
     element.appendChild(layerNumberElement);
     element.appendChild(labelElement);
     element.appendChild(valueElement);
@@ -206,14 +213,17 @@ class LayerWidget extends RefCounted {
     });
     element.appendChild(closeElement);
     this.registerEventListener(element, 'click', (event: MouseEvent) => {
+      /* START OF CHANGE: Action remapping */
       if (event.ctrlKey) {
-        panel.selectedLayer.layer = layer;
-        panel.selectedLayer.visible = true;
+        this.panel.layerManager.removeManagedLayer(this.layer);
+        event.stopPropagation();
       } else if (event.altKey) {
         layer.pickEnabled = !layer.pickEnabled;
       } else {
-        layer.setVisible(!layer.visible);
+        panel.selectedLayer.layer = layer;
+        panel.selectedLayer.visible = true;
       }
+      /* END OF CHANGE: Action remapping */
     });
 
     this.registerEventListener(element, 'contextmenu', (event: MouseEvent) => {
@@ -244,7 +254,9 @@ class LayerWidget extends RefCounted {
     element.dataset.visible = layer.visible.toString();
     element.dataset.selected = (layer === this.panel.selectedLayer.layer).toString();
     element.dataset.pick = layer.pickEnabled.toString();
-    let title = `Click to ${layer.visible ? 'hide' : 'show'}, control+click to show side panel`;
+    /* START OF CHANGE: Action remapping */
+    let title = `Click to show side panel, control+click to remove layer`;
+    /* END OF CHANGE: Action remapping */
     if (layer.supportsPickOption) {
       title += `, alt+click to ${layer.pickEnabled ? 'disable' : 'enable'} spatial object selection`;
     }
