@@ -80,11 +80,15 @@ export class WatchableAnnotationRelationshipStates extends
   }
 }
 
+/* START OF CHANGE: Point Annotation Marker Size */
 const DEFAULT_FRAGMENT_MAIN = `
+#uicontrol float size slider(min=0, max=10, default=1)
 void main() {
   setColor(defaultColor());
+  setPointMarkerSize(size);
 }
 `;
+/* END OF CHANGE: Point Annotation Marker Size */
 
 export class AnnotationDisplayState extends RefCounted {
   shader = makeTrackableFragmentMain(DEFAULT_FRAGMENT_MAIN);
