@@ -20,7 +20,7 @@ import {WatchableValue} from 'neuroglancer/trackable_value';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {verifyObject} from 'neuroglancer/util/json';
 import {Trackable} from 'neuroglancer/util/trackable';
-import {StateAPI, State} from 'neuroglancer/ui/state_loader';
+import {StateAPI, State} from 'neuroglancer/services/state_loader';
 import {AppSettings} from 'neuroglancer/services/service';
 
 /**
