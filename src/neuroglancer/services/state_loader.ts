@@ -8,9 +8,9 @@ import {fetchOk} from 'neuroglancer/util/http_request';
 import {Viewer} from 'neuroglancer/viewer';
 import {StatusMessage} from 'neuroglancer/status';
 import {makeIcon} from 'neuroglancer/widget/icon';
-import {makeText} from 'neuroglancer/widget/textbox';
 import {getCachedJson} from 'neuroglancer/util/trackable';
 import {AppSettings} from 'neuroglancer/services/service';
+import {User} from 'neuroglancer/services/user_loader';
 
 /**
  * Fuzzy search algorithm from https://github.com/bevacqua/fuzzysearch in Typescript.
@@ -36,6 +36,16 @@ function fuzzySearch (needle: string, haystack: string) {
     return false;
   }
   return true;
+}
+
+function getUrlParams() {
+  const href = new URL(location.href);
+  const id = href.searchParams.get('id');
+  const locationVariables = {
+    'stateID': id,
+    'multiUserMode': id !== null && href.searchParams.get('multi') === '1',
+  };
+  return locationVariables;
 }
 
 /**
@@ -120,7 +130,7 @@ export interface State {
 export class StateAPI {
   constructor (private userUrl: string, private stateUrl: string) {}
 
-  getUser(): Promise<any> {
+  public getUser(): Promise<User> {
     const url = this.userUrl;
 
     return fetchOk(url, {
@@ -128,12 +138,11 @@ export class StateAPI {
     }).then(response => {
       return response.json();
     }).then(json => {
-      console.log(json);
-      return json['person_id'];
+      return json;
     });
   }
 
-  getState(stateID: number|string): Promise<State> {
+  public getState(stateID: number|string): Promise<State> {
     const url = this.stateUrl + '/' + String(stateID);
 
     return fetchOk(url, {
@@ -147,6 +156,14 @@ export class StateAPI {
         comments: json['comments'],
         user_date: json['user_date'],
         url: json['url'],
+      };
+    }).catch(err => {
+      return {
+        state_id: 0,
+        person_id: 0,
+        comments: err,
+        user_date: "0",
+        url: "",
       };
     });
   }
@@ -171,7 +188,6 @@ export class StateAPI {
     }).then(response => {
       return response.json();
     }).then(json => {
-      console.log('newState', json);
       return {
         state_id: json['id'],
         person_id: json['person_id'],
@@ -202,7 +218,6 @@ export class StateAPI {
     }).then(response => {
       return response.json();
     }).then(json => {
-      console.log('saveState', json);
       return {
         state_id: json['id'],
         person_id: json['person_id'],
@@ -214,6 +229,13 @@ export class StateAPI {
   }
 }
 
+export const stateAPI = new StateAPI(
+  `${AppSettings.API_ENDPOINT}/session`,
+  `${AppSettings.API_ENDPOINT}/neuroglancer`,
+);
+
+export const urlParams = getUrlParams();
+
 export class StateLoader extends RefCounted {
   element = document.createElement('div');
 
@@ -221,27 +243,19 @@ export class StateLoader extends RefCounted {
   private input: StateAutocomplete;
   private saveButton: HTMLElement;
   private newButton: HTMLElement;
-  private userID: number;
+  private user: User;
   private stateID: number;
-  private listUsers: HTMLElement;
-  private currentUsers:string;
 
   constructor(public viewer: Viewer) {
     super();
     this.element.classList.add('state-loader');
 
-    this.stateAPI = new StateAPI(
-      AppSettings.API_ENDPOINT + '/session',
-      AppSettings.API_ENDPOINT + '/neuroglancer'
-    );
+    this.stateAPI = stateAPI;
 
-    this.stateAPI.getUser().then(userID => {
-      this.userID = userID;
+    this.stateAPI.getUser().then(user => {
+      this.user = user;
 
-      if (this.userID !== 0) {
-        this.listUsers = makeText({text: this.currentUsers, title: 'Current users.'});
-        this.element.appendChild(this.listUsers);
-
+      if (this.user.user_id !== 0) {
         this.input = new StateAutocomplete(viewer);
         this.input.disableCompletions();
         this.input.element.classList.add('state-loader-input');
@@ -263,9 +277,9 @@ export class StateLoader extends RefCounted {
         this.input.value = 'Type URL name here';
         this.saveButton.style.display = 'none';
 
-        const id_match = location.href.match(/(?<=(\?id=))(.*?)\d*/);
-        if (id_match !== null && typeof id_match[0] !== 'undefined') {
-          this.stateID = Number(id_match[0]);
+        const stateID = urlParams.stateID;
+        if (stateID) {
+          this.stateID = Number(stateID);
           this.getState();
         }
       }
@@ -298,7 +312,7 @@ export class StateLoader extends RefCounted {
 
     const state = {
       state_id: this.stateID,
-      person_id: this.userID,
+      person_id: this.user.user_id,
       comments: comments,
       user_date: String(Date.now()),
       url: JSON.stringify(getCachedJson(this.viewer.state).value, null, 0),
@@ -321,7 +335,7 @@ export class StateLoader extends RefCounted {
 
     const state = {
       state_id: this.stateID,
-      person_id: this.userID,
+      person_id: this.user.user_id,
       comments: comments,
       user_date: String(Date.now()),
       url: JSON.stringify(getCachedJson(this.viewer.state).value, null, 0),
