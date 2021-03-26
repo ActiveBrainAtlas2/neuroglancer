@@ -26,6 +26,7 @@
   margin: 0px;
   padding: 0px;
   margin-top: 2px;
+  overflow-x: hidden;
   overflow-y: auto;
   height: 0px;
   flex: 1;
