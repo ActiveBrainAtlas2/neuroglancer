@@ -60,7 +60,9 @@ import {NumberInputWidget} from 'neuroglancer/widget/number_input_widget';
 import {MousePositionWidget, PositionWidget} from 'neuroglancer/widget/position_widget';
 import {TrackableScaleBarOptions} from 'neuroglancer/widget/scale_bar';
 import {RPC} from 'neuroglancer/worker_rpc';
-import {StateLoader} from 'neuroglancer/ui/state_loader';
+import {StateLoader} from 'neuroglancer/services/state_loader';
+import {UserLoader} from 'neuroglancer/services/user_loader';
+
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
 
@@ -519,6 +521,8 @@ export class Viewer extends RefCounted implements ViewerState {
 
     /* START OF CHANGE: Add state loader */
     const stateLoader = new StateLoader(this);
+    const userLoader = new UserLoader();
+    topRow.appendChild(userLoader.element);
     topRow.appendChild(stateLoader.element);
     /* END OF CHANGE: Add state loader */
 
