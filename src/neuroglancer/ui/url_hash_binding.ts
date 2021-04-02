@@ -107,9 +107,9 @@ export class UrlHashBinding extends RefCounted {
     if (this.stateID !== null) {
       const {stateID} = this;
       neuroglancerDataRef.child(stateID).once('value', (snapshot) => {
-        if (snapshot.exists()) {
-          console.log('child exists with ' + this.stateID);
+        if ((snapshot.exists())  && (this.multiUserMode)) {
           this.stateData = snapshot.val();
+          console.log('using existing snapshot key=' + snapshot.key);
           const jsonStateUrl = this.stateData.url;
           this.root.reset();
           verifyObject(jsonStateUrl);
@@ -119,6 +119,7 @@ export class UrlHashBinding extends RefCounted {
           this.stateAPI.getState(stateID).then(jsonState => {
             this.stateData = jsonState;
             if (this.stateData.state_id > 0) {
+              console.log('if stateData.state_id > 0');
               const jsonStateUrl = JSON.parse(this.stateData.url);
               this.root.reset();
               verifyObject(jsonStateUrl);
@@ -153,7 +154,7 @@ export class UrlHashBinding extends RefCounted {
           s = s.slice(3);
           // Firefox always %-encodes the URL even if it is not typed that way.
           s = decodeURIComponent(s);
-          let state = urlSafeParse(s);
+          const state = urlSafeParse(s);
           verifyObject(state);
           this.root.restoreState(state);
           this.prevStateString = undefined;
@@ -165,7 +166,7 @@ export class UrlHashBinding extends RefCounted {
           }
           this.prevStateString = s;
           this.root.reset();
-          let state = urlSafeParse(s);
+          const state = urlSafeParse(s);
           verifyObject(state);
           this.root.restoreState(state);
         } else {
