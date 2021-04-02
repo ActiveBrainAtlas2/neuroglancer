@@ -63,9 +63,10 @@ import {RPC} from 'neuroglancer/worker_rpc';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 
-declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any;
 
-const WIKI_ADDRESS="https://github.com/ActiveBrainAtlasPipeline/neuroglancer/wiki/Help"
+declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
+
+const WIKI_ADDRESS="https://github.com/ActiveBrainAtlasPipeline/neuroglancer/wiki/Help";
 
 export class DataManagementContext extends RefCounted {
   worker: Worker;
@@ -535,15 +536,6 @@ export class Viewer extends RefCounted implements ViewerState {
       topRow.appendChild(button);
     }
 
-    {
-      const button = makeIcon({text: '?', title: 'Help'});
-      this.registerEventListener(button, 'click', () => {
-        this.showHelpDialog();
-      });
-      this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
-          this.uiControlVisibility.showHelpButton, button));
-      topRow.appendChild(button);
-    }
 
     {
       const button = makeIcon({text: 'Wiki', title: 'Wiki'});
