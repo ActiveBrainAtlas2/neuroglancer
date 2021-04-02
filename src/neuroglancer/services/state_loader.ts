@@ -1,25 +1,23 @@
-
 import './state_loader.css';
 
-import { Completion } from 'neuroglancer/util/completion';
-import { AutocompleteTextInput } from 'neuroglancer/widget/multiline_autocomplete';
-import { CancellationToken } from 'neuroglancer/util/cancellation';
-import { RefCounted } from 'neuroglancer/util/disposable';
-import { fetchOk } from 'neuroglancer/util/http_request';
-import { Viewer } from 'neuroglancer/viewer';
-import { StatusMessage } from 'neuroglancer/status';
-import { makeIcon } from 'neuroglancer/widget/icon';
-import { getCachedJson } from 'neuroglancer/util/trackable';
-import { AppSettings } from "neuroglancer/services/service";
-import { User } from "neuroglancer/services/user";
-
+import {Completion} from 'neuroglancer/util/completion';
+import {AutocompleteTextInput} from 'neuroglancer/widget/multiline_autocomplete';
+import {CancellationToken} from 'neuroglancer/util/cancellation';
+import {RefCounted} from 'neuroglancer/util/disposable';
+import {fetchOk} from 'neuroglancer/util/http_request';
+import {Viewer} from 'neuroglancer/viewer';
+import {StatusMessage} from 'neuroglancer/status';
+import {makeIcon} from 'neuroglancer/widget/icon';
+import {getCachedJson} from 'neuroglancer/util/trackable';
+import {AppSettings} from 'neuroglancer/services/service';
+import {User} from 'neuroglancer/services/user_loader';
 
 /**
  * Fuzzy search algorithm from https://github.com/bevacqua/fuzzysearch in Typescript.
  * @param needle
  * @param haystack
  */
-function fuzzySearch(needle: string, haystack: string) {
+function fuzzySearch (needle: string, haystack: string) {
   const hlen = haystack.length;
   const nlen = needle.length;
   if (nlen > hlen) {
@@ -40,23 +38,13 @@ function fuzzySearch(needle: string, haystack: string) {
   return true;
 }
 
-export function getLocationBar() {
-  let multiUserMode = false;
-  let locationVariables: any = {'stateID':undefined, 'multiUserMode': multiUserMode};
-  //id_match = location.href.match(/(?<=)\/(\d*)\/([0-1])/);
-  const id_match = location.href.match(/(?<=(\?id=))(.*?\d*)\&multi=(\d*)/);
-  if (
-    (id_match !== null)
-    && (typeof id_match[2] !== 'undefined')
-    && (typeof id_match[3] !== 'undefined')
-  ) {
-    if (id_match[3] === '1') {
-      multiUserMode = true;
-    }
-
-    locationVariables = { 'stateID': id_match[2], 'multiUserMode': multiUserMode };
-  }
-
+function getUrlParams() {
+  const href = new URL(location.href);
+  const id = href.searchParams.get('id');
+  const locationVariables = {
+    'stateID': id,
+    'multiUserMode': id !== null && href.searchParams.get('multi') === '1',
+  };
   return locationVariables;
 }
 
@@ -86,24 +74,22 @@ export class StateAutocomplete extends AutocompleteTextInput {
   private curCompletions: CompletionWithState[] = [];
 
   constructor(private viewer: Viewer) {
-    super({
-      completer: (value: string, _cancellationToken: CancellationToken) => {
-        this.curCompletions = [];
-        for (const result of this.allCompletions) {
-          if (fuzzySearch(value, result['value'])) {
-            this.curCompletions.push(result);
-          }
+    super({completer: (value: string, _cancellationToken: CancellationToken) => {
+      this.curCompletions = [];
+      for(const result of this.allCompletions) {
+        if (fuzzySearch(value, result['value'])) {
+          this.curCompletions.push(result);
         }
+      }
 
-        return Promise.resolve({
-          completions: this.curCompletions,
-          offset: 0,
-          showSingleResult: true,
-          selectSingleResult: true,
-          makeElement: makeCompletionElementWithState,
-        });
-      }, delay: 0
-    });
+      return Promise.resolve({
+        completions: this.curCompletions,
+        offset: 0,
+        showSingleResult: true,
+        selectSingleResult: true,
+        makeElement: makeCompletionElementWithState,
+      });
+    }, delay: 0});
 
     this.placeholder = 'State comment';
   }
@@ -142,7 +128,7 @@ export interface State {
 }
 
 export class StateAPI {
-  constructor(private userUrl: string, private stateUrl: string) { }
+  constructor (private userUrl: string, private stateUrl: string) {}
 
   public getUser(): Promise<User> {
     const url = this.userUrl;
@@ -156,7 +142,7 @@ export class StateAPI {
     });
   }
 
-  public getState(stateID: number | string): Promise<State> {
+  public getState(stateID: number|string): Promise<State> {
     const url = this.stateUrl + '/' + String(stateID);
 
     return fetchOk(url, {
@@ -176,12 +162,14 @@ export class StateAPI {
         state_id: 0,
         person_id: 0,
         comments: err,
-        user_date: "none",
-        url: "none"
+        user_date: "0",
+        url: "",
       };
-    })
+    });
   }
 
+  // We need to update the URL when we get a new ID!!
+  //TODO Junjie, check this code!
   newState(state: State): Promise<State> {
     const url = this.stateUrl;
     const body = {
@@ -202,6 +190,15 @@ export class StateAPI {
     }).then(response => {
       return response.json();
     }).then(json => {
+      const urlParams = getUrlParams();
+      const stateID = urlParams.stateID;
+      const multiUser = urlParams.multiUserMode;
+      if (stateID) {
+        console.log('old ID=' + stateID + ' new ID=' + json['id']);
+        const oldUrl = '?id=' + stateID + '&multi=' + multiUser;
+        const newUrl = '?id=' + json['id'] + '&multi=' + multiUser;
+        history.replaceState(null, oldUrl, newUrl);
+      }
       return {
         state_id: json['id'],
         person_id: json['person_id'],
@@ -212,7 +209,7 @@ export class StateAPI {
     });
   }
 
-  saveState(stateID: number | string, state: State): Promise<State> {
+  saveState(stateID: number|string, state: State): Promise<State> {
     const url = this.stateUrl + '/' + String(stateID);
     const body = {
       id: state['state_id'],
@@ -243,6 +240,12 @@ export class StateAPI {
   }
 }
 
+export const stateAPI = new StateAPI(
+  `${AppSettings.API_ENDPOINT}/session`,
+  `${AppSettings.API_ENDPOINT}/neuroglancer`,
+);
+
+export const urlParams = getUrlParams();
 
 export class StateLoader extends RefCounted {
   element = document.createElement('div');
@@ -258,13 +261,10 @@ export class StateLoader extends RefCounted {
     super();
     this.element.classList.add('state-loader');
 
-    this.stateAPI = new StateAPI(
-      AppSettings.API_ENDPOINT + '/session',
-      AppSettings.API_ENDPOINT + '/neuroglancer'
-    );
+    this.stateAPI = stateAPI;
 
-    this.stateAPI.getUser().then(jsonData => {
-      this.user = jsonData;
+    this.stateAPI.getUser().then(user => {
+      this.user = user;
 
       if (this.user.user_id !== 0) {
         this.input = new StateAutocomplete(viewer);
@@ -272,39 +272,36 @@ export class StateLoader extends RefCounted {
         this.input.element.classList.add('state-loader-input');
         this.element.appendChild(this.input.element);
 
-        this.saveButton = makeIcon({ text: 'Save', title: 'Save to the current JSON state' });
+        this.saveButton = makeIcon({text: 'Save', title: 'Save to the current JSON state'});
         this.registerEventListener(this.saveButton, 'click', () => {
           this.saveState();
         });
         this.element.appendChild(this.saveButton);
 
-        this.newButton = makeIcon({ text: 'New', title: 'Save to a new JSON state' });
+        this.newButton = makeIcon({text: 'New', title: 'Save to a new JSON state'});
         this.registerEventListener(this.newButton, 'click', () => {
           this.newState();
         });
         this.element.appendChild(this.newButton);
 
-
-
         this.stateID = -1;
-        this.input.value = 'type url name here';
+        this.input.value = 'Type URL name here';
         this.saveButton.style.display = 'none';
 
-        const locationVariables = getLocationBar();
-
-        if (('stateID' in locationVariables) && (typeof locationVariables['stateID'] !== 'undefined')) {
-          this.stateID = Number(locationVariables['stateID']);
+        const stateID = urlParams.stateID;
+        if (stateID) {
+          this.stateID = Number(stateID);
           this.getState();
         }
       }
     });
   }
 
-  private validateState(state: State | null) {
+  private validateState(state: State|null) {
     if (state !== null) {
       this.stateID = state['state_id'];
       this.input.value = state['comments'];
-      this.saveButton.style.display = 'inline';
+      this.saveButton.style.removeProperty("display");
     }
   }
 
@@ -343,7 +340,7 @@ export class StateLoader extends RefCounted {
   private newState() {
     const comments = this.input.value;
     if (comments.length === 0) {
-      StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
+      StatusMessage.showTemporaryMessage(`Error: the comment cannot be empty.`);
       return;
     }
 
@@ -363,25 +360,5 @@ export class StateLoader extends RefCounted {
       console.log(err);
     });
   }
-
-  /*
-  private getAllCompletions() {
-    this.getStates().then(json => {
-      let results: CompletionWithState[] = [];
-      for (let result of json['results']) {
-        results.push({
-          value: result['comments'],
-          date: new Date(Number(result['user_date'])).toLocaleString(),
-          json: result['url'],
-        });
-      }
-      this.input.allCompletions = results;
-    }).catch(err => {
-      StatusMessage.showTemporaryMessage(`Internal error: please see debug message`);
-      console.log(err);
-      this.input.allCompletions = [];
-    });
-  }
-   */
 }
 
