@@ -107,7 +107,7 @@ export class UrlHashBinding extends RefCounted {
     if (this.stateID !== null) {
       const {stateID} = this;
       neuroglancerDataRef.child(stateID).once('value', (snapshot) => {
-        if (snapshot.exists()) {
+        if (snapshot.exists() && this.multiUserMode) {
           console.log('child exists with ' + this.stateID);
           this.stateData = snapshot.val();
           const jsonStateUrl = this.stateData.url;
