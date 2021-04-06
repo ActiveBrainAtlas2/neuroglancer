@@ -234,6 +234,9 @@ export class DataSourceView extends RefCounted {
   seenGeneration = 0;
   generation = -1;
   private loadedView: LoadedDataSourceView|undefined;
+  /* START OF CHANGE: Retrieve Matrix Button */
+  private fetchMatrixWidget: FetchRotationMatrixWidget|undefined;
+  /* END OF CHANGE: Retrieve Matrix Button */
 
   constructor(public tab: Borrowed<LayerDataSourcesTab>, public source: Borrowed<LayerDataSource>) {
     super();
@@ -286,6 +289,9 @@ export class DataSourceView extends RefCounted {
     this.urlInput.dirty.value = false;
     const {loadState} = this.source;
     let {loadedView} = this;
+    /* START OF CHANGE: Retrieve Matrix Button */
+    this.fetchMatrixWidget?.hide();
+    /* END OF CHANGE: Retrieve Matrix Button */
     if (loadedView !== undefined) {
       if (loadedView.source === loadState) {
         return;
@@ -297,8 +303,11 @@ export class DataSourceView extends RefCounted {
       loadedView = this.loadedView = new LoadedDataSourceView(loadState);
       this.element.appendChild(loadedView.element);
       /* START OF CHANGE: Retrieve Matrix Button */
-      const fetchMatrixWidget = new FetchRotationMatrixWidget(loadState.transform, this.urlInput.value);
-      this.element.appendChild(fetchMatrixWidget.element)
+      if (this.fetchMatrixWidget === undefined) {
+        this.fetchMatrixWidget = this.registerDisposer(new FetchRotationMatrixWidget());
+        this.element.appendChild(this.fetchMatrixWidget.element)
+      }
+      this.fetchMatrixWidget.display(loadState.transform, this.urlInput.value);
       /* END OF CHANGE: Retrieve Matrix Button */
     }
   }

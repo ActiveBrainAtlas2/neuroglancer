@@ -143,7 +143,7 @@ export class StateAPI {
   }
 
   public getState(stateID: number|string): Promise<State> {
-    const url = this.stateUrl + '/' + String(stateID);
+    const url = `${this.stateUrl}/${stateID}`;
 
     return fetchOk(url, {
       method: 'GET',
@@ -188,6 +188,10 @@ export class StateAPI {
     }).then(response => {
       return response.json();
     }).then(json => {
+      const href = new URL(location.href);
+      href.searchParams.set('id', json['id']);
+      window.history.pushState({}, '', href.toString());
+      urlParams.stateID = json['id'];
       return {
         state_id: json['id'],
         person_id: json['person_id'],
@@ -199,7 +203,7 @@ export class StateAPI {
   }
 
   saveState(stateID: number|string, state: State): Promise<State> {
-    const url = this.stateUrl + '/' + String(stateID);
+    const url = `${this.stateUrl}/${stateID}`;
     const body = {
       id: state['state_id'],
       person_id: state['person_id'],
