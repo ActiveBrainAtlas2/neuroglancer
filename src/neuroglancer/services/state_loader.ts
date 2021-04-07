@@ -143,7 +143,7 @@ export class StateAPI {
   }
 
   public getState(stateID: number|string): Promise<State> {
-    const url = this.stateUrl + '/' + String(stateID);
+    const url = `${this.stateUrl}/${stateID}`;
 
     return fetchOk(url, {
       method: 'GET',
@@ -168,8 +168,6 @@ export class StateAPI {
     });
   }
 
-  // We need to update the URL when we get a new ID!!
-  //TODO Junjie, check this code!
   newState(state: State): Promise<State> {
     const url = this.stateUrl;
     const body = {
@@ -190,15 +188,10 @@ export class StateAPI {
     }).then(response => {
       return response.json();
     }).then(json => {
-      const urlParams = getUrlParams();
-      const stateID = urlParams.stateID;
-      const multiUser = urlParams.multiUserMode;
-      if (stateID) {
-        console.log('old ID=' + stateID + ' new ID=' + json['id']);
-        const oldUrl = '?id=' + stateID + '&multi=' + multiUser;
-        const newUrl = '?id=' + json['id'] + '&multi=' + multiUser;
-        history.replaceState(null, oldUrl, newUrl);
-      }
+      const href = new URL(location.href);
+      href.searchParams.set('id', json['id']);
+      window.history.pushState({}, '', href.toString());
+      urlParams.stateID = json['id'];
       return {
         state_id: json['id'],
         person_id: json['person_id'],
@@ -210,7 +203,7 @@ export class StateAPI {
   }
 
   saveState(stateID: number|string, state: State): Promise<State> {
-    const url = this.stateUrl + '/' + String(stateID);
+    const url = `${this.stateUrl}/${stateID}`;
     const body = {
       id: state['state_id'],
       person_id: state['person_id'],
