@@ -640,7 +640,7 @@ export function annotationToJson(annotation: Annotation, schema: AnnotationSchem
   return result;
 }
 
-function restoreAnnotation(obj: any, schema: AnnotationSchema, allowMissingId = false): Annotation {
+export function restoreAnnotation(obj: any, schema: AnnotationSchema, allowMissingId = false): Annotation {
   verifyObject(obj);
   const type = verifyObjectProperty(obj, 'type', x => verifyEnumString(x, AnnotationType));
   const id =

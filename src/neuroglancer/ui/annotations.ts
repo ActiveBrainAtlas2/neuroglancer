@@ -61,6 +61,7 @@ import {makeIcon} from 'neuroglancer/widget/icon';
 import {makeMoveToButton} from 'neuroglancer/widget/move_to_button';
 import {Tab} from 'neuroglancer/widget/tab_view';
 import {VirtualList, VirtualListSource} from 'neuroglancer/widget/virtual_list';
+import {FetchAnnotationWidget} from 'neuroglancer/widget/fetch_annotation';
 
 export class MergedAnnotationStates extends RefCounted implements
     WatchableValueInterface<readonly AnnotationLayerState[]> {
@@ -338,6 +339,10 @@ export class AnnotationLayerView extends Tab {
       public layer: Borrowed<UserLayerWithAnnotations>,
       public displayState: AnnotationDisplayState) {
     super();
+
+    const fetchAnnotationWidget = this.registerDisposer(new FetchAnnotationWidget(this));
+    this.element.appendChild(fetchAnnotationWidget.element);
+
     this.element.classList.add('neuroglancer-annotation-layer-view');
     this.registerDisposer(this.visibility.changed.add(() => this.updateView()));
     this.registerDisposer(
