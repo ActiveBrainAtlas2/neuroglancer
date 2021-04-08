@@ -1,0 +1,12 @@
+.neuroglancer-fetch-annotation-tool {
+  display: flex;
+}
+
+.neuroglancer-fetch-annotation-selection {
+  min-width: 0;
+}
+
+.neuroglancer-fetch-annotation-button {
+  margin-left: 4px;
+  margin-right: 4px;
+}
