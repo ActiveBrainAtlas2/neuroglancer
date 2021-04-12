@@ -11,9 +11,17 @@ const pattern_animal = /precomputed:\/\/https:\/\/activebrainatlas.ucsd.edu\/dat
 const buttonText = 'Fetch rotation matrix';
 const buttonTitle = 'Please note that the rotation matrix will only be applied for the current layer. To rotate other layers, switch to that layer and click this button.';
 
-interface remoteRotationMatrix {
+interface RemoteRotationMatrix {
   rotation: Array<Array<any>>;
   translation: Array<Array<any>>;
+}
+
+interface RotationInfo {
+  prep_id: string;
+  input_type: string;
+  person_id: number;
+  username: string;
+  count?: number;
 }
 
 export class FetchRotationMatrixWidget extends RefCounted{
@@ -23,7 +31,6 @@ export class FetchRotationMatrixWidget extends RefCounted{
   private fetchButton: HTMLElement;
   private transform: WatchableCoordinateSpaceTransform;
   private url: string|null = null;
-  private animal: string|null = null;
 
   constructor() {
     super();
@@ -70,10 +77,11 @@ export class FetchRotationMatrixWidget extends RefCounted{
     const urlNameMatches = [...this.url.matchAll(pattern_animal)];
     const urlNames = [...new Set(urlNameMatches.map(m => m[1]))];
     if (urlNames.length === 1) {
-      this.animal = urlNames[0];
+      const animal = urlNames[0];
       for(var i = 0; i < this.animalSelection.options.length; i++) {
-        if (this.animalSelection.options[i].value == this.animal) {
-          this.animalSelection.value = this.animal;
+        const optionVal = this.animalSelection.options[i].value;
+        if (optionVal.indexOf(animal) == 0) {
+          this.animalSelection.value = optionVal;
           break;
         }
       }
@@ -81,14 +89,13 @@ export class FetchRotationMatrixWidget extends RefCounted{
   }
 
   async setUpAnimalList() {
-    const url = `${AppSettings.API_ENDPOINT}/animals`;
+    const url = `${AppSettings.API_ENDPOINT}/rotations`;
     try {
-      const response:Array<any> = await fetchOk(url, {
+      const response:Array<RotationInfo> = await fetchOk(url, {
         method: 'GET',
       }).then(response => {
         return response.json();
       });
-      const animalNames = response.map(m => m['prep_id']);
 
       const animalSelectionFetched = document.createElement('select');
       const defaultOption = document.createElement('option');
@@ -98,10 +105,12 @@ export class FetchRotationMatrixWidget extends RefCounted{
       defaultOption.selected = true;
       animalSelectionFetched.add(defaultOption);
 
-      animalNames.forEach(animal => {
+      response.forEach(info => {
+        const {prep_id, input_type, person_id, username, count} = info;
         var option = document.createElement('option');
-        option.value = animal;
-        option.text = animal;
+        option.value = `${prep_id}/${input_type}/${person_id}`;
+        option.text = `${prep_id} ${input_type} ${username}`;
+        option.text += count? (count > 1)? ` - ${count} structures`: ` - ${count} structure`: ``;
         animalSelectionFetched.add(option);
       });
 
@@ -117,17 +126,17 @@ export class FetchRotationMatrixWidget extends RefCounted{
   }
 
   async fetchRotationMatrix() {
-    const animal = this.animalSelection.value;
-    if (!animal) {
+    const selection = this.animalSelection.value;
+    if (!selection) {
       StatusMessage.showTemporaryMessage('Please select the name of the current brain.');
       return;
     }
-    const animalURL = `${AppSettings.API_ENDPOINT}/alignatlas?animal=${animal}`;
+    const rotationURL = `${AppSettings.API_ENDPOINT}/rotation/${selection}`;
 
-    StatusMessage.showTemporaryMessage(`Fetching rotation matrix for ${animal}`);
+    StatusMessage.showTemporaryMessage(`Fetching rotation matrix for ${selection}`);
 
     try {
-      const rotationJSON:remoteRotationMatrix = await fetchOk(animalURL, {
+      const rotationJSON:RemoteRotationMatrix = await fetchOk(rotationURL, {
         method: 'GET',
       }).then(response => {
         return response.json();
@@ -142,7 +151,7 @@ export class FetchRotationMatrixWidget extends RefCounted{
         translation[0][0], translation[1][0], translation[2][0], 1,
       ])
       this.transform.transform = dimensionTransform(newTransform, rank);
-      StatusMessage.showTemporaryMessage(`Fetched rotation matrix for ${animal}`);
+      StatusMessage.showTemporaryMessage(`Fetched rotation matrix for ${selection}`);
     } catch (e) {
       StatusMessage.showTemporaryMessage('Unable to get rotation matirx.');
       throw e;
