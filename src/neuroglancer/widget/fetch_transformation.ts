@@ -8,15 +8,15 @@ import {makeIcon} from 'neuroglancer/widget/icon';
 import {AppSettings} from 'neuroglancer/services/service';
 
 const pattern_animal = /precomputed:\/\/https:\/\/activebrainatlas.ucsd.edu\/data\/([A-Z0-9]+)\//g;
-const buttonText = 'Fetch rotation matrix';
-const buttonTitle = 'Please note that the rotation matrix will only be applied for the current layer. To rotate other layers, switch to that layer and click this button.';
+const buttonText = 'Align';
+const buttonTitle = 'The transformation will only be applied on the current layer.';
 
-interface RemoteRotationMatrix {
-  rotation: Array<Array<any>>;
-  translation: Array<Array<any>>;
+interface TransformJSON {
+  rotation: Array<Array<number>>;
+  translation: Array<Array<number>>;
 }
 
-interface RotationInfo {
+interface TransformInfo {
   prep_id: string;
   input_type: string;
   person_id: number;
@@ -24,10 +24,10 @@ interface RotationInfo {
   count?: number;
 }
 
-export class FetchRotationMatrixWidget extends RefCounted{
+export class FetchTransformationWidget extends RefCounted{
   element: HTMLElement;
-  private animalSelection: HTMLSelectElement;
-  private animalSelectionDefault: HTMLSelectElement;
+  private transformSelection: HTMLSelectElement;
+  private transformSelectionDefault: HTMLSelectElement;
   private fetchButton: HTMLElement;
   private transform: WatchableCoordinateSpaceTransform;
   private url: string|null = null;
@@ -35,25 +35,25 @@ export class FetchRotationMatrixWidget extends RefCounted{
   constructor() {
     super();
 
-    this.animalSelectionDefault = document.createElement('select');
+    this.transformSelectionDefault = document.createElement('select');
     const defaultOption = document.createElement('option');
-    defaultOption.text = 'Loading brains';
+    defaultOption.text = 'Loading transformations';
     defaultOption.value = '';
     defaultOption.disabled = true;
     defaultOption.selected = true;
-    this.animalSelectionDefault.add(defaultOption);
-    this.animalSelection = this.animalSelectionDefault;
+    this.transformSelectionDefault.add(defaultOption);
+    this.transformSelection = this.transformSelectionDefault;
 
-    this.setUpAnimalList();
+    this.setUpTransformList();
 
     this.fetchButton = makeIcon({
       text: buttonText,
       title: buttonTitle,
-      onClick: () => {this.fetchRotationMatrix()},
+      onClick: () => {this.applyTransformation()},
     });
 
     this.element = document.createElement('div');
-    this.element.appendChild(this.animalSelection);
+    this.element.appendChild(this.transformSelection);
     this.element.appendChild(this.fetchButton)
 
     this.registerDisposer(() => removeFromParent(this.element));
@@ -78,32 +78,32 @@ export class FetchRotationMatrixWidget extends RefCounted{
     const urlNames = [...new Set(urlNameMatches.map(m => m[1]))];
     if (urlNames.length === 1) {
       const animal = urlNames[0];
-      for(var i = 0; i < this.animalSelection.options.length; i++) {
-        const optionVal = this.animalSelection.options[i].value;
+      for(var i = 0; i < this.transformSelection.options.length; i++) {
+        const optionVal = this.transformSelection.options[i].value;
         if (optionVal.indexOf(animal) == 0) {
-          this.animalSelection.value = optionVal;
+          this.transformSelection.value = optionVal;
           break;
         }
       }
     }
   }
 
-  async setUpAnimalList() {
+  async setUpTransformList() {
     const url = `${AppSettings.API_ENDPOINT}/rotations`;
     try {
-      const response:Array<RotationInfo> = await fetchOk(url, {
+      const response:Array<TransformInfo> = await fetchOk(url, {
         method: 'GET',
       }).then(response => {
         return response.json();
       });
 
-      const animalSelectionFetched = document.createElement('select');
+      const transformSelectionFetched = document.createElement('select');
       const defaultOption = document.createElement('option');
-      defaultOption.text = 'Select brain';
+      defaultOption.text = 'Select transformation';
       defaultOption.value = '';
       defaultOption.disabled = true;
       defaultOption.selected = true;
-      animalSelectionFetched.add(defaultOption);
+      transformSelectionFetched.add(defaultOption);
 
       response.forEach(info => {
         const {prep_id, input_type, person_id, username, count} = info;
@@ -111,37 +111,38 @@ export class FetchRotationMatrixWidget extends RefCounted{
         option.value = `${prep_id}/${input_type}/${person_id}`;
         option.text = `${prep_id} ${input_type} ${username}`;
         option.text += count? (count > 1)? ` - ${count} structures`: ` - ${count} structure`: ``;
-        animalSelectionFetched.add(option);
+        transformSelectionFetched.add(option);
       });
 
       const newElement = document.createElement('div');
-      newElement.appendChild(animalSelectionFetched);
+      newElement.appendChild(transformSelectionFetched);
       newElement.appendChild(this.fetchButton)
       this.element.parentNode?.replaceChild(newElement, this.element);
-      this.animalSelection = animalSelectionFetched;
+      this.transformSelection = transformSelectionFetched;
       this.matchURL();
     } catch (err) {
-      StatusMessage.showTemporaryMessage('Failed to load the list of brains to align. Please try later.');
+      StatusMessage.showTemporaryMessage('Failed to load the list of transformations. Please try later.');
     }
   }
 
-  async fetchRotationMatrix() {
-    const selection = this.animalSelection.value;
+  async applyTransformation() {
+    const selection = this.transformSelection.value;
     if (!selection) {
-      StatusMessage.showTemporaryMessage('Please select the name of the current brain.');
+      StatusMessage.showTemporaryMessage('Please select the transformation to apply.');
       return;
     }
-    const rotationURL = `${AppSettings.API_ENDPOINT}/rotation/${selection}`;
+    const selectionName = this.transformSelection.options[this.transformSelection.selectedIndex].text;
+    const transformURL = `${AppSettings.API_ENDPOINT}/rotation/${selection}`;
 
-    StatusMessage.showTemporaryMessage(`Fetching rotation matrix for ${selection}`);
+    StatusMessage.showTemporaryMessage(`Fetching transformation: ${selectionName}`);
 
     try {
-      const rotationJSON:RemoteRotationMatrix = await fetchOk(rotationURL, {
+      const transformJSON:TransformJSON = await fetchOk(transformURL, {
         method: 'GET',
       }).then(response => {
         return response.json();
       });
-      const {rotation, translation} = rotationJSON;
+      const {rotation, translation} = transformJSON;
 
       const rank = this.transform.value.rank;
       const newTransform = Float64Array.from([
@@ -151,9 +152,9 @@ export class FetchRotationMatrixWidget extends RefCounted{
         translation[0][0], translation[1][0], translation[2][0], 1,
       ])
       this.transform.transform = dimensionTransform(newTransform, rank);
-      StatusMessage.showTemporaryMessage(`Fetched rotation matrix for ${selection}`);
+      StatusMessage.showTemporaryMessage(`Transformation applied: ${selectionName}`);
     } catch (e) {
-      StatusMessage.showTemporaryMessage('Unable to get rotation matirx.');
+      StatusMessage.showTemporaryMessage('Unable to fetch the transformation.');
       throw e;
     }
   }
