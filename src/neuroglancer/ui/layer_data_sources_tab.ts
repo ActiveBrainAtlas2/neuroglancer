@@ -38,7 +38,7 @@ import {makeAddButton} from 'neuroglancer/widget/add_button';
 import {CoordinateSpaceTransformWidget} from 'neuroglancer/widget/coordinate_transform';
 import {AutocompleteTextInput, makeCompletionElementWithDescription} from 'neuroglancer/widget/multiline_autocomplete';
 import {Tab} from 'neuroglancer/widget/tab_view';
-import {FetchRotationMatrixWidget} from 'neuroglancer/widget/fetch_rotation_matrix';
+import {FetchTransformationWidget} from 'src/neuroglancer/widget/fetch_transformation';
 
 class SourceUrlAutocomplete extends AutocompleteTextInput {
   dataSourceView: DataSourceView;
@@ -235,7 +235,7 @@ export class DataSourceView extends RefCounted {
   generation = -1;
   private loadedView: LoadedDataSourceView|undefined;
   /* START OF CHANGE: Retrieve Matrix Button */
-  private fetchMatrixWidget: FetchRotationMatrixWidget|undefined;
+  private fetchMatrixWidget: FetchTransformationWidget|undefined;
   /* END OF CHANGE: Retrieve Matrix Button */
 
   constructor(public tab: Borrowed<LayerDataSourcesTab>, public source: Borrowed<LayerDataSource>) {
@@ -304,7 +304,7 @@ export class DataSourceView extends RefCounted {
       this.element.appendChild(loadedView.element);
       /* START OF CHANGE: Retrieve Matrix Button */
       if (this.fetchMatrixWidget === undefined) {
-        this.fetchMatrixWidget = this.registerDisposer(new FetchRotationMatrixWidget());
+        this.fetchMatrixWidget = this.registerDisposer(new FetchTransformationWidget());
         this.element.appendChild(this.fetchMatrixWidget.element)
       }
       this.fetchMatrixWidget.display(loadState.transform, this.urlInput.value);
