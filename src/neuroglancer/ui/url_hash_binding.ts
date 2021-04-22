@@ -82,6 +82,10 @@ export class UrlHashBinding extends RefCounted {
    */
   setUrlHash() {
     if (this.stateID && this.multiUserMode) {
+      if (this.user.user_id == 0) {
+        StatusMessage.showTemporaryMessage('You have not logged in yet. Changes will not be pushed to the cloud. Please log in and refresh the page to use multi-user mode.');
+        return;
+      }
       const cacheState = getCachedJson(this.root);
       const stateString = JSON.stringify(cacheState.value);
       const urlData = JSON.parse(stateString);
@@ -107,7 +111,7 @@ export class UrlHashBinding extends RefCounted {
     if (this.stateID !== null) {
       const {stateID} = this;
       neuroglancerDataRef.child(stateID).once('value', (snapshot) => {
-        if (snapshot.exists() && this.multiUserMode) {
+        if (snapshot.exists() && this.multiUserMode && this.user.user_id !== 0) {
           console.log('child exists with ' + this.stateID);
           this.stateData = snapshot.val();
           const jsonStateUrl = this.stateData.url;
@@ -116,6 +120,9 @@ export class UrlHashBinding extends RefCounted {
           this.root.restoreState(jsonStateUrl);
           setupUser(this.stateData, this.user);
         } else {
+          if (this.multiUserMode && this.user.user_id == 0) {
+            StatusMessage.showTemporaryMessage('You have not logged in yet. Please log in and refresh the page to use multi-user mode.');
+          }
           this.stateAPI.getState(stateID).then(jsonState => {
             this.stateData = jsonState;
             if (this.stateData.state_id > 0) {
