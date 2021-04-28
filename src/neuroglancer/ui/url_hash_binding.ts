@@ -15,7 +15,6 @@
  */
 
 import debounce from 'lodash/debounce';
-import isEqual from 'lodash/isEqual';
 import {CredentialsManager} from 'neuroglancer/credentials_provider';
 import {StatusMessage} from 'neuroglancer/status';
 import {WatchableValue} from 'neuroglancer/trackable_value';
@@ -62,17 +61,17 @@ export class UrlHashBinding extends RefCounted {
       public root: Trackable, public credentialsManager: CredentialsManager,
       updateDelayMilliseconds = 200) {
     super();
-    this.registerEventListener(window, 'hashchange', () => this.updateFromUrlHash());
-    const throttledSetUrlHash = debounce(() => this.setUrlHash(), updateDelayMilliseconds);
-    this.registerDisposer(root.changed.add(throttledSetUrlHash));
-    this.registerDisposer(() => throttledSetUrlHash.cancel());
     this.stateAPI = stateAPI;
     stateAPI.getUser().then(jsonUser => {
       this.user = jsonUser;
+      this.stateID = urlParams.stateID;
+      this.multiUserMode = urlParams.multiUserMode;
+      this.registerEventListener(window, 'hashchange', () => this.updateFromUrlHash());
+      const throttledSetUrlHash = debounce(() => this.setUrlHash(), updateDelayMilliseconds);
+      this.registerDisposer(root.changed.add(throttledSetUrlHash));
+      this.registerDisposer(() => throttledSetUrlHash.cancel());
     });
-    this.stateID = urlParams.stateID;
-    this.multiUserMode = urlParams.multiUserMode;
-}
+  }
 
   /**
    * ActiveBrainAtlas fork:
@@ -87,14 +86,13 @@ export class UrlHashBinding extends RefCounted {
         return;
       }
       const cacheState = getCachedJson(this.root);
-      const stateString = JSON.stringify(cacheState.value);
+      const stateString = JSON.stringify(cacheState.value)
       const urlData = JSON.parse(stateString);
-      const layerType = urlData.layers[0].type;
       const {prevStateString} = this;
-      const sameState = prevStateString? compareState(prevStateString, stateString):false;
-      if ((layerType !== 'new') && (!sameState)) {
-        console.log('updating state from user browser')
-        neuroglancerDataRef.child(this.stateID).update({url: urlData });
+      const sameState = prevStateString === stateString;
+      if (!sameState) {
+        console.log('Updating state from user browser')
+        neuroglancerDataRef.child(this.stateID).update({url: urlData});
         this.prevStateString = stateString;
       }
     }
@@ -108,37 +106,48 @@ export class UrlHashBinding extends RefCounted {
    * This is called upon initial load of the page.
    */
   updateFromUrlHash() {
-    if (this.stateID !== null) {
+    if (this.stateID) {
       const {stateID} = this;
-      neuroglancerDataRef.child(stateID).once('value', (snapshot) => {
-        if (snapshot.exists() && this.multiUserMode && this.user.user_id !== 0) {
-          console.log('child exists with ' + this.stateID);
-          this.stateData = snapshot.val();
-          const jsonStateUrl = this.stateData.url;
-          this.root.reset();
-          verifyObject(jsonStateUrl);
-          this.root.restoreState(jsonStateUrl);
-          setupUser(this.stateData, this.user);
-        } else {
-          if (this.multiUserMode && this.user.user_id == 0) {
-            StatusMessage.showTemporaryMessage('You have not logged in yet. Please log in and refresh the page to use multi-user mode.');
-          }
-          this.stateAPI.getState(stateID).then(jsonState => {
-            this.stateData = jsonState;
-            if (this.stateData.state_id > 0) {
-              const stateObject = this.stateData.url;
-              this.prevStateString = JSON.stringify(stateObject);
+      if (this.multiUserMode) {
+        if (this.user.user_id === 0) {
+          StatusMessage.showTemporaryMessage('You have not logged in yet. Please log in and refresh the page to use multi-user mode.');
+          return;
+        }
+        neuroglancerDataRef.child(stateID).once('value', (snapshot) => {
+          if (snapshot.exists()) {
+            this.stateData = snapshot.val();
+            const jsonStateUrl = this.stateData.url;
+            this.root.reset();
+            verifyObject(jsonStateUrl);
+            this.root.restoreState(jsonStateUrl);
+            this.prevStateString = JSON.stringify(jsonStateUrl);
+            setupUser(this.stateData, this.user);
+            this.setStateFromFirebase();
+          } else {
+            this.stateAPI.getState(stateID).then(jsonState => {
+              this.stateData = jsonState;
+              const jsonStateUrl = this.stateData.url;
               this.root.reset();
-              verifyObject(stateObject);
-              this.root.restoreState(stateObject);
-              this.stateData.url = stateObject;
+              verifyObject(jsonStateUrl);
+              this.root.restoreState(jsonStateUrl);
+              this.prevStateString = JSON.stringify(jsonStateUrl);
               setupUser(this.stateData, this.user);
               saveData(this.stateData);
-            }
-          });
-        }
-      });
-      this.setStateFromFirebase();
+              this.setStateFromFirebase();
+            });
+          }
+        });
+      } else {
+        this.stateAPI.getState(stateID).then(jsonState => {
+          this.stateData = jsonState;
+          const stateObject = this.stateData.url;
+          this.prevStateString = undefined;
+          this.root.reset();
+          verifyObject(stateObject);
+          this.root.restoreState(stateObject);
+          this.stateData.url = stateObject;
+        });
+      }
     } else {
       try {
         let s = location.href.replace(/^[^#]+/, '');
@@ -164,16 +173,11 @@ export class UrlHashBinding extends RefCounted {
           let state = urlSafeParse(s);
           verifyObject(state);
           this.root.restoreState(state);
-          this.prevStateString = undefined;
         } else if (s.startsWith('#!')) {
           s = s.slice(2);
           s = decodeURIComponent(s);
-          if (s === this.prevStateString) {
-            return;
-          }
-          this.prevStateString = s;
-          this.root.reset();
           let state = urlSafeParse(s);
+          this.root.reset();
           verifyObject(state);
           this.root.restoreState(state);
         } else {
@@ -186,6 +190,21 @@ export class UrlHashBinding extends RefCounted {
     }
   }
 
+  resetDatabaseState() {
+    if (!this.stateID) {
+      StatusMessage.showTemporaryMessage("This is not saved to the database yet.");
+    } else {
+      this.stateAPI.getState(this.stateID).then(jsonState => {
+        this.stateData = jsonState;
+        const jsonStateUrl = this.stateData.url;
+        this.root.reset();
+        verifyObject(jsonStateUrl);
+        this.root.restoreState(jsonStateUrl);
+        this.setUrlHash();
+      });
+    }
+  }
+
   /**
    * ActiveBrainAtlas fork:
    * Update the local state upon a firebase update.
@@ -193,21 +212,15 @@ export class UrlHashBinding extends RefCounted {
    */
   private setStateFromFirebase() {
     if (this.stateID != null && this.multiUserMode) {
-      neuroglancerDataRef.child(this.stateID)
-        .on("child_changed", (snapshot) => {
-          const jsonState = snapshot.val();
-          const stateString = JSON.stringify(jsonState);
-          const {prevStateString} = this;
-          const sameState = prevStateString? compareState(prevStateString, stateString):false;
-
-          if ((snapshot.key === 'url') && (!sameState)) {
-            this.prevStateString = stateString;
-            this.root.reset();
-            verifyObject(jsonState);
-            this.root.restoreState(jsonState);
-          }
+      neuroglancerDataRef.child(this.stateID).on("child_changed", (snapshot) => {
+        const jsonState = snapshot.val();
+        if ((snapshot.key === 'url')) {
+          this.root.reset();
+          verifyObject(jsonState);
+          this.root.restoreState(jsonState);
+          this.prevStateString = JSON.stringify(jsonState);
         }
-      );
+      });
     }
   }
 }
@@ -222,13 +235,4 @@ function saveData(state: State) {
   const updates: any = {};
   updates[`/neuroglancer/${state.state_id}`] = state;
   return databaseRef.update(updates);
-}
-
-function compareState(stringObject1:string, stringObject2:string): boolean {
-  try {
-    const eq = isEqual(JSON.parse(stringObject1), JSON.parse(stringObject2));
-    return eq;
-   } catch (e) {
-    return false;
-  }
 }

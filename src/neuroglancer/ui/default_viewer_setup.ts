@@ -43,5 +43,6 @@ export function setupDefaultViewer() {
   bindDefaultCopyHandler(viewer);
   bindDefaultPasteHandler(viewer);
 
+  viewer.urlHashBinding = hashBinding;
   return viewer;
 }
