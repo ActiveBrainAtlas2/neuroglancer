@@ -158,6 +158,7 @@ export class StateAPI {
         url: json['url'],
       };
     }).catch(err => {
+      StatusMessage.showTemporaryMessage('The URL is deleted from database. Please check again.');
       return {
         state_id: 0,
         person_id: 0,
@@ -245,6 +246,7 @@ export class StateLoader extends RefCounted {
 
   private stateAPI: StateAPI;
   private input: StateAutocomplete;
+  private resetButton: HTMLElement;
   private saveButton: HTMLElement;
   private newButton: HTMLElement;
   private user: User;
@@ -265,6 +267,12 @@ export class StateLoader extends RefCounted {
         this.input.element.classList.add('state-loader-input');
         this.element.appendChild(this.input.element);
 
+        this.resetButton = makeIcon({text: 'Reset', title: 'Reset to the JSON state stored in the database'});
+        this.registerEventListener(this.resetButton, 'click', () => {
+          this.resetState();
+        });
+        this.element.appendChild(this.resetButton);
+
         this.saveButton = makeIcon({text: 'Save', title: 'Save to the current JSON state'});
         this.registerEventListener(this.saveButton, 'click', () => {
           this.saveState();
@@ -280,6 +288,7 @@ export class StateLoader extends RefCounted {
         this.stateID = -1;
         this.input.value = 'Type URL name here';
         this.saveButton.style.display = 'none';
+        this.resetButton.style.display = 'none;'
 
         const stateID = urlParams.stateID;
         if (stateID) {
@@ -294,7 +303,8 @@ export class StateLoader extends RefCounted {
     if (state !== null) {
       this.stateID = state['state_id'];
       this.input.value = state['comments'];
-      this.saveButton.style.removeProperty("display");
+      this.saveButton.style.removeProperty('display');
+      this.resetButton.style.removeProperty('display');
     }
   }
 
@@ -352,6 +362,10 @@ export class StateLoader extends RefCounted {
       StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
       console.log(err);
     });
+  }
+
+  private resetState() {
+    this.viewer.urlHashBinding.resetDatabaseState();
   }
 }
 

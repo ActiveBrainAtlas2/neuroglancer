@@ -38,10 +38,10 @@ export function setupDefaultViewer() {
     }
     hashBinding.parseError;
   }));
-  hashBinding.updateFromUrlHash();
 
   bindDefaultCopyHandler(viewer);
   bindDefaultPasteHandler(viewer);
 
+  viewer.urlHashBinding = hashBinding;
   return viewer;
 }
