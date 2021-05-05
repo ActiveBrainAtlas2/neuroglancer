@@ -81,7 +81,7 @@ export class FetchAnnotationWidget extends RefCounted{
         const {id, description, layer_name} = AnnotationLayerInfo;
         var option = document.createElement('option');
         option.value = `${id}/${encodeURIComponent(layer_name)}`;
-        option.text = `${id}-${description}/${layer_name}`;
+        option.text = `${description}/${layer_name}`;
         annotationSelectionFetched.add(option);
       });
 
