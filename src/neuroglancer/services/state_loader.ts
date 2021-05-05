@@ -124,7 +124,7 @@ export interface State {
   person_id: number;
   comments: string;
   user_date: string;
-  url: string;
+  url: object;
 }
 
 export class StateAPI {
@@ -163,7 +163,7 @@ export class StateAPI {
         person_id: 0,
         comments: err,
         user_date: "0",
-        url: "",
+        url: {},
       };
     });
   }
@@ -319,7 +319,7 @@ export class StateLoader extends RefCounted {
       person_id: this.user.user_id,
       comments: comments,
       user_date: String(Date.now()),
-      url: JSON.stringify(getCachedJson(this.viewer.state).value, null, 0),
+      url: getCachedJson(this.viewer.state).value,
     };
 
     this.stateAPI.saveState(this.stateID, state).then(() => {
@@ -342,7 +342,7 @@ export class StateLoader extends RefCounted {
       person_id: this.user.user_id,
       comments: comments,
       user_date: String(Date.now()),
-      url: JSON.stringify(getCachedJson(this.viewer.state).value, null, 0),
+      url: getCachedJson(this.viewer.state).value,
     };
 
     this.stateAPI.newState(state).then((newState) => {
