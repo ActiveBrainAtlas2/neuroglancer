@@ -119,11 +119,12 @@ export class UrlHashBinding extends RefCounted {
           this.stateAPI.getState(stateID).then(jsonState => {
             this.stateData = jsonState;
             if (this.stateData.state_id > 0) {
-              const jsonStateUrl = JSON.parse(this.stateData.url);
+              const stateObject = this.stateData.url;
+              this.prevStateString = JSON.stringify(stateObject);
               this.root.reset();
-              verifyObject(jsonStateUrl);
-              this.root.restoreState(jsonStateUrl);
-              this.stateData.url = jsonStateUrl;
+              verifyObject(stateObject);
+              this.root.restoreState(stateObject);
+              this.stateData.url = stateObject;
               setupUser(this.stateData, this.user);
               saveData(this.stateData);
             }
