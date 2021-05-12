@@ -25,7 +25,7 @@ import {cancellableFetchSpecialOk, parseSpecialUrl} from 'neuroglancer/util/spec
 import {getCachedJson, Trackable} from 'neuroglancer/util/trackable';
 import {urlParams, stateAPI, StateAPI, State} from 'neuroglancer/services/state_loader';
 import {neuroglancerDataRef, databaseRef} from 'neuroglancer/services/firebase';
-import {User} from 'neuroglancer/services/user_loader';
+import {User, ActiveUser} from 'neuroglancer/services/user_loader';
 
 /**
  * @file Implements a binding between a Trackable value and the URL hash state.
@@ -92,6 +92,7 @@ export class UrlHashBinding extends RefCounted {
       const sameState = prevStateString === stateString;
       if (!sameState) {
         console.log('Updating state from user browser')
+        setupUser(this.stateData, this.user);
         neuroglancerDataRef.child(this.stateID).update({url: urlData});
         this.prevStateString = stateString;
       }
@@ -131,8 +132,8 @@ export class UrlHashBinding extends RefCounted {
               verifyObject(jsonStateUrl);
               this.root.restoreState(jsonStateUrl);
               this.prevStateString = JSON.stringify(jsonStateUrl);
-              setupUser(this.stateData, this.user);
               saveData(this.stateData);
+              setupUser(this.stateData, this.user);
               this.setStateFromFirebase();
             });
           }
@@ -227,7 +228,11 @@ export class UrlHashBinding extends RefCounted {
 
 function setupUser(state: State, user: User) {
   const updates: any = {};
-  updates[`/users/${state.state_id}/${user.user_id}`] = user.username;
+  const activeUser: ActiveUser = {
+    name: user.username,
+    date: Date.now(),
+  }
+  updates[`/users/${state.state_id}/${user.user_id}`] = activeUser;
   return databaseRef.update(updates);
 }
 
