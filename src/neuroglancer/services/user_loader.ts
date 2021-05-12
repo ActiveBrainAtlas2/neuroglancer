@@ -14,6 +14,11 @@ export interface User {
   username: string;
 }
 
+export interface ActiveUser {
+  name: string;
+  date: number;
+}
+
 export class UserLoader {
   element = document.createElement('div');
   private userList = document.createElement('div');
@@ -57,8 +62,9 @@ export class UserLoader {
 
   private updateUserList(snapshot: any) {
     this.users = [];
-    snapshot.forEach((childSnapshot: { val: () => string; }) => {
-      this.users.push(childSnapshot.val());
+    snapshot.forEach((childSnapshot: { val: () => ActiveUser; }) => {
+      const active = childSnapshot.val();
+      if (Date.now() - active.date < 300000) this.users.push(active.name);
     });
     const newList = document.createElement('div');
     newList.classList.add('user-list');
