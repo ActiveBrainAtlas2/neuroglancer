@@ -1,3 +1,4 @@
+src/neuroglancer/services/firebase.ts
 /node_modules/
 /dist/
 /trans
