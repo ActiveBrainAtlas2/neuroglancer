@@ -62,6 +62,7 @@ import {TrackableScaleBarOptions} from 'neuroglancer/widget/scale_bar';
 import {RPC} from 'neuroglancer/worker_rpc';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
+import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
 
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
@@ -341,6 +342,7 @@ export class Viewer extends RefCounted implements ViewerState {
   dataSourceProvider: Borrowed<DataSourceProviderRegistry>;
 
   uiConfiguration: ViewerUIConfiguration;
+  urlHashBinding: UrlHashBinding;
 
   private makeUiControlVisibilityState(key: keyof ViewerUIOptions) {
     const showUIControls = this.uiConfiguration.showUIControls;
