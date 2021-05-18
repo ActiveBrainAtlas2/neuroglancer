@@ -19,21 +19,24 @@ import throttle from 'lodash/throttle';
 import {AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
 import {ChunkManager} from 'neuroglancer/chunk_manager/frontend';
 import {CoordinateSpace, CoordinateSpaceCombiner, CoordinateTransformSpecification, coordinateTransformSpecificationFromLegacyJson, emptyInvalidCoordinateSpace, isGlobalDimension, isLocalDimension, isLocalOrChannelDimension, TrackableCoordinateSpace} from 'neuroglancer/coordinate_transform';
-import {DataSourceSpecification, makeEmptyDataSourceSpecification} from 'neuroglancer/datasource';
-import {DataSourceProviderRegistry, DataSubsource} from 'neuroglancer/datasource';
+import {DataSourceProviderRegistry, DataSourceSpecification, DataSubsource, makeEmptyDataSourceSpecification} from 'neuroglancer/datasource';
 import {DisplayContext, RenderedPanel} from 'neuroglancer/display_context';
 import {LayerDataSource, layerDataSourceSpecificationFromJson, LoadedDataSubsource} from 'neuroglancer/layer_data_source';
 import {DisplayDimensions, Position, WatchableDisplayDimensionRenderInfo} from 'neuroglancer/navigation_state';
+import {RenderLayerTransform} from 'neuroglancer/render_coordinate_transform';
 import {RENDERED_VIEW_ADD_LAYER_RPC_ID, RENDERED_VIEW_REMOVE_LAYER_RPC_ID} from 'neuroglancer/render_layer_common';
 import {RenderLayer, RenderLayerRole, VisibilityTrackedRenderLayer} from 'neuroglancer/renderlayer';
 import {VolumeType} from 'neuroglancer/sliceview/volume/base';
 import {StatusMessage} from 'neuroglancer/status';
 import {TrackableBoolean} from 'neuroglancer/trackable_boolean';
-import {registerNested, TrackableRefCounted, TrackableValue, TrackableValueInterface, WatchableSet, WatchableValue, WatchableValueInterface} from 'neuroglancer/trackable_value';
+import {registerNested, TrackableRefCounted, TrackableValueInterface, WatchableSet, WatchableValue, WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {LayerDataSourcesTab} from 'neuroglancer/ui/layer_data_sources_tab';
+import {SELECTED_LAYER_SIDE_PANEL_DEFAULT_LOCATION, UserLayerSidePanelsState} from 'neuroglancer/ui/layer_side_panel_state';
+import {DEFAULT_SIDE_PANEL_LOCATION, TrackableSidePanelLocation} from 'neuroglancer/ui/side_panel_location';
 import {restoreTool, Tool} from 'neuroglancer/ui/tool';
+import {gatherUpdate} from 'neuroglancer/util/array';
 import {Borrowed, invokeDisposers, Owned, RefCounted} from 'neuroglancer/util/disposable';
-import {parseArray, parseFixedLengthArray, verifyBoolean, verifyFiniteFloat, verifyInt, verifyObject, verifyObjectProperty, verifyOptionalBoolean, verifyOptionalObjectProperty, verifyOptionalString, verifyPositiveInt, verifyString} from 'neuroglancer/util/json';
+import {emptyToUndefined, parseArray, parseFixedLengthArray, verifyBoolean, verifyFiniteFloat, verifyInt, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyOptionalString, verifyString} from 'neuroglancer/util/json';
 import {MessageList} from 'neuroglancer/util/message_list';
 import {NullarySignal} from 'neuroglancer/util/signal';
 import {addSignalBinding, removeSignalBinding, SignalBindingUpdater} from 'neuroglancer/util/signal_binding_updater';
@@ -45,7 +48,6 @@ import {DependentViewContext} from 'neuroglancer/widget/dependent_view_widget';
 import {TabSpecification} from 'neuroglancer/widget/tab_view';
 import {RPC} from 'neuroglancer/worker_rpc';
 
-const TAB_JSON_KEY = 'tab';
 const TOOL_JSON_KEY = 'tool';
 const LOCAL_POSITION_JSON_KEY = 'localPosition';
 const LOCAL_COORDINATE_SPACE_JSON_KEY = 'localDimensions';
@@ -90,6 +92,7 @@ export class UserLayer extends RefCounted {
   }
 
   static type: string;
+  static typeAbbreviation: string;
 
   get type() {
     return (this.constructor as typeof UserLayer).type;
@@ -218,6 +221,7 @@ export class UserLayer extends RefCounted {
   }
 
   tabs = this.registerDisposer(new TabSpecification());
+  panels = new UserLayerSidePanelsState(this);
   tool: TrackableRefCounted<Tool> = this.registerDisposer(
       new TrackableRefCounted<Tool>(value => restoreTool(this, value), value => value.toJSON()));
 
@@ -232,6 +236,7 @@ export class UserLayer extends RefCounted {
     super();
     this.localCoordinateSpaceCombiner.includeDimensionPredicate = isLocalOrChannelDimension;
     this.tabs.changed.add(this.specificationChanged.dispatch);
+    this.panels.specificationChanged.add(this.specificationChanged.dispatch);
     this.tool.changed.add(this.specificationChanged.dispatch);
     this.localPosition.changed.add(this.specificationChanged.dispatch);
     this.pick.changed.add(this.specificationChanged.dispatch);
@@ -351,7 +356,7 @@ export class UserLayer extends RefCounted {
 
   restoreState(specification: any) {
     this.tool.restoreState(specification[TOOL_JSON_KEY]);
-    this.tabs.restoreState(specification[TAB_JSON_KEY]);
+    this.panels.restoreState(specification);
     this.localCoordinateSpace.restoreState(specification[LOCAL_COORDINATE_SPACE_JSON_KEY]);
     this.localPosition.restoreState(specification[LOCAL_POSITION_JSON_KEY]);
     if ((this.constructor as typeof UserLayer).supportsPickOption) {
@@ -422,11 +427,11 @@ export class UserLayer extends RefCounted {
     return {
       type: this.type,
       [SOURCE_JSON_KEY]: dataSourcesToJson(this.dataSources),
-      [TAB_JSON_KEY]: this.tabs.toJSON(),
       [TOOL_JSON_KEY]: this.tool.toJSON(),
       [LOCAL_COORDINATE_SPACE_JSON_KEY]: this.localCoordinateSpace.toJSON(),
       [LOCAL_POSITION_JSON_KEY]: this.localPosition.toJSON(),
       [PICK_JSON_KEY]: this.pick.toJSON(),
+      ...this.panels.toJSON(),
     };
   }
 
@@ -439,6 +444,15 @@ export class UserLayer extends RefCounted {
 
   selectedValueFromJson(json: any) {
     return json;
+  }
+
+  setLayerPosition(modelTransform: RenderLayerTransform, layerPosition: Float32Array) {
+    const {globalPosition} = this.manager.root;
+    const {localPosition} = this;
+    gatherUpdate(globalPosition.value, layerPosition, modelTransform.globalToRenderLayerDimensions);
+    gatherUpdate(localPosition.value, layerPosition, modelTransform.localToRenderLayerDimensions);
+    localPosition.changed.dispatch();
+    globalPosition.changed.dispatch();
   }
 }
 
@@ -507,8 +521,9 @@ export class ManagedUserLayer extends RefCounted {
   }
 
   visible = true;
+  archived = false;
 
-  get supportsPickOption () {
+  get supportsPickOption() {
     const userLayer = this.layer;
     return userLayer !== null && (userLayer.constructor as typeof UserLayer).supportsPickOption;
   }
@@ -542,16 +557,43 @@ export class ManagedUserLayer extends RefCounted {
     let layerSpec = userLayer.toJSON();
     layerSpec.name = this.name;
     if (!this.visible) {
-      layerSpec['visible'] = false;
+      if (this.archived) {
+        layerSpec['archived'] = true;
+      } else {
+        layerSpec['visible'] = false;
+      }
     }
     return layerSpec;
   }
 
   setVisible(value: boolean) {
-    if (value !== this.visible) {
-      this.visible = value;
-      this.layerChanged.dispatch();
+    if (value === this.visible) return;
+    if (value && this.archived) {
+      this.visible = true;
+      this.setArchived(false);
+      return;
     }
+    this.visible = value;
+    this.layerChanged.dispatch();
+  }
+
+  setArchived(value: boolean) {
+    if (this.archived === value) return;
+    if (value === true) {
+      this.visible = false;
+      this.archived = true;
+      for (const {layerManager} of this.manager.root.subsets) {
+        if (!layerManager.has(this)) continue;
+        layerManager.removeManagedLayer(this);
+      }
+    } else {
+      for (const {layerManager} of this.manager.root.subsets) {
+        if (layerManager.has(this)) continue;
+        layerManager.addManagedLayer(this.addRef());
+      }
+      this.archived = false;
+    }
+    this.layerChanged.dispatch();
   }
 
   disposed() {
@@ -617,7 +659,7 @@ export class LayerManager extends RefCounted {
     if (this.numDirectUsers > 0) {
       return;
     }
-    this.filter(layer => layer.refCount !== 1);
+    this.filter(layer => layer.refCount !== 1 || layer.archived);
   }
 
   private updateSignalBindings(
@@ -667,6 +709,9 @@ export class LayerManager extends RefCounted {
   unbindManagedLayer(managedLayer: ManagedUserLayer) {
     this.updateSignalBindings(managedLayer, removeSignalBinding);
     managedLayer.containers.delete(this);
+    // Also notify the root LayerManager, to ensures the layer is removed if this is the last direct
+    // reference.
+    managedLayer.manager.rootLayers.layersChanged.dispatch();
     managedLayer.dispose();
   }
 
@@ -789,6 +834,7 @@ export class MouseSelectionState implements PickState {
   changed = new NullarySignal();
   coordinateSpace: CoordinateSpace = emptyInvalidCoordinateSpace;
   position: Float32Array = kEmptyFloat32Vec;
+  unsnappedPosition: Float32Array = kEmptyFloat32Vec;
   active = false;
   displayDimensions: DisplayDimensions|undefined = undefined;
   pickedRenderLayer: RenderLayer|null = null;
@@ -918,11 +964,23 @@ export interface PersistentViewerSelectionState {
 
 const maxSelectionHistorySize = 10;
 
+const DATA_SELECTION_STATE_DEFAULT_PANEL_LOCATION = {
+  ...DEFAULT_SIDE_PANEL_LOCATION,
+  minSize: 150,
+  row: 1
+};
+
+const DATA_SELECTION_STATE_DEFAULT_PANEL_LOCATION_VISIBLE = {
+  ...DATA_SELECTION_STATE_DEFAULT_PANEL_LOCATION,
+  visible: true
+};
+
 export class TrackableDataSelectionState extends RefCounted implements
     TrackableValueInterface<PersistentViewerSelectionState|undefined> {
   changed = new NullarySignal();
   history: PersistentViewerSelectionState[] = [];
   historyIndex: number = 0;
+  location = new TrackableSidePanelLocation(DATA_SELECTION_STATE_DEFAULT_PANEL_LOCATION);
 
   constructor(
       public coordinateSpace: WatchableValueInterface<CoordinateSpace>,
@@ -934,12 +992,11 @@ export class TrackableDataSelectionState extends RefCounted implements
       context.registerDisposer(layerSelectedValues.changed.add(context.registerCancellable(
           throttle(() => this.capture(true), 100, {leading: true, trailing: true}))));
     }, this.pin));
-    this.visible.changed.add(this.changed.dispatch);
     this.pin.changed.add(this.changed.dispatch);
+    this.location.changed.add(this.changed.dispatch);
   }
   private value_: PersistentViewerSelectionState|undefined;
   pin = new WatchableValue<boolean>(true);
-  visible = new WatchableValue<boolean>(false);
   get value() {
     return this.value_;
   }
@@ -995,11 +1052,11 @@ export class TrackableDataSelectionState extends RefCounted implements
   captureSingleLayerState<T extends UserLayer>(
       userLayer: Borrowed<T>, capture: (state: T['selectionState']) => boolean,
       pin: boolean|'toggle' = true) {
-    if (pin === false && (!this.visible.value || this.pin.value)) return;
+    if (pin === false && (!this.location.visible || this.pin.value)) return;
     const state = {} as UserLayerSelectionState;
     userLayer.initializeSelectionState(state);
     if (capture(state)) {
-      this.visible.value = true;
+      this.location.visible = true;
       if (pin === true) {
         this.pin.value = true;
       } else if (pin === 'toggle') {
@@ -1013,30 +1070,44 @@ export class TrackableDataSelectionState extends RefCounted implements
     }
   }
   reset() {
-    this.visible.value = false;
+    this.location.reset();
     this.pin.value = false;
     this.value = undefined;
   }
   toJSON() {
+    // Default panel configuration, not visible: -> undefined
+    // Default panel configuration, visible: -> {}
+    // Non-default panel configuration, not visible: -> {side: 'left', ..., visible: false}}
+    // Non-default panel configuration, visible: -> {side: 'left', ...}
     const {value} = this;
-    if (!this.visible.value) return undefined;
-    if (this.pin.value === false) return null;
-    if (value === undefined) return null;
-    const layersJson: any = {};
-    for (const layerData of value.layers) {
-      const {layer} = layerData;
-      let data = layer.selectionStateToJson(layerData.state, false);
-      if (Object.keys(data).length === 0) data = undefined;
-      layersJson[layerData.layer.managedLayer.name] = data;
+    let obj: any;
+    if (this.location.visible) {
+      obj = this.location.toJSON(DATA_SELECTION_STATE_DEFAULT_PANEL_LOCATION_VISIBLE);
+      if (this.pin.value && value !== undefined) {
+        const layersJson: any = {};
+        for (const layerData of value.layers) {
+          const {layer} = layerData;
+          let data = layer.selectionStateToJson(layerData.state, false);
+          if (Object.keys(data).length === 0) data = undefined;
+          layersJson[layerData.layer.managedLayer.name] = data;
+        }
+        if (value.position !== undefined) {
+          obj.position = Array.from(value.position);
+        }
+        obj.layers = layersJson;
+      }
+    } else {
+      obj = this.location.toJSON(DATA_SELECTION_STATE_DEFAULT_PANEL_LOCATION);
+      obj = emptyToUndefined(obj);
+      if (obj !== undefined) {
+        obj.visible = false;
+      }
     }
-    return {
-      position: value.position === undefined ? undefined : Array.from(value.position),
-      layers: layersJson,
-    };
+    return obj;
   }
   select() {
-    const {pin, visible} = this;
-    visible.value = true;
+    const {pin} = this;
+    this.location.visible = true;
     pin.value = !pin.value;
     if (pin.value) {
       this.capture();
@@ -1050,17 +1121,19 @@ export class TrackableDataSelectionState extends RefCounted implements
   restoreState(obj: unknown) {
     if (obj === undefined) {
       this.pin.value = true;
-      this.visible.value = false;
       this.value = undefined;
       return;
     }
     if (obj === null) {
+      // Support for old representation where `null` means visible but unpinned.
       this.pin.value = false;
-      this.visible.value = true;
+      this.location.visible = true;
       this.value = undefined;
       return;
     }
     verifyObject(obj);
+    // If the object is present, then visible by default.
+    this.location.restoreState(obj, DATA_SELECTION_STATE_DEFAULT_PANEL_LOCATION_VISIBLE);
     const coordinateSpace = this.coordinateSpace.value;
     const position = verifyOptionalObjectProperty(
         obj, 'position',
@@ -1082,8 +1155,7 @@ export class TrackableDataSelectionState extends RefCounted implements
         layers.push({layer, state});
       }
     });
-    this.visible.value = true;
-    this.pin.value = true;
+    this.pin.value = (layers.length > 0 || position !== undefined);
     this.value = {position, coordinateSpace, layers};
   }
 }
@@ -1220,25 +1292,45 @@ makeRenderedPanelVisibleLayerTracker<View extends RenderedPanel&LayerView, Rende
 
 export class SelectedLayerState extends RefCounted implements Trackable {
   changed = new NullarySignal();
-  visible_ = false;
+  location = new TrackableSidePanelLocation(SELECTED_LAYER_SIDE_PANEL_DEFAULT_LOCATION);
   layer_: ManagedUserLayer|undefined;
-  size = new TrackableValue<number>(300, verifyPositiveInt)
 
   get layer() {
     return this.layer_;
   }
 
   get visible() {
-    return this.visible_;
+    return this.location.visible;
+  }
+
+  toggle(layer: ManagedUserLayer) {
+    if (this.layer === layer && this.visible) {
+      this.visible = false;
+    } else {
+      this.layer = layer;
+      this.visible = true;
+    }
   }
 
   set visible(value: boolean) {
-    const existingLayer = this.layer_;
-    if (existingLayer === undefined) {
-      value = false;
+    let existingLayer = this.layer_;
+    if (value === true && existingLayer === undefined) {
+      // Check if there is a layer
+      const {managedLayers} = this.layerManager;
+      if (managedLayers.length > 0) {
+        existingLayer = this.layer = managedLayers[0];
+      } else {
+        value = false;
+      }
     }
-    if (this.visible_ !== value) {
-      this.visible_ = value;
+    if (value === true && existingLayer !== undefined) {
+      const userLayer = existingLayer.layer;
+      if (userLayer === null || userLayer.panels.panels[0].tabs.length === 0) {
+        value = false;
+      }
+    }
+    if (this.visible !== value) {
+      this.location.visible = value;
       if (!value && existingLayer !== undefined) {
         this.maybeDeleteNewLayer(existingLayer);
       }
@@ -1261,7 +1353,20 @@ export class SelectedLayerState extends RefCounted implements Trackable {
   constructor(public layerManager: Owned<LayerManager>) {
     super();
     this.registerDisposer(layerManager);
-    this.size.changed.add(this.changed.dispatch);
+    this.location.changed.add(() => {
+      this.changed.dispatch();
+      const userLayer = this.layer?.layer ?? undefined;
+      if (userLayer !== undefined) {
+        const curLocation = this.location.value;
+        if (curLocation.visible) {
+          const panel = userLayer.panels.panels[0];
+          if (panel.location.value !== curLocation) {
+            panel.location.value = curLocation;
+            panel.location.locationChanged.dispatch();
+          }
+        }
+      }
+    });
   }
 
   set layer(layer: ManagedUserLayer|undefined) {
@@ -1298,20 +1403,17 @@ export class SelectedLayerState extends RefCounted implements Trackable {
         layerChangedDisposer();
       };
     } else {
-      this.visible_ = false;
+      this.location.visible = false;
     }
     this.changed.dispatch();
   }
 
   toJSON() {
-    if (this.layer === undefined) {
-      return undefined;
+    const obj: any = this.location.toJSON();
+    if (this.layer !== undefined) {
+      obj.layer = this.layer.name;
     }
-    return {
-      'layer': this.layer.name,
-      'visible': this.visible === true ? true : undefined,
-      'size': this.size.toJSON(),
-    };
+    return emptyToUndefined(obj);
   }
 
   restoreState(obj: any) {
@@ -1320,14 +1422,14 @@ export class SelectedLayerState extends RefCounted implements Trackable {
       return;
     }
     verifyObject(obj);
+    this.location.restoreState(obj);
     const layerName = verifyObjectProperty(obj, 'layer', verifyOptionalString);
     const layer = layerName !== undefined ? this.layerManager.getLayerByName(layerName) : undefined;
     this.layer = layer;
-    this.visible = verifyObjectProperty(obj, 'visible', verifyOptionalBoolean) ? true : false;
-    verifyObjectProperty(obj, 'size', x => this.size.restoreState(x));
   }
 
   reset() {
+    this.location.reset();
     this.layer = undefined;
   }
 }
@@ -1435,7 +1537,7 @@ export class LinkedLayerGroup extends RefCounted implements Trackable {
   linkedLayersChanged = new NullarySignal();
   readonly root: WatchableValueInterface<UserLayer>;
 
-  get linkedLayers (): ReadonlySet<UserLayer> {
+  get linkedLayers(): ReadonlySet<UserLayer> {
     return this.linkedLayers_;
   }
 
@@ -1515,7 +1617,7 @@ export class LinkedLayerGroup extends RefCounted implements Trackable {
     if (otherUserLayer === this.layer) return;
     if (this.root_ === otherUserLayer) return;
     if (this.root_ !== this.layer) {
-      this.isolate(/*notifyChanged=*/false);
+      this.isolate(/*notifyChanged=*/ false);
     }
     const {getGroup} = this;
     const newRoot = getGroup(otherUserLayer).root_;
@@ -1528,13 +1630,18 @@ export class LinkedLayerGroup extends RefCounted implements Trackable {
   }
 
   disposed() {
-    this.isolate(/*notifyChanged=*/false);
+    this.isolate(/*notifyChanged=*/ false);
   }
 }
 
 function initializeLayerFromSpecNoRestoreState(managedLayer: ManagedUserLayer, spec: any) {
   const layerType = verifyOptionalObjectProperty(spec, 'type', verifyString, 'auto');
-  managedLayer.visible = verifyOptionalObjectProperty(spec, 'visible', verifyBoolean, true);
+  managedLayer.archived = verifyOptionalObjectProperty(spec, 'archived', verifyBoolean, false);
+  if (!managedLayer.archived) {
+    managedLayer.visible = verifyOptionalObjectProperty(spec, 'visible', verifyBoolean, true);
+  } else {
+    managedLayer.visible = false;
+  }
   const layerConstructor = layerTypes.get(layerType) || NewUserLayer;
   managedLayer.layer = new layerConstructor(managedLayer);
   return spec;
@@ -1608,6 +1715,7 @@ export class TopLevelLayerListSpecification extends LayerListSpecification {
   }
 
   coordinateSpaceCombiner = new CoordinateSpaceCombiner(this.coordinateSpace, isGlobalDimension);
+  subsets = new Set<LayerSubsetSpecification>();
 
   layerSelectedValues = this.selectionState.layerSelectedValues;
 
@@ -1733,6 +1841,12 @@ export class LayerSubsetSpecification extends LayerListSpecification {
     const {layerManager} = this;
     this.registerDisposer(layerManager.layersChanged.add(this.changed.dispatch));
     this.registerDisposer(layerManager.specificationChanged.add(this.changed.dispatch));
+    master.subsets.add(this);
+  }
+
+  disposed() {
+    super.disposed();
+    this.master.subsets.delete(this);
   }
 
   reset() {
@@ -1748,6 +1862,7 @@ export class LayerSubsetSpecification extends LayerListSpecification {
         throw new Error(
             `Undefined layer referenced in subset specification: ${JSON.stringify(name)}`);
       }
+      if (layer.archived) continue;
       layers.push(layer);
     }
     this.layerManager.clear();
@@ -1794,7 +1909,8 @@ const layerTypeDetectors: LayerTypeDetector[] = [
   },
 ];
 
-export function registerLayerType(name: string, layerConstructor: UserLayerConstructor) {
+export function registerLayerType(
+    layerConstructor: UserLayerConstructor, name: string = layerConstructor.type) {
   layerTypes.set(name, layerConstructor);
 }
 
@@ -1812,7 +1928,6 @@ export function changeLayerType(
   const userLayer = managedLayer.layer;
   if (userLayer === null) return;
   const spec = userLayer.toJSON();
-  spec['tab'] = userLayer.tabs.value;
   const newUserLayer = new layerConstructor(managedLayer);
   newUserLayer.restoreState(spec);
   newUserLayer.initializationDone();
@@ -1890,6 +2005,7 @@ function detectLayerTypeFromSubsources(subsources: Iterable<LoadedDataSubsource>
  */
 export class NewUserLayer extends UserLayer {
   static type = 'new';
+  static typeAbbreviation = 'new';
   detectedLayerConstructor: UserLayerConstructor|undefined;
 
   activateDataSubsources(subsources: Iterable<LoadedDataSubsource>) {
@@ -1902,6 +2018,7 @@ export class NewUserLayer extends UserLayer {
  */
 export class AutoUserLayer extends UserLayer {
   static type = 'auto';
+  static typeAbbreviation = 'auto';
 
   activateDataSubsources(subsources: Iterable<LoadedDataSubsource>) {
     const layerConstructor = detectLayerTypeFromSubsources(subsources)?.layerConstructor;
@@ -1919,5 +2036,5 @@ export function addNewLayer(
   selectedLayer.visible = true;
 }
 
-registerLayerType('new', NewUserLayer);
-registerLayerType('auto', AutoUserLayer);
+registerLayerType(NewUserLayer);
+registerLayerType(AutoUserLayer);
