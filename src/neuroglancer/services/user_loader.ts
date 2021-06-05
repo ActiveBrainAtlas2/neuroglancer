@@ -31,6 +31,8 @@ export class UserLoader {
   constructor() {
     this.stateAPI = stateAPI;
 
+    this.element.classList.add('user-loader');
+
     if (urlParams.stateID) {
       const stateID = urlParams.stateID;
 
@@ -112,10 +114,6 @@ export class UserLoader {
       userDiv.textContent = this.user.username;
       userDiv.style.color = 'lightblue';
       this.userList.append(userDiv);
-      const reminder = document.createElement('div');
-      reminder.classList.add('user-div');
-      reminder.textContent = 'Remember to save your changes!';
-      this.userList.append(reminder);
     }
   }
 

@@ -7,6 +7,8 @@
 
 .state-loader-input {
   margin-top: 0px;
-  width: 400px;
+  width: 275px;
   background-color: #383d41;
+  overflow: hidden;
+  white-space: nowrap;
 }
