@@ -15,6 +15,7 @@
  */
 
 .neuroglancer-annotation-tool-status-widget {
+  white-space: nowrap;
   color: #3c3;
   font: 10pt sans-serif;
 }
