@@ -1,0 +1,1 @@
+{"type":"module","name":"browserify-typescript-extension","author":"Vandelay Industries","version":"1.0.0","main":"./lib/main.js","types":"./lib/main.d.ts","dependencies":{"@types/browserify":"latest","browserify":"latest"},"devDependencies":{"ts-node":"^10.2.0","typescript":"^4.3.5"}}
