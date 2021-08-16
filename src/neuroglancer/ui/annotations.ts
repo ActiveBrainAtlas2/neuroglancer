@@ -19,7 +19,7 @@
  */
 
 import './annotations.css';
-
+import {AppSettings} from 'neuroglancer/services/service';
 import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Ellipsoid, Line} from 'neuroglancer/annotation';
 import {AnnotationDisplayState, AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
 import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
@@ -62,6 +62,11 @@ import {makeMoveToButton} from 'neuroglancer/widget/move_to_button';
 import {Tab} from 'neuroglancer/widget/tab_view';
 import {VirtualList, VirtualListSource} from 'neuroglancer/widget/virtual_list';
 import {FetchAnnotationWidget} from 'neuroglancer/widget/fetch_annotation';
+import {fetchOk} from 'neuroglancer/util/http_request';
+
+interface LandmarkListJSON {
+  land_marks: Array<string>,
+}
 
 export class MergedAnnotationStates extends RefCounted implements
     WatchableValueInterface<readonly AnnotationLayerState[]> {
@@ -188,7 +193,6 @@ function getCenterPosition(center: Float32Array, annotation: Annotation) {
   }
 }
 
-
 function setLayerPosition(
     layer: UserLayer, chunkTransform: ValueOrError<ChunkTransformParameters>,
     layerPosition: Float32Array) {
@@ -201,7 +205,6 @@ function setLayerPosition(
   localPosition.changed.dispatch();
   globalPosition.changed.dispatch();
 }
-
 
 function visitTransformedAnnotationGeometry(
     annotation: Annotation, chunkTransform: ChunkTransformParameters,
@@ -1371,6 +1374,35 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
       state.annotationSubsource = annotationLayer.subsourceId;
     }
 
+    async getLandmarkList(){
+      const landmarkURL = `${AppSettings.API_ENDPOINT}/landmark_list`;
+      const landmarkListJSON:LandmarkListJSON = await fetchOk(landmarkURL, {
+        method: 'GET',
+      }).then(response => {
+        return response.json();});
+      const {land_marks} = landmarkListJSON;
+      return land_marks
+    }
+
+    async addText(parent: HTMLElement, select:HTMLSelectElement) {
+      const text_element = document.createElement('textarea');
+      var idx = select.selectedIndex; 
+      var text = select.options[idx].value
+      text_element.value = text;
+      text_element.rows = 3;
+      text_element.className = 'neuroglancer-annotation-details-description';
+      text_element.placeholder = 'Description';
+      const n_child = parent.children.length
+      var text_childi:number = -1
+      for (let childi = 0; childi < n_child; childi++){
+        if (parent.children[childi].className == 'neuroglancer-annotation-details-description'){
+          text_childi = childi;
+        }
+      }
+      if (!(text_childi == -1)){
+        parent.children[text_childi].replaceWith(text_element)
+      }
+    }
     displayAnnotationState(state: this['selectionState'], parent: HTMLElement, context: RefCounted):
         boolean {
       if (state.annotationId === undefined) return false;
@@ -1382,8 +1414,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
       const reference =
           context.registerDisposer(annotationLayer.source.getReference(state.annotationId));
       parent.appendChild(
-          context
-              .registerDisposer(new DependentViewWidget(
+          context.registerDisposer(new DependentViewWidget(
                   context.registerDisposer(
                       new AggregateWatchableValue(() => ({
                                                     annotation: reference,
@@ -1502,8 +1533,6 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                     //   length.textContent = spatialLengthText + voxelLengthText;
                     //   element.appendChild(length);
                     // }
-
-
                     const {relationships, properties} = annotationLayer.source;
                     const sourceReadonly = annotationLayer.source.readonly;
                     const {relatedSegments} = annotation;
@@ -1604,9 +1633,31 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                           annotationLayer.source.commit(reference);
                         });
                         parent.appendChild(description);
+                        var dropdownElement :HTMLElement = document.createElement('div')
+                        const landmarkDropdown = document.createElement('select');
+                        landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');
+                        const defaultOption = document.createElement('option');
+                        defaultOption.text = 'Select landmark';
+                        defaultOption.value = '';
+                        defaultOption.disabled = true;
+                        defaultOption.selected = true;
+                        landmarkDropdown.add(defaultOption);
+                        landmarkDropdown.addEventListener('change', () => {this.addText(parent,landmarkDropdown)})
+                        this.getLandmarkList().then(function(result) {
+                          const n_landmark = result.length
+                          for (let i = 0; i < n_landmark; i++){
+                            const landmarki = result[i];
+                            const option = document.createElement('option');
+                            option.value = landmarki;
+                            option.text = landmarki;
+                            landmarkDropdown.add(option)}
+                          dropdownElement.classList.add('neuroglancer-landmarks-dropdown-tool');
+                          dropdownElement.appendChild(landmarkDropdown);
+                          })
+                        parent.appendChild(dropdownElement)
                       }
-                    }
-                  }))
+                    }}
+                  ))
               .element);
       return true;
     }
