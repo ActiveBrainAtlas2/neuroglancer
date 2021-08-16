@@ -1642,10 +1642,6 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                         defaultOption.disabled = true;
                         defaultOption.selected = true;
                         landmarkDropdown.add(defaultOption);
-                        var option = document.createElement('option');
-                        option.value = '123';
-                        option.text = '123';
-                        landmarkDropdown.add(option);
                         landmarkDropdown.addEventListener('change', () => {this.addText(parent,landmarkDropdown)})
                         this.getLandmarkList().then(function(result) {
                           const n_landmark = result.length
