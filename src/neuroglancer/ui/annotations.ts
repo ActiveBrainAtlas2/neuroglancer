@@ -1384,14 +1384,21 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
       return land_marks
     }
 
-    async addText(parent: HTMLElement, select:HTMLSelectElement) {
-      const text_element = document.createElement('textarea');
+    async addText(parent: HTMLElement, select:HTMLSelectElement,annotationLayer:AnnotationLayerState,
+      reference:AnnotationReference,annotation:Annotation) {
       var idx = select.selectedIndex; 
       var text = select.options[idx].value
+      const text_element = document.createElement('textarea');
       text_element.value = text;
       text_element.rows = 3;
       text_element.className = 'neuroglancer-annotation-details-description';
       text_element.placeholder = 'Description';
+      text_element.addEventListener('change', () => {
+        const x = text_element.value;
+        annotationLayer.source.update(
+            reference, {...annotation, description: x ? x : undefined});
+        annotationLayer.source.commit(reference);
+      });
       const n_child = parent.children.length
       var text_childi:number = -1
       for (let childi = 0; childi < n_child; childi++){
@@ -1400,7 +1407,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
         }
       }
       if (!(text_childi == -1)){
-        parent.children[text_childi].replaceWith(text_element)
+        parent.children[text_childi].replaceWith(text_element) 
       }
     }
     displayAnnotationState(state: this['selectionState'], parent: HTMLElement, context: RefCounted):
@@ -1642,13 +1649,14 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                         defaultOption.disabled = true;
                         defaultOption.selected = true;
                         landmarkDropdown.add(defaultOption);
-                        landmarkDropdown.addEventListener('change', () => {this.addText(parent,landmarkDropdown)})
+                        landmarkDropdown.addEventListener('change', () => {this.addText(parent,landmarkDropdown,annotationLayer,
+                          reference,annotation)})
                         this.getLandmarkList().then(function(result) {
                           const n_landmark = result.length
                           for (let i = 0; i < n_landmark; i++){
                             const landmarki = result[i];
                             const option = document.createElement('option');
-                            option.value = landmarki;
+                            option.value = landmarki; 
                             option.text = landmarki;
                             landmarkDropdown.add(option)}
                           dropdownElement.classList.add('neuroglancer-landmarks-dropdown-tool');
