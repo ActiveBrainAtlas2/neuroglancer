@@ -1393,12 +1393,9 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
       text_element.rows = 3;
       text_element.className = 'neuroglancer-annotation-details-description';
       text_element.placeholder = 'Description';
-      text_element.addEventListener('change', () => {
-        const x = text_element.value;
-        annotationLayer.source.update(
-            reference, {...annotation, description: x ? x : undefined});
-        annotationLayer.source.commit(reference);
-      });
+      annotationLayer.source.update(
+          reference, {...annotation, description: text ? text : undefined});
+      annotationLayer.source.commit(reference);
       const n_child = parent.children.length
       var text_childi:number = -1
       for (let childi = 0; childi < n_child; childi++){
