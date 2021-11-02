@@ -1,0 +1,31 @@
+src/neuroglancer/neuroglancer/viewer.ts
+
+src/neuroglancer/annotation/annotation_layer_state.ts
+src/neuroglancer/display_context.ts 
+src/neuroglancer/image_user_layer.ts
+
+
+src/neuroglancer/services
+
+src/neuroglancer/ui/annotations.ts
+src/neuroglancer/ui/default_viewer_setup.ts
+src/neuroglancer/ui/layer_data_sources_tab.ts
+src/neuroglancer/ui/url_hash_binding.ts
+
+src/neuroglancer/util/matrix.ts
+
+src/neuroglancer/widget/invlerp.ts
+src/neuroglancer/widget/shader_controls.ts
+
+
+Only in src/neuroglancer/widget: fetch_annotation.css
+Only in src/neuroglancer/widget: fetch_annotation.ts
+Only in src/neuroglancer/widget: fetch_transformation.ts
+Only in src/neuroglancer/widget: histogram.css
+Only in src/neuroglancer/widget: histogram.ts
+
+Only in src/neuroglancer/widget/: shader_controls.css
+
+
+
+

@@ -13,7 +13,7 @@ export class HistogramPanel extends RenderedPanel {
   get drawOrder() {
     return 100;
   }
-  constructor(public parent: InvlerpWidget, public NUM_CDF_LINES: number, public histogramSamplerTextureUnit: Symbol) {
+  constructor(public parent: InvlerpWidget, public NUM_CDF_LINES: number, public histogramSamplerTextureUnit: symbol) {
     super(parent.display, document.createElement('div'), parent.visibility);
     const {element} = this;
     element.classList.add('neuroglancer-invlerp-histogram-panel');

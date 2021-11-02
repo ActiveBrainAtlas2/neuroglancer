@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
+:root {
+  --layer-number-color: #9a7518;
+}
+
 .neuroglancer-layer-panel {
   width: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  background-color: black;
   align-items: stretch;
   margin-left: -5px;
   margin-top: -1px;
+  z-index: -0.1;
+  overflow: hidden;
 }
 
 .neuroglancer-layer-item {
@@ -70,7 +75,7 @@
 
 .neuroglancer-layer-item-number {
   display: inline-block;
-  background-color: /*#daa520*/ #9a7518;
+  background-color: var(--layer-number-color);
   font-weight: bold;
   padding-left: 1px;
   padding-right: 1px;
@@ -118,4 +123,35 @@
 
 .neuroglancer-layer-item-prefetch-progress {
   bottom: 0px;
+}
+
+.neuroglancer-layer-item-value-container {
+  display: grid;
+  grid-template-columns: min-content;
+  align-items: center;
+}
+
+.neuroglancer-layer-item-value {
+  grid-row: 1;
+  grid-column: 1;
+  visibility: visible;
+}
+
+.neuroglancer-layer-item-button-container {
+  grid-row: 1;
+  grid-column: 1;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  visibility: hidden;
+  justify-self: right;
+}
+
+.neuroglancer-layer-panel:hover .neuroglancer-layer-item-value  {
+  visibility: hidden;
+}
+
+.neuroglancer-layer-panel:hover .neuroglancer-layer-item-button-container {
+  visibility: visible;
 }

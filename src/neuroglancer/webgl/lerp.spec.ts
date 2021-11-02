@@ -15,9 +15,10 @@
  */
 
 import {DATA_TYPE_ARRAY_CONSTRUCTOR, DataType} from 'neuroglancer/util/data_type';
+import {computeInvlerp, computeLerp, DataTypeInterval, defaultDataTypeRange} from 'neuroglancer/util/lerp';
 import {getRandomValues} from 'neuroglancer/util/random';
 import {Uint64} from 'neuroglancer/util/uint64';
-import {computeInvlerp, computeLerp, DataTypeInterval, defaultDataTypeRange, defineInvlerpShaderFunction, defineLerpShaderFunction, enableLerpShaderFunction} from 'neuroglancer/webgl/lerp';
+import {defineInvlerpShaderFunction, defineLerpShaderFunction, enableLerpShaderFunction} from 'neuroglancer/webgl/lerp';
 import {fragmentShaderTest} from 'neuroglancer/webgl/shader_testing';
 
 function getRandomValue(dataType: DataType) {
@@ -78,7 +79,7 @@ function getAbsDifference(a: number|Uint64, b: number|Uint64): number {
 function getLerpErrorBound(interval: DataTypeInterval, dataType: DataType) {
   if (dataType === DataType.FLOAT32) {
     // For float, the error bound is independent of the interval.
-    return 1e-4;
+    return 1e-3;
   }
   const size = getAbsDifference(interval[0], interval[1]);
   return Math.max(1e-6, 2 / size);

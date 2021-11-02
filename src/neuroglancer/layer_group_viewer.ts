@@ -24,23 +24,26 @@ import debounce from 'lodash/debounce';
 import {DataPanelLayoutContainer, InputEventBindings as DataPanelInputEventBindings} from 'neuroglancer/data_panel_layout';
 import {DisplayContext} from 'neuroglancer/display_context';
 import {LayerListSpecification, LayerSubsetSpecification, MouseSelectionState, SelectedLayerState} from 'neuroglancer/layer';
-import {LayerPanel} from 'neuroglancer/layer_panel';
 import {DisplayPose, LinkedDepthRange, LinkedDisplayDimensions, LinkedOrientationState, LinkedPosition, LinkedRelativeDisplayScales, linkedStateLegacyJsonView, LinkedZoomState, NavigationState, TrackableCrossSectionZoom, TrackableNavigationLink, TrackableProjectionZoom, WatchableDisplayDimensionRenderInfo} from 'neuroglancer/navigation_state';
 import {RenderLayerRole} from 'neuroglancer/renderlayer';
 import {TrackableBoolean} from 'neuroglancer/trackable_boolean';
 import {WatchableSet, WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {ContextMenu} from 'neuroglancer/ui/context_menu';
-import {endLayerDrag, startLayerDrag} from 'neuroglancer/ui/layer_drag_and_drop';
+import {popDragStatus, pushDragStatus} from 'neuroglancer/ui/drag_and_drop';
+import {LayerBar} from 'neuroglancer/ui/layer_bar';
+import {endLayerDrag, getDropEffectFromModifiers, startLayerDrag} from 'neuroglancer/ui/layer_drag_and_drop';
 import {setupPositionDropHandlers} from 'neuroglancer/ui/position_drag_and_drop';
 import {AutomaticallyFocusedElement} from 'neuroglancer/util/automatic_focus';
 import {TrackableRGB} from 'neuroglancer/util/color';
 import {Borrowed, Owned, RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren} from 'neuroglancer/util/dom';
-import {registerActionListener} from 'neuroglancer/util/event_action_map';
+import {dispatchEventAction, registerActionListener} from 'neuroglancer/util/event_action_map';
 import {CompoundTrackable, optionallyRestoreFromJsonMember} from 'neuroglancer/util/trackable';
 import {WatchableVisibilityPriority} from 'neuroglancer/visibility_priority/frontend';
 import {EnumSelectWidget} from 'neuroglancer/widget/enum_widget';
 import {TrackableScaleBarOptions} from 'neuroglancer/widget/scale_bar';
+
+declare var NEUROGLANCER_SHOW_LAYER_BAR_EXTRA_BUTTONS: boolean|undefined;
 
 export interface LayerGroupViewerState {
   display: Borrowed<DisplayContext>;
@@ -84,23 +87,22 @@ export function getCompatibleViewerDragSource(manager: Borrowed<LayerListSpecifi
   }
 }
 
-function getDefaultViewerDropEffect(manager: Borrowed<LayerListSpecification>): 'move'|'copy' {
-  if (getCompatibleViewerDragSource(manager) !== undefined) {
-    return 'move';
+export function getViewerDropEffect(event: DragEvent, manager: Borrowed<LayerListSpecification>):
+    {dropEffect: 'move'|'copy', dropEffectMessage: string} {
+  const source = getCompatibleViewerDragSource(manager);
+  let defaultDropEffect: 'move'|'copy';
+  let moveAllowed = false;
+  if (source === undefined || source.layerSpecification === source.layerSpecification.root) {
+    // Either drag source is from another window, or there is only a single layer group.  If the
+    // drag source is from another window, move is not supported because we cannot reliably
+    // communicate the drop effect back to the source window anyway.  If there is only a single
+    // layer group, move is not supported since it would be a no-op.
+    defaultDropEffect = 'copy';
   } else {
-    return 'copy';
+    moveAllowed = true;
+    defaultDropEffect = 'move';
   }
-}
-
-export function getViewerDropEffect(
-    event: DragEvent, manager: Borrowed<LayerListSpecification>): 'move'|'copy' {
-  if (event.shiftKey) {
-    return 'copy';
-  } else if (event.ctrlKey) {
-    return 'move';
-  } else {
-    return getDefaultViewerDropEffect(manager);
-  }
+  return getDropEffectFromModifiers(event, defaultDropEffect, moveAllowed);
 }
 
 export class LinkedViewerNavigationState extends RefCounted {
@@ -279,7 +281,7 @@ export class LayerGroupViewer extends RefCounted {
   get scaleBarOptions() {
     return this.viewerState.scaleBarOptions;
   }
-  layerPanel: LayerPanel|undefined;
+  layerPanel: LayerBar|undefined;
   layout: DataPanelLayoutContainer;
 
   options: LayerGroupViewerOptions;
@@ -387,7 +389,7 @@ export class LayerGroupViewer extends RefCounted {
       return;
     }
     if (showLayerPanel && this.layerPanel === undefined) {
-      const layerPanel = this.layerPanel = new LayerPanel(
+      const layerPanel = this.layerPanel = new LayerBar(
           this.display, this.layerSpecification, this.viewerNavigationState,
           this.viewerState.selectedLayer.addRef(), () => this.layout.toJSON(),
           this.options.showLayerHoverValues);
@@ -397,8 +399,44 @@ export class LayerGroupViewer extends RefCounted {
       } else {
         layerPanel.element.title = 'Drag to move/copy layer group.';
       }
+
+      if (typeof NEUROGLANCER_SHOW_LAYER_BAR_EXTRA_BUTTONS !== 'undefined' &&
+          NEUROGLANCER_SHOW_LAYER_BAR_EXTRA_BUTTONS === true) {
+        {
+          const button = document.createElement('button');
+          button.textContent = 'Clear segments';
+          button.title = `De-select all objects ("x")`;
+          button.addEventListener('click', (event: MouseEvent) => {
+            dispatchEventAction(event, event, {action: 'clear-segments'});
+          });
+          layerPanel.element.appendChild(button);
+        }
+        for (const layout of ['3d', 'xy', 'xz', 'yz']) {
+          const button = document.createElement('button');
+          button.textContent = layout;
+          button.title = `Switch to ${layout} layout`;
+          button.addEventListener('click', () => {
+            let newLayout: string;
+            if (this.layout.name === layout) {
+              if (layout !== '3d') {
+                newLayout = `${layout}-3d`;
+              } else {
+                newLayout = '4panel';
+              }
+            } else {
+              newLayout = layout;
+            }
+            this.layout.name = newLayout;
+          });
+          layerPanel.element.appendChild(button);
+        }
+      }
       layerPanel.element.draggable = true;
-      this.registerEventListener(layerPanel.element, 'dragstart', (event: DragEvent) => {
+      const layerPanelElement = layerPanel.element;
+      layerPanelElement.addEventListener('dragstart', (event: DragEvent) => {
+        pushDragStatus(
+            layerPanel.element, 'drag',
+            'Drag layer group to the left/top/right/bottom edge of a layer group, or to another layer bar/panel (including in another Neuroglancer window)');
         startLayerDrag(event, {
           manager: this.layerSpecification,
           layers: this.layerManager.managedLayers,
@@ -415,14 +453,19 @@ export class LayerGroupViewer extends RefCounted {
         const dragData = this.toJSON();
         delete dragData['layers'];
         event.dataTransfer!.setData(viewerDragType, JSON.stringify(dragData));
+        layerPanel.element.style.backgroundColor = 'black';
+        setTimeout(() => {
+          layerPanel.element.style.backgroundColor = '';
+        }, 0);
       });
-      this.registerEventListener(layerPanel.element, 'dragend', (event: DragEvent) => {
-        endLayerDrag(event);
+      layerPanel.element.addEventListener('dragend', () => {
+        popDragStatus(layerPanelElement, 'drag');
+        endLayerDrag();
         if (dragSource !== undefined && dragSource.viewer === this) {
           dragSource.disposer();
         }
       });
-      this.element.insertBefore(layerPanel.element, this.element.firstChild);
+      this.element.insertBefore(layerPanelElement, this.element.firstChild);
     }
   }
 

@@ -59,7 +59,7 @@ export class FetchAnnotationWidget extends RefCounted{
     this.element.appendChild(this.fetchButton);
 
     this.registerDisposer(() => removeFromParent(this.element));
-  };
+  }
 
   async setUpAnnotationList() {
     const url = `${AppSettings.API_ENDPOINT}/annotations`;
@@ -80,7 +80,7 @@ export class FetchAnnotationWidget extends RefCounted{
 
       response.forEach(AnnotationLayerInfo => {
         const {prep_id, layer, input_type, input_type_id} = AnnotationLayerInfo;
-        var option = document.createElement('option');
+        const option = document.createElement('option');
         option.value = `${prep_id}/${encodeURIComponent(layer)}/${input_type_id}`;
         option.text = `${prep_id}/${layer}/${input_type}`;
         annotationSelectionFetched.add(option);

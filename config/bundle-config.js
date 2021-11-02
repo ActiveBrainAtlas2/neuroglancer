@@ -52,6 +52,7 @@ const DEFAULT_DATA_SOURCES = exports.DEFAULT_DATA_SOURCES = [
     asyncComputation: [
       'neuroglancer/async_computation/decode_jpeg',
       'neuroglancer/async_computation/decode_gzip',
+      'neuroglancer/async_computation/decode_compresso',
     ],
   },
   {
@@ -102,6 +103,9 @@ const DEFAULT_DATA_SOURCES = exports.DEFAULT_DATA_SOURCES = [
     backend: null,
     register: null,
     registerCredentials: 'neuroglancer/datasource/middleauth/register_credentials_provider',
+  },
+  {
+    source: 'neuroglancer/datasource/nggraph',
   },
 ];
 

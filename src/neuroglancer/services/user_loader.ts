@@ -89,7 +89,7 @@ export class UserLoader {
     this.loginButton.style.removeProperty('display');
     this.userList.style.display = 'none';
     this.logoutButton.style.display = 'none';
-    userDataRef.off("child_changed");
+    //TODO fixme migrate web 8 -> 9 userDataRef.off("child_changed");
   }
 
   private loggedIn(stateID: string) {
@@ -97,6 +97,7 @@ export class UserLoader {
     this.userList.style.removeProperty('display');
     if (urlParams.multiUserMode) {
       this.logoutButton.style.removeProperty('display');
+      /* //TODO fixme migrate web 8 -> 9 
       const usersRef = userDataRef.child(stateID).orderByKey();
       usersRef.once("value").then((snapshot) => {
         this.updateUserList(snapshot);
@@ -106,6 +107,7 @@ export class UserLoader {
           this.updateUserList(snapshot);
         }
       });
+      */
     } else {
       this.logoutButton.style.display = 'none';
       this.userList.style.removeProperty('display');
@@ -125,7 +127,7 @@ export class UserLoader {
   }
 
   private logout(state_id: string) {
-    userDataRef.child(state_id).child("" + this.user.user_id + "").remove();
+    //TODO fixme migrate web 8 -> 9 userDataRef.child(state_id).child("" + this.user.user_id + "").remove();
     window.location.href = DATABASE_PORTAL;
   }
 }

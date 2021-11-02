@@ -15,144 +15,23 @@
  */
 
 import 'neuroglancer/noselect.css';
-import './layer_panel.css';
+import './layer_bar.css';
 
 import svg_plus from 'ikonate/icons/plus.svg';
 import {DisplayContext} from 'neuroglancer/display_context';
-import {addNewLayer, LayerListSpecification, makeLayer, ManagedUserLayer, SelectedLayerState} from 'neuroglancer/layer';
+import {addNewLayer, deleteLayer, LayerListSpecification, makeLayer, ManagedUserLayer, SelectedLayerState} from 'neuroglancer/layer';
 import {LinkedViewerNavigationState} from 'neuroglancer/layer_group_viewer';
 import {NavigationLinkType} from 'neuroglancer/navigation_state';
 import {WatchableValueInterface} from 'neuroglancer/trackable_value';
-import {DropLayers, endLayerDrag, getDropLayers, getLayerDropEffect, startLayerDrag} from 'neuroglancer/ui/layer_drag_and_drop';
+import {DropLayers, registerLayerBarDragLeaveHandler, registerLayerBarDropHandlers, registerLayerDragHandlers} from 'neuroglancer/ui/layer_drag_and_drop';
 import {animationFrameDebounce} from 'neuroglancer/util/animation_frame_debounce';
-import {Owned, RefCounted, registerEventListener} from 'neuroglancer/util/disposable';
+import {Owned, RefCounted} from 'neuroglancer/util/disposable';
 import {removeFromParent} from 'neuroglancer/util/dom';
-import {getDropEffect, preventDrag, setDropEffect} from 'neuroglancer/util/drag_and_drop';
+import {preventDrag} from 'neuroglancer/util/drag_and_drop';
 import {makeCloseButton} from 'neuroglancer/widget/close_button';
+import {makeDeleteButton} from 'neuroglancer/widget/delete_button';
 import {makeIcon} from 'neuroglancer/widget/icon';
 import {PositionWidget} from 'neuroglancer/widget/position_widget';
-
-function destroyDropLayers(dropLayers: DropLayers, targetLayer?: ManagedUserLayer) {
-  if (dropLayers.method === 'move') {
-    // Nothing to do.
-    return false;
-  }
-  dropLayers.manager.layerManager.filter(layer => !dropLayers.layers.has(layer));
-  return targetLayer !== undefined && dropLayers.layers.has(targetLayer);
-}
-
-function registerDropHandlers(
-    panel: LayerPanel, target: EventTarget, targetLayer: ManagedUserLayer|undefined) {
-  function update(event: DragEvent, updateDropEffect: boolean): DropLayers|undefined {
-    let dropLayers = panel.dropLayers;
-    const dropEffect =
-        updateDropEffect ? getLayerDropEffect(event, panel.manager) : getDropEffect();
-    let existingDropLayers = true;
-    if (dropLayers !== undefined) {
-      if (updateDropEffect) {
-        setDropEffect(event, dropEffect);
-      }
-      if (!dropLayers.compatibleWithMethod(dropEffect)) {
-        panel.dropLayers = undefined;
-        if (destroyDropLayers(dropLayers, targetLayer)) {
-          // We destroyed the layer for which we received the dragenter event.  Wait until we get
-          // another dragenter or drop event to do something.
-          return undefined;
-        }
-      }
-    }
-    if (dropLayers === undefined) {
-      dropLayers = panel.dropLayers = getDropLayers(
-          event, panel.manager, /*forceCopy=*/ dropEffect === 'copy', /*allowMove=*/ true,
-          /*newTarget=*/ false);
-      if (dropLayers === undefined) {
-        return undefined;
-      }
-      existingDropLayers = dropLayers.method === 'move';
-    }
-
-    // Dragged onto itself, nothing to do.
-    if (targetLayer !== undefined && dropLayers.layers.has(targetLayer)) {
-      return dropLayers;
-    }
-    if (!existingDropLayers) {
-      let newIndex: number|undefined;
-      if (targetLayer !== undefined) {
-        newIndex = panel.manager.layerManager.managedLayers.indexOf(targetLayer);
-      }
-      for (const newLayer of dropLayers.layers.keys()) {
-        panel.manager.add(newLayer, newIndex);
-      }
-    } else {
-      // Rearrange layers.
-      const {layerManager} = panel.manager;
-      const existingLayers = new Set<ManagedUserLayer>();
-      let firstRemovalIndex = Number.POSITIVE_INFINITY;
-      const managedLayers = layerManager.managedLayers =
-          layerManager.managedLayers.filter((x: ManagedUserLayer, index) => {
-            if (dropLayers!.layers.has(x)) {
-              if (firstRemovalIndex === Number.POSITIVE_INFINITY) {
-                firstRemovalIndex = index;
-              }
-              existingLayers.add(x);
-              return false;
-            } else {
-              return true;
-            }
-          });
-      let newIndex: number;
-      if (targetLayer !== undefined) {
-        newIndex = managedLayers.indexOf(targetLayer);
-        if (firstRemovalIndex <= newIndex) {
-          ++newIndex;
-        }
-      } else {
-        newIndex = managedLayers.length;
-      }
-      // Filter out layers that have been concurrently removed.
-      for (const layer of dropLayers.layers.keys()) {
-        if (!existingLayers.has(layer)) {
-          dropLayers.layers.delete(layer);
-        }
-      }
-      managedLayers.splice(newIndex, 0, ...dropLayers.layers.keys());
-      layerManager.layersChanged.dispatch();
-    }
-    return dropLayers;
-  }
-  const enterDisposer = registerEventListener(target, 'dragenter', (event: DragEvent) => {
-    if (update(event, /*updateDropEffect=*/ true) !== undefined) {
-      event.preventDefault();
-    }
-  });
-  const dropDisposer = registerEventListener(target, 'drop', (event: DragEvent) => {
-    event.preventDefault();
-    const dropLayers = update(event, /*updateDropEffect=*/ false);
-    if (dropLayers !== undefined) {
-      if (!dropLayers.finalize(event)) {
-        destroyDropLayers(dropLayers);
-      } else {
-        event.dataTransfer!.dropEffect = getDropEffect();
-        endLayerDrag(dropLayers.method === 'move' ? undefined : event);
-      }
-    }
-    panel.dropLayers = undefined;
-  });
-  const overDisposer = registerEventListener(target, 'dragover', (event: DragEvent) => {
-    const dropLayers = update(event, /*updateDropEffect=*/ true);
-    if (dropLayers === undefined) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-  });
-
-  return () => {
-    overDisposer();
-    dropDisposer();
-    enterDisposer();
-  };
-}
 
 
 class LayerWidget extends RefCounted {
@@ -166,7 +45,7 @@ class LayerWidget extends RefCounted {
   maxLength: number = 0;
   prevValueText: string = '';
 
-  constructor(public layer: ManagedUserLayer, public panel: LayerPanel) {
+  constructor(public layer: ManagedUserLayer, public panel: LayerBar) {
     super();
     const {
       element,
@@ -186,22 +65,45 @@ class LayerWidget extends RefCounted {
     prefetchProgress.className = 'neuroglancer-layer-item-prefetch-progress';
     layerNumberElement.className = 'neuroglancer-layer-item-number';
     valueElement.className = 'neuroglancer-layer-item-value';
+
+    const valueContainer = document.createElement('div');
+    valueContainer.className = 'neuroglancer-layer-item-value-container';
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'neuroglancer-layer-item-button-container';
     const closeElement = makeCloseButton();
-    /* START OF CHANGE: Action remapping */
-    closeElement.title = 'Hide layer from this layer group';
-    this.registerEventListener(closeElement, 'click', (event: MouseEvent) => {
-      if (event.ctrlKey) {
-        this.panel.layerManager.removeManagedLayer(this.layer);
-        event.stopPropagation();
+    closeElement.title = 'Remove layer from this layer group';
+    closeElement.addEventListener('click', (event: MouseEvent) => {
+      if (this.panel.layerManager === this.panel.manager.rootLayers) {
+        // The layer bar corresponds to a TopLevelLayerListSpecification.  That means there is just
+        // a single layer group, archive the layer unconditionally.
+        this.layer.setArchived(true);
+      } else {
+        // The layer bar corresponds to a LayerSubsetSpecification.  The layer is always contained
+        // in the root LayerManager, as well as the LayerManager for each LayerSubsetSpecification.
+        if (this.layer.containers.size > 2) {
+          // Layer is contained in at least one other layer group, just remove it from this layer
+          // group.
+          this.panel.layerManager.removeManagedLayer(this.layer);
+        } else {
+          // Layer is not contained in any other layer group.  Archive it.
+          this.layer.setArchived(true);
+        }
       }
-      else {
-        layer.setVisible(!layer.visible);
-      }
+      event.stopPropagation();
     });
-    /* END OF CHANGE: Action remapping */
+    const deleteElement = makeDeleteButton();
+    deleteElement.title = 'Delete this layer';
+    deleteElement.addEventListener('click', (event: MouseEvent) => {
+      deleteLayer(this.layer);
+      event.stopPropagation();
+    });
     element.appendChild(layerNumberElement);
+    valueContainer.appendChild(valueElement);
+    valueContainer.appendChild(buttonContainer);
+    buttonContainer.appendChild(closeElement);
+    buttonContainer.appendChild(deleteElement);
     element.appendChild(labelElement);
-    element.appendChild(valueElement);
+    element.appendChild(valueContainer);
     const positionWidget = this.registerDisposer(new PositionWidget(
         layer.localPosition, layer.localCoordinateSpaceCombiner, {copyButton: false}));
     element.appendChild(positionWidget.element);
@@ -211,41 +113,25 @@ class LayerWidget extends RefCounted {
     positionWidget.element.addEventListener('dblclick', (event: MouseEvent) => {
       event.stopPropagation();
     });
-    element.appendChild(closeElement);
-    this.registerEventListener(element, 'click', (event: MouseEvent) => {
-      /* START OF CHANGE: Action remapping */
+    element.addEventListener('click', (event: MouseEvent) => {
       if (event.ctrlKey) {
-        this.panel.layerManager.removeManagedLayer(this.layer);
-        event.stopPropagation();
+        panel.selectedLayer.toggle(layer);
       } else if (event.altKey) {
         layer.pickEnabled = !layer.pickEnabled;
       } else {
-        panel.selectedLayer.layer = layer;
-        panel.selectedLayer.visible = true;
+        layer.setVisible(!layer.visible);
       }
-      /* END OF CHANGE: Action remapping */
     });
 
-    this.registerEventListener(element, 'contextmenu', (event: MouseEvent) => {
+    element.addEventListener('contextmenu', (event: MouseEvent) => {
       panel.selectedLayer.layer = layer;
       panel.selectedLayer.visible = true;
       event.stopPropagation();
       event.preventDefault();
     });
-
-    element.draggable = true;
-    this.registerEventListener(element, 'dragstart', (event: DragEvent) => {
-      startLayerDrag(
-          event,
-          {manager: panel.manager, layers: [this.layer], layoutSpec: panel.getLayoutSpecForDrag()});
-      event.stopPropagation();
-    });
-
-    this.registerEventListener(element, 'dragend', (event: DragEvent) => {
-      endLayerDrag(event);
-    });
-
-    this.registerDisposer(registerDropHandlers(this.panel, element, this.layer));
+    registerLayerDragHandlers(
+        panel, element, layer, {getLayoutSpec: () => panel.getLayoutSpecForDrag()});
+    registerLayerBarDropHandlers(this.panel, element, this.layer);
   }
 
   update() {
@@ -254,11 +140,10 @@ class LayerWidget extends RefCounted {
     element.dataset.visible = layer.visible.toString();
     element.dataset.selected = (layer === this.panel.selectedLayer.layer).toString();
     element.dataset.pick = layer.pickEnabled.toString();
-    /* START OF CHANGE: Action remapping */
-    let title = `Click to show side panel, control+click to remove layer`;
-    /* END OF CHANGE: Action remapping */
+    let title = `Click to ${layer.visible ? 'hide' : 'show'}, control+click to show side panel`;
     if (layer.supportsPickOption) {
-      title += `, alt+click to ${layer.pickEnabled ? 'disable' : 'enable'} spatial object selection`;
+      title +=
+          `, alt+click to ${layer.pickEnabled ? 'disable' : 'enable'} spatial object selection`;
     }
     title += `, drag to move, shift+drag to copy`;
     element.title = title;
@@ -270,7 +155,7 @@ class LayerWidget extends RefCounted {
   }
 }
 
-export class LayerPanel extends RefCounted {
+export class LayerBar extends RefCounted {
   layerWidgets = new Map<ManagedUserLayer, LayerWidget>();
   element = document.createElement('div');
   private layerUpdateNeeded = true;
@@ -283,6 +168,8 @@ export class LayerPanel extends RefCounted {
    * For use within this module only.
    */
   dropLayers: DropLayers|undefined;
+
+  dragEnterCount = 0;
 
   get layerManager() {
     return this.manager.layerManager;
@@ -352,18 +239,8 @@ export class LayerPanel extends RefCounted {
     this.update();
     this.updateChunkStatistics();
 
-    this.registerEventListener(element, 'dragleave', (event: DragEvent) => {
-      if (event.relatedTarget && element.contains(<Node>event.relatedTarget)) {
-        return;
-      }
-      const {dropLayers} = this;
-      if (dropLayers !== undefined) {
-        destroyDropLayers(dropLayers);
-        this.dropLayers = undefined;
-      }
-    });
-    this.registerDisposer(registerDropHandlers(this, addButton, undefined));
-    this.registerDisposer(registerDropHandlers(this, dropZone, undefined));
+    registerLayerBarDragLeaveHandler(this);
+    registerLayerBarDropHandlers(this, dropZone, undefined);
 
     // Ensure layer widgets are updated before WebGL drawing starts; we don't want the layout to
     // change after WebGL drawing or we will get flicker.
@@ -442,8 +319,10 @@ export class LayerPanel extends RefCounted {
           numPrefetchChunksAvailable += layerChunkProgressInfo.numPrefetchChunksAvailable;
         }
       }
-      widget.visibleProgress.style.width = `${numVisibleChunksAvailable/Math.max(1, numVisibleChunksNeeded)*100}%`;
-      widget.prefetchProgress.style.width = `${numPrefetchChunksAvailable/Math.max(1, numPrefetchChunksNeeded)*100}%`;
+      widget.visibleProgress.style.width =
+          `${numVisibleChunksAvailable / Math.max(1, numVisibleChunksNeeded) * 100}%`;
+      widget.prefetchProgress.style.width =
+          `${numPrefetchChunksAvailable / Math.max(1, numPrefetchChunksNeeded) * 100}%`;
     }
   }
 
@@ -455,10 +334,12 @@ export class LayerPanel extends RefCounted {
     let container = this.element;
     let layers = new Set();
     let nextChild = this.layerWidgetInsertionPoint.nextElementSibling;
-    this.manager.layerManager.managedLayers.forEach((layer: ManagedUserLayer) => {
+    this.manager.rootLayers.updateNonArchivedLayerIndices();
+    for (const layer of this.manager.layerManager.managedLayers) {
+      if (layer.archived && !this.dropLayers?.layers.has(layer)) continue;
       layers.add(layer);
       let widget = this.layerWidgets.get(layer);
-      const layerIndex = this.manager.rootLayers.managedLayers.indexOf(layer);
+      const layerIndex = layer.nonArchivedLayerIndex;
       if (widget === undefined) {
         widget = new LayerWidget(layer, this);
         this.layerWidgets.set(layer, widget);
@@ -470,7 +351,7 @@ export class LayerPanel extends RefCounted {
         container.insertBefore(widget.element, nextChild);
       }
       nextChild = element.nextElementSibling;
-    });
+    }
     for (let [layer, widget] of this.layerWidgets) {
       if (!layers.has(layer)) {
         this.layerWidgets.delete(layer);

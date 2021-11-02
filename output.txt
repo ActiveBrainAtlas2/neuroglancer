@@ -1,0 +1,17 @@
+
+> neuroglancer@0.0.0-beta.0 build
+> node ./config/esbuild-cli.js --config=min
+
+Built in 1.531 seconds
+src/neuroglancer/services/user_loader.ts(4,1): error TS6133: 'userDataRef' is declared but its value is never read.
+src/neuroglancer/services/user_loader.ts(65,11): error TS6133: 'updateUserList' is declared but its value is never read.
+src/neuroglancer/services/user_loader.ts(95,20): error TS6133: 'stateID' is declared but its value is never read.
+src/neuroglancer/services/user_loader.ts(129,18): error TS6133: 'state_id' is declared but its value is never read.
+src/neuroglancer/ui/url_hash_binding.ts(27,1): error TS6192: All imports in import declaration are unused.
+src/neuroglancer/ui/url_hash_binding.ts(28,1): error TS6133: 'ref' is declared but its value is never read.
+src/neuroglancer/ui/url_hash_binding.ts(93,13): error TS6133: 'urlData' is declared but its value is never read.
+src/neuroglancer/ui/url_hash_binding.ts(219,11): error TS6133: 'setStateFromFirebase' is declared but its value is never read.
+src/neuroglancer/ui/url_hash_binding.ts(248,10): error TS6133: 'saveData' is declared but its value is never read.
+src/neuroglancer/viewer.ts(70,1): error TS6133: 'ContextMenu' is declared but its value is never read.
+src/neuroglancer/widget/invlerp.ts(583,10): error TS6133: 'getUpdatedParameters' is declared but its value is never read.
+Type checked in 23.296 seconds

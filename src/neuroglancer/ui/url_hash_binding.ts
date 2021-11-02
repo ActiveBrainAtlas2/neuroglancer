@@ -25,6 +25,8 @@ import {cancellableFetchSpecialOk, parseSpecialUrl} from 'neuroglancer/util/spec
 import {getCachedJson, Trackable} from 'neuroglancer/util/trackable';
 import {urlParams, stateAPI, StateAPI, State} from 'neuroglancer/services/state_loader';
 import {neuroglancerDataRef, databaseRef} from 'neuroglancer/services/firebase';
+import { ref } from "firebase/database";
+
 import {User, ActiveUser} from 'neuroglancer/services/user_loader';
 
 /**
@@ -94,7 +96,7 @@ export class UrlHashBinding extends RefCounted {
       if (!sameState) {
         console.log('Updating state from user browser')
         setupUser(this.stateData, this.user);
-        neuroglancerDataRef.child(this.stateID).update({url: urlData});
+        //TODO fixme neuroglancerDataRef.child(this.stateID).update({url: urlData});
         this.prevStateString = stateString;
       }
     }
@@ -115,6 +117,7 @@ export class UrlHashBinding extends RefCounted {
           StatusMessage.showTemporaryMessage('You have not logged in yet. Please log in and refresh the page to use multi-user mode.');
           return;
         }
+        /* TODO fixme, need to upgrade this from Web version 8 - 9
         neuroglancerDataRef.child(stateID).once('value', (snapshot) => {
           if (snapshot.exists()) {
             this.stateData = snapshot.val();
@@ -139,6 +142,7 @@ export class UrlHashBinding extends RefCounted {
             });
           }
         });
+        */
       } else {
         this.stateAPI.getState(stateID).then(jsonState => {
           this.stateData = jsonState;
@@ -172,13 +176,13 @@ export class UrlHashBinding extends RefCounted {
           s = s.slice(3);
           // Firefox always %-encodes the URL even if it is not typed that way.
           s = decodeURIComponent(s);
-          let state = urlSafeParse(s);
+          const state = urlSafeParse(s);
           verifyObject(state);
           this.root.restoreState(state);
         } else if (s.startsWith('#!')) {
           s = s.slice(2);
           s = decodeURIComponent(s);
-          let state = urlSafeParse(s);
+          const state = urlSafeParse(s);
           this.root.reset();
           verifyObject(state);
           this.root.restoreState(state);
@@ -213,6 +217,8 @@ export class UrlHashBinding extends RefCounted {
    * This is called only in the multi user mode.
    */
   private setStateFromFirebase() {
+    console.log('private setStateFromFirebase');
+    /** TODO upgrade from web 8 -> 9 
     if (this.stateID != null && this.multiUserMode) {
       neuroglancerDataRef.child(this.stateID).on("child_changed", (snapshot) => {
         const jsonState = snapshot.val();
@@ -224,7 +230,9 @@ export class UrlHashBinding extends RefCounted {
         }
       });
     }
+    */
   }
+  
 }
 
 function setupUser(state: State, user: User) {
@@ -234,11 +242,11 @@ function setupUser(state: State, user: User) {
     date: Date.now(),
   }
   updates[`/users/${state.state_id}/${user.user_id}`] = activeUser;
-  return databaseRef.update(updates);
+  // TODO upgrade from web 8 -> 9 return databaseRef.update(updates);
 }
 
 function saveData(state: State) {
   const updates: any = {};
   updates[`/neuroglancer/${state.state_id}`] = state;
-  return databaseRef.update(updates);
+  // TODO upgrade from web 8 -> 9 return databaseRef.update(updates);
 }
