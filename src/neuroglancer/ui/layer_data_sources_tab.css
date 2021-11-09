@@ -13,102 +13,101 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 .neuroglancer-layer-data-sources-tab {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .neuroglancer-layer-data-sources-container {
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  height: 0px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	height: 0px;
 }
 
 .neuroglancer-layer-data-source-url-input input.autocomplete-input {
-  color: #fff;
+	color: #fff;
 }
 
 .neuroglancer-layer-data-source-url-input input.autocomplete-hint {
-  color: #aaa;
+	color: #aaa;
 }
 
 .neuroglancer-layer-data-source-url-input .autocomplete-dropdown {
-  background-color: #333;
+	background-color: #333;
 }
 
 .neuroglancer-layer-data-sources-source-id {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 .neuroglancer-layer-data-sources-source-id:not(:empty)::before {
-  content: "[";
+	content: "[";
 }
 
 .neuroglancer-layer-data-sources-source-id:not(:empty)::after {
-  content: "]";
+	content: "]";
 }
 
 .neuroglancer-layer-data-sources-source-id:not(:empty) {
-  margin-right: 4px;
-  color: #0ff;
+	margin-right: 4px;
+	color: #0ff;
 }
 
 .neuroglancer-layer-data-sources-source-type {
+	
 }
 
 .neuroglancer-layer-data-sources-source-messages:empty {
-  display: none;
+	display: none;
 }
 
 .neuroglancer-layer-data-sources-source-messages {
-  margin-top: 0px;
-  list-style: none;
-  padding-left: 0px;
+	margin-top: 0px;
+	list-style: none;
+	padding-left: 0px;
 }
 
 li.neuroglancer-message {
-  word-wrap: break-word;
-  user-select: text;
+	word-wrap: break-word;
+	user-select: text;
 }
 
 li.neuroglancer-message-error {
-  color: red;
+	color: red;
 }
 
 li.neuroglancer-message-warning {
-  color: yellow;
+	color: yellow;
 }
 
 li.neuroglancer-message-info {
-  color: #ccc;
+	color: #ccc;
 }
 
-
 .neuroglancer-layer-data-sources-source-default {
-  display: block;
-  margin-bottom: 4px;
+	display: block;
+	margin-bottom: 4px;
 }
 
 .neuroglancer-layer-data-sources-info-line[data-is-active="false"] {
-  text-decoration: solid line-through #caa;
+	text-decoration: solid line-through #caa;
 }
 
 .neuroglancer-layer-data-sources-tab-type-detection {
-  position: sticky;
-  bottom: 0px;
-  background-color: #ff9;
-  color: black;
-  text-align: center;
-  cursor: pointer;
+	position: sticky;
+	bottom: 0px;
+	background-color: #ff9;
+	color: black;
+	text-align: center;
+	cursor: pointer;
 }
 
 .neuroglancer-layer-data-sources-tab-type-detection:hover {
-  background-color: #ffc;
+	background-color: #ffc;
 }
 
 .neuroglancer-layer-data-sources-tab-type-detection-type {
-  font-weight: bold;
+	font-weight: bold;
 }

@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 html, body {
-  margin: 0px;
-  padding: 0px;
-  overflow: hidden;
-  width: 100vw;
-  height: 100vh;
-  background-color: black;
-  color: white;
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+	width: 100vw;
+	height: 100vh;
+	background-color: black;
+	color: white;
 }
 
 body {
-  position: relative;
-  display: flex;
-  flex-direction: column;
+	position: relative;
+	display: flex;
+	flex-direction: column;
 }
 
 #neuroglancer-container {
-  width: 100vw;
-  overflow: hidden;
-  flex: 1;
+	width: 100vw;
+	overflow: hidden;
+	flex: 1;
 }

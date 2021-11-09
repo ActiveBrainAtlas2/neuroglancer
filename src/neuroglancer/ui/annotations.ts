@@ -60,6 +60,7 @@ import {makeIcon} from 'neuroglancer/widget/icon';
 import {makeMoveToButton} from 'neuroglancer/widget/move_to_button';
 import {Tab} from 'neuroglancer/widget/tab_view';
 import {VirtualList, VirtualListSource} from 'neuroglancer/widget/virtual_list';
+import {FetchAnnotationWidget} from 'neuroglancer/widget/fetch_annotation';
 
 export class MergedAnnotationStates extends RefCounted implements
     WatchableValueInterface<readonly AnnotationLayerState[]> {
@@ -88,7 +89,7 @@ export class MergedAnnotationStates extends RefCounted implements
 
   private sort() {
     this.states.sort((a, b) => {
-      let d = a.sourceIndex - b.sourceIndex;
+      const d = a.sourceIndex - b.sourceIndex;
       if (d !== 0) return d;
       return a.subsourceIndex - b.subsourceIndex;
     });
@@ -279,6 +280,8 @@ export class AnnotationLayerView extends Tab {
       public layer: Borrowed<UserLayerWithAnnotations>,
       public displayState: AnnotationDisplayState) {
     super();
+    const fetchAnnotationWidget = this.registerDisposer(new FetchAnnotationWidget(this));
+    this.element.appendChild(fetchAnnotationWidget.element);
     this.element.classList.add('neuroglancer-annotation-layer-view');
     this.registerDisposer(this.visibility.changed.add(() => this.updateView()));
     this.registerDisposer(
@@ -394,7 +397,7 @@ export class AnnotationLayerView extends Tab {
       this.previousHoverAnnotationLayerState = undefined;
       this.previousHoverId = undefined;
       const element = this.getRenderedAnnotationListElement(
-          previousHoverAnnotationLayerState, previousHoverId!!);
+          previousHoverAnnotationLayerState, previousHoverId!);
       if (element !== undefined) {
         element.classList.remove('neuroglancer-annotation-hover');
       }
@@ -776,7 +779,7 @@ export class AnnotationTab extends Tab {
 }
 
 function getSelectedAssociatedSegments(annotationLayer: AnnotationLayerState) {
-  let segments: Uint64[][] = [];
+  const segments: Uint64[][] = [];
   const {relationships} = annotationLayer.source;
   const {relationshipStates} = annotationLayer.displayState;
   for (let i = 0, count = relationships.length; i < count; ++i) {

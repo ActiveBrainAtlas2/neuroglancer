@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 .neuroglancer-merge-segments-status {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .neuroglancer-merge-segments-status .neuroglancer-segment-list-entry {
-  margin-left: 1em;
-  margin-right: 1em;
+	margin-left: 1em;
+	margin-right: 1em;
 }

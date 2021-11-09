@@ -13,275 +13,277 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 .neuroglancer-annotations-tab {
-  display: flex;
-  align-items: stretch;
-  flex: 1;
-  flex-direction: column;
+	display: flex;
+	align-items: stretch;
+	flex: 1;
+	flex-direction: column;
 }
 
-.neuroglancer-annotation-list { 
-  position: relative;
-  margin: 0px;
-  padding: 0px;
-  margin-top: 2px;
-  overflow-y: auto;
-  height: 0px;
-  flex: 1;
-  flex-basis: 0px;
-  min-height: 0px;
+.neuroglancer-annotation-list {
+	position: relative;
+	margin: 0px;
+	padding: 0px;
+	margin-top: 2px;
+	overflow-y: auto;
+	height: 0px;
+	flex: 1;
+	flex-basis: 0px;
+	min-height: 0px;
 }
 
 .neuroglancer-annotation-list-entry {
-  display: grid;
-  grid-auto-rows: min-content;
-  cursor: pointer;
-  justify-content: start;
+	display: grid;
+	grid-auto-rows: min-content;
+	cursor: pointer;
+	justify-content: start;
 }
 
 .neuroglancer-annotation-position {
-  display: contents;
+	display: contents;
 }
 
 .neuroglancer-annotation-layer-view {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: stretch;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	align-items: stretch;
 }
 
 .neuroglancer-annotation-list-header {
-  grid-auto-rows: min-content;
-  display: grid;
-  padding-bottom: 2px;
-  justify-content: start;
+	grid-auto-rows: min-content;
+	display: grid;
+	padding-bottom: 2px;
+	justify-content: start;
 }
 
 .neuroglancer-annotation-coordinate {
-  font-family: monospace;
-  text-align: right;
+	font-family: monospace;
+	text-align: right;
 }
 
 .neuroglancer-annotation-icon {
-  grid-column: symbol;
-  padding-right: 5px;
+	grid-column: symbol;
+	padding-right: 5px;
 }
 
 .neuroglancer-annotation-description {
-  grid-column: dim / -1;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+	grid-column: dim/-1;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .neuroglancer-annotation-list-entry-delete {
-  grid-column: delete;
-  margin-left: 1ch;
-  align-self: start;
-  visibility: hidden;
+	grid-column: delete;
+	margin-left: 1ch;
+	align-self: start;
+	visibility: hidden;
 }
 
-.neuroglancer-annotation-list-entry:hover > .neuroglancer-annotation-list-entry-delete {
-  visibility: visible;
+.neuroglancer-annotation-list-entry:hover>.neuroglancer-annotation-list-entry-delete
+	{
+	visibility: visible;
 }
 
 .neuroglancer-annotation-hover {
-  background-color: #333;
+	background-color: #333;
 }
 
 .neuroglancer-annotation-selected {
-  background-color: #939;
+	background-color: #939;
 }
 
 .neuroglancer-annotation-hover.neuroglancer-annotation-selected {
-  background-color: #969;
+	background-color: #969;
 }
 
 .neuroglancer-tab-content.neuroglancer-annotation-details {
-  flex: 0 0 auto;
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-
-  -webkit-touch-callout: default;
-  -webkit-user-select: text;
-  -khtml-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
+	flex: 0 0 auto;
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	-webkit-touch-callout: default;
+	-webkit-user-select: text;
+	-khtml-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
 }
 
 .neuroglancer-annotation-details-title {
-  display: flex;
-  flex-direction: row;
-  background-color: #03c;
-  align-self: stretch;
-  padding: 2px;
+	display: flex;
+	flex-direction: row;
+	background-color: #03c;
+	align-self: stretch;
+	padding: 2px;
 }
 
 .neuroglancer-voxel-coordinates-link {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .neuroglancer-voxel-coordinates-link:hover {
-  background-color: #db4437;
+	background-color: #db4437;
 }
 
 .neuroglancer-annotation-details-icon {
-  display: inline-block;
-  margin-right: 5px;
+	display: inline-block;
+	margin-right: 5px;
 }
 
 .neuroglancer-annotation-details-title-text {
-  display: inline-block;
-  flex: 1;
+	display: inline-block;
+	flex: 1;
 }
 
 textarea.neuroglancer-annotation-details-description {
-  align-self: stretch;
-  background-color: #222;
-  color: white;
-  font: 10pt sans-serif;
-  border: 0px;
-  outline: 0px;
-  resize: none;
-  overflow-y: scroll;
+	align-self: stretch;
+	background-color: #222;
+	color: white;
+	font: 10pt sans-serif;
+	border: 0px;
+	outline: 0px;
+	resize: none;
+	overflow-y: scroll;
 }
 
 div.neuroglancer-annotation-details-description {
-  align-self: stretch;
-  color: white;
-  font: 10pt sans-serif;
+	align-self: stretch;
+	color: white;
+	font: 10pt sans-serif;
 }
 
 .neuroglancer-annotation-details-position {
+	
 }
 
 .neuroglancer-annotation-toolbox {
-  display: flex;
-  align-items: stretch;
+	display: flex;
+	align-items: stretch;
 }
 
 .neuroglancer-annotation-segment-list {
+	
 }
 
-
 .neuroglancer-annotation-segment-item {
-  color: black;
-  background-color: white;
+	color: black;
+	background-color: white;
 }
 
 .neuroglancer-annotations-view-dimension {
-  font-family: monospace;
-  text-align: right;
+	font-family: monospace;
+	text-align: right;
 }
 
 .neuroglancer-annotations-view-dimension-name {
-  color: #ff6;
+	color: #ff6;
 }
 
 .neuroglancer-annotations-view-dimension-scale {
-  color: #bbb;
+	color: #bbb;
 }
 
 .neuroglancer-annotations-view-dimension-scale:not(:empty)::before {
-  content: "(";
-  margin-left: 1ch;
+	content: "(";
+	margin-left: 1ch;
 }
 
 .neuroglancer-annotations-view-dimension-scale:not(:empty)::after {
-  content: ")";
+	content: ")";
 }
 
-.neuroglancer-annotation-relationship-label, .neuroglancer-annotation-property-label {
-  margin-right: 5px;
+.neuroglancer-annotation-relationship-label,
+	.neuroglancer-annotation-property-label {
+	margin-right: 5px;
 }
-
 
 .neuroglancer-selected-annotation-details-position-grid {
-  display: grid;
-  grid-auto-rows: auto;
-  font-family: monospace;
-  font-size: medium;
-  grid-auto-flow: dense;
+	display: grid;
+	grid-auto-rows: auto;
+	font-family: monospace;
+	font-size: medium;
+	grid-auto-flow: dense;
 }
 
 .neuroglancer-selected-annotation-details-icon {
-  grid-rows: 1 / -1;
-  grid-column: icon;
-  align-self: start;
+	grid-rows: 1/-1;
+	grid-column: icon;
+	align-self: start;
 }
 
 .neuroglancer-selected-annotation-details-delete {
-  grid-rows: 1 / -1;
-  grid-column: delete;
-  align-self: start;
+	grid-rows: 1/-1;
+	grid-column: delete;
+	align-self: start;
 }
 
 .neuroglancer-selected-annotation-details-position-dim {
-  color: #ff6;
-  margin-left: 1ch;
+	color: #ff6;
+	margin-left: 1ch;
 }
 
 .neuroglancer-selected-annotation-details-position-coord {
-  text-align: right;
-  margin-left: 0.5ch;
+	text-align: right;
+	margin-left: 0.5ch;
 }
 
 .neuroglancer-related-segment-list-title {
-  font-family: sans-serif;
-  font-size: small;
-  background-color: #333;
+	font-family: sans-serif;
+	font-size: small;
+	background-color: #333;
 }
 
 .neuroglancer-related-segment-list-header {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .neuroglancer-related-segment-list {
-/*  border: 1px solid #333;
+	/*  border: 1px solid #333;
   margin: 3px;*/
+	
 }
 
 .neuroglancer-annotation-property {
-  display: flex;
-  flex-direction: row;
-  font-family: sans-serif;
-  font-size: small;
+	display: flex;
+	flex-direction: row;
+	font-family: sans-serif;
+	font-size: small;
 }
 
 .neuroglancer-annotation-property-label {
-  color: #999;
+	color: #999;
 }
 
 .neuroglancer-annotation-property-value {
-  text-align: right;
-  font-family: monospace;
-  font-size: medium;
-  flex: 1;
+	text-align: right;
+	font-family: monospace;
+	font-size: medium;
+	flex: 1;
 }
 
 input.neuroglancer-segment-list-entry-id {
-  outline: 0px;
-  border: 0px;
-  text-align: left;
+	outline: 0px;
+	border: 0px;
+	text-align: left;
 }
 
-.neuroglancer-segment-list-entry-new > .neuroglancer-segment-list-entry-copy {
-  visibility: hidden;
+.neuroglancer-segment-list-entry-new>.neuroglancer-segment-list-entry-copy
+	{
+	visibility: hidden;
 }
 
-.neuroglancer-segment-list-entry-new > input[type="checkbox"] {
-  visibility: hidden;
+.neuroglancer-segment-list-entry-new>input[type="checkbox"] {
+	visibility: hidden;
 }
 
 .neuroglancer-segment-list-entry-delete {
-  order: 0;
+	order: 0;
 }
 
 .neuroglancer-selection-annotation-status {
-  font-family: sans-serif;
-  font-size: small;
+	font-family: sans-serif;
+	font-size: small;
 }

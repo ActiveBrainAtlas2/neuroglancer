@@ -13,57 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 .neuroglancer-settings-body {
-  flex-basis: 0px;
-  flex: 1;
-  height: 0px;
-  min-height: 0px;
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  font-size: 10pt;
+	flex-basis: 0px;
+	flex: 1;
+	height: 0px;
+	min-height: 0px;
+	font-family: sans-serif;
+	display: flex;
+	flex-direction: column;
+	font-size: 10pt;
 }
 
-.neuroglancer-settings-body input[type="text"], .neuroglancer-settings-body input[type="number"] {
-  background-color: #333;
-  color: #fff;
-  border: 0px;
+.neuroglancer-settings-body input[type="text"],
+	.neuroglancer-settings-body input[type="number"] {
+	background-color: #333;
+	color: #fff;
+	border: 0px;
 }
 
 .neuroglancer-settings-scroll-container {
-  flex: 1;
-  flex-basis: 0px;
-  position: relative;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
+	flex: 1;
+	flex-basis: 0px;
+	position: relative;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
 }
 
-.neuroglancer-settings-scroll-container > * {
-  margin-top: 3px;
+.neuroglancer-settings-scroll-container>* {
+	margin-top: 3px;
 }
 
 .neuroglancer-settings-title {
-  align-self: stretch;
+	align-self: stretch;
 }
 
-.neuroglancer-settings-scroll-container > label {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.neuroglancer-settings-scroll-container>label {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
 }
 
-.neuroglancer-settings-scroll-container > label > input::before {
-  flex: 1;
-  content: " ";
+.neuroglancer-settings-scroll-container>label>input::before {
+	flex: 1;
+	content: " ";
 }
 
-.neuroglancer-settings-scroll-container > label > input {
-  margin-left: 5px;
-  width: 11ch;
+.neuroglancer-settings-scroll-container>label>input {
+	margin-left: 5px;
+	width: 11ch;
 }
 
-.neuroglancer-settings-limit-widget > input {
-  width: 11ch;
+.neuroglancer-settings-limit-widget>input {
+	width: 11ch;
 }

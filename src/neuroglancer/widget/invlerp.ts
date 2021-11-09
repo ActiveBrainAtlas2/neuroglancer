@@ -579,29 +579,3 @@ export class InvlerpWidget extends Tab {
     invertArrows[reversed ? 0 : 1].style.display = 'none';
   }
 }
-
-function getUpdatedParameters(
-    existingBounds: InvlerpParameters, boundType: 'range'|'window', endpointIndex: number,
-    newEndpoint: number|Uint64, fitRangeInWindow = false) {
-  const newBounds = {...existingBounds};
-  const existingInterval = existingBounds[boundType];
-  newBounds[boundType] = [existingInterval[0], existingInterval[1]] as DataTypeInterval;
-  newBounds[boundType][endpointIndex] = newEndpoint;
-  if (boundType === 'window' &&
-      dataTypeCompare(newEndpoint, existingInterval[1 - endpointIndex]) * (2 * endpointIndex - 1) <
-          0) {
-    newBounds[boundType][1 - endpointIndex] = newEndpoint;
-  }
-  if (boundType === 'range' && fitRangeInWindow) {
-    // Also adjust `window` endpoint to contain the new endpoint.
-    const newWindowInterval =
-        [existingBounds.window[0], existingBounds.window[1]] as DataTypeInterval;
-    for (let i = 0; i < 2; ++i) {
-      if (dataTypeCompare(newEndpoint, newWindowInterval[i]) * (2 * i - 1) > 0) {
-        newWindowInterval[i] = newEndpoint;
-      }
-    }
-    newBounds.window = newWindowInterval;
-  }
-  return newBounds;
-}
