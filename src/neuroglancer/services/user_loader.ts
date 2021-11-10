@@ -1,15 +1,15 @@
 import './user_loader.css';
 import { makeIcon } from 'neuroglancer/widget/icon';
 import { registerEventListener } from 'neuroglancer/util/disposable';
-import { database, dbRef, userDataRef } from 'neuroglancer/services/firebase';
-import { child, get, off, ref, update, } from "firebase/database";
+import { database, userDataRef } from 'neuroglancer/services/firebase';
+import { child, get, off, ref, update,getDatabase } from "firebase/database";
 
 import { urlParams, stateAPI, StateAPI } from 'neuroglancer/services/state_loader';
 import { StatusMessage } from 'neuroglancer/status';
 
 const DATABASE_PORTAL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/admin/neuroglancer/urlmodel/';
 const LOGIN_URL = 'https://activebrainatlas.ucsd.edu/activebrainatlas/admin/login/?next='
-
+const dbRef = ref(getDatabase());
 
 export interface User {
     user_id: number;
@@ -36,6 +36,9 @@ export class UserLoader {
         this.element.classList.add('user-loader');
 
         if (urlParams.stateID) {
+            
+            console.log('url param state id')
+            console.log(urlParams.stateID)
             const stateID = urlParams.stateID;
 
             this.loginButton = makeIcon({ text: 'Log in', title: 'You will be directed to the log-in page.' });
@@ -43,12 +46,11 @@ export class UserLoader {
             registerEventListener(this.loginButton, 'click', () => {
                 this.login();
             });
-
             
             registerEventListener(this.logoutButton, 'click', () => {
                 this.logout(stateID);
             });
-            
+            this.element.appendChild(this.logoutButton);
 
             this.stateAPI.getUser().then(jsonUser => {
                 this.user = jsonUser;
@@ -56,14 +58,17 @@ export class UserLoader {
                     StatusMessage.showTemporaryMessage('You are not logged in.');
                     this.notLoggedIn();
                 } else {
+                    console.log('lgin')
                     this.loggedIn(stateID);
                 }
                 this.userList.classList.add('user-list');
                 this.element.appendChild(this.loginButton);
                 this.element.appendChild(this.userList);
                 this.element.appendChild(this.logoutButton);
+                console.log('url param state id')
             });
         }
+        
     }
 
     private updateUserList(snapshot: any) {
@@ -78,7 +83,6 @@ export class UserLoader {
             const userDiv = document.createElement('div');
             userDiv.classList.add('user-div');
             userDiv.textContent = username;
-            console.log(username);
             if (username == this.user.username) {
                 userDiv.style.color = 'lightblue';
                 newList.prepend(userDiv);
@@ -86,6 +90,8 @@ export class UserLoader {
                 newList.append(userDiv);
             }
         });
+        console.log('users')
+        console.log(this.users);
         this.element.replaceChild(newList, this.userList);
         this.userList = newList;
     }
@@ -101,12 +107,15 @@ export class UserLoader {
     private loggedIn(stateID: string) {
         this.loginButton.style.display = 'none';
         this.userList.style.removeProperty('display');
-
         if (urlParams.multiUserMode) {
             this.logoutButton.style.removeProperty('display');
             //TODO fixme migrate web 8 -> 9 
             // const usersRef = userDataRef.child(stateID).orderByKey();
             get(child(dbRef, `users/${stateID}`)).then((snapshot) => {
+                console.log('exists')
+                console.log(snapshot.exists())
+                console.log(snapshot)
+                console.log(stateID)
                 if (snapshot.exists()) {
                     this.updateUserList(snapshot);
                 }
@@ -129,6 +138,7 @@ export class UserLoader {
         const url = new URL(window.location.href);
         const { pathname, search, hash } = url;
         window.location.href = `${LOGIN_URL}${pathname}${search}${hash}`;
+        // console.log(window.location.href)
     }
 
     private logout(stateID: string) {
