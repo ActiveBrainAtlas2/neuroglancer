@@ -24,9 +24,17 @@ import { urlSafeParse, verifyObject } from 'neuroglancer/util/json';
 import { cancellableFetchSpecialOk, parseSpecialUrl } from 'neuroglancer/util/special_protocol_request';
 import { getCachedJson, Trackable } from 'neuroglancer/util/trackable';
 import { urlParams, stateAPI, StateAPI, State } from 'neuroglancer/services/state_loader';
+<<<<<<< HEAD
+import { database } from 'neuroglancer/services/firebase';
+import { child, get, onValue, ref, set, update, getDatabase } from "firebase/database";
+
+import { User, ActiveUser } from 'neuroglancer/services/user_loader';
+const dbRef = ref(getDatabase());
+=======
 import { database, dbRef } from 'neuroglancer/services/firebase';
 import { child, get, onValue, ref, update } from "firebase/database";
 import { User, updateUser } from 'neuroglancer/services/user_loader';
+>>>>>>> 51035dd3ca60a17a2a8f66a142fbcd8d32808085
 
 /**
  * @file Implements a binding between a Trackable value and the URL hash state.

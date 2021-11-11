@@ -70,7 +70,7 @@
     "@types/webpack-env": "^1.16.0",
     "codemirror": "^5.61.1",
     "esbuild": "^0.12.8",
-    "firebase": "^9.2.0",
+    "firebase": "^9.4.0",
     "gl-matrix": "3.1.0",
     "glsl-editor": "^1.0.0",
     "ikonate": "mikolajdobrucki/ikonate#a86b4107c6ec717e7877f880a930d1ccf0b59d89",

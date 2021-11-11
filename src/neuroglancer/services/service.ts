@@ -1,8 +1,8 @@
 import { fetchOk } from 'neuroglancer/util/http_request';
 
 export class AppSettings {
-  public static API_ENDPOINT ='https://activebrainatlas.ucsd.edu/activebrainatlas';
-  // public static API_ENDPOINT ='http://localhost:8000';
+  // public static API_ENDPOINT ='https://activebrainatlas.ucsd.edu/activebrainatlas';
+  public static API_ENDPOINT ='http://localhost:8000';
 }
 
 export class APIService {
