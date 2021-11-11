@@ -24,11 +24,17 @@ import { urlSafeParse, verifyObject } from 'neuroglancer/util/json';
 import { cancellableFetchSpecialOk, parseSpecialUrl } from 'neuroglancer/util/special_protocol_request';
 import { getCachedJson, Trackable } from 'neuroglancer/util/trackable';
 import { urlParams, stateAPI, StateAPI, State } from 'neuroglancer/services/state_loader';
+<<<<<<< HEAD
 import { database } from 'neuroglancer/services/firebase';
 import { child, get, onValue, ref, set, update, getDatabase } from "firebase/database";
 
 import { User, ActiveUser } from 'neuroglancer/services/user_loader';
 const dbRef = ref(getDatabase());
+=======
+import { database, dbRef } from 'neuroglancer/services/firebase';
+import { child, get, onValue, ref, update } from "firebase/database";
+import { User, updateUser } from 'neuroglancer/services/user_loader';
+>>>>>>> 51035dd3ca60a17a2a8f66a142fbcd8d32808085
 
 /**
  * @file Implements a binding between a Trackable value and the URL hash state.
@@ -96,7 +102,7 @@ export class UrlHashBinding extends RefCounted {
             const sameState = prevStateString === stateString;
             if (!sameState) {
                 console.log('Updating state from user browser and saving to firebase');
-                setupUser(this.stateData, this.user);
+                updateUser(this.stateID, this.user.user_id, this.user.username);
                 this.updateData(urlData);
                 this.prevStateString = stateString;
             } else {
@@ -133,7 +139,7 @@ export class UrlHashBinding extends RefCounted {
                         verifyObject(jsonStateUrl);
                         this.root.restoreState(jsonStateUrl);
                         this.prevStateString = JSON.stringify(jsonStateUrl);
-                        setupUser(this.stateData, this.user);
+                        updateUser(this.stateID, this.user.user_id, this.user.username);
                         this.setStateFromFirebase();
                     } else {
                         this.stateAPI.getState(stateID).then(jsonState => {
@@ -145,8 +151,8 @@ export class UrlHashBinding extends RefCounted {
                             this.root.restoreState(jsonStateUrl);
                             this.prevStateString = JSON.stringify(jsonStateUrl);
                             this.updateData(this.stateData);
-                            setupUser(this.stateData, this.user);
-                            // this.setStateFromFirebase();
+                            updateUser(this.stateID, this.user.user_id, this.user.username);
+                        // this.setStateFromFirebase();
                         });
                     }
                 }).catch((error) => {
@@ -279,14 +285,4 @@ export class UrlHashBinding extends RefCounted {
     }
 
 
-}
-
-function setupUser(state: State, user: User) {
-    if (state.state_id != null && user.user_id != null) {
-        const activeUser: ActiveUser = {
-            name: user.username,
-            date: Date.now(),
-        }
-        set(ref(database, `users/${state.state_id}/${user.user_id}`), { activeUser });
-    }
 }

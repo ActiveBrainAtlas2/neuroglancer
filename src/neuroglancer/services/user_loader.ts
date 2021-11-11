@@ -46,11 +46,20 @@ export class UserLoader {
             registerEventListener(this.loginButton, 'click', () => {
                 this.login();
             });
+<<<<<<< HEAD
             
             registerEventListener(this.logoutButton, 'click', () => {
                 this.logout(stateID);
             });
             this.element.appendChild(this.logoutButton);
+=======
+
+
+            registerEventListener(this.logoutButton, 'click', () => {
+                this.logout(stateID);
+            });
+
+>>>>>>> 51035dd3ca60a17a2a8f66a142fbcd8d32808085
 
             this.stateAPI.getUser().then(jsonUser => {
                 this.user = jsonUser;
@@ -70,6 +79,7 @@ export class UserLoader {
         }
         
     }
+
 
     private updateUserList(snapshot: any) {
         this.users = [];
@@ -109,8 +119,7 @@ export class UserLoader {
         this.userList.style.removeProperty('display');
         if (urlParams.multiUserMode) {
             this.logoutButton.style.removeProperty('display');
-            //TODO fixme migrate web 8 -> 9 
-            // const usersRef = userDataRef.child(stateID).orderByKey();
+            updateUser(stateID, this.user.user_id, this.user.username);
             get(child(dbRef, `users/${stateID}`)).then((snapshot) => {
                 console.log('exists')
                 console.log(snapshot.exists())
@@ -130,7 +139,6 @@ export class UserLoader {
             userDiv.style.color = 'lightblue';
             this.userList.append(userDiv);
         }
-
     }
 
 
@@ -155,3 +163,23 @@ export class UserLoader {
     }
 }
 
+/** I made this a function in case we need it in another part
+of the program
+ */
+function updateUser(stateID: string, userID: number, username: string) {
+    const updates: any = {};
+    const activeUser: ActiveUser = {
+        name: username,
+        date: Date.now(),
+    }
+
+    updates['/users/' + stateID + '/' + userID] = activeUser;
+    update(ref(database), updates)
+        .then(() => {
+            console.log('updateUser was OK');
+        })
+        .catch((error) => {
+            console.log('error in updateUser');
+            console.log(error);
+        });
+}
