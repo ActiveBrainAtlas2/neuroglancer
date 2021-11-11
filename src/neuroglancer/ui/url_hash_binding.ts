@@ -25,9 +25,8 @@ import { cancellableFetchSpecialOk, parseSpecialUrl } from 'neuroglancer/util/sp
 import { getCachedJson, Trackable } from 'neuroglancer/util/trackable';
 import { urlParams, stateAPI, StateAPI, State } from 'neuroglancer/services/state_loader';
 import { database, dbRef } from 'neuroglancer/services/firebase';
-import { child, get, onValue, ref, set, update } from "firebase/database";
-
-import { User, ActiveUser } from 'neuroglancer/services/user_loader';
+import { child, get, onValue, ref, update } from "firebase/database";
+import { User } from 'neuroglancer/services/user_loader';
 
 /**
  * @file Implements a binding between a Trackable value and the URL hash state.
@@ -95,7 +94,8 @@ export class UrlHashBinding extends RefCounted {
             const sameState = prevStateString === stateString;
             if (!sameState) {
                 console.log('Updating state from user browser and saving to firebase');
-                setupUser(this.stateData, this.user);
+                // setupUser(this.stateData, this.user);
+                
                 this.updateData(urlData);
                 this.prevStateString = stateString;
             } else {
@@ -132,7 +132,7 @@ export class UrlHashBinding extends RefCounted {
                         verifyObject(jsonStateUrl);
                         this.root.restoreState(jsonStateUrl);
                         this.prevStateString = JSON.stringify(jsonStateUrl);
-                        setupUser(this.stateData, this.user);
+                        // setupUser(this.stateData, this.user);
                         this.setStateFromFirebase();
                     } else {
                         this.stateAPI.getState(stateID).then(jsonState => {
@@ -144,7 +144,7 @@ export class UrlHashBinding extends RefCounted {
                             this.root.restoreState(jsonStateUrl);
                             this.prevStateString = JSON.stringify(jsonStateUrl);
                             this.updateData(this.stateData);
-                            setupUser(this.stateData, this.user);
+                            // setupUser(this.stateData, this.user);
                             // this.setStateFromFirebase();
                         });
                     }
@@ -278,14 +278,4 @@ export class UrlHashBinding extends RefCounted {
     }
 
 
-}
-
-function setupUser(state: State, user: User) {
-    if (state.state_id != null && user.user_id != null) {
-        const activeUser: ActiveUser = {
-            name: user.username,
-            date: Date.now(),
-        }
-        set(ref(database, `users/${state.state_id}/${user.user_id}`), { activeUser });
-    }
 }

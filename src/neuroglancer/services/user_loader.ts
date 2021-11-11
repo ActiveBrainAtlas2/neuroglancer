@@ -44,11 +44,11 @@ export class UserLoader {
                 this.login();
             });
 
-            
+
             registerEventListener(this.logoutButton, 'click', () => {
                 this.logout(stateID);
             });
-            
+
 
             this.stateAPI.getUser().then(jsonUser => {
                 this.user = jsonUser;
@@ -65,6 +65,7 @@ export class UserLoader {
             });
         }
     }
+
 
     private updateUserList(snapshot: any) {
         this.users = [];
@@ -104,8 +105,7 @@ export class UserLoader {
 
         if (urlParams.multiUserMode) {
             this.logoutButton.style.removeProperty('display');
-            //TODO fixme migrate web 8 -> 9 
-            // const usersRef = userDataRef.child(stateID).orderByKey();
+            updateUser(stateID, this.user.user_id, this.user.username);
             get(child(dbRef, `users/${stateID}`)).then((snapshot) => {
                 if (snapshot.exists()) {
                     this.updateUserList(snapshot);
@@ -121,7 +121,6 @@ export class UserLoader {
             userDiv.style.color = 'lightblue';
             this.userList.append(userDiv);
         }
-
     }
 
 
@@ -145,3 +144,23 @@ export class UserLoader {
     }
 }
 
+/** I made this a function in case we need it in another part
+of the program
+ */
+function updateUser(stateID: string, userID: number, username: string) {
+    const updates: any = {};
+    const activeUser: ActiveUser = {
+        name: username,
+        date: Date.now(),
+    }
+
+    updates['/users/' + stateID + '/' + userID] = activeUser;
+    update(ref(database), updates)
+        .then(() => {
+            console.log('updateUser was OK');
+        })
+        .catch((error) => {
+            console.log('error in updateUser');
+            console.log(error);
+        });
+}
