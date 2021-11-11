@@ -147,7 +147,7 @@ export class UserLoader {
 /** I made this a function in case we need it in another part
 of the program
  */
-function updateUser(stateID: string, userID: number, username: string) {
+export function updateUser(stateID: string | null, userID: number, username: string) {
     const updates: any = {};
     const activeUser: ActiveUser = {
         name: username,

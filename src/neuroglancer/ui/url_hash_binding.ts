@@ -41,7 +41,7 @@ export class UrlHashBinding extends RefCounted {
     /**
      * Most recently parsed or set state string.
      */
-    private prevStateString: string | undefined;
+    private prevUrlString: string | undefined;
 
     /**
      * Most recent error parsing URL hash.
@@ -88,15 +88,16 @@ export class UrlHashBinding extends RefCounted {
                 return;
             }
             const cacheState = getCachedJson(this.root);
-            const stateString = JSON.stringify(cacheState.value)
-            const urlData = JSON.parse(stateString);
-            const { prevStateString } = this;
-            const sameState = prevStateString === stateString;
-            if (!sameState) {
+            const urlString = JSON.stringify(cacheState.value)
+            const urlData = JSON.parse(urlString);
+            const { prevUrlString } = this;
+            const sameUrl = prevUrlString === urlString;
+            if (!sameUrl) {
                 console.log('Updating state from user browser and saving to firebase');
                 updateUser(this.stateID, this.user.user_id, this.user.username);
-                this.updateData(urlData);
-                this.prevStateString = stateString;
+                this.stateData.url = urlData;
+                this.updateStateData(this.stateData);
+                this.prevUrlString = urlString;
             } else {
                 console.log('setUrlHash states are the same, doing nothing.')
             }
@@ -119,32 +120,31 @@ export class UrlHashBinding extends RefCounted {
                     StatusMessage.showTemporaryMessage('You have not logged in yet. Please log in and refresh the page to use multi-user mode.');
                     return;
                 }
-                console.log('updateFromUrlHash point 1');
                 get(child(dbRef, `neuroglancer/${stateID}`)).then((snapshot) => {
-                    console.log('updateFromUrlHash point 2');
                     if (snapshot.exists()) {
-                        console.log('updateFromUrlHash point 3');
+                        console.log('Updating state from firebase');
                         this.stateData = snapshot.val();
                         console.log(this.stateData);
-                        const jsonStateUrl = this.stateData;
+                        const jsonStateUrl = this.stateData.url;
                         this.root.reset();
                         verifyObject(jsonStateUrl);
                         this.root.restoreState(jsonStateUrl);
-                        this.prevStateString = JSON.stringify(jsonStateUrl);
+                        this.prevUrlString = JSON.stringify(jsonStateUrl);
                         updateUser(this.stateID, this.user.user_id, this.user.username);
-                        this.setStateFromFirebase();
+                        this.checkAndSetStateFromFirebase()
                     } else {
                         this.stateAPI.getState(stateID).then(jsonState => {
+                            console.log('updateFromUrlHash update from mysql database');
                             this.stateData = jsonState;
+                            console.log(this.stateData);
                             const jsonStateUrl = this.stateData.url;
                             this.root.reset();
-                            console.log('updateFromUrlHash update from mysql database');
                             verifyObject(jsonStateUrl);
                             this.root.restoreState(jsonStateUrl);
-                            this.prevStateString = JSON.stringify(jsonStateUrl);
-                            this.updateData(this.stateData);
+                            this.prevUrlString = JSON.stringify(jsonStateUrl);
+                            this.updateStateData(this.stateData);
                             updateUser(this.stateID, this.user.user_id, this.user.username);
-                        // this.setStateFromFirebase();
+                            this.checkAndSetStateFromFirebase()
                         });
                     }
                 }).catch((error) => {
@@ -155,7 +155,7 @@ export class UrlHashBinding extends RefCounted {
                 this.stateAPI.getState(stateID).then(jsonState => {
                     this.stateData = jsonState;
                     const stateObject = this.stateData.url;
-                    this.prevStateString = undefined;
+                    this.prevUrlString = undefined;
                     this.root.reset();
                     verifyObject(stateObject);
                     this.root.restoreState(stateObject);
@@ -225,16 +225,16 @@ export class UrlHashBinding extends RefCounted {
      * Update the local state upon a firebase update.
      * This is called only in the multi user mode.
      */
-    checkAndSetStateFromFirebase() {
+    private checkAndSetStateFromFirebase() {
         if (this.stateID != null && this.multiUserMode) {
             const stateRef = ref(database, `neuroglancer/${this.stateID}`);
             onValue(stateRef, (snapshot) => {
                 this.stateData = snapshot.val();
-                const jsonStateUrl = this.stateData;
+                const jsonStateUrl = this.stateData.url;
                 this.root.reset();
                 verifyObject(jsonStateUrl);
                 this.root.restoreState(jsonStateUrl);
-                this.prevStateString = JSON.stringify(jsonStateUrl);
+                this.prevUrlString = JSON.stringify(jsonStateUrl);
             });
         }
     }
@@ -249,11 +249,11 @@ export class UrlHashBinding extends RefCounted {
             get(child(dbRef, `neuroglancer/${this.stateID}`)).then((snapshot) => {
                 if (snapshot.exists()) {
                     this.stateData = snapshot.val();
-                    const jsonStateUrl = this.stateData;
+                    const jsonStateUrl = this.stateData.url;
                     this.root.reset();
                     verifyObject(jsonStateUrl);
                     this.root.restoreState(jsonStateUrl);
-                    this.prevStateString = JSON.stringify(jsonStateUrl);
+                    this.prevUrlString = JSON.stringify(jsonStateUrl);
                 } else {
                     console.log("No data available");
                 }
@@ -263,9 +263,9 @@ export class UrlHashBinding extends RefCounted {
         }
     }
 
-    private updateData(urlData: any) {
+    private updateStateData(stateData: State) {
         const updates: any = {};
-        updates['/neuroglancer/' + this.stateID] = urlData;
+        updates['/neuroglancer/' + this.stateID] = stateData;
         update(ref(database), updates)
             .then(() => {
                 console.log('updatedData was OK');
