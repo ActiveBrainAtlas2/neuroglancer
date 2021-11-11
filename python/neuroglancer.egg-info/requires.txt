@@ -1,0 +1,24 @@
+Pillow>=3.2.0
+numpy>=1.11.0
+requests
+tornado
+sockjs-tornado
+six
+google-apitools
+google-auth
+
+[test]
+pytest>=6.1.2
+pytest-rerunfailures>=9.1.1
+pytest-timeout>=1.4.2
+
+[test-browser]
+selenium>=3.141.0
+
+[test-chrome]
+chromedriver-binary
+
+[test-firefox]
+
+[test-firefox:python_version >= "3.6"]
+geckodriver_autoinstaller>=0.1.0
