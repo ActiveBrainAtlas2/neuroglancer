@@ -230,7 +230,7 @@ export class UrlHashBinding extends RefCounted {
     }
 
     /**
-    This method is used in state_loader.ts
+    This method is also used in state_loader.ts
      */
     public resetDatabaseState() {
         if (!this.stateID) {
