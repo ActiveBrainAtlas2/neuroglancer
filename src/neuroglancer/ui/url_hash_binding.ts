@@ -81,7 +81,7 @@ export class UrlHashBinding extends RefCounted {
      * Instead, when the current state change in the multi-user mode,
      * push the update to Firebase.
      */
-    setUrlHash() {
+    private setUrlHash() {
         if (this.stateID && this.multiUserMode) {
             if (this.user.user_id == 0) {
                 StatusMessage.showTemporaryMessage('You have not logged in yet. Changes will not be pushed to the cloud. Please log in and refresh the page to use multi-user mode.');
@@ -98,9 +98,7 @@ export class UrlHashBinding extends RefCounted {
                 this.stateData.url = urlData;
                 this.updateStateData(this.stateData);
                 this.prevUrlString = urlString;
-            } else {
-                console.log('setUrlHash states are the same, doing nothing.')
-            }
+            } 
         }
     }
 
@@ -110,9 +108,10 @@ export class UrlHashBinding extends RefCounted {
      * The user mode is determined by the GET parameter `multi`:
      * 0 - single user mode; 1 - multi user mode.
      * This is called upon initial load of the page.
+     * This is called from src/main_python.ts
      */
 
-    updateFromUrlHash() {
+    public updateFromUrlHash() {
         if (this.stateID) {
             const { stateID } = this;
             if (this.multiUserMode) {
@@ -121,37 +120,20 @@ export class UrlHashBinding extends RefCounted {
                     return;
                 }
                 get(child(dbRef, `neuroglancer/${stateID}`)).then((snapshot) => {
-                    if (snapshot.exists()) {
-                        console.log('Updating state from firebase');
+                    if (snapshot.exists()) { // get data from firebase
                         this.stateData = snapshot.val();
-                        console.log(this.stateData);
-                        const jsonStateUrl = this.stateData.url;
-                        this.root.reset();
-                        verifyObject(jsonStateUrl);
-                        this.root.restoreState(jsonStateUrl);
-                        this.prevUrlString = JSON.stringify(jsonStateUrl);
-                        updateUser(this.stateID, this.user.user_id, this.user.username);
-                        this.checkAndSetStateFromFirebase()
-                    } else {
+                        this.setStateRoot();
+                    } else { // no firebase data, so get it from mysql
                         this.stateAPI.getState(stateID).then(jsonState => {
-                            console.log('updateFromUrlHash update from mysql database');
                             this.stateData = jsonState;
-                            console.log(this.stateData);
-                            const jsonStateUrl = this.stateData.url;
-                            this.root.reset();
-                            verifyObject(jsonStateUrl);
-                            this.root.restoreState(jsonStateUrl);
-                            this.prevUrlString = JSON.stringify(jsonStateUrl);
-                            this.updateStateData(this.stateData);
-                            updateUser(this.stateID, this.user.user_id, this.user.username);
-                            this.checkAndSetStateFromFirebase()
+                            this.setStateRoot();
                         });
                     }
                 }).catch((error) => {
                     console.error(error);
                 });
 
-            } else {
+            } else { // not in multi user mode
                 this.stateAPI.getState(stateID).then(jsonState => {
                     this.stateData = jsonState;
                     const stateObject = this.stateData.url;
@@ -162,7 +144,7 @@ export class UrlHashBinding extends RefCounted {
                     this.stateData.url = stateObject;
                 });
             }
-        } else {
+        } else { // this part of the else is the old code when all data was in the url
             try {
                 let s = location.href.replace(/^[^#]+/, '');
                 if (s === '' || s === '#' || s === '#!') {
@@ -204,20 +186,15 @@ export class UrlHashBinding extends RefCounted {
         }
     }
 
-    /** Not used at the moment */
-    resetDatabaseState() {
-        if (!this.stateID) {
-            StatusMessage.showTemporaryMessage("This is not saved to the database yet.");
-        } else {
-            this.stateAPI.getState(this.stateID).then(jsonState => {
-                this.stateData = jsonState;
-                const jsonStateUrl = this.stateData.url;
-                this.root.reset();
-                verifyObject(jsonStateUrl);
-                this.root.restoreState(jsonStateUrl);
-                this.setUrlHash();
-            });
-        }
+    private setStateRoot() {
+        const jsonStateUrl = this.stateData.url;
+        this.root.reset();
+        verifyObject(jsonStateUrl);
+        this.root.restoreState(jsonStateUrl);
+        this.prevUrlString = JSON.stringify(jsonStateUrl);
+        this.updateStateData(this.stateData);
+        updateUser(this.stateID, this.user.user_id, this.user.username);
+        this.checkAndSetStateFromFirebase()
     }
 
     /**
@@ -239,30 +216,6 @@ export class UrlHashBinding extends RefCounted {
         }
     }
 
-    /**
-     * ActiveBrainAtlas fork:
-     * Update the local state upon a firebase update.
-     * This is called only in the multi user mode.
-     */
-    private setStateFromFirebase() {
-        if (this.stateID != null && this.multiUserMode) {
-            get(child(dbRef, `neuroglancer/${this.stateID}`)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    this.stateData = snapshot.val();
-                    const jsonStateUrl = this.stateData.url;
-                    this.root.reset();
-                    verifyObject(jsonStateUrl);
-                    this.root.restoreState(jsonStateUrl);
-                    this.prevUrlString = JSON.stringify(jsonStateUrl);
-                } else {
-                    console.log("No data available");
-                }
-            }).catch((error) => {
-                console.error(error);
-            });
-        }
-    }
-
     private updateStateData(stateData: State) {
         const updates: any = {};
         updates['/neuroglancer/' + this.stateID] = stateData;
@@ -274,6 +227,24 @@ export class UrlHashBinding extends RefCounted {
                 console.log('error in updateData');
                 console.log(error);
             });
+    }
+
+    /**
+    This method is used in state_loader.ts
+     */
+    public resetDatabaseState() {
+        if (!this.stateID) {
+            StatusMessage.showTemporaryMessage("This is not saved to the database yet.");
+        } else {
+            this.stateAPI.getState(this.stateID).then(jsonState => {
+                this.stateData = jsonState;
+                const jsonStateUrl = this.stateData.url;
+                this.root.reset();
+                verifyObject(jsonStateUrl);
+                this.root.restoreState(jsonStateUrl);
+                this.setUrlHash();
+            });
+        }
     }
 
 
