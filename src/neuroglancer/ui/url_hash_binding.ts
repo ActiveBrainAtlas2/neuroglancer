@@ -98,7 +98,7 @@ export class UrlHashBinding extends RefCounted {
                 this.stateData.url = urlData;
                 this.updateStateData(this.stateData);
                 this.prevUrlString = urlString;
-            } 
+            }
         }
     }
 
@@ -200,20 +200,19 @@ export class UrlHashBinding extends RefCounted {
     /**
      * ActiveBrainAtlas fork:
      * Update the local state upon a firebase update.
-     * This is called only in the multi user mode.
+     * This is called only in the multi user mode so we know
+     * there is a stateID and multiUser=1
      */
     private checkAndSetStateFromFirebase() {
-        if (this.stateID != null && this.multiUserMode) {
-            const stateRef = ref(database, `neuroglancer/${this.stateID}`);
-            onValue(stateRef, (snapshot) => {
-                this.stateData = snapshot.val();
-                const jsonStateUrl = this.stateData.url;
-                this.root.reset();
-                verifyObject(jsonStateUrl);
-                this.root.restoreState(jsonStateUrl);
-                this.prevUrlString = JSON.stringify(jsonStateUrl);
-            });
-        }
+        const stateRef = ref(database, `neuroglancer/${this.stateID}`);
+        onValue(stateRef, (snapshot) => {
+            this.stateData = snapshot.val();
+            const jsonStateUrl = this.stateData.url;
+            this.root.reset();
+            verifyObject(jsonStateUrl);
+            this.root.restoreState(jsonStateUrl);
+            this.prevUrlString = JSON.stringify(jsonStateUrl);
+        });
     }
 
     private updateStateData(stateData: State) {
