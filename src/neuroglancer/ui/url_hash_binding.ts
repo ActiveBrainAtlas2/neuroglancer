@@ -44,7 +44,7 @@ export class UrlHashBinding extends RefCounted {
     private prevUrlString: string | undefined;
 
     /**
-     * Most recent error parsing URL hash.
+     * Most recent error parsing URL hash.   
      */
     parseError = new WatchableValue<Error | undefined>(undefined);
 
