@@ -24,7 +24,7 @@ import { urlSafeParse, verifyObject } from 'neuroglancer/util/json';
 import { cancellableFetchSpecialOk, parseSpecialUrl } from 'neuroglancer/util/special_protocol_request';
 import { getCachedJson, Trackable } from 'neuroglancer/util/trackable';
 import { urlParams, stateAPI, StateAPI, State } from 'neuroglancer/services/state_loader';
-import { database, stateIDdbRef } from 'neuroglancer/services/firebase';
+import { database, dbRef } from 'neuroglancer/services/firebase';
 import { child, get, onValue, ref, update } from "firebase/database";
 import { User, updateUser } from 'neuroglancer/services/user_loader';
 
@@ -119,7 +119,7 @@ export class UrlHashBinding extends RefCounted {
                     StatusMessage.showTemporaryMessage('You have not logged in yet. Please log in and refresh the page to use multi-user mode.');
                     return;
                 }
-                get(child(stateIDdbRef, `neuroglancer/${stateID}`)).then((snapshot) => {
+                get(child(dbRef, `neuroglancer/${stateID}`)).then((snapshot) => {
                     if (snapshot.exists()) { // get data from firebase
                         this.stateData = snapshot.val();
                         this.setStateRoot();

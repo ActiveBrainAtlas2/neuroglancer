@@ -1,7 +1,7 @@
 import './user_loader.css';
 import { makeIcon } from 'neuroglancer/widget/icon';
 import { registerEventListener } from 'neuroglancer/util/disposable';
-import { database, stateIDdbRef, userDataRef } from 'neuroglancer/services/firebase';
+import { database, dbRef, userDataRef } from 'neuroglancer/services/firebase';
 import { child, get, off, ref, update, } from "firebase/database";
 
 import { urlParams, stateAPI, StateAPI } from 'neuroglancer/services/state_loader';
@@ -106,7 +106,7 @@ export class UserLoader {
         if (urlParams.multiUserMode) {
             this.logoutButton.style.removeProperty('display');
             updateUser(stateID, this.user.user_id, this.user.username);
-            get(child(stateIDdbRef, `users/${stateID}`)).then((snapshot) => {
+            get(child(dbRef, `users/${stateID}`)).then((snapshot) => {
                 if (snapshot.exists()) {
                     this.updateUserList(snapshot);
                 }

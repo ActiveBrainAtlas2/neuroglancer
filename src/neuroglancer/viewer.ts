@@ -67,7 +67,6 @@ import {makeIcon} from 'neuroglancer/widget/icon';
 import {MousePositionWidget, PositionWidget} from 'neuroglancer/widget/position_widget';
 import {TrackableScaleBarOptions} from 'neuroglancer/widget/scale_bar';
 import {RPC} from 'neuroglancer/worker_rpc';
-// import {ContextMenu} from 'neuroglancer/ui/context_menu';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
@@ -299,7 +298,6 @@ export class Viewer extends RefCounted implements ViewerState {
   perspectiveViewBackgroundColor = new TrackableRGB(vec3.fromValues(0, 0, 0));
   scaleBarOptions = new TrackableScaleBarOptions();
   partialViewport = new TrackableWindowedViewport();
-  // contextMenu: ContextMenu;
   statisticsDisplayState = new StatisticsDisplayState();
   helpPanelState = new HelpPanelState();
   settingsPanelState = new ViewerSettingsPanelState();
@@ -309,7 +307,6 @@ export class Viewer extends RefCounted implements ViewerState {
       new TrackableDataSelectionState(this.coordinateSpace, this.layerSelectedValues));
   selectedStateServer = new TrackableValue<string>('', verifyString);
   layerListPanelState = new LayerListPanelState();
-  toolBinder = this.registerDisposer(new ToolBinder());
 
   resetInitiated = new NullarySignal();
 
@@ -486,8 +483,6 @@ export class Viewer extends RefCounted implements ViewerState {
 
     const topRow = document.createElement('div');
     topRow.classList.add('neuroglancer-viewer-top-row');
-    // const contextMenu = this.contextMenu = this.registerDisposer(makeViewerContextMenu(this));
-    // contextMenu.registerParent(topRow);
     topRow.style.display = 'flex';
     topRow.style.flexDirection = 'row';
     topRow.style.alignItems = 'stretch';
@@ -650,6 +645,7 @@ export class Viewer extends RefCounted implements ViewerState {
         topRow));
 
     gridContainer.appendChild(topRow);
+
     this.layout = this.registerDisposer(new RootLayoutContainer(this, '4panel'));
     this.sidePanelManager = this.registerDisposer(
         new SidePanelManager(this.display, this.layout.element, this.visibility));
@@ -803,8 +799,10 @@ export class Viewer extends RefCounted implements ViewerState {
           inputEventMap, Number.POSITIVE_INFINITY));
   };
 
+  private toolBinder = this.registerDisposer(new ToolBinder(this.toolInputEventMapBinder));
+
   activateTool(uppercase: string) {
-    this.toolBinder.activate(uppercase, this.toolInputEventMapBinder);
+    this.toolBinder.activate(uppercase);
   }
 
   showWiki() {
