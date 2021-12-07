@@ -17,6 +17,10 @@
 /**
  * @file Basic annotation data structures.
  */
+import { TrackableBoolean } from 'neuroglancer/trackable_boolean';
+import { vec3 } from 'neuroglancer/util/geom';
+
+
 
 import {BoundingBox, CoordinateSpaceTransform, WatchableCoordinateSpaceTransform} from 'neuroglancer/coordinate_transform';
 import {arraysEqual} from 'neuroglancer/util/array';
@@ -51,6 +55,8 @@ export enum AnnotationType {
   LINE,
   AXIS_ALIGNED_BOUNDING_BOX,
   ELLIPSOID,
+  COLLECTION,
+  LINE_STRIP,
 }
 
 export const annotationTypes = [
@@ -58,6 +64,8 @@ export const annotationTypes = [
   AnnotationType.LINE,
   AnnotationType.AXIS_ALIGNED_BOUNDING_BOX,
   AnnotationType.ELLIPSOID,
+  AnnotationType.COLLECTION,
+  AnnotationType.LINE_STRIP,
 ];
 
 export interface AnnotationPropertySpecBase {
@@ -473,6 +481,25 @@ export interface Ellipsoid extends AnnotationBase {
   center: Float32Array;
   radii: Float32Array;
   type: AnnotationType.ELLIPSOID;
+}
+
+// Collections //
+export interface Collection extends AnnotationBase {
+  lastA?: AnnotationReference;
+  lastB?: AnnotationReference;
+  entries: string[];
+  type: AnnotationType.COLLECTION|AnnotationType.LINE_STRIP;
+  connected: boolean;
+  source: vec3;
+  entry: Function;
+  segmentSet: Function;
+  childrenVisible: TrackableBoolean;
+}
+
+export interface LineStrip extends Collection {
+  looped?: boolean;
+  type: AnnotationType.LINE_STRIP;
+  connected: true;
 }
 
 export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid;

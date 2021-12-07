@@ -131,12 +131,8 @@ export class UserLoader {
     }
 
     private logout(stateID: string) {
-        //TODO fixme migrate web 8 -> 9 userDataRef.child(state_id).child("" + this.user.user_id + "").remove();
-        // get(child(userDataRef, `${stateID}`)).remove()
         const userID = this.user.user_id;
-        // set(ref(database, `/users/${stateID}/${userID}`).remove(), {state: null});
-        // const updates:string = {};
-        const updates: { [stateIDdbRef: string]: null } = {};
+        const updates: { [dbRef: string]: null } = {};
         updates[`/users/${stateID}/${userID}`] = null;
         console.log('updates', updates);
         update(ref(database), updates);
