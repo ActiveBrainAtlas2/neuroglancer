@@ -694,6 +694,7 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
         looped: (<LineStrip>annotation).looped
       };
     },
+    //TODO this is wrong, rank is not used for one thing
     restoreState: (annotation: LineStrip, obj: any, rank: number) => {
       annotation.source = verifyObjectProperty(obj, 'source', verify3dVec);
       annotation.entries = [];
@@ -708,7 +709,7 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
       serializeFloatVector(
         buffer, offset, isLittleEndian, rank, annotation.source);
     },
-    // put deserialize here
+    //TODO this needs to be fixed
     deserialize:
       (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, id: string):
         LineStrip => {
