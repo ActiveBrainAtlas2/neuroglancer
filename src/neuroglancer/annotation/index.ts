@@ -18,7 +18,6 @@
  * @file Basic annotation data structures.
  */
 import { TrackableBoolean } from 'neuroglancer/trackable_boolean';
-import { vec3 } from 'neuroglancer/util/geom';
 
 
 
@@ -28,7 +27,7 @@ import {packColor, parseRGBAColorSpecification, parseRGBColorSpecification, seri
 import {DataType} from 'neuroglancer/util/data_type';
 import {Borrowed, RefCounted} from 'neuroglancer/util/disposable';
 import {Endianness, ENDIANNESS} from 'neuroglancer/util/endian';
-import {expectArray, parseArray, parseFixedLengthArray, verifyEnumString, verifyFiniteFloat, verifyFiniteNonNegativeFloat, verifyFloat, verifyInt, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyOptionalString, verifyString} from 'neuroglancer/util/json';
+import {expectArray, parseArray, parseFixedLengthArray, verify3dVec, verifyEnumString, verifyFiniteFloat, verifyFiniteNonNegativeFloat, verifyFloat, verifyInt, verifyObject, verifyObjectProperty, verifyOptionalBoolean, verifyOptionalObjectProperty, verifyOptionalString, verifyString} from 'neuroglancer/util/json';
 import {parseDataTypeValue} from 'neuroglancer/util/lerp';
 import {getRandomHexString} from 'neuroglancer/util/random';
 import {NullarySignal, Signal} from 'neuroglancer/util/signal';
@@ -55,7 +54,6 @@ export enum AnnotationType {
   LINE,
   AXIS_ALIGNED_BOUNDING_BOX,
   ELLIPSOID,
-  COLLECTION,
   LINE_STRIP,
 }
 
@@ -64,7 +62,6 @@ export const annotationTypes = [
   AnnotationType.LINE,
   AnnotationType.AXIS_ALIGNED_BOUNDING_BOX,
   AnnotationType.ELLIPSOID,
-  AnnotationType.COLLECTION,
   AnnotationType.LINE_STRIP,
 ];
 
@@ -397,7 +394,7 @@ function parseAnnotationPropertySpec(obj: unknown): AnnotationPropertySpec {
   const identifier = verifyObjectProperty(obj, 'id', parseAnnotationPropertyId);
   const type = verifyObjectProperty(obj, 'type', parseAnnotationPropertyType);
   const description = verifyOptionalObjectProperty(obj, 'description', verifyString);
-  let defaultValue = verifyOptionalObjectProperty(
+  const defaultValue = verifyOptionalObjectProperty(
       obj, 'default', x => annotationPropertyTypeHandlers[type].deserializeJson(x), 0);
   let enumValues: number[]|undefined;
   let enumLabels: string[]|undefined;
@@ -484,25 +481,22 @@ export interface Ellipsoid extends AnnotationBase {
 }
 
 // Collections //
-export interface Collection extends AnnotationBase {
+export interface LineStrip extends AnnotationBase {
   lastA?: AnnotationReference;
   lastB?: AnnotationReference;
   entries: string[];
-  type: AnnotationType.COLLECTION|AnnotationType.LINE_STRIP;
-  connected: boolean;
-  source: vec3;
+  type: AnnotationType.LINE_STRIP;
+  connected: true;
+  // source: vec3;
+  source: Float32Array;
   entry: Function;
   segmentSet: Function;
   childrenVisible: TrackableBoolean;
-}
-
-export interface LineStrip extends Collection {
   looped?: boolean;
-  type: AnnotationType.LINE_STRIP;
-  connected: true;
 }
 
-export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid;
+
+export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid|LineStrip;
 
 export interface AnnotationTypeHandler<T extends Annotation = Annotation> {
   icon: string;
@@ -689,7 +683,47 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
       callback(annotation.radii, true);
     },
   },
+  // place line strip here
+  [AnnotationType.LINE_STRIP]: {
+    icon: '-^-',
+    description: 'Connected line',
+    toJSON: (annotation: LineStrip) => {
+      return {
+        source: Array.from(annotation.source),
+        childrenVisible: annotation.childrenVisible.value,
+        looped: (<LineStrip>annotation).looped
+      };
+    },
+    restoreState: (annotation: LineStrip, obj: any, rank: number) => {
+      annotation.source = verifyObjectProperty(obj, 'source', verify3dVec);
+      annotation.entries = [];
+      annotation.childrenVisible = new TrackableBoolean(obj.childrenVisible, true);
+      (<LineStrip>annotation).looped = verifyObjectProperty(obj, 'looped', verifyOptionalBoolean);
+
+    },
+    serializedBytes: rank => 2 * 4 * rank,
+    serialize(
+      buffer: DataView, offset: number, isLittleEndian: boolean, rank: number,
+      annotation: LineStrip) {
+      serializeFloatVector(
+        buffer, offset, isLittleEndian, rank, annotation.source);
+    },
+    // put deserialize here
+    deserialize:
+      (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, id: string):
+        LineStrip => {
+        const source = new Float32Array(rank);
+        deserializeFloatVector(buffer, offset, isLittleEndian, rank, source);
+        return { type: AnnotationType.LINE_STRIP, source, id, properties: []};
+      },
+
+    visitGeometry(annotation: LineStrip, callback) {
+      callback(annotation.source, false);
+    },
+  },
+
 };
+
 
 export interface AnnotationSchema {
   rank: number;
@@ -1055,7 +1089,8 @@ function serializeAnnotations(
 }
 
 export class AnnotationSerializer {
-  annotations: [Point[], Line[], AxisAlignedBoundingBox[], Ellipsoid[]] = [[], [], [], []];
+  annotations: [Point[], Line[], AxisAlignedBoundingBox[], Ellipsoid[], 
+    LineStrip[]] = [[], [], [], [], []];
   constructor(public propertySerializer: AnnotationPropertySerializer) {}
   add(annotation: Annotation) {
     (<Annotation[]>this.annotations[annotation.type]).push(annotation);
