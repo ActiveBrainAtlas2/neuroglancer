@@ -70,7 +70,7 @@
     "codemirror": "^5.58.2",
     "cross-fetch": "^3.1.4",
     "esbuild": "^0.8.11",
-    "firebase": "^8.8.0",
+    "firebase": "^9.6.1",
     "gl-matrix": "^3.1.0",
     "glsl-editor": "^1.0.0",
     "ikonate": "^1.1.1",

@@ -24,7 +24,7 @@ import {urlSafeParse, verifyObject} from 'neuroglancer/util/json';
 import {cancellableFetchSpecialOk, parseSpecialUrl} from 'neuroglancer/util/special_protocol_request';
 import {getCachedJson, Trackable} from 'neuroglancer/util/trackable';
 import {urlParams, stateAPI, StateAPI, State} from 'neuroglancer/services/state_loader';
-import {neuroglancerDataRef, databaseRef} from 'neuroglancer/services/firebase';
+import {neuroglancerDataRef, dbRef} from 'neuroglancer/services/firebase';
 import {User, ActiveUser} from 'neuroglancer/services/user_loader';
 
 /**
@@ -234,11 +234,11 @@ function setupUser(state: State, user: User) {
     date: Date.now(),
   }
   updates[`/users/${state.state_id}/${user.user_id}`] = activeUser;
-  return databaseRef.update(updates);
+  return dbRef.update(updates);
 }
 
 function saveData(state: State) {
   const updates: any = {};
   updates[`/neuroglancer/${state.state_id}`] = state;
-  return databaseRef.update(updates);
+  return dbRef.update(updates);
 }
