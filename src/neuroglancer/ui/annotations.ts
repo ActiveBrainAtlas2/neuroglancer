@@ -63,6 +63,8 @@ import {Tab} from 'neuroglancer/widget/tab_view';
 import {VirtualList, VirtualListSource} from 'neuroglancer/widget/virtual_list';
 import {FetchAnnotationWidget} from 'neuroglancer/widget/fetch_annotation';
 import {fetchOk} from 'neuroglancer/util/http_request';
+import { stateAPI } from '../services/state_loader';
+import { StatusMessage } from '../status';
 
 interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -1060,6 +1062,8 @@ abstract class PlaceCollectionAnnotationTool extends MultiStepAnnotationTool {
 
 export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   childTool: PlaceLineTool;
+  sourceMouseState: MouseSelectionState;
+  sourcePosition: any;
 
   constructor(public layer: UserLayerWithAnnotations, options: any) {
     super(layer, options);
@@ -1074,6 +1078,8 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     }
     if (mouseState.updateUnconditionally()) {
       if (this.inProgressAnnotation === undefined) {
+        this.sourceMouseState = <MouseSelectionState>{...mouseState};
+        this.sourcePosition = this.sourceMouseState.position.slice();
         const annotation = this.getInitialAnnotation(mouseState, annotationLayer);
         const reference = annotationLayer.source.add(annotation, /*commit=*/ false);
         this.layer.selectAnnotation(annotationLayer, reference.id, true);
@@ -1092,7 +1098,6 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
         this.childTool.trigger(mouseState);
       }
     }
-    console.log('Polygon drawing triggered');
   }
 
   dispose() {
@@ -1108,8 +1113,44 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   complete() {
-    console.log('Polygon drawing completed');
-    return true;
+    const {annotationLayer} = this;
+    const state = this.inProgressAnnotation;
+
+    if(annotationLayer === undefined || state === undefined) {
+      return false;
+    }
+
+    if(this.completeLastLine(<MouseSelectionState>{...this.sourceMouseState, position: this.sourcePosition})) {
+      annotationLayer.source.commit(this.inProgressAnnotation!.reference);
+      this.layer.selectAnnotation(annotationLayer, this.inProgressAnnotation!.reference.id, true);
+      this.inProgressAnnotation!.disposer();
+      this.inProgressAnnotation = undefined;
+      return true;
+    }
+
+    return false;
+  }
+  
+  private completeLastLine(mouseState: MouseSelectionState): boolean {
+    const {annotationLayer} = this;
+    const {childTool} = this;
+    const childState = childTool.inProgressAnnotation;
+    const state = this.inProgressAnnotation;
+
+    if(annotationLayer === undefined || childTool === undefined || childState === undefined || state === undefined) {
+      return false;
+    }
+
+    if (childState.reference !== undefined && childState.reference.value !== undefined) {
+      const newAnnotation = this.childTool.getUpdatedAnnotation(<Line>childState.reference.value, mouseState, annotationLayer);
+      annotationLayer.source.update(childState.reference, newAnnotation);
+      this.layer.selectAnnotation(annotationLayer, childState.reference.id, true);
+      annotationLayer.source.commit(childState.reference);
+      this.childTool.inProgressAnnotation!.disposer();
+      this.childTool.inProgressAnnotation = undefined;
+      return true;
+    }
+    return false;
   }
 
   get description() {
