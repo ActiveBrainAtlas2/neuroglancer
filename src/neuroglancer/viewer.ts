@@ -63,6 +63,7 @@ import {RPC} from 'neuroglancer/worker_rpc';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
+import { MultiStepAnnotationTool } from './ui/annotations';
 
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
@@ -696,6 +697,25 @@ export class Viewer extends RefCounted implements ViewerState {
         return;
       }
       userLayer.tool.value.trigger(this.mouseState);
+    });
+
+    this.bindAction('complete-annotation', () => {
+      const selectedLayer = this.selectedLayer.layer;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+      if(!(userLayer.tool.value instanceof MultiStepAnnotationTool)) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${JSON.stringify(selectedLayer.name)}) does not have annotation tool with complete step.`);
+        return;
+      }
+      (<MultiStepAnnotationTool>userLayer.tool.value).complete();
     });
 
     this.bindAction('toggle-axis-lines', () => this.showAxisLines.toggle());
