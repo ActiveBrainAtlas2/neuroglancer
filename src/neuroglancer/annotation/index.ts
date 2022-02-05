@@ -49,6 +49,7 @@ export enum AnnotationType {
   LINE,
   AXIS_ALIGNED_BOUNDING_BOX,
   ELLIPSOID,
+  POLYGON
 }
 
 export const annotationTypes = [
@@ -56,6 +57,7 @@ export const annotationTypes = [
   AnnotationType.LINE,
   AnnotationType.AXIS_ALIGNED_BOUNDING_BOX,
   AnnotationType.ELLIPSOID,
+  AnnotationType.POLYGON
 ];
 
 export interface AnnotationPropertySpecBase {
@@ -428,7 +430,15 @@ export interface Ellipsoid extends AnnotationBase {
   type: AnnotationType.ELLIPSOID;
 }
 
-export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid;
+export interface Collection extends AnnotationBase {
+  source: Float32Array;
+}
+
+export interface Polygon extends Collection {
+  type: AnnotationType.POLYGON;
+}
+
+export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid|Polygon;
 
 export interface AnnotationTypeHandler<T extends Annotation = Annotation> {
   icon: string;
@@ -613,6 +623,31 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
     visitGeometry(annotation: Ellipsoid, callback) {
       callback(annotation.center, false);
       callback(annotation.radii, true);
+    },
+  },
+  [AnnotationType.POLYGON]: {
+    icon: '△',
+    description: 'Polygon',
+    toJSON: (annotation: Polygon) => {
+      return {
+        source: Array.from(annotation.source)
+      }
+    },
+    restoreState: (annotation: Polygon, obj: any, rank: number) => {
+      annotation.source = verifyObjectProperty(
+          obj, 'source', x => parseFixedLengthArray(new Float32Array(rank), x, verifyFiniteFloat));
+    },
+    serializedBytes: rank => rank * 4,
+    serialize: (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, annotation: Polygon) => {
+      serializeFloatVector(buffer, offset, isLittleEndian, rank, annotation.source);
+    },
+    deserialize: (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, id: string): Polygon => {
+      const source = new Float32Array(rank);
+      deserializeFloatVector(buffer, offset, isLittleEndian, rank, source);
+      return {type: AnnotationType.POLYGON, source, id, properties: []};
+    },
+    visitGeometry(annotation: Polygon, callback) {
+      callback(annotation.source, false);
     },
   },
 };
@@ -886,6 +921,9 @@ export class LocalAnnotationSource extends AnnotationSource {
         case AnnotationType.POINT:
           annotation.point = mapVector(annotation.point);
           break;
+        case AnnotationType.POLYGON:
+          annotation.source = mapVector(annotation.source);
+          break;
         case AnnotationType.LINE:
         case AnnotationType.AXIS_ALIGNED_BOUNDING_BOX:
           annotation.pointA = mapVector(annotation.pointA);
@@ -973,7 +1011,7 @@ function serializeAnnotations(
 }
 
 export class AnnotationSerializer {
-  annotations: [Point[], Line[], AxisAlignedBoundingBox[], Ellipsoid[]] = [[], [], [], []];
+  annotations: [Point[], Line[], AxisAlignedBoundingBox[], Ellipsoid[], Polygon[]] = [[], [], [], [], []];
   constructor(public propertySerializer: AnnotationPropertySerializer) {}
   add(annotation: Annotation) {
     (<Annotation[]>this.annotations[annotation.type]).push(annotation);

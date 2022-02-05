@@ -20,7 +20,7 @@
 
 import './annotations.css';
 import {AppSettings} from 'neuroglancer/services/service';
-import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Ellipsoid, Line} from 'neuroglancer/annotation';
+import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Ellipsoid, Line, Polygon} from 'neuroglancer/annotation';
 import {AnnotationDisplayState, AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
 import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
 import {AnnotationLayer, PerspectiveViewAnnotationLayer, SliceViewAnnotationLayer} from 'neuroglancer/annotation/renderlayer';
@@ -166,6 +166,9 @@ export function getPositionSummary(
     case AnnotationType.POINT:
       element.appendChild(makePointLinkWithTransform(annotation.point));
       break;
+    case AnnotationType.POLYGON:
+      element.appendChild(makePointLinkWithTransform(annotation.source));
+      break;
     case AnnotationType.ELLIPSOID:
       element.appendChild(makePointLinkWithTransform(annotation.center));
       const rank = chunkTransform.layerRank;
@@ -189,6 +192,9 @@ function getCenterPosition(center: Float32Array, annotation: Annotation) {
       break;
     case AnnotationType.ELLIPSOID:
       center.set(annotation.center);
+      break;
+    case AnnotationType.POLYGON:
+      center.set(annotation.source);
       break;
   }
 }
@@ -400,6 +406,16 @@ export class AnnotationLayerView extends Tab {
       },
     });
     mutableControls.appendChild(ellipsoidButton);
+
+    const polygonButton = makeIcon({
+      text: annotationTypeHandlers[AnnotationType.POLYGON].icon,
+      title: 'Annotate polygon',
+      onClick: () => {
+        this.layer.tool.value = new PlacePolygonTool(this.layer, {});
+      }
+    });
+    mutableControls.appendChild(polygonButton);
+
     toolbox.appendChild(mutableControls);
     this.element.appendChild(toolbox);
 
@@ -877,6 +893,7 @@ const ANNOTATE_POINT_TOOL_ID = 'annotatePoint';
 const ANNOTATE_LINE_TOOL_ID = 'annotateLine';
 const ANNOTATE_BOUNDING_BOX_TOOL_ID = 'annotateBoundingBox';
 const ANNOTATE_ELLIPSOID_TOOL_ID = 'annotateSphere';
+const ANNOTATE_POLYGON_TOOL_ID = 'annotatePolygon';
 
 export class PlacePointTool extends PlaceAnnotationTool {
   trigger(mouseState: MouseSelectionState) {
@@ -994,6 +1011,116 @@ abstract class TwoStepAnnotationTool extends PlaceAnnotationTool {
   }
 }
 
+export abstract class MultiStepAnnotationTool extends PlaceAnnotationTool {
+  inProgressAnnotation: {
+    annotationLayer: AnnotationLayerState, 
+    reference: AnnotationReference, 
+    disposer: () => void
+  } | undefined;
+
+  
+  abstract getInitialAnnotation(mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState): Annotation;
+  abstract getUpdatedAnnotation(oldAnnotation: Annotation, mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState): Annotation;
+  abstract complete() : boolean;
+
+  disposed() {
+    this.deactivate();
+    super.disposed();
+  }
+
+  deactivate() {
+    if (this.inProgressAnnotation !== undefined) {
+      this.inProgressAnnotation.annotationLayer.source.delete(this.inProgressAnnotation.reference);
+      this.inProgressAnnotation.disposer();
+      this.inProgressAnnotation = undefined;
+    }
+  }
+}
+
+abstract class PlaceCollectionAnnotationTool extends MultiStepAnnotationTool {
+  annotationType: AnnotationType.POLYGON;
+
+  getInitialAnnotation(mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState): Annotation {
+    const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+    return <Polygon> {
+      id: '',
+      type: this.annotationType,
+      description: '',
+      source: point,
+      properties: annotationLayer.source.properties.map(x => x.default),
+    };
+  }
+
+  getUpdatedAnnotation(oldAnnotation: Annotation, mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState): Annotation {
+    const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+    if(point == undefined) return oldAnnotation;
+    return <Polygon>{...oldAnnotation, source: point};
+  }
+}
+
+export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
+  childTool: PlaceLineTool;
+
+  constructor(public layer: UserLayerWithAnnotations, options: any) {
+    super(layer, options);
+    this.childTool = new PlaceLineTool(layer, {...options, parent: this});
+  }
+
+  trigger(mouseState: MouseSelectionState) {
+    const {annotationLayer} = this;
+    if (annotationLayer === undefined) {
+      // Not yet ready.
+      return;
+    }
+    if (mouseState.updateUnconditionally()) {
+      if (this.inProgressAnnotation === undefined) {
+        const annotation = this.getInitialAnnotation(mouseState, annotationLayer);
+        const reference = annotationLayer.source.add(annotation, /*commit=*/ false);
+        this.layer.selectAnnotation(annotationLayer, reference.id, true);
+        this.childTool.trigger(mouseState);
+        const disposer = () => {
+          reference.dispose();
+        };
+        this.inProgressAnnotation = {
+          annotationLayer,
+          reference,
+          disposer,
+        };
+      } else {
+        this.childTool.trigger(mouseState);
+        //start new annotation
+        this.childTool.trigger(mouseState);
+      }
+    }
+    console.log('Polygon drawing triggered');
+  }
+
+  dispose() {
+    if (this.childTool) {
+      this.childTool.dispose();
+    }
+    if (this.inProgressAnnotation && this.annotationLayer) {
+      // completely delete the annotation
+      this.annotationLayer.source.delete(this.inProgressAnnotation.reference);
+      this.inProgressAnnotation.disposer();
+    }
+    super.dispose();
+  }
+
+  complete() {
+    console.log('Polygon drawing completed');
+    return true;
+  }
+
+  get description() {
+    return `annotate polygon`;
+  }
+
+  toJSON() {
+    return ANNOTATE_POLYGON_TOOL_ID;
+  }
+}
+PlacePolygonTool.prototype.annotationType = AnnotationType.POLYGON;
 
 abstract class PlaceTwoCornerAnnotationTool extends TwoStepAnnotationTool {
   annotationType: AnnotationType.LINE|AnnotationType.AXIS_ALIGNED_BOUNDING_BOX;
@@ -1123,6 +1250,9 @@ registerTool(
 registerTool(
     ANNOTATE_ELLIPSOID_TOOL_ID,
     (layer, options) => new PlaceEllipsoidTool(<UserLayerWithAnnotations>layer, options));
+registerTool(
+    ANNOTATE_POLYGON_TOOL_ID,
+    (layer, options) => new PlacePolygonTool(<UserLayerWithAnnotations>layer, options));
 
 const newRelatedSegmentKeyMap = EventActionMap.fromObject({
   'enter': {action: 'commit'},
