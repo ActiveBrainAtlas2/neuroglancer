@@ -19,12 +19,7 @@
  */
 
  import {AnnotationType, Polygon} from 'neuroglancer/annotation';
- import {AnnotationRenderContext, AnnotationRenderHelper, AnnotationShaderGetter, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
-import { defineCircleShader } from '../webgl/circles';
-import { defineLineShader } from '../webgl/lines';
-import { ShaderBuilder, ShaderProgram } from '../webgl/shader';
-import { defineVectorArrayVertexShaderInput } from '../webgl/shader_lib';
-import { defineVertexId, VertexIdHelper } from '../webgl/vertex_id';
+ import {AnnotationRenderContext, AnnotationRenderHelper, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
  
  class RenderHelper extends AnnotationRenderHelper {
 

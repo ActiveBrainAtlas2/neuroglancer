@@ -955,7 +955,7 @@ abstract class TwoStepAnnotationTool extends PlaceAnnotationTool {
       oldAnnotation: Annotation, mouseState: MouseSelectionState,
       annotationLayer: AnnotationLayerState): Annotation;
 
-  trigger(mouseState: MouseSelectionState) {
+  trigger(mouseState: MouseSelectionState, parentRef?: AnnotationReference) {
     const {annotationLayer} = this;
     if (annotationLayer === undefined) {
       // Not yet ready.
@@ -977,7 +977,7 @@ abstract class TwoStepAnnotationTool extends PlaceAnnotationTool {
 
       if (this.inProgressAnnotation === undefined) {
         const reference = annotationLayer.source.add(
-            this.getInitialAnnotation(mouseState, annotationLayer), /*commit=*/ false);
+            this.getInitialAnnotation(mouseState, annotationLayer), /*commit=*/ false, parentRef);
         this.layer.selectAnnotation(annotationLayer, reference.id, true);
         const mouseDisposer = mouseState.changed.add(updatePointB);
         const disposer = () => {
@@ -1024,6 +1024,7 @@ export abstract class MultiStepAnnotationTool extends PlaceAnnotationTool {
   abstract getInitialAnnotation(mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState): Annotation;
   abstract getUpdatedAnnotation(oldAnnotation: Annotation, mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState): Annotation;
   abstract complete() : boolean;
+  abstract undo(mouseState: MouseSelectionState) : boolean;
 
   disposed() {
     this.deactivate();
@@ -1050,6 +1051,7 @@ abstract class PlaceCollectionAnnotationTool extends MultiStepAnnotationTool {
       description: '',
       source: point,
       properties: annotationLayer.source.properties.map(x => x.default),
+      childAnnotationIds: [],
     };
   }
 
@@ -1083,7 +1085,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
         const annotation = this.getInitialAnnotation(mouseState, annotationLayer);
         const reference = annotationLayer.source.add(annotation, /*commit=*/ false);
         this.layer.selectAnnotation(annotationLayer, reference.id, true);
-        this.childTool.trigger(mouseState);
+        this.childTool.trigger(mouseState, reference);
         const disposer = () => {
           reference.dispose();
         };
@@ -1093,9 +1095,9 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
           disposer,
         };
       } else {
-        this.childTool.trigger(mouseState);
+        this.childTool.trigger(mouseState, this.inProgressAnnotation.reference);
         //start new annotation
-        this.childTool.trigger(mouseState);
+        this.childTool.trigger(mouseState, this.inProgressAnnotation.reference);
       }
     }
   }
@@ -1104,15 +1106,12 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     if (this.childTool) {
       this.childTool.dispose();
     }
-    if (this.inProgressAnnotation && this.annotationLayer) {
-      // completely delete the annotation
-      this.annotationLayer.source.delete(this.inProgressAnnotation.reference);
-      this.inProgressAnnotation.disposer();
-    }
+    // completely delete the annotation
+    this.disposeAnnotation();
     super.dispose();
   }
 
-  complete() {
+  complete(): boolean {
     const {annotationLayer} = this;
     const state = this.inProgressAnnotation;
 
@@ -1130,6 +1129,66 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
 
     return false;
   }
+
+  private disposeAnnotation() {
+    if (this.inProgressAnnotation && this.annotationLayer) {
+      this.annotationLayer.source.delete(this.inProgressAnnotation.reference);
+      this.inProgressAnnotation.disposer();
+      this.inProgressAnnotation = undefined;
+    }
+  }
+
+  undo(mouseState: MouseSelectionState): boolean {
+    const {annotationLayer} = this;
+    const state = this.inProgressAnnotation;
+    
+    if(annotationLayer === undefined || state === undefined) {
+      return false;
+    }
+
+    const annotation = <Polygon>state.reference.value;
+    if (annotation.childAnnotationIds.length > 0) {
+      const id = annotation.childAnnotationIds[annotation.childAnnotationIds.length-1];
+      const annotationRef = annotationLayer.source.getReference(id);
+      annotationLayer.source.delete(annotationRef);
+      annotationRef.dispose();
+      this.childTool.inProgressAnnotation!.disposer();
+      this.childTool.inProgressAnnotation = undefined;
+    }
+
+    if (annotation.childAnnotationIds.length > 0) {
+      const updatePointB = () => {
+        const state = this.childTool.inProgressAnnotation!;
+        const reference = state.reference;
+        const newAnnotation =
+            this.childTool.getUpdatedAnnotation(<Line>reference.value!, mouseState, annotationLayer);
+        if (JSON.stringify(annotationToJson(newAnnotation, annotationLayer.source)) ===
+            JSON.stringify(annotationToJson(reference.value!, annotationLayer.source))) {
+          return;
+        }
+        state.annotationLayer.source.update(reference, newAnnotation);
+        this.childTool.layer.selectAnnotation(annotationLayer, reference.id, true);
+      };
+
+      const id = annotation.childAnnotationIds[annotation.childAnnotationIds.length-1];
+      const reference = annotationLayer.source.getReference(id);
+      this.childTool.layer.selectAnnotation(annotationLayer, reference.id, true);
+      const mouseDisposer = mouseState.changed.add(updatePointB);
+      const disposer = () => {
+        mouseDisposer();
+        reference.dispose();
+      };
+      this.childTool.inProgressAnnotation = {
+        annotationLayer,
+        reference,
+        disposer,
+      };
+    } else {
+      this.disposeAnnotation();
+    }
+
+    return true;
+  }
   
   private completeLastLine(mouseState: MouseSelectionState): boolean {
     const {annotationLayer} = this;
@@ -1140,6 +1199,8 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     if(annotationLayer === undefined || childTool === undefined || childState === undefined || state === undefined) {
       return false;
     }
+    const annotation = <Polygon>state.reference.value;
+    if(annotation.childAnnotationIds.length < 2) return false; //min 3 sides in polygon
 
     if (childState.reference !== undefined && childState.reference.value !== undefined) {
       const newAnnotation = this.childTool.getUpdatedAnnotation(<Line>childState.reference.value, mouseState, annotationLayer);
