@@ -718,6 +718,25 @@ export class Viewer extends RefCounted implements ViewerState {
       (<MultiStepAnnotationTool>userLayer.tool.value).complete();
     });
 
+    this.bindAction('undo-annotation', () => {
+      const selectedLayer = this.selectedLayer.layer;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+      if(!(userLayer.tool.value instanceof MultiStepAnnotationTool)) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${JSON.stringify(selectedLayer.name)}) does not have annotation tool with complete step.`);
+        return;
+      }
+      (<MultiStepAnnotationTool>userLayer.tool.value).undo(this.mouseState);
+    });
+
     this.bindAction('toggle-axis-lines', () => this.showAxisLines.toggle());
     this.bindAction('toggle-scale-bar', () => this.showScaleBar.toggle());
     this.bindAction('toggle-default-annotations', () => this.showDefaultAnnotations.toggle());

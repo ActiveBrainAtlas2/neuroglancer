@@ -18,6 +18,7 @@
  * @file Basic annotation data structures.
  */
 
+import { child } from '@firebase/database';
 import {BoundingBox, CoordinateSpaceTransform, WatchableCoordinateSpaceTransform} from 'neuroglancer/coordinate_transform';
 import {arraysEqual} from 'neuroglancer/util/array';
 import {packColor, parseRGBAColorSpecification, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA} from 'neuroglancer/util/color';
@@ -405,6 +406,8 @@ export interface AnnotationBase {
 
   relatedSegments?: Uint64[][];
   properties: any[];
+
+  parentAnnotationId?: string;
 }
 
 export interface Line extends AnnotationBase {
@@ -432,6 +435,7 @@ export interface Ellipsoid extends AnnotationBase {
 
 export interface Collection extends AnnotationBase {
   source: Float32Array;
+  childAnnotationIds: string[];
 }
 
 export interface Polygon extends Collection {
@@ -644,7 +648,7 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
     deserialize: (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, id: string): Polygon => {
       const source = new Float32Array(rank);
       deserializeFloatVector(buffer, offset, isLittleEndian, rank, source);
-      return {type: AnnotationType.POLYGON, source, id, properties: []};
+      return {type: AnnotationType.POLYGON, source, id, properties: [], childAnnotationIds: []};
     },
     visitGeometry(annotation: Polygon, callback) {
       callback(annotation.source, false);
@@ -747,12 +751,18 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     this.annotationPropertySerializer = new AnnotationPropertySerializer(rank, properties);
   }
 
-  add(annotation: Annotation, commit: boolean = true): AnnotationReference {
+  add(annotation: Annotation, commit: boolean = true, parentRef?: AnnotationReference): AnnotationReference {
     this.ensureUpdated();
     if (!annotation.id) {
       annotation.id = makeAnnotationId();
     } else if (this.annotationMap.has(annotation.id)) {
       throw new Error(`Annotation id already exists: ${JSON.stringify(annotation.id)}.`);
+    }
+    if(parentRef) {
+      annotation.parentAnnotationId = parentRef.id;
+      const parAnnotation = <Collection>parentRef.value!;
+      parAnnotation.childAnnotationIds.push(annotation.id);
+      this.update(parentRef, <Annotation>parAnnotation);
     }
     this.annotationMap.set(annotation.id, annotation);
     this.changed.dispatch();
@@ -795,6 +805,24 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
   delete(reference: AnnotationReference) {
     if (reference.value === null) {
       return;
+    }
+    if (reference.value!.parentAnnotationId) {
+      const parentRef = this.getReference(reference.value!.parentAnnotationId);
+      if (parentRef.value && parentRef.value.type === AnnotationType.POLYGON) {
+        const parAnnotation = <Collection>parentRef.value;
+        const index = parAnnotation.childAnnotationIds.indexOf(reference.value!.id, 0);
+        if (index > -1) {
+          parAnnotation.childAnnotationIds.splice(index, 1);
+        }
+        this.update(parentRef, <Annotation>parAnnotation);
+      }
+    }
+    if(reference.value!.type == AnnotationType.POLYGON) {
+      const annotation = <Collection>reference.value;
+      const childAnnotationIds = Object.assign([], annotation.childAnnotationIds);
+      childAnnotationIds.forEach((childId) => {
+        this.delete(this.getReference(childId));
+      });
     }
     reference.value = null;
     this.annotationMap.delete(reference.id);
