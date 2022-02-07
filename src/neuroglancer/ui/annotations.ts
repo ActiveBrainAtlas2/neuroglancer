@@ -1200,7 +1200,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       return false;
     }
     const annotation = <Polygon>state.reference.value;
-    if(annotation.childAnnotationIds.length < 2) return false; //min 3 sides in polygon
+    if(annotation.childAnnotationIds.length < 3) return false; //min 3 sides in polygon
 
     if (childState.reference !== undefined && childState.reference.value !== undefined) {
       const newAnnotation = this.childTool.getUpdatedAnnotation(<Line>childState.reference.value, mouseState, annotationLayer);
