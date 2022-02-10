@@ -34,7 +34,7 @@ import {RenderLayerRole} from 'neuroglancer/renderlayer';
 import {bindSegmentListWidth, registerCallbackWhenSegmentationDisplayStateChanged, SegmentationDisplayState, SegmentWidgetFactory} from 'neuroglancer/segmentation_display_state/frontend';
 import {ElementVisibilityFromTrackableBoolean} from 'neuroglancer/trackable_boolean';
 import {AggregateWatchableValue, makeCachedLazyDerivedWatchableValue, registerNested, WatchableValueInterface} from 'neuroglancer/trackable_value';
-import {getDefaultAnnotationListBindings} from 'neuroglancer/ui/default_input_event_bindings';
+import {getDefaultAnnotationListBindings, setPolygonDrawModeInputEventBindings} from 'neuroglancer/ui/default_input_event_bindings';
 import {registerTool, Tool} from 'neuroglancer/ui/tool';
 import {animationFrameDebounce} from 'neuroglancer/util/animation_frame_debounce';
 import {arraysEqual, ArraySpliceOp, gatherUpdate} from 'neuroglancer/util/array';
@@ -413,7 +413,17 @@ export class AnnotationLayerView extends Tab {
       text: annotationTypeHandlers[AnnotationType.POLYGON].icon,
       title: 'Annotate polygon',
       onClick: () => {
-        this.layer.tool.value = new PlacePolygonTool(this.layer, {});
+        if(this.layer.tool.value instanceof PlacePolygonTool) {
+          this.layer.tool.value = undefined;
+        }
+        else {
+          this.layer.tool.value = new PlacePolygonTool(this.layer, {});
+          setPolygonDrawModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
+        }
+      },
+      onRightClick: () => {
+        this.layer.tool.value = undefined;
+        console.log('Triggered right click');
       }
     });
     mutableControls.appendChild(polygonButton);

@@ -16,6 +16,7 @@
 
 import {EventActionMap} from 'neuroglancer/util/event_action_map';
 import {InputEventBindings} from 'neuroglancer/viewer';
+import { RefCounted } from '../util/disposable';
 
 let defaultGlobalBindings: EventActionMap|undefined;
 
@@ -100,8 +101,6 @@ export function getDefaultRenderedDataPanelBindings() {
           'at:shift+wheel': {action: 'z+10-via-wheel', preventDefault: true},
           'at:dblclick0': 'select',
           'at:control+mousedown0': 'annotate',
-          'at:control+keyz': 'undo-annotation',
-          'at:control+backquote': 'complete-annotation',
           'at:mousedown2': 'move-to-mouse-position',
           'at:alt+mousedown0': 'move-annotation',
           'at:control+alt+mousedown2': 'delete-annotation',
@@ -148,10 +147,30 @@ export function getDefaultSliceViewPanelBindings() {
   return defaultSliceViewPanelBindings;
 }
 
+let polygonDrawModeBindings: EventActionMap|undefined;
+export function getPolygonDrawModeBindings() {
+  if (polygonDrawModeBindings === undefined) {
+    polygonDrawModeBindings = EventActionMap.fromObject(
+      {
+        'at:mousedown0': 'annotate',
+        'at:mousedown2': 'complete-annotation',
+        'at:keyz': 'undo-annotation',
+      }
+    );
+  }
+  return polygonDrawModeBindings;
+}
+
 export function setDefaultInputEventBindings(inputEventBindings: InputEventBindings) {
   inputEventBindings.global.addParent(getDefaultGlobalBindings(), Number.NEGATIVE_INFINITY);
   inputEventBindings.sliceView.addParent(
       getDefaultSliceViewPanelBindings(), Number.NEGATIVE_INFINITY);
   inputEventBindings.perspectiveView.addParent(
       getDefaultPerspectivePanelBindings(), Number.NEGATIVE_INFINITY);
+}
+
+export function setPolygonDrawModeInputEventBindings<T extends RefCounted> (annotationTool: T, 
+  inputEventBindings: InputEventBindings) {
+  annotationTool.registerDisposer(inputEventBindings.sliceView.addParent(getPolygonDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
+  annotationTool.registerDisposer(inputEventBindings.perspectiveView.addParent(getPolygonDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
 }

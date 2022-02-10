@@ -22,10 +22,11 @@ export interface MakeIconOptions {
   title?: string;
   onClick?: (this: HTMLElement, event: MouseEvent) => void;
   href?: string;
+  onRightClick?: (this: HTMLElement, event: MouseEvent) => void;
 }
 
 export function makeIcon(options: MakeIconOptions): HTMLElement {
-  const {title, onClick, href} = options;
+  const {title, onClick, href, onRightClick} = options;
   let element: HTMLDivElement|HTMLAnchorElement;
   if (href !== undefined) {
     element = document.createElement('a');
@@ -40,6 +41,9 @@ export function makeIcon(options: MakeIconOptions): HTMLElement {
   }
   if (onClick !== undefined) {
     element.addEventListener('click', onClick);
+  }
+  if (onRightClick !== undefined) {
+    element.addEventListener('contextmenu', onRightClick);
   }
   const {svg} = options;
   element.className = 'neuroglancer-icon';
