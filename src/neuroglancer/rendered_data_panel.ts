@@ -17,7 +17,7 @@
 import 'neuroglancer/rendered_data_panel.css';
 import 'neuroglancer/noselect.css';
 
-import {Annotation} from 'neuroglancer/annotation';
+import {Annotation, AnnotationReference, AnnotationType, Line, Polygon} from 'neuroglancer/annotation';
 import {getAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
 import {DisplayContext, RenderedPanel} from 'neuroglancer/display_context';
 import {NavigationState} from 'neuroglancer/navigation_state';
@@ -34,6 +34,8 @@ import {startRelativeMouseDrag} from 'neuroglancer/util/mouse_drag';
 import {TouchEventBinder, TouchPinchInfo, TouchTranslateInfo} from 'neuroglancer/util/touch_bindings';
 import {getWheelZoomAmount} from 'neuroglancer/util/wheel_zoom';
 import {ViewerState} from 'neuroglancer/viewer_state';
+import { getPointPartIndex, isCornerPicked } from './annotation/line';
+import { arraysEqual } from './util/array';
 
 const tempVec3 = vec3.create();
 
@@ -519,45 +521,113 @@ export abstract class RenderedDataPanel extends RenderedPanel {
           e.stopPropagation();
           let annotationRef = annotationLayer.source.getReference(selectedAnnotationId)!;
           let ann = <Annotation>annotationRef.value;
+          if (ann.parentAnnotationId === undefined) {
+            const handler = getAnnotationTypeRenderHandler(ann.type);
+            const pickedOffset = mouseState.pickedOffset;
+            const {chunkTransform: {value: chunkTransform}} = annotationLayer;
+            if (chunkTransform.error !== undefined) return;
+            const {layerRank} = chunkTransform;
+            const repPoint = new Float32Array(layerRank);
+            handler.getRepresentativePoint(repPoint, ann, mouseState.pickedOffset);
+            let totDeltaVec = vec2.set(vec2.create(), 0, 0);
+            if (mouseState.updateUnconditionally()) {
+              startRelativeMouseDrag(
+                  e.detail,
+                  (_event, deltaX, deltaY) => {
+                    vec2.add(totDeltaVec, totDeltaVec, [deltaX, deltaY]);
+                    const layerPoint = new Float32Array(layerRank);
+                    matrix.transformPoint(
+                        layerPoint, chunkTransform.chunkToLayerTransform, layerRank + 1, repPoint,
+                        layerRank);
+                    const renderPt = tempVec3;
+                    const {displayDimensionIndices} =
+                        this.navigationState.pose.displayDimensions.value;
+                    layerToDisplayCoordinates(
+                        renderPt, layerPoint, chunkTransform.modelTransform, displayDimensionIndices);
+                    this.translateDataPointByViewportPixels(
+                        renderPt, renderPt, totDeltaVec[0], totDeltaVec[1]);
+                    displayToLayerCoordinates(
+                        layerPoint, renderPt, chunkTransform.modelTransform, displayDimensionIndices);
+                    const newPoint = new Float32Array(layerRank);
+                    matrix.transformPoint(
+                        newPoint, chunkTransform.layerToChunkTransform, layerRank + 1, layerPoint,
+                        layerRank);
+                    let newAnnotation =
+                        handler.updateViaRepresentativePoint(ann, newPoint, pickedOffset);
+                    annotationLayer.source.update(annotationRef, newAnnotation);
+                  },
+                  (_event) => {
+                    annotationLayer.source.commit(annotationRef);
+                    annotationRef.dispose();
+                  });
+            }
+          }
+          else {
+            let parAnnotationRef = annotationLayer.source.getReference(ann.parentAnnotationId)!;
+            let parAnn = <Annotation>parAnnotationRef.value;
+            
+            if (parAnn.type === AnnotationType.POLYGON && isCornerPicked(mouseState.pickedOffset)) {
+              const handler = getAnnotationTypeRenderHandler(ann.type);
+              const {chunkTransform: {value: chunkTransform}} = annotationLayer;
+              if (chunkTransform.error !== undefined) return;
+              const {layerRank} = chunkTransform;
+              const repPoint = new Float32Array(layerRank);
+              handler.getRepresentativePoint(repPoint, ann, mouseState.pickedOffset);
+              let pickedOffset = mouseState.pickedOffset;
+              
+              let childAnnotationIds = (<Polygon>parAnn).childAnnotationIds;
+              let pickedAnnotations: {partIndex: number, annotationRef: AnnotationReference}[] = [];
 
-          const handler = getAnnotationTypeRenderHandler(ann.type);
-          const pickedOffset = mouseState.pickedOffset;
-          const {chunkTransform: {value: chunkTransform}} = annotationLayer;
-          if (chunkTransform.error !== undefined) return;
-          const {layerRank} = chunkTransform;
-          const repPoint = new Float32Array(layerRank);
-          handler.getRepresentativePoint(repPoint, ann, mouseState.pickedOffset);
-          let totDeltaVec = vec2.set(vec2.create(), 0, 0);
-          if (mouseState.updateUnconditionally()) {
-            startRelativeMouseDrag(
-                e.detail,
-                (_event, deltaX, deltaY) => {
-                  vec2.add(totDeltaVec, totDeltaVec, [deltaX, deltaY]);
-                  const layerPoint = new Float32Array(layerRank);
-                  matrix.transformPoint(
-                      layerPoint, chunkTransform.chunkToLayerTransform, layerRank + 1, repPoint,
-                      layerRank);
-                  const renderPt = tempVec3;
-                  const {displayDimensionIndices} =
-                      this.navigationState.pose.displayDimensions.value;
-                  layerToDisplayCoordinates(
-                      renderPt, layerPoint, chunkTransform.modelTransform, displayDimensionIndices);
-                  this.translateDataPointByViewportPixels(
-                      renderPt, renderPt, totDeltaVec[0], totDeltaVec[1]);
-                  displayToLayerCoordinates(
-                      layerPoint, renderPt, chunkTransform.modelTransform, displayDimensionIndices);
-                  const newPoint = new Float32Array(layerRank);
-                  matrix.transformPoint(
-                      newPoint, chunkTransform.layerToChunkTransform, layerRank + 1, layerPoint,
-                      layerRank);
-                  let newAnnotation =
-                      handler.updateViaRepresentativePoint(ann, newPoint, pickedOffset);
-                  annotationLayer.source.update(annotationRef, newAnnotation);
-                },
-                (_event) => {
-                  annotationLayer.source.commit(annotationRef);
-                  annotationRef.dispose();
-                });
+              childAnnotationIds.forEach((childAnnotationId) => {
+                let childAnnotationRef = annotationLayer.source.getReference(childAnnotationId);
+                let childAnn = <Line>childAnnotationRef.value;
+                if (arraysEqual(childAnn.pointA, repPoint) || arraysEqual(childAnn.pointB, repPoint)) {
+                  pickedAnnotations.push(
+                    {
+                      partIndex: getPointPartIndex(<Line>childAnn, repPoint),
+                      annotationRef: childAnnotationRef
+                    }
+                  );
+                }
+              });
+
+              let totDeltaVec = vec2.set(vec2.create(), 0, 0);
+              if (mouseState.updateUnconditionally()) {
+                startRelativeMouseDrag(
+                    e.detail,
+                    (_event, deltaX, deltaY) => {
+                      vec2.add(totDeltaVec, totDeltaVec, [deltaX, deltaY]);
+                      const layerPoint = new Float32Array(layerRank);
+                      matrix.transformPoint(
+                          layerPoint, chunkTransform.chunkToLayerTransform, layerRank + 1, repPoint,
+                          layerRank);
+                      const renderPt = tempVec3;
+                      const {displayDimensionIndices} =
+                          this.navigationState.pose.displayDimensions.value;
+                      layerToDisplayCoordinates(
+                          renderPt, layerPoint, chunkTransform.modelTransform, displayDimensionIndices);
+                      this.translateDataPointByViewportPixels(
+                          renderPt, renderPt, totDeltaVec[0], totDeltaVec[1]);
+                      displayToLayerCoordinates(
+                          layerPoint, renderPt, chunkTransform.modelTransform, displayDimensionIndices);
+                      const newPoint = new Float32Array(layerRank);
+                      matrix.transformPoint(
+                          newPoint, chunkTransform.layerToChunkTransform, layerRank + 1, layerPoint,
+                          layerRank);
+                      pickedAnnotations.forEach((pickedAnnotation) => {
+                        let newAnnotation = handler.updateViaRepresentativePoint(pickedAnnotation.annotationRef.value!, 
+                          newPoint, pickedAnnotation.partIndex);
+                        annotationLayer.source.update(pickedAnnotation.annotationRef, newAnnotation);
+                      });
+                    },
+                    (_event) => {
+                      pickedAnnotations.forEach((pickedAnnotation) => {
+                        annotationLayer.source.commit(pickedAnnotation.annotationRef);
+                        pickedAnnotation.annotationRef.dispose();
+                      });
+                    });
+              }
+            }
           }
         }
       }

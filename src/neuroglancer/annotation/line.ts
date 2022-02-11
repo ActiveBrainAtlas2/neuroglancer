@@ -26,6 +26,7 @@ import {defineLineShader, drawLines, initializeLineShader} from 'neuroglancer/we
 import {ShaderBuilder, ShaderProgram} from 'neuroglancer/webgl/shader';
 import {defineVectorArrayVertexShaderInput} from 'neuroglancer/webgl/shader_lib';
 import {defineVertexId, VertexIdHelper} from 'neuroglancer/webgl/vertex_id';
+import { arraysEqual } from '../util/array';
 
 const FULL_OBJECT_PICK_OFFSET = 0;
 const ENDPOINTS_PICK_OFFSET = FULL_OBJECT_PICK_OFFSET + 1;
@@ -135,7 +136,7 @@ for (int i = 0; i < ${rank}; ++i) {
 vClipCoefficient = getSubspaceClipCoefficient(modelPosition);
 vColor = vec4(0.0, 0.0, 0.0, 0.0);
 vBorderColor = vec4(0.0, 0.0, 0.0, 1.0);
-ng_markerDiameter = 5.0;
+ng_markerDiameter = 8.0;
 ng_markerBorderWidth = 1.0;
 ${this.invokeUserMain}
 emitCircle(uModelViewProjection * vec4(projectModelVectorToSubspace(modelPosition), 1.0), ng_markerDiameter, ng_markerBorderWidth);
@@ -247,3 +248,13 @@ registerAnnotationTypeRenderHandler<Line>(AnnotationType.LINE, {
     return baseLine;
   }
 });
+
+export function isCornerPicked(partIndex: number) : boolean {
+  return partIndex === FULL_OBJECT_PICK_OFFSET + 1 || partIndex === FULL_OBJECT_PICK_OFFSET + 2
+}
+
+export function getPointPartIndex(annotation: Line, point: Float32Array) : number {
+  if (arraysEqual(annotation.pointA, point)) return FULL_OBJECT_PICK_OFFSET + 1;
+  if (arraysEqual(annotation.pointB, point)) return FULL_OBJECT_PICK_OFFSET + 2;
+  return -1;
+}
