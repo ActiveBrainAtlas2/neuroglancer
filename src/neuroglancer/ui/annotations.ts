@@ -34,7 +34,7 @@ import {RenderLayerRole} from 'neuroglancer/renderlayer';
 import {bindSegmentListWidth, registerCallbackWhenSegmentationDisplayStateChanged, SegmentationDisplayState, SegmentWidgetFactory} from 'neuroglancer/segmentation_display_state/frontend';
 import {ElementVisibilityFromTrackableBoolean} from 'neuroglancer/trackable_boolean';
 import {AggregateWatchableValue, makeCachedLazyDerivedWatchableValue, registerNested, WatchableValueInterface} from 'neuroglancer/trackable_value';
-import {getDefaultAnnotationListBindings, setPolygonDrawModeInputEventBindings} from 'neuroglancer/ui/default_input_event_bindings';
+import {getDefaultAnnotationListBindings, setPolygonDrawModeInputEventBindings, setPolygonEditModeInputEventBindings} from 'neuroglancer/ui/default_input_event_bindings';
 import {registerTool, Tool} from 'neuroglancer/ui/tool';
 import {animationFrameDebounce} from 'neuroglancer/util/animation_frame_debounce';
 import {arraysEqual, ArraySpliceOp, gatherUpdate} from 'neuroglancer/util/array';
@@ -413,17 +413,37 @@ export class AnnotationLayerView extends Tab {
       text: annotationTypeHandlers[AnnotationType.POLYGON].icon,
       title: 'Annotate polygon',
       onClick: () => {
-        if(this.layer.tool.value instanceof PlacePolygonTool) {
-          this.layer.tool.value = undefined;
+        const isInstance = this.layer.tool.value instanceof PlacePolygonTool;
+        if (!isInstance) {
+          this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.DRAW);
+          setPolygonDrawModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
         }
         else {
-          this.layer.tool.value = new PlacePolygonTool(this.layer, {});
-          setPolygonDrawModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
+          const polygonTool = <PlacePolygonTool>this.layer.tool.value;
+          if (polygonTool.mode === PolygonToolMode.EDIT) {
+            this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.DRAW);
+            setPolygonDrawModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
+          }
+          else {
+            this.layer.tool.value = undefined;
+          }
         }
       },
       onRightClick: () => {
-        this.layer.tool.value = undefined;
-        console.log('Triggered right click');
+        const isInstance = this.layer.tool.value instanceof PlacePolygonTool;
+        if (!isInstance) {
+          this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.EDIT);
+          setPolygonEditModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
+        } else {
+          const polygonTool = <PlacePolygonTool>this.layer.tool.value;
+          if (polygonTool.mode === PolygonToolMode.DRAW) {
+            this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.EDIT);
+            setPolygonEditModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
+          }
+          else {
+            this.layer.tool.value = undefined;
+          }
+        }
       }
     });
     mutableControls.appendChild(polygonButton);
@@ -1072,19 +1092,27 @@ abstract class PlaceCollectionAnnotationTool extends MultiStepAnnotationTool {
   }
 }
 
+
+export enum PolygonToolMode {
+  DRAW,
+  EDIT
+}
+
 export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   childTool: PlaceLineTool;
   sourceMouseState: MouseSelectionState;
   sourcePosition: any;
+  mode: PolygonToolMode;
 
-  constructor(public layer: UserLayerWithAnnotations, options: any) {
+  constructor(public layer: UserLayerWithAnnotations, options: any, mode: PolygonToolMode) {
     super(layer, options);
+    this.mode = mode;
     this.childTool = new PlaceLineTool(layer, {...options, parent: this});
   }
 
   trigger(mouseState: MouseSelectionState) {
-    const {annotationLayer} = this;
-    if (annotationLayer === undefined) {
+    const {annotationLayer, mode} = this;
+    if (annotationLayer === undefined || mode === PolygonToolMode.EDIT) {
       // Not yet ready.
       return;
     }
@@ -1122,10 +1150,10 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   complete(): boolean {
-    const {annotationLayer} = this;
+    const {annotationLayer, mode} = this;
     const state = this.inProgressAnnotation;
 
-    if(annotationLayer === undefined || state === undefined) {
+    if(annotationLayer === undefined || state === undefined || mode === PolygonToolMode.EDIT) {
       return false;
     }
 
@@ -1149,10 +1177,10 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   undo(mouseState: MouseSelectionState): boolean {
-    const {annotationLayer} = this;
+    const {annotationLayer, mode} = this;
     const state = this.inProgressAnnotation;
     
-    if(annotationLayer === undefined || state === undefined) {
+    if(annotationLayer === undefined || state === undefined || mode === PolygonToolMode.EDIT) {
       return false;
     }
 
@@ -1201,12 +1229,13 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
   
   private completeLastLine(mouseState: MouseSelectionState): boolean {
-    const {annotationLayer} = this;
+    const {annotationLayer, mode} = this;
     const {childTool} = this;
     const childState = childTool.inProgressAnnotation;
     const state = this.inProgressAnnotation;
 
-    if(annotationLayer === undefined || childTool === undefined || childState === undefined || state === undefined) {
+    if(annotationLayer === undefined || childTool === undefined || childState === undefined || state === undefined || mode == PolygonToolMode
+      .EDIT) {
       return false;
     }
     const annotation = <Polygon>state.reference.value;
@@ -1225,7 +1254,11 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   get description() {
-    return `annotate polygon`;
+    const {mode} = this;
+    if (mode == PolygonToolMode.DRAW) {
+      return `annotate polygon (draw mode)`;
+    }
+    return `annotate polygon (edit mode)`;
   }
 
   toJSON() {

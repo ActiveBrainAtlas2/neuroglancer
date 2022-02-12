@@ -161,6 +161,19 @@ export function getPolygonDrawModeBindings() {
   return polygonDrawModeBindings;
 }
 
+
+let polygonEditModeBindings: EventActionMap|undefined;
+export function getPolygonEditModeBindings() {
+  if (polygonEditModeBindings === undefined) {
+    polygonEditModeBindings = EventActionMap.fromObject(
+      {
+        'at:mousedown0': 'move-annotation',
+      }
+    );
+  }
+  return polygonEditModeBindings;
+}
+
 export function setDefaultInputEventBindings(inputEventBindings: InputEventBindings) {
   inputEventBindings.global.addParent(getDefaultGlobalBindings(), Number.NEGATIVE_INFINITY);
   inputEventBindings.sliceView.addParent(
@@ -173,4 +186,10 @@ export function setPolygonDrawModeInputEventBindings<T extends RefCounted> (anno
   inputEventBindings: InputEventBindings) {
   annotationTool.registerDisposer(inputEventBindings.sliceView.addParent(getPolygonDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
   annotationTool.registerDisposer(inputEventBindings.perspectiveView.addParent(getPolygonDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
+}
+
+export function setPolygonEditModeInputEventBindings<T extends RefCounted> (annotationTool: T,
+  inputEventBindings: InputEventBindings) {
+  annotationTool.registerDisposer(inputEventBindings.sliceView.addParent(getPolygonEditModeBindings(), Number.NEGATIVE_INFINITY+1));
+  annotationTool.registerDisposer(inputEventBindings.perspectiveView.addParent(getPolygonEditModeBindings(), Number.NEGATIVE_INFINITY+1));
 }

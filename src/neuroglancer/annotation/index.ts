@@ -667,6 +667,7 @@ export function annotationToJson(annotation: Annotation, schema: AnnotationSchem
   result.type = AnnotationType[annotation.type].toLowerCase();
   result.id = annotation.id;
   result.description = annotation.description || undefined;
+  result.parentAnnotationId = annotation.parentAnnotationId || undefined;
   const {relatedSegments} = annotation;
   if (relatedSegments !== undefined && relatedSegments.some(x => x.length !== 0)) {
     result.segments = relatedSegments.map(segments => segments.map(x => x.toString()));

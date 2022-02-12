@@ -573,7 +573,6 @@ export abstract class RenderedDataPanel extends RenderedPanel {
               const {layerRank} = chunkTransform;
               const repPoint = new Float32Array(layerRank);
               handler.getRepresentativePoint(repPoint, ann, mouseState.pickedOffset);
-              let pickedOffset = mouseState.pickedOffset;
               
               let childAnnotationIds = (<Polygon>parAnn).childAnnotationIds;
               let pickedAnnotations: {partIndex: number, annotationRef: AnnotationReference}[] = [];
