@@ -136,8 +136,8 @@ for (int i = 0; i < ${rank}; ++i) {
 vClipCoefficient = getSubspaceClipCoefficient(modelPosition);
 vColor = vec4(0.0, 0.0, 0.0, 0.0);
 vBorderColor = vec4(0.0, 0.0, 0.0, 1.0);
-ng_markerDiameter = 8.0;
-ng_markerBorderWidth = 1.0;
+ng_markerDiameter = 7.0;
+ng_markerBorderWidth = 3.0;
 ${this.invokeUserMain}
 emitCircle(uModelViewProjection * vec4(projectModelVectorToSubspace(modelPosition), 1.0), ng_markerDiameter, ng_markerBorderWidth);
 ${this.setPartIndex(builder, 'uint(getEndpointIndex()) + 1u')};
@@ -257,4 +257,14 @@ export function getPointPartIndex(annotation: Line, point: Float32Array) : numbe
   if (arraysEqual(annotation.pointA, point)) return FULL_OBJECT_PICK_OFFSET + 1;
   if (arraysEqual(annotation.pointB, point)) return FULL_OBJECT_PICK_OFFSET + 2;
   return -1;
+}
+
+export function getEndPointBasedOnPartIndex(annotation: Line, partIndex: number) : Float32Array|undefined {
+  if (partIndex === FULL_OBJECT_PICK_OFFSET + 1) {
+    return annotation.pointA;
+  }
+  else if (partIndex === FULL_OBJECT_PICK_OFFSET + 2) {
+    return annotation.pointB;
+  }
+  return undefined;
 }

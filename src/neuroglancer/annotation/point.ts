@@ -196,5 +196,3 @@ void setPointMarkerBorderColor(vec4 color) {}
     return {...oldAnnotation, point: new Float32Array(position)};
   }
 });
-
-console.log('File ran point!!!');
