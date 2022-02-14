@@ -63,7 +63,7 @@ import {RPC} from 'neuroglancer/worker_rpc';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
-import { MultiStepAnnotationTool } from './ui/annotations';
+import { MultiStepAnnotationTool, PlacePointTool, PlacePolygonTool } from './ui/annotations';
 
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
@@ -697,6 +697,48 @@ export class Viewer extends RefCounted implements ViewerState {
         return;
       }
       userLayer.tool.value.trigger(this.mouseState);
+    });
+
+    this.bindAction('add-vertex-polygon', () => {
+      const selectedLayer = this.selectedLayer.layer;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+
+      if (!(userLayer.tool.value instanceof PlacePolygonTool)) {
+        StatusMessage.showTemporaryMessage(`Please select polygon tool in edit mode to perform this operation`);
+        return;
+      }
+
+      (<PlacePolygonTool>userLayer.tool.value).addVertexPolygon(this.mouseState);
+    });
+
+    this.bindAction('delete-vertex-polygon', () => {
+      const selectedLayer = this.selectedLayer.layer;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+
+      if (!(userLayer.tool.value instanceof PlacePolygonTool)) {
+        StatusMessage.showTemporaryMessage(`Please select polygon tool in edit mode to perform this operation`);
+        return;
+      }
+
+      (<PlacePolygonTool>userLayer.tool.value).deleteVertexPolygon(this.mouseState);
     });
 
     this.bindAction('complete-annotation', () => {

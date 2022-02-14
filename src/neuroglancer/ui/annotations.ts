@@ -65,6 +65,7 @@ import {FetchAnnotationWidget} from 'neuroglancer/widget/fetch_annotation';
 import {fetchOk} from 'neuroglancer/util/http_request';
 import { stateAPI } from '../services/state_loader';
 import { StatusMessage } from '../status';
+import { getEndPointBasedOnPartIndex, isCornerPicked } from '../annotation/line';
 
 interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -1253,9 +1254,119 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     return false;
   }
 
+  addVertexPolygon(mouseState: MouseSelectionState) {
+    const {mode} = this;
+    if (mode === PolygonToolMode.DRAW) return;
+    const selectedAnnotationId = mouseState.pickedAnnotationId;
+    const annotationLayer = mouseState.pickedAnnotationLayer;
+    const pickedOffset = mouseState.pickedOffset;
+
+    if (annotationLayer === undefined || selectedAnnotationId === undefined || isCornerPicked(pickedOffset)) {
+      return;
+    }
+
+    const annotationRef = annotationLayer.source.getReference(selectedAnnotationId);
+    if (annotationRef.value!.parentAnnotationId === undefined) {
+      return;
+    }
+    const parentAnnotationId = annotationRef.value!.parentAnnotationId;
+    const parentAnnotationRef = annotationLayer.source.getReference(parentAnnotationId);
+    const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+    if (parentAnnotationRef.value!.type !== AnnotationType.POLYGON || annotationRef.value!.type !== AnnotationType.LINE
+      || point === undefined) {
+      return;
+    }
+    const newAnn1 = <Line>{
+      id: '',
+      type: AnnotationType.LINE,
+      description: '',
+      pointA: (<Line>annotationRef.value).pointA,
+      pointB: point,
+      properties: annotationLayer.source.properties.map(x => x.default),
+    };
+    const newAnn2 = <Line>{
+      id: '',
+      type: AnnotationType.LINE,
+      description: '',
+      pointA: point,
+      pointB: (<Line>annotationRef.value).pointB,
+      properties: annotationLayer.source.properties.map(x => x.default),
+    };
+    const newAnnRef1 = annotationLayer.source.add(newAnn1, false, parentAnnotationRef);
+    const newAnnRef2 = annotationLayer.source.add(newAnn2, false, parentAnnotationRef);
+    annotationLayer.source.delete(annotationRef);
+    annotationLayer.source.commit(newAnnRef1);
+    annotationLayer.source.commit(newAnnRef2);
+    annotationRef.dispose();
+    newAnnRef1.dispose();
+    newAnnRef2.dispose();
+  }
+
+  deleteVertexPolygon(mouseState: MouseSelectionState) {
+    const {mode} = this;
+    if (mode === PolygonToolMode.DRAW) return;
+    const selectedAnnotationId = mouseState.pickedAnnotationId;
+    const annotationLayer = mouseState.pickedAnnotationLayer;
+    const pickedOffset = mouseState.pickedOffset;
+    if (annotationLayer === undefined || selectedAnnotationId === undefined || !isCornerPicked(pickedOffset)) {
+      return;
+    }
+    const annotationRef = annotationLayer.source.getReference(selectedAnnotationId);
+    if (annotationRef.value!.parentAnnotationId === undefined) {
+      return;
+    }
+    const parentAnnotationId = annotationRef.value!.parentAnnotationId;
+    const parentAnnotationRef = annotationLayer.source.getReference(parentAnnotationId);
+    const point = getEndPointBasedOnPartIndex(<Line>annotationRef.value, pickedOffset);
+    if (parentAnnotationRef.value!.type !== AnnotationType.POLYGON || annotationRef.value!.type !== AnnotationType.LINE
+      || point === undefined) {
+      return;
+    }
+
+    let annotationRef1 : AnnotationReference|undefined = undefined;
+    let annotationRef2 : AnnotationReference|undefined = undefined;
+    const childAnnotationIds = (<Polygon>(parentAnnotationRef.value!)).childAnnotationIds;
+    if (childAnnotationIds.length <= 3) { // minimum 3 sides should be there
+      return;
+    }
+
+    childAnnotationIds.forEach((annotationId) => {
+      const annRef = annotationLayer.source.getReference(annotationId);
+      const ann = <Line>annRef.value;
+      if (arraysEqual(ann.pointA, point)) {
+        annotationRef2 = <AnnotationReference>annRef;
+      } else if (arraysEqual(ann.pointB, point)) {
+        annotationRef1 = <AnnotationReference>annRef;
+      } else {
+        annRef.dispose();
+      }
+    });
+
+    if(annotationRef1 === undefined || annotationRef2 === undefined) return;
+
+    annotationRef1 = <AnnotationReference>annotationRef1;
+    annotationRef2 = <AnnotationReference>annotationRef2;
+
+    const newAnn = <Line>{
+      id: '',
+      type: AnnotationType.LINE,
+      description: '',
+      pointA: (<Line>annotationRef1.value).pointA,
+      pointB: (<Line>annotationRef2.value).pointB,
+      properties: annotationLayer.source.properties.map(x => x.default),
+    };
+    const newAnnRef = annotationLayer.source.add(newAnn, false, parentAnnotationRef);
+    annotationLayer.source.delete(annotationRef1);
+    annotationLayer.source.delete(annotationRef2);
+    annotationLayer.source.commit(newAnnRef);
+    annotationRef1.dispose();
+    annotationRef2.dispose();
+    newAnnRef.dispose();
+  }
+
   get description() {
     const {mode} = this;
-    if (mode == PolygonToolMode.DRAW) {
+    if (mode === PolygonToolMode.DRAW) {
       return `annotate polygon (draw mode)`;
     }
     return `annotate polygon (edit mode)`;
