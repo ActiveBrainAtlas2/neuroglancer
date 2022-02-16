@@ -32,8 +32,8 @@ window.addEventListener('load', () => {
     const dummyEle = document.getElementsByClassName('neuroglancer-multiline-autocomplete-input')[0];
     dummyEle.innerHTML = "precomputed://https://activebrainatlas.ucsd.edu/data/DK39/neuroglancer_data/C1";
     dummyEle.dispatchEvent(new KeyboardEvent('keydown', {code:'Enter', key: 'Enter', keyCode: 13} ));
-    await sleep(100);
+    await sleep(1000);
     dummyEle.dispatchEvent(new KeyboardEvent('keydown', {code:'Enter', key: 'Enter', keyCode: 13} ));
-    }, 100);
+    }, 2000);
   }
 );
