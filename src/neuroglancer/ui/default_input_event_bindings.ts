@@ -170,6 +170,7 @@ export function getPolygonEditModeBindings() {
         'at:mousedown0': 'move-annotation',
         'at:control+mousedown0': 'add-vertex-polygon',
         'at:control+mousedown2': 'delete-vertex-polygon',
+        'at:shift+mousedown0': 'move-polygon-annotation',
       }
     );
   }
