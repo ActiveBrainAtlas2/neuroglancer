@@ -34,7 +34,7 @@ import {startRelativeMouseDrag} from 'neuroglancer/util/mouse_drag';
 import {TouchEventBinder, TouchPinchInfo, TouchTranslateInfo} from 'neuroglancer/util/touch_bindings';
 import {getWheelZoomAmount} from 'neuroglancer/util/wheel_zoom';
 import {ViewerState} from 'neuroglancer/viewer_state';
-import { getPointPartIndex, isCornerPicked } from './annotation/line';
+import { FULL_OBJECT_PICK_OFFSET, getPointPartIndex, isCornerPicked } from './annotation/line';
 import { arraysEqual } from './util/array';
 
 const tempVec3 = vec3.create();
@@ -511,6 +511,68 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     });
 
     registerActionListener(element, 'snap', () => this.navigationState.pose.snap());
+
+    registerActionListener(element, 'move-polygon-annotation', (e: ActionEvent<MouseEvent>) => {
+      const {mouseState} = this.viewer;
+      const selectedAnnotationId = mouseState.pickedAnnotationId;
+      const annotationLayer = mouseState.pickedAnnotationLayer;
+
+      if(selectedAnnotationId === undefined || annotationLayer === undefined) return;
+      e.stopPropagation();
+      let selectedAnnotationRef = annotationLayer.source.getReference(selectedAnnotationId)!;
+      let selectedAnn = <Annotation>selectedAnnotationRef.value;
+      if(selectedAnn.parentAnnotationId === undefined) return;
+      let parAnnotationRef = annotationLayer.source.getReference(selectedAnn.parentAnnotationId)!;
+      let parAnn = <Annotation>parAnnotationRef.value;
+      if(parAnn.type !== AnnotationType.POLYGON) return;
+      const {chunkTransform: {value: chunkTransform}} = annotationLayer;
+      if (chunkTransform.error !== undefined) return;
+      const {layerRank} = chunkTransform;
+
+      const {childAnnotationIds} = parAnn;
+      childAnnotationIds.forEach((childAnnotationId) => {
+        const pickedOffset = FULL_OBJECT_PICK_OFFSET;
+        const annotationRef = annotationLayer.source.getReference(childAnnotationId)!;
+        const ann = <Annotation>annotationRef.value;
+        const handler = getAnnotationTypeRenderHandler(ann.type);
+        const repPoint = new Float32Array(layerRank);
+
+        handler.getRepresentativePoint(repPoint, ann, pickedOffset);
+        let totDeltaVec = vec2.set(vec2.create(), 0, 0);
+        if (mouseState.updateUnconditionally()) {
+          startRelativeMouseDrag(
+              e.detail,
+              (_event, deltaX, deltaY) => {
+                vec2.add(totDeltaVec, totDeltaVec, [deltaX, deltaY]);
+                const layerPoint = new Float32Array(layerRank);
+                matrix.transformPoint(
+                    layerPoint, chunkTransform.chunkToLayerTransform, layerRank + 1, repPoint,
+                    layerRank);
+                const renderPt = tempVec3;
+                const {displayDimensionIndices} =
+                    this.navigationState.pose.displayDimensions.value;
+                layerToDisplayCoordinates(
+                    renderPt, layerPoint, chunkTransform.modelTransform, displayDimensionIndices);
+                this.translateDataPointByViewportPixels(
+                    renderPt, renderPt, totDeltaVec[0], totDeltaVec[1]);
+                displayToLayerCoordinates(
+                    layerPoint, renderPt, chunkTransform.modelTransform, displayDimensionIndices);
+                const newPoint = new Float32Array(layerRank);
+                matrix.transformPoint(
+                    newPoint, chunkTransform.layerToChunkTransform, layerRank + 1, layerPoint,
+                    layerRank);
+                let newAnnotation =
+                    handler.updateViaRepresentativePoint(ann, newPoint, pickedOffset);
+                annotationLayer.source.update(annotationRef, newAnnotation);
+              },
+              (_event) => {
+                annotationLayer.source.commit(annotationRef);
+                annotationRef.dispose();
+              });
+        }
+      });
+      
+    });
 
     registerActionListener(element, 'move-annotation', (e: ActionEvent<MouseEvent>) => {
       const {mouseState} = this.viewer;

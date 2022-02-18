@@ -28,7 +28,7 @@ import {defineVectorArrayVertexShaderInput} from 'neuroglancer/webgl/shader_lib'
 import {defineVertexId, VertexIdHelper} from 'neuroglancer/webgl/vertex_id';
 import { arraysEqual } from '../util/array';
 
-const FULL_OBJECT_PICK_OFFSET = 0;
+export const FULL_OBJECT_PICK_OFFSET = 0;
 const ENDPOINTS_PICK_OFFSET = FULL_OBJECT_PICK_OFFSET + 1;
 const PICK_IDS_PER_INSTANCE = ENDPOINTS_PICK_OFFSET + 2;
 
