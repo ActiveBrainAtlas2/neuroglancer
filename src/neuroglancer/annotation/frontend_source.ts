@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { values } from 'lodash';
 import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationPropertySpec, AnnotationReference, AnnotationSourceSignals, AnnotationType, annotationTypeHandlers, annotationTypes, fixAnnotationAfterStructuredCloning, makeAnnotationId, SerializedAnnotations} from 'neuroglancer/annotation';
 import {ANNOTATION_COMMIT_UPDATE_RESULT_RPC_ID, ANNOTATION_COMMIT_UPDATE_RPC_ID, ANNOTATION_GEOMETRY_CHUNK_SOURCE_RPC_ID, ANNOTATION_METADATA_CHUNK_SOURCE_RPC_ID, ANNOTATION_REFERENCE_ADD_RPC_ID, ANNOTATION_REFERENCE_DELETE_RPC_ID, ANNOTATION_SUBSET_GEOMETRY_CHUNK_SOURCE_RPC_ID, AnnotationGeometryChunkSpecification} from 'neuroglancer/annotation/base';
 import {getAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
@@ -522,6 +523,15 @@ export class MultiscaleAnnotationSource extends SharedObject implements
       existing.value = chunk.annotation;
     }
     return existing;
+  }
+
+  getTopMostParentReference(id: AnnotationId): Owned<AnnotationReference> {
+    const reference = this.getReference(id);
+    if (reference!.value!.parentAnnotationId) {
+      reference.dispose();
+      return this.getTopMostParentReference(reference!.value!.parentAnnotationId);
+    }
+    return reference;
   }
 
   private forEachPossibleChunk(
