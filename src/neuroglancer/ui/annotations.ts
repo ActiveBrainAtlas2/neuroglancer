@@ -66,6 +66,10 @@ import {fetchOk} from 'neuroglancer/util/http_request';
 import { stateAPI } from '../services/state_loader';
 import { StatusMessage } from '../status';
 import { getEndPointBasedOnPartIndex, isCornerPicked } from '../annotation/line';
+import {ActionEvent, dispatchEvent, EventActionMapInterface} from 'neuroglancer/util/event_action_map';
+import {getPolygonEditModeBindings} from 'neuroglancer/ui/default_input_event_bindings';
+import { Viewer } from '../viewer';
+import { cloneAnnotationSequence } from '../annotation/polygon';
 
 interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -1105,7 +1109,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   sourcePosition: any;
   mode: PolygonToolMode;
 
-  constructor(public layer: UserLayerWithAnnotations, options: any, mode: PolygonToolMode) {
+  constructor(public layer: UserLayerWithAnnotations, options: any, mode: PolygonToolMode = PolygonToolMode.DRAW) {
     super(layer, options);
     this.mode = mode;
     this.childTool = new PlaceLineTool(layer, {...options, parent: this});
@@ -2046,6 +2050,38 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                           dropdownElement.appendChild(landmarkDropdown);
                           })
                         parent.appendChild(dropdownElement)
+                        const cloneAnnDivElement :HTMLElement = document.createElement('div');
+                        const cloneAnnTitleDivElement :HTMLElement = document.createElement('div');
+                        const offsetStartDivElement :HTMLElement = document.createElement('div');
+                        const offsetEndDivElement :HTMLElement = document.createElement('div');
+                        const offsetStartInputElement :HTMLInputElement = document.createElement('input');
+                        const offsetEndInputElement :HTMLInputElement = document.createElement('input');
+                        const cloneAnnButtonElement :HTMLElement = document.createElement('button');
+                        offsetStartInputElement.setAttribute('type', 'number');
+                        offsetEndInputElement.setAttribute('type', 'number');
+                        cloneAnnButtonElement.setAttribute('type', 'button');
+                        cloneAnnTitleDivElement.append("Clone annotation");
+                        offsetStartDivElement.append("Offset start:");
+                        offsetStartDivElement.append(offsetStartInputElement);
+                        offsetEndDivElement.append("Offset end:");
+                        offsetEndDivElement.append(offsetEndInputElement);
+                        cloneAnnButtonElement.textContent = "Clone";
+                        cloneAnnButtonElement.addEventListener('click', (ev: MouseEvent) => {
+                          const startOffset = parseInt(offsetStartInputElement.value);
+                          const endOffset = parseInt(offsetEndInputElement.value);
+                          if (isNaN(startOffset) || isNaN(endOffset) || startOffset > endOffset) {
+                            return;
+                          }
+                          const viewer = <Viewer>window['viewer'];
+                          const reference = annotationLayer.source.getTopMostParentReference(state.annotationId!);
+                          if(reference.value!.type !== AnnotationType.POLYGON) return; // only handling polygon cloning for now
+                          cloneAnnotationSequence(viewer, annotationLayer, reference, startOffset, endOffset);
+                        });
+                        cloneAnnDivElement.append(cloneAnnTitleDivElement);
+                        cloneAnnDivElement.append(offsetStartDivElement);
+                        cloneAnnDivElement.append(offsetEndDivElement);
+                        cloneAnnDivElement.append(cloneAnnButtonElement);
+                        parent.appendChild(cloneAnnDivElement);
                       }
                     }}
                   ))

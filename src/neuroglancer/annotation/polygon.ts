@@ -18,8 +18,12 @@
  * @file Support for rendering polygon annotations.
  */
 
- import {AnnotationType, Polygon} from 'neuroglancer/annotation';
+ import { vec3 } from 'gl-matrix';
+import {AnnotationReference, AnnotationType, Line, Polygon} from 'neuroglancer/annotation';
  import {AnnotationRenderContext, AnnotationRenderHelper, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
+import { DisplayPose, NavigationState } from '../navigation_state';
+ import { Viewer } from '../viewer';
+ import { AnnotationLayerState } from './annotation_layer_state';
  
  class RenderHelper extends AnnotationRenderHelper {
 
@@ -45,3 +49,100 @@
      return {...oldAnnotation, source: new Float32Array(position)};
    }
  });
+
+export function cloneAnnotationSequence(viewer: Viewer, annotationLayer: AnnotationLayerState, 
+  reference: AnnotationReference, startOffset: number, endOffset: number): void {
+  if(startOffset > endOffset || reference.value?.type !== AnnotationType.POLYGON) return;
+  for (let depth = startOffset; depth <= endOffset; depth++) {
+    cloneAnnotation(viewer, annotationLayer, reference, depth);
+  }
+}
+
+function cloneAnnotation(viewer: Viewer, annotationLayer: AnnotationLayerState, 
+  reference: AnnotationReference, depth: number): boolean {
+  const childAnnotationRefs : AnnotationReference[] = [];
+  const ann = <Polygon>reference.value;
+  ann.childAnnotationIds.forEach((childAnnotationId) => {
+    childAnnotationRefs.push(annotationLayer.source.getReference(childAnnotationId));
+  });
+  const {pose} = viewer.navigationState;
+  const translation = vec3.create();
+  translation[0] = 0;
+  translation[1] = 1;
+  translation[2] = depth;
+
+  const cloneSource = getTransformedPoint(pose, ann.source, translation);
+  if (cloneSource === undefined) return false;
+
+  const cloneAnnRef = annotationLayer.source.add(<Polygon>{
+    id: '',
+    type: AnnotationType.POLYGON,
+    description: '',
+    source: cloneSource,
+    properties: annotationLayer.source.properties.map(x => x.default),
+    childAnnotationIds: [],
+  }, false);
+
+  const disposeAnnotation = () : boolean => {
+    annotationLayer.source.delete(cloneAnnRef);
+    cloneAnnRef.dispose();
+    return false;
+  };
+
+  const success = () : boolean => {
+    annotationLayer.source.commit(cloneAnnRef);
+    cloneAnnRef.dispose();
+    return true;
+  };
+
+  childAnnotationRefs.forEach((childAnnotationRef) => {
+    const pointAnn = <Line>childAnnotationRef.value;
+    const pointA = getTransformedPoint(pose, pointAnn.pointA, translation);
+    const pointB = getTransformedPoint(pose, pointAnn.pointB, translation);
+    if (pointA === undefined || pointB === undefined) {
+      return disposeAnnotation();
+    }
+
+    const cloneLineRef = annotationLayer.source.add(<Line>{
+      id: '',
+      type: AnnotationType.LINE,
+      description: '',
+      pointA: pointA,
+      pointB: pointB,
+      properties: annotationLayer.source.properties.map(x => x.default),
+    }, true, cloneAnnRef);
+    cloneLineRef.dispose();
+  });
+
+  return success();
+}
+
+function getTransformedPoint(pose: DisplayPose, source: Float32Array, translation: vec3, round: boolean = false): Float32Array | undefined {
+  if (!pose.valid) {
+    return undefined;
+  }
+  const temp = vec3.transformQuat(vec3.create(), translation, pose.orientation.orientation);
+  const {position} = pose;
+  const {displayDimensionIndices, displayRank} = pose.displayDimensions.value;
+  const {bounds: {lowerBounds, upperBounds}} = position.coordinateSpace.value;
+  const transformedPoint = new Float32Array(displayRank);
+  for (let i = 0; i < displayRank; ++i) {
+    const dim = displayDimensionIndices[i];
+    const adjustment = temp[i];
+    let newValue = source[dim] + adjustment;
+    if (adjustment > 0) {
+      const bound = upperBounds[dim];
+      if (Number.isFinite(bound)) {
+        newValue = Math.min(newValue, Math.ceil(bound - 1));
+      }
+    } else {
+      const bound = lowerBounds[dim];
+      if (Number.isFinite(bound)) {
+        newValue = Math.max(newValue, Math.floor(bound));
+      }
+    }
+    if (round) newValue = Math.floor(newValue) + 0.5;
+    transformedPoint[dim] = newValue;
+  }
+  return transformedPoint;
+}

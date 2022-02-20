@@ -22,7 +22,7 @@ import { child } from '@firebase/database';
 import {BoundingBox, CoordinateSpaceTransform, WatchableCoordinateSpaceTransform} from 'neuroglancer/coordinate_transform';
 import {arraysEqual} from 'neuroglancer/util/array';
 import {packColor, parseRGBAColorSpecification, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA} from 'neuroglancer/util/color';
-import {Borrowed, RefCounted} from 'neuroglancer/util/disposable';
+import {Borrowed, Owned, RefCounted} from 'neuroglancer/util/disposable';
 import {Endianness, ENDIANNESS} from 'neuroglancer/util/endian';
 import {expectArray, parseArray, parseFixedLengthArray, verifyEnumString, verifyFiniteFloat, verifyFiniteNonNegativeFloat, verifyFloat, verifyInt, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyOptionalString, verifyString} from 'neuroglancer/util/json';
 import {getRandomHexString} from 'neuroglancer/util/random';
@@ -778,6 +778,12 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     this.ensureUpdated();
     const id = reference.id;
     this.pending.delete(id);
+    if(reference.value!.type == AnnotationType.POLYGON) {
+      const ann = <Polygon>reference.value!;
+      ann.childAnnotationIds.forEach((childAnnotationId) => {
+        this.pending.delete(childAnnotationId);
+      });
+    }
     this.changed.dispatch();
   }
 
@@ -845,6 +851,15 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
       this.references.delete(id);
     });
     return existing;
+  }
+
+  getTopMostParentReference(id: AnnotationId): AnnotationReference {
+    const reference = this.getReference(id);
+    if (reference!.value!.parentAnnotationId) {
+      reference.dispose();
+      return this.getTopMostParentReference(reference!.value!.parentAnnotationId);
+    }
+    return reference;
   }
 
   references = new Map<AnnotationId, Borrowed<AnnotationReference>>();
