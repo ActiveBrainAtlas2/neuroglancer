@@ -19,9 +19,9 @@
  */
 
  import { vec3 } from 'gl-matrix';
-import {AnnotationReference, AnnotationType, Line, Polygon} from 'neuroglancer/annotation';
- import {AnnotationRenderContext, AnnotationRenderHelper, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
-import { DisplayPose, NavigationState } from '../navigation_state';
+ import {AnnotationReference, AnnotationType, Line, Polygon} from 'neuroglancer/annotation';
+ import {AnnotationRenderContext, AnnotationRenderHelper, getAnnotationTypeRenderHandler, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
+ import { DisplayPose, NavigationState } from '../navigation_state';
  import { Viewer } from '../viewer';
  import { AnnotationLayerState } from './annotation_layer_state';
  
@@ -68,7 +68,7 @@ function cloneAnnotation(viewer: Viewer, annotationLayer: AnnotationLayerState,
   const {pose} = viewer.navigationState;
   const translation = vec3.create();
   translation[0] = 0;
-  translation[1] = 1;
+  translation[1] = 0;
   translation[2] = depth;
 
   const cloneSource = getTransformedPoint(pose, ann.source, translation);
@@ -121,7 +121,9 @@ function getTransformedPoint(pose: DisplayPose, source: Float32Array, translatio
   if (!pose.valid) {
     return undefined;
   }
-  const temp = vec3.transformQuat(vec3.create(), translation, pose.orientation.orientation);
+  const orientation = pose.orientation.orientation;
+  const temp = vec3.transformQuat(vec3.create(), translation, orientation);
+  console.log('final vector: ', temp, 'translation mentioned: ', translation, 'Orientation: ', orientation);
   const {position} = pose;
   const {displayDimensionIndices, displayRank} = pose.displayDimensions.value;
   const {bounds: {lowerBounds, upperBounds}} = position.coordinateSpace.value;
