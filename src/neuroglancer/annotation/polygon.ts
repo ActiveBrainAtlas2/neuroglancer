@@ -50,22 +50,24 @@
    }
  });
 
-export function cloneAnnotationSequence(viewer: Viewer, annotationLayer: AnnotationLayerState, 
-  reference: AnnotationReference, startOffset: number, endOffset: number): void {
-  if(startOffset > endOffset || reference.value?.type !== AnnotationType.POLYGON) return;
-  for (let depth = startOffset; depth <= endOffset; depth++) {
-    cloneAnnotation(viewer, annotationLayer, reference, depth);
+export function cloneAnnotationSequence(navigationState: NavigationState, annotationLayer: AnnotationLayerState, 
+  annotationId: string, startOffset: number, polygonCnt: number, stepSize: number): void {
+  const reference = annotationLayer.source.getTopMostParentReference(annotationId);
+  if(reference.value?.type !== AnnotationType.POLYGON) return;
+  for (let depth = startOffset, cnt = 0; cnt < polygonCnt; depth += stepSize, cnt++) {
+    cloneAnnotation(navigationState, annotationLayer, reference, depth);
   }
+  reference.dispose();
 }
 
-function cloneAnnotation(viewer: Viewer, annotationLayer: AnnotationLayerState, 
+function cloneAnnotation(navigationState: NavigationState, annotationLayer: AnnotationLayerState, 
   reference: AnnotationReference, depth: number): boolean {
   const childAnnotationRefs : AnnotationReference[] = [];
   const ann = <Polygon>reference.value;
   ann.childAnnotationIds.forEach((childAnnotationId) => {
     childAnnotationRefs.push(annotationLayer.source.getReference(childAnnotationId));
   });
-  const {pose} = viewer.navigationState;
+  const {pose} = navigationState;
   const translation = vec3.create();
   translation[0] = 0;
   translation[1] = 0;
@@ -123,7 +125,6 @@ function getTransformedPoint(pose: DisplayPose, source: Float32Array, translatio
   }
   const orientation = pose.orientation.orientation;
   const temp = vec3.transformQuat(vec3.create(), translation, orientation);
-  console.log('final vector: ', temp, 'translation mentioned: ', translation, 'Orientation: ', orientation);
   const {position} = pose;
   const {displayDimensionIndices, displayRank} = pose.displayDimensions.value;
   const {bounds: {lowerBounds, upperBounds}} = position.coordinateSpace.value;

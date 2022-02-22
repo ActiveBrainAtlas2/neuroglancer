@@ -1047,6 +1047,9 @@ export class TrackableDataSelectionState extends RefCounted implements
     if (canRetain && newValue === undefined) return;
     this.value = newValue;
   }
+  getCapturedState(): PersistentViewerSelectionState|undefined {
+    return capturePersistentViewerSelectionState(this.layerSelectedValues);
+  }
   restoreState(obj: unknown) {
     if (obj === undefined) {
       this.pin.value = true;
