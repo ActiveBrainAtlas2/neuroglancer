@@ -1,0 +1,10 @@
+.neuroglancer-clone-polygon-input {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.neuroglancer-clone-polygon {
+  border-radius: 3px;
+  padding: 20px;
+  font-size: 15px;
+}

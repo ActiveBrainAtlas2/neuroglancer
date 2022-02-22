@@ -155,6 +155,7 @@ export function getPolygonDrawModeBindings() {
         'at:mousedown0': 'annotate',
         'at:mousedown2': 'complete-annotation',
         'at:keyz': 'undo-annotation',
+        'at:control+mousedown2': 'clone-polygon-annotation',
       }
     );
   }

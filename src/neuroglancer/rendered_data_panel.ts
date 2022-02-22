@@ -36,6 +36,9 @@ import {getWheelZoomAmount} from 'neuroglancer/util/wheel_zoom';
 import {ViewerState} from 'neuroglancer/viewer_state';
 import { FULL_OBJECT_PICK_OFFSET, getPointPartIndex, isCornerPicked } from './annotation/line';
 import { arraysEqual } from './util/array';
+import { PersistentViewerSelectionState } from './layer';
+import { UserLayerWithAnnotations } from './ui/annotations';
+import { ClonePolygonDialog } from './ui/clone_polygon';
 
 const tempVec3 = vec3.create();
 
@@ -413,6 +416,30 @@ export abstract class RenderedDataPanel extends RenderedPanel {
 
     registerActionListener(element, 'select-position', () => {
       this.viewer.selectionDetailsState.select();
+    });
+
+    registerActionListener(element, 'clone-polygon-annotation', () => {
+      const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.getCapturedState();
+      if (selectionState === undefined) return;
+      let selectedAnnotationId = undefined;
+      let selectedAnnotationLayer = undefined;
+
+      for (let layer of selectionState.layers) {
+        if (layer.state.annotationId === undefined) continue;
+        const userLayerWithAnnotations = <UserLayerWithAnnotations>layer.layer;
+        const annotationLayer = userLayerWithAnnotations.annotationStates.states.find(
+          x => x.sourceIndex === layer.state.annotationSourceIndex &&
+              (layer.state.annotationSubsource === undefined ||
+               x.subsourceId === layer.state.annotationSubsource));
+        if (annotationLayer === undefined) continue;
+
+        selectedAnnotationId = layer.state.annotationId;
+        selectedAnnotationLayer = annotationLayer;
+        break;
+      }
+      if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
+
+      new ClonePolygonDialog(this.navigationState, selectedAnnotationId, selectedAnnotationLayer);
     });
 
     registerActionListener(element, 'snap', () => {

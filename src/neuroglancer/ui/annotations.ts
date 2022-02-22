@@ -2050,38 +2050,6 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                           dropdownElement.appendChild(landmarkDropdown);
                           })
                         parent.appendChild(dropdownElement)
-                        const cloneAnnDivElement :HTMLElement = document.createElement('div');
-                        const cloneAnnTitleDivElement :HTMLElement = document.createElement('div');
-                        const offsetStartDivElement :HTMLElement = document.createElement('div');
-                        const offsetEndDivElement :HTMLElement = document.createElement('div');
-                        const offsetStartInputElement :HTMLInputElement = document.createElement('input');
-                        const offsetEndInputElement :HTMLInputElement = document.createElement('input');
-                        const cloneAnnButtonElement :HTMLElement = document.createElement('button');
-                        offsetStartInputElement.setAttribute('type', 'number');
-                        offsetEndInputElement.setAttribute('type', 'number');
-                        cloneAnnButtonElement.setAttribute('type', 'button');
-                        cloneAnnTitleDivElement.append("Clone annotation");
-                        offsetStartDivElement.append("Offset start:");
-                        offsetStartDivElement.append(offsetStartInputElement);
-                        offsetEndDivElement.append("Offset end:");
-                        offsetEndDivElement.append(offsetEndInputElement);
-                        cloneAnnButtonElement.textContent = "Clone";
-                        cloneAnnButtonElement.addEventListener('click', (ev: MouseEvent) => {
-                          const startOffset = parseInt(offsetStartInputElement.value);
-                          const endOffset = parseInt(offsetEndInputElement.value);
-                          if (isNaN(startOffset) || isNaN(endOffset) || startOffset > endOffset) {
-                            return;
-                          }
-                          const viewer = <Viewer>window['viewer'];
-                          const reference = annotationLayer.source.getTopMostParentReference(state.annotationId!);
-                          if(reference.value!.type !== AnnotationType.POLYGON) return; // only handling polygon cloning for now
-                          cloneAnnotationSequence(viewer, annotationLayer, reference, startOffset, endOffset);
-                        });
-                        cloneAnnDivElement.append(cloneAnnTitleDivElement);
-                        cloneAnnDivElement.append(offsetStartDivElement);
-                        cloneAnnDivElement.append(offsetEndDivElement);
-                        cloneAnnDivElement.append(cloneAnnButtonElement);
-                        parent.appendChild(cloneAnnDivElement);
                       }
                     }}
                   ))
