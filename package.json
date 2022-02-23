@@ -13,10 +13,10 @@
   },
   "scripts": {
     "generate-code": "node ./config/generate_code.js",
-    "build-min": "node ./config/esbuild-cli.js --config=min",
-    "build": "node ./config/esbuild-cli.js --config=min",
+    "build-min": "./set_service.sh production && node ./config/esbuild-cli.js --config=min",
+    "build": "./set_service.sh production && node ./config/esbuild-cli.js --config=min",
     "build:watch": "node ./config/esbuild-cli.js --config=dev --serve --watch",
-    "dev-server": "node ./config/esbuild-cli.js --config=dev --serve --watch",
+    "dev-server": "./set_service.sh development && node ./config/esbuild-cli.js --config=dev --serve --watch",
     "dev-server-python": "node ./config/esbuild-cli.js --config=python-dev --serve --watch",
     "build-module": "node ./config/esbuild-cli.js --config=module",
     "build-python": "node ./config/esbuild-cli.js --config=python-min",
