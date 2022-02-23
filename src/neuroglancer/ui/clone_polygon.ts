@@ -58,6 +58,7 @@ export class ClonePolygonDialog extends Overlay {
         return;
       }
       cloneAnnotationSequence(this.navigationState, this.annotationLayer, this.annotationId, startOffset, polygonCnt, stepSize);
+      this.dispose();
     });
 
     const offsetStartDiv = document.createElement('div');
