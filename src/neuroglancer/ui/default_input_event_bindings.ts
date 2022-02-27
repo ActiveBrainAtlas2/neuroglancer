@@ -177,6 +177,8 @@ export function getPolygonEditModeBindings() {
         'control+equal': 'scale-polygon-enlarge',
         'control+shift+equal': 'scale-polygon-enlarge',
         'control+minus': 'scale-polygon-shrink',
+        'at:touchrotate': 'rotate-polygon-via-touchrotate',
+        'at:touchpinch': 'zoom-polygon-via-touchpinch',
       }
     );
   }
