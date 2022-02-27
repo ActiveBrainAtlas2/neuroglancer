@@ -212,6 +212,42 @@ function getTransformedPoint(pose: DisplayPose, source: Float32Array, normalVec:
   return transformedPoint;
 }
 
+export function scalePolygon(navigationState: NavigationState, annotationLayer: AnnotationLayerState,
+  reference: AnnotationReference, scale: number) {
+  const childAnnotationRefs : AnnotationReference[] = [];
+  const ann = <Polygon>reference.value;
+  const {pose} = navigationState;
+
+  ann.childAnnotationIds.forEach((childAnnotationId) => {
+    childAnnotationRefs.push(annotationLayer.source.getReference(childAnnotationId));
+  });
+  const centroid = getCentroidPolygon(childAnnotationRefs);
+
+  childAnnotationRefs.forEach((childAnnotationRef) => {
+    const line = <Line>childAnnotationRef.value;
+    const vecA = new Float32Array(centroid.length);
+    const vecB = new Float32Array(centroid.length);
+    for (let i = 0; i < centroid.length; i++) {
+      vecA[i] = scale*(line.pointA[i] - centroid[i]);
+      vecB[i] = scale*(line.pointB[i] - centroid[i]);
+    }
+    const newPointA = new Float32Array(centroid.length);
+    const newPointB = new Float32Array(centroid.length);
+    for (let i = 0; i < centroid.length; i++) {
+      newPointA[i] = vecA[i] + centroid[i];
+      newPointB[i] = vecB[i] + centroid[i];
+    }
+    const newLine = <Line>{...line, pointA: newPointA, pointB: newPointB};
+    annotationLayer.source.update(childAnnotationRef, newLine);
+  });
+  const vec = new Float32Array(centroid.length);
+  for (let i = 0; i < centroid.length; i++) vec[i] = scale*(ann.source[i] - centroid[i]);
+  const newSource = new Float32Array(centroid.length);
+  for (let i = 0; i < centroid.length; i++) newSource[i] = vec[i] + centroid[i];
+  const newAnn = <Polygon>{...ann, source: newSource};
+  annotationLayer.source.update(reference, newAnn);
+}
+
 export function rotatePolygon(navigationState: NavigationState, annotationLayer: AnnotationLayerState, reference: AnnotationReference, angle: number) {
   if(reference.value?.type !== AnnotationType.POLYGON) return;
   const childAnnotationRefs : AnnotationReference[] = [];
@@ -226,8 +262,6 @@ export function rotatePolygon(navigationState: NavigationState, annotationLayer:
   quat.setAxisAngle(rotateQuat, normalVector, angle);
   const centroid = getCentroidPolygon(childAnnotationRefs);
 
-  console.log(rotateQuat, centroid, normalVector);
-
   childAnnotationRefs.forEach((childAnnotationRef) => {
     const line = <Line>childAnnotationRef.value;
     const vecA = new Float32Array(centroid.length);
@@ -238,7 +272,6 @@ export function rotatePolygon(navigationState: NavigationState, annotationLayer:
     }
     const newVecA = getTransformedPointOnRotation(rotateQuat, vecA);
     const newVecB = getTransformedPointOnRotation(rotateQuat, vecB);
-    console.log('New vec: ', newVecA, 'Old vec: ', vecA);
     const newPointA = new Float32Array(centroid.length);
     const newPointB = new Float32Array(centroid.length);
     for (let i = 0; i < centroid.length; i++) {

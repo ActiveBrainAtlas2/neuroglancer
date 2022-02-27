@@ -174,6 +174,9 @@ export function getPolygonEditModeBindings() {
         'at:shift+mousedown0': 'move-polygon-annotation',
         'at:keyr': 'rotate-polygon-z+',
         'at:keye': 'rotate-polygon-z-',
+        'control+equal': 'scale-polygon-enlarge',
+        'control+shift+equal': 'scale-polygon-enlarge',
+        'control+minus': 'scale-polygon-shrink',
       }
     );
   }
