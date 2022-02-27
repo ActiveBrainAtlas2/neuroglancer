@@ -39,6 +39,7 @@ import { arraysEqual } from './util/array';
 import { PersistentViewerSelectionState } from './layer';
 import { UserLayerWithAnnotations } from './ui/annotations';
 import { ClonePolygonDialog } from './ui/clone_polygon';
+import { rotatePolygon } from './annotation/polygon';
 
 const tempVec3 = vec3.create();
 
@@ -419,7 +420,8 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     });
 
     registerActionListener(element, 'clone-polygon-annotation', () => {
-      const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.getCapturedState();
+      const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.value;
+      if (!this.viewer.selectionDetailsState.pin.value) return;
       if (selectionState === undefined) return;
       let selectedAnnotationId = undefined;
       let selectedAnnotationLayer = undefined;
@@ -441,6 +443,38 @@ export abstract class RenderedDataPanel extends RenderedPanel {
 
       new ClonePolygonDialog(this.navigationState, selectedAnnotationId, selectedAnnotationLayer);
     });
+
+    for (const sign of [-1, +1]) {
+      let signStr = (sign < 0) ? '-' : '+';
+      registerActionListener(element, `rotate-polygon-z${signStr}`, () => {
+        const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.value;
+        if (!this.viewer.selectionDetailsState.pin.value) return;
+        const signVal = sign;
+        if (selectionState === undefined) return;
+        let selectedAnnotationId = undefined;
+        let selectedAnnotationLayer = undefined;
+
+        for (let layer of selectionState.layers) {
+          if (layer.state.annotationId === undefined) continue;
+          const userLayerWithAnnotations = <UserLayerWithAnnotations>layer.layer;
+          const annotationLayer = userLayerWithAnnotations.annotationStates.states.find(
+            x => x.sourceIndex === layer.state.annotationSourceIndex &&
+                (layer.state.annotationSubsource === undefined ||
+                x.subsourceId === layer.state.annotationSubsource));
+          if (annotationLayer === undefined) continue;
+
+          selectedAnnotationId = layer.state.annotationId;
+          selectedAnnotationLayer = annotationLayer;
+          break;
+        }
+        if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
+
+        const reference = selectedAnnotationLayer.source.getTopMostParentReference(selectedAnnotationId);
+        if (reference.value!.type != AnnotationType.POLYGON) return;
+
+        rotatePolygon(this.navigationState, selectedAnnotationLayer, reference, signVal*0.1);
+      });
+    }
 
     registerActionListener(element, 'snap', () => {
       this.navigationState.pose.snap();
