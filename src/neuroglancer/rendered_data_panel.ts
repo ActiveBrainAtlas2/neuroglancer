@@ -31,7 +31,7 @@ import {KeyboardEventBinder} from 'neuroglancer/util/keyboard_bindings';
 import * as matrix from 'neuroglancer/util/matrix';
 import {MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
 import {startRelativeMouseDrag} from 'neuroglancer/util/mouse_drag';
-import {TouchEventBinder, TouchPinchInfo, TouchTranslateInfo} from 'neuroglancer/util/touch_bindings';
+import {TouchEventBinder, TouchPinchInfo, TouchRotateInfo, TouchTranslateInfo} from 'neuroglancer/util/touch_bindings';
 import {getWheelZoomAmount} from 'neuroglancer/util/wheel_zoom';
 import {ViewerState} from 'neuroglancer/viewer_state';
 import { FULL_OBJECT_PICK_OFFSET, getPointPartIndex, isCornerPicked } from './annotation/line';
@@ -824,6 +824,72 @@ export abstract class RenderedDataPanel extends RenderedPanel {
       if (ratio > 0.1 && ratio < 10) {
         this.zoomByMouse(ratio);
       }
+    });
+
+    registerActionListener(
+      element, 'rotate-polygon-via-touchrotate', (e: ActionEvent<TouchRotateInfo>) => {
+        const {detail} = e;
+        const {mouseState} = this.viewer;
+        this.handleMouseMove(detail.centerX, detail.centerY);
+        if (mouseState.updateUnconditionally()) {
+          const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.value;
+          if (!this.viewer.selectionDetailsState.pin.value) return;
+          if (selectionState === undefined) return;
+          let selectedAnnotationId = undefined;
+          let selectedAnnotationLayer = undefined;
+
+          for (let layer of selectionState.layers) {
+            if (layer.state.annotationId === undefined) continue;
+            const userLayerWithAnnotations = <UserLayerWithAnnotations>layer.layer;
+            const annotationLayer = userLayerWithAnnotations.annotationStates.states.find(
+              x => x.sourceIndex === layer.state.annotationSourceIndex &&
+                  (layer.state.annotationSubsource === undefined ||
+                  x.subsourceId === layer.state.annotationSubsource));
+            if (annotationLayer === undefined) continue;
+
+            selectedAnnotationId = layer.state.annotationId;
+            selectedAnnotationLayer = annotationLayer;
+            break;
+          }
+          if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
+
+          const reference = selectedAnnotationLayer.source.getTopMostParentReference(selectedAnnotationId);
+          if (reference.value!.type != AnnotationType.POLYGON) return;
+
+          rotatePolygon(this.navigationState, selectedAnnotationLayer, reference, -(detail.angle - detail.prevAngle));
+        }
+    });
+
+    registerActionListener(element, 'zoom-polygon-via-touchpinch', (e: ActionEvent<TouchPinchInfo>) => {
+      const {detail} = e;
+      this.handleMouseMove(detail.centerX, detail.centerY);
+      const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.value;
+      if (!this.viewer.selectionDetailsState.pin.value) return;
+      const scale = detail.prevDistance / detail.distance;
+      if (scale <= 0.1 || scale >= 10) return;
+      if (selectionState === undefined) return;
+      let selectedAnnotationId = undefined;
+      let selectedAnnotationLayer = undefined;
+
+      for (let layer of selectionState.layers) {
+        if (layer.state.annotationId === undefined) continue;
+        const userLayerWithAnnotations = <UserLayerWithAnnotations>layer.layer;
+        const annotationLayer = userLayerWithAnnotations.annotationStates.states.find(
+          x => x.sourceIndex === layer.state.annotationSourceIndex &&
+              (layer.state.annotationSubsource === undefined ||
+              x.subsourceId === layer.state.annotationSubsource));
+        if (annotationLayer === undefined) continue;
+
+        selectedAnnotationId = layer.state.annotationId;
+        selectedAnnotationLayer = annotationLayer;
+        break;
+      }
+      if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
+
+      const reference = selectedAnnotationLayer.source.getTopMostParentReference(selectedAnnotationId);
+      if (reference.value!.type != AnnotationType.POLYGON) return;
+
+      scalePolygon(this.navigationState, selectedAnnotationLayer, reference, scale);
     });
   }
 
