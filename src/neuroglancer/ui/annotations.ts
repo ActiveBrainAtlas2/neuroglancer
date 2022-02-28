@@ -1193,7 +1193,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     if (annotation.childAnnotationIds.length > 0) {
       const id = annotation.childAnnotationIds[annotation.childAnnotationIds.length-1];
       const annotationRef = annotationLayer.source.getReference(id);
-      annotationLayer.source.delete(annotationRef);
+      annotationLayer.source.delete(annotationRef, true);
       annotationRef.dispose();
       this.childTool.inProgressAnnotation!.disposer();
       this.childTool.inProgressAnnotation = undefined;
@@ -1298,7 +1298,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     };
     const newAnnRef1 = annotationLayer.source.add(newAnn1, false, parentAnnotationRef);
     const newAnnRef2 = annotationLayer.source.add(newAnn2, false, parentAnnotationRef);
-    annotationLayer.source.delete(annotationRef);
+    annotationLayer.source.delete(annotationRef, true);
     annotationLayer.source.commit(newAnnRef1);
     annotationLayer.source.commit(newAnnRef2);
     annotationRef.dispose();
@@ -1360,8 +1360,8 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       properties: annotationLayer.source.properties.map(x => x.default),
     };
     const newAnnRef = annotationLayer.source.add(newAnn, false, parentAnnotationRef);
-    annotationLayer.source.delete(annotationRef1);
-    annotationLayer.source.delete(annotationRef2);
+    annotationLayer.source.delete(annotationRef1, true);
+    annotationLayer.source.delete(annotationRef2, true);
     annotationLayer.source.commit(newAnnRef);
     annotationRef1.dispose();
     annotationRef2.dispose();
