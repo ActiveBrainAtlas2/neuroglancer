@@ -28,6 +28,7 @@ import {expectArray, parseArray, parseFixedLengthArray, verifyEnumString, verify
 import {getRandomHexString} from 'neuroglancer/util/random';
 import {NullarySignal, Signal} from 'neuroglancer/util/signal';
 import {Uint64} from 'neuroglancer/util/uint64';
+import { StatusMessage } from '../status';
 
 export type AnnotationId = string;
 
@@ -809,8 +810,13 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     return this.annotationMap.get(id);
   }
 
-  delete(reference: AnnotationReference) {
+  delete(reference: AnnotationReference, fromParent: boolean = false) {
     if (reference.value === null) {
+      return;
+    }
+    if (reference.value!.parentAnnotationId && fromParent === false) {
+      const msg = new StatusMessage();
+      msg.setErrorMessage('Cannot delete child annotations');
       return;
     }
     if (reference.value!.parentAnnotationId) {
@@ -828,7 +834,7 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
       const annotation = <Collection>reference.value;
       const childAnnotationIds = Object.assign([], annotation.childAnnotationIds);
       childAnnotationIds.forEach((childId) => {
-        this.delete(this.getReference(childId));
+        this.delete(this.getReference(childId), true);
       });
     }
     reference.value = null;
