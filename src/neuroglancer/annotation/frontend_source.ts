@@ -527,7 +527,7 @@ export class MultiscaleAnnotationSource extends SharedObject implements
 
   getTopMostParentReference(id: AnnotationId): Owned<AnnotationReference> {
     const reference = this.getReference(id);
-    if (reference!.value!.parentAnnotationId) {
+    if (reference.value !== null && reference.value!.parentAnnotationId) {
       reference.dispose();
       return this.getTopMostParentReference(reference!.value!.parentAnnotationId);
     }

@@ -25,12 +25,18 @@ import {TrackableBoolean} from 'neuroglancer/trackable_boolean';
 import {TrackableRGB} from 'neuroglancer/util/color';
 import {Borrowed, Owned} from 'neuroglancer/util/disposable';
 import {ActionEvent, registerActionListener} from 'neuroglancer/util/event_action_map';
-import {disableZProjection, identityMat4, kAxes, mat4, vec3, vec4} from 'neuroglancer/util/geom';
+import {disableZProjection, identityMat4, kAxes, mat4, vec2, vec3, vec4} from 'neuroglancer/util/geom';
 import {startRelativeMouseDrag} from 'neuroglancer/util/mouse_drag';
 import {TouchRotateInfo} from 'neuroglancer/util/touch_bindings';
 import {FramebufferConfiguration, OffscreenCopyHelper, TextureBuffer} from 'neuroglancer/webgl/offscreen';
 import {ShaderBuilder} from 'neuroglancer/webgl/shader';
 import {MultipleScaleBarTextures, TrackableScaleBarOptions} from 'neuroglancer/widget/scale_bar';
+import { Annotation, AnnotationReference, AnnotationType, Line, Polygon } from '../annotation';
+import { getPointPartIndex, isCornerPicked } from '../annotation/line';
+import { getAnnotationTypeRenderHandler } from '../annotation/type_handler';
+import { displayToLayerCoordinates, layerToDisplayCoordinates } from '../render_coordinate_transform';
+import { arraysEqual } from '../util/array';
+import * as matrix from 'neuroglancer/util/matrix';
 
 export interface SliceViewerState extends RenderedDataViewerState {
   showScaleBar: TrackableBoolean;
@@ -148,6 +154,81 @@ export class SliceViewPanel extends RenderedDataPanel {
                 detail.angle - detail.prevAngle, mouseState.position);
           }
         });
+    
+    registerActionListener(element, 'move-polygon-vertex', (e: ActionEvent<MouseEvent>) => {
+      const {mouseState} = this.viewer;
+      const selectedAnnotationId = mouseState.pickedAnnotationId;
+      const annotationLayer = mouseState.pickedAnnotationLayer;
+      if (annotationLayer === undefined || selectedAnnotationId === undefined) return;
+      e.stopPropagation();
+      let annotationRef = annotationLayer.source.getReference(selectedAnnotationId)!;
+      let ann = <Annotation>annotationRef.value;
+      if (!ann.parentAnnotationId) return;
+
+      let parAnnotationRef = annotationLayer.source.getReference(ann.parentAnnotationId)!;
+      let parAnn = <Annotation>parAnnotationRef.value;
+      if (parAnn.type === AnnotationType.POLYGON && isCornerPicked(mouseState.pickedOffset)) {
+        const handler = getAnnotationTypeRenderHandler(ann.type);
+        const {chunkTransform: {value: chunkTransform}} = annotationLayer;
+        if (chunkTransform.error !== undefined) return;
+        const {layerRank} = chunkTransform;
+        const repPoint = new Float32Array(layerRank);
+        handler.getRepresentativePoint(repPoint, ann, mouseState.pickedOffset);
+        
+        let childAnnotationIds = (<Polygon>parAnn).childAnnotationIds;
+        let pickedAnnotations: {partIndex: number, annotationRef: AnnotationReference}[] = [];
+
+        childAnnotationIds.forEach((childAnnotationId) => {
+          let childAnnotationRef = annotationLayer.source.getReference(childAnnotationId);
+          let childAnn = <Line>childAnnotationRef.value;
+          if (arraysEqual(childAnn.pointA, repPoint) || arraysEqual(childAnn.pointB, repPoint)) {
+            pickedAnnotations.push(
+              {
+                partIndex: getPointPartIndex(<Line>childAnn, repPoint),
+                annotationRef: childAnnotationRef
+              }
+            );
+          }
+        });
+
+        let totDeltaVec = vec2.set(vec2.create(), 0, 0);
+        if (mouseState.updateUnconditionally()) {
+          startRelativeMouseDrag(
+            e.detail,
+            (_event, deltaX, deltaY) => {
+              vec2.add(totDeltaVec, totDeltaVec, [deltaX, deltaY]);
+              const layerPoint = new Float32Array(layerRank);
+              matrix.transformPoint(
+                  layerPoint, chunkTransform.chunkToLayerTransform, layerRank + 1, repPoint,
+                  layerRank);
+              const renderPt = tempVec3;
+              const {displayDimensionIndices} =
+                  this.navigationState.pose.displayDimensions.value;
+              layerToDisplayCoordinates(
+                  renderPt, layerPoint, chunkTransform.modelTransform, displayDimensionIndices);
+              this.translateDataPointByViewportPixels(
+                  renderPt, renderPt, totDeltaVec[0], totDeltaVec[1]);
+              displayToLayerCoordinates(
+                  layerPoint, renderPt, chunkTransform.modelTransform, displayDimensionIndices);
+              const newPoint = new Float32Array(layerRank);
+              matrix.transformPoint(
+                  newPoint, chunkTransform.layerToChunkTransform, layerRank + 1, layerPoint,
+                  layerRank);
+              pickedAnnotations.forEach((pickedAnnotation) => {
+                let newAnnotation = handler.updateViaRepresentativePoint(pickedAnnotation.annotationRef.value!, 
+                  newPoint, pickedAnnotation.partIndex);
+                annotationLayer.source.update(pickedAnnotation.annotationRef, newAnnotation);
+              });
+            },
+            (_event) => {
+              pickedAnnotations.forEach((pickedAnnotation) => {
+                annotationLayer.source.commit(pickedAnnotation.annotationRef);
+                pickedAnnotation.annotationRef.dispose();
+              });
+          });
+        }
+      }
+    });
 
     this.registerDisposer(sliceView);
     // Create visible layer tracker after registering SliceView, to ensure it is destroyed before

@@ -767,8 +767,11 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
     if(parentRef) {
       annotation.parentAnnotationId = parentRef.id;
-      const parAnnotation = <Collection>parentRef.value!;
+      let parAnnotation = <Collection>parentRef.value!;
       parAnnotation.childAnnotationIds.push(annotation.id);
+      if (parAnnotation.type === AnnotationType.POLYGON) {
+        parAnnotation = <Collection>this.getUpdatedSourceVertex(<Polygon>parAnnotation);
+      }
       this.update(parentRef, <Annotation>parAnnotation);
     }
     this.annotationMap.set(annotation.id, annotation);
@@ -800,6 +803,17 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
     reference.value = annotation;
     this.annotationMap.set(annotation.id, annotation);
+    if (annotation.parentAnnotationId) {
+      const parentRef = this.getReference(annotation.parentAnnotationId);
+      if (parentRef.value) {
+        let parAnnotation = <Collection>parentRef.value;
+        if (parAnnotation.type === AnnotationType.POLYGON) {
+          parAnnotation = <Collection>this.getUpdatedSourceVertex(<Polygon>parAnnotation);
+        }
+        this.update(parentRef, <Annotation>parAnnotation);
+      }
+      parentRef.dispose();
+    }
     reference.changed.dispatch();
     this.changed.dispatch();
     this.childUpdated.dispatch(annotation);
@@ -826,14 +840,18 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
     if (reference.value!.parentAnnotationId) {
       const parentRef = this.getReference(reference.value!.parentAnnotationId);
-      if (parentRef.value && parentRef.value.type === AnnotationType.POLYGON) {
-        const parAnnotation = <Collection>parentRef.value;
+      if (parentRef.value) {
+        let parAnnotation = <Collection>parentRef.value;
         const index = parAnnotation.childAnnotationIds.indexOf(reference.value!.id, 0);
         if (index > -1) {
           parAnnotation.childAnnotationIds.splice(index, 1);
         }
+        if (parAnnotation.type === AnnotationType.POLYGON) {
+          parAnnotation = <Collection>this.getUpdatedSourceVertex(<Polygon>parAnnotation);
+        }
         this.update(parentRef, <Annotation>parAnnotation);
       }
+      parentRef.dispose();
     }
     if(reference.value!.type == AnnotationType.POLYGON) {
       const annotation = <Collection>reference.value;
@@ -866,11 +884,24 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
 
   getTopMostParentReference(id: AnnotationId): AnnotationReference {
     const reference = this.getReference(id);
-    if (reference!.value!.parentAnnotationId) {
+    if (reference.value !== null && reference.value!.parentAnnotationId) {
       reference.dispose();
       return this.getTopMostParentReference(reference!.value!.parentAnnotationId);
     }
     return reference;
+  }
+
+  getUpdatedSourceVertex(ann: Polygon) : Polygon {
+    if (ann.childAnnotationIds.length === 0) return ann;
+    const reference = this.getReference(ann.childAnnotationIds[0]);
+    const line = <Line>reference.value;
+    if (!line) {
+      reference.dispose();
+      return ann;
+    }
+    const newAnn = {...ann, source: line.pointA};
+    reference.dispose();
+    return newAnn;
   }
 
   references = new Map<AnnotationId, Borrowed<AnnotationReference>>();

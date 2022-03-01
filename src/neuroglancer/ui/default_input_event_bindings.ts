@@ -168,7 +168,7 @@ export function getPolygonEditModeBindings() {
   if (polygonEditModeBindings === undefined) {
     polygonEditModeBindings = EventActionMap.fromObject(
       {
-        'at:mousedown0': 'move-annotation',
+        'at:mousedown0': 'move-polygon-vertex',
         'at:control+alt+mousedown0': 'add-vertex-polygon',
         'at:control+alt+mousedown2': 'delete-vertex-polygon',
         'at:shift+mousedown0': 'move-polygon-annotation',
