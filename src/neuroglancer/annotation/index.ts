@@ -24,7 +24,7 @@ import {arraysEqual} from 'neuroglancer/util/array';
 import {packColor, parseRGBAColorSpecification, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA} from 'neuroglancer/util/color';
 import {Borrowed, Owned, RefCounted} from 'neuroglancer/util/disposable';
 import {Endianness, ENDIANNESS} from 'neuroglancer/util/endian';
-import {expectArray, parseArray, parseFixedLengthArray, verifyEnumString, verifyFiniteFloat, verifyFiniteNonNegativeFloat, verifyFloat, verifyInt, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyOptionalString, verifyString} from 'neuroglancer/util/json';
+import {expectArray, parseArray, parseFixedLengthArray, verifyEnumString, verifyFiniteFloat, verifyFiniteNonNegativeFloat, verifyFloat, verifyInt, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyOptionalString, verifyString, verifyStringArray} from 'neuroglancer/util/json';
 import {getRandomHexString} from 'neuroglancer/util/random';
 import {NullarySignal, Signal} from 'neuroglancer/util/signal';
 import {Uint64} from 'neuroglancer/util/uint64';
@@ -635,12 +635,15 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
     description: 'Polygon',
     toJSON: (annotation: Polygon) => {
       return {
-        source: Array.from(annotation.source)
+        source: Array.from(annotation.source),
+        childAnnotationIds: annotation.childAnnotationIds,
       }
     },
     restoreState: (annotation: Polygon, obj: any, rank: number) => {
       annotation.source = verifyObjectProperty(
           obj, 'source', x => parseFixedLengthArray(new Float32Array(rank), x, verifyFiniteFloat));
+      annotation.childAnnotationIds = verifyObjectProperty(
+          obj, 'childAnnotationIds', verifyStringArray);
     },
     serializedBytes: rank => rank * 4,
     serialize: (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, annotation: Polygon) => {
@@ -709,12 +712,14 @@ export function restoreAnnotation(obj: any, schema: AnnotationSchema, allowMissi
         expectArray(propsObj, schema.properties.length),
         (x, i) => annotationPropertyTypeHandlers[propSpecs[i].type].deserializeJson(x));
   });
+  const parentAnnotationId = verifyObjectProperty(obj, 'parentAnnotationid', verifyOptionalString);
   const result: Annotation = {
     id,
     description: verifyObjectProperty(obj, 'description', verifyOptionalString),
     relatedSegments,
     properties,
     type,
+    parentAnnotationId,
   } as Annotation;
   annotationTypeHandlers[type].restoreState(result, obj, schema.rank);
   return result;
