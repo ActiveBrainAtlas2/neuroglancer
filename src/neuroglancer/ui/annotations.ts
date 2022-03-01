@@ -501,11 +501,14 @@ export class AnnotationLayerView extends Tab {
     const {previousSelectedState: state} = this;
     if (state === undefined) return;
     this.previousSelectedState = undefined;
+    const reference = state.annotationLayerState.source.getTopMostParentReference(state.annotationId);
+    if (reference.value === null) return;
     const element =
-        this.getRenderedAnnotationListElement(state.annotationLayerState, state.annotationId);
+        this.getRenderedAnnotationListElement(state.annotationLayerState, reference.value!.id);
     if (element !== undefined) {
       element.classList.remove('neuroglancer-annotation-selected');
     }
+    reference.dispose();
   }
 
   private clearHoverClass() {
@@ -549,12 +552,16 @@ export class AnnotationLayerView extends Tab {
     this.clearSelectionClass();
     this.previousSelectedState = selectionState;
     if (selectionState === undefined) return;
+    const reference = selectionState.annotationLayerState.source.getTopMostParentReference(selectionState.annotationId);
+    if (reference.value === null) return;
+    const annotationId = reference.value!.id;
     const element = this.getRenderedAnnotationListElement(
-        selectionState.annotationLayerState, selectionState.annotationId,
+        selectionState.annotationLayerState, annotationId,
         /*scrollIntoView=*/ selectionState.pin);
     if (element !== undefined) {
       element.classList.add('neuroglancer-annotation-selected');
     }
+    reference.dispose();
   }
 
   private updateHoverView() {
@@ -695,6 +702,7 @@ export class AnnotationLayerView extends Tab {
       this.updateView();
       return;
     }
+    if (annotation.parentAnnotationId) return; 
     const info = this.attachedAnnotationStates.get(state);
     if (info !== undefined) {
       const index = info.annotations.length;
@@ -718,6 +726,7 @@ export class AnnotationLayerView extends Tab {
       this.updateView();
       return;
     }
+    if (annotation.parentAnnotationId) return;
     const info = this.attachedAnnotationStates.get(state);
     if (info !== undefined) {
       const index = info.idToIndex.get(annotation.id);
@@ -876,9 +885,12 @@ export class AnnotationLayerView extends Tab {
     });
 
     const selectionState = this.selectedAnnotationState.value;
-    if (selectionState !== undefined && selectionState.annotationLayerState === state &&
-        selectionState.annotationId === annotation.id) {
-      element.classList.add('neuroglancer-annotation-selected');
+    if (selectionState !== undefined && selectionState.annotationLayerState === state) {
+      const reference = selectionState.annotationLayerState.source.getTopMostParentReference(selectionState.annotationId);
+      if (reference.value !== null && reference.value!.id === annotation.id) {
+        element.classList.add('neuroglancer-annotation-selected');
+      }
+      reference.dispose();
     }
     return element;
   }
@@ -1304,6 +1316,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     annotationRef.dispose();
     newAnnRef1.dispose();
     newAnnRef2.dispose();
+    parentAnnotationRef.dispose();
   }
 
   deleteVertexPolygon(mouseState: MouseSelectionState) {
@@ -1366,6 +1379,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     annotationRef1.dispose();
     annotationRef2.dispose();
     newAnnRef.dispose();
+    parentAnnotationRef.dispose();
   }
 
   get description() {
@@ -1726,15 +1740,19 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
           if (pickedAnnotationLayer !== undefined &&
               this.annotationStates.states.includes(pickedAnnotationLayer)) {
             const existingValue = this.annotationDisplayState.hoverState.value;
-            if (existingValue === undefined || existingValue.id !== mouseState.pickedAnnotationId!
+            const reference = pickedAnnotationLayer.source.getTopMostParentReference(mouseState.pickedAnnotationId!);
+            if (reference.value === null) return;
+            const annotationId = reference.value!.id;
+            if (existingValue === undefined || existingValue.id !== annotationId
                 || existingValue.partIndex !== mouseState.pickedOffset ||
                 existingValue.annotationLayerState !== pickedAnnotationLayer) {
               this.annotationDisplayState.hoverState.value = {
-                id: mouseState.pickedAnnotationId!,
+                id: annotationId,
                 partIndex: mouseState.pickedOffset,
                 annotationLayerState: pickedAnnotationLayer,
               };
             }
+            reference.dispose();
             return;
           }
         }
