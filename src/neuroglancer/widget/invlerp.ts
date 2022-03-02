@@ -18,12 +18,14 @@ import './invlerp.css';
 
 import svg_arrowLeft from 'ikonate/icons/arrow-left.svg';
 import svg_arrowRight from 'ikonate/icons/arrow-right.svg';
-import {DisplayContext, RenderedPanel} from 'neuroglancer/display_context';
+import {DisplayContext, IndirectRenderedPanel} from 'neuroglancer/display_context';
 import {WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {animationFrameDebounce} from 'neuroglancer/util/animation_frame_debounce';
 import {DataType} from 'neuroglancer/util/data_type';
+import {RefCounted} from 'neuroglancer/util/disposable';
 import {updateInputFieldWidth} from 'neuroglancer/util/dom';
 import {EventActionMap, registerActionListener} from 'neuroglancer/util/event_action_map';
+import {computeInvlerp, computeLerp, dataTypeCompare, DataTypeInterval, getClampedInterval, getClosestEndpoint, getIntervalBoundsEffectiveFraction, getIntervalBoundsEffectiveOffset, parseDataTypeValue} from 'neuroglancer/util/lerp';
 import {MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
 import {startRelativeMouseDrag} from 'neuroglancer/util/mouse_drag';
 import {Uint64} from 'neuroglancer/util/uint64';
@@ -32,29 +34,122 @@ import {WatchableVisibilityPriority} from 'neuroglancer/visibility_priority/fron
 import {getMemoizedBuffer} from 'neuroglancer/webgl/buffer';
 import {ParameterizedEmitterDependentShaderGetter, parameterizedEmitterDependentShaderGetter} from 'neuroglancer/webgl/dynamic_shader';
 import {HistogramSpecifications} from 'neuroglancer/webgl/empirical_cdf';
-import {computeInvlerp, computeLerp, dataTypeCompare, DataTypeInterval, defineLerpShaderFunction, enableLerpShaderFunction, getClampedInterval, getClosestEndpoint, getIntervalBoundsEffectiveFraction, getIntervalBoundsEffectiveOffset, parseDataTypeValue} from 'neuroglancer/webgl/lerp';
+import {defineLerpShaderFunction, enableLerpShaderFunction} from 'neuroglancer/webgl/lerp';
 import {defineLineShader, drawLines, initializeLineShader, VERTICES_PER_LINE} from 'neuroglancer/webgl/lines';
 import {ShaderBuilder} from 'neuroglancer/webgl/shader';
 import {getShaderType} from 'neuroglancer/webgl/shader_lib';
-import {InvlerpParameters, ShaderInvlerpControl} from 'neuroglancer/webgl/shader_ui_controls';
+import {InvlerpParameters} from 'neuroglancer/webgl/shader_ui_controls';
 import {getSquareCornersBuffer} from 'neuroglancer/webgl/square_corners_buffer';
 import {setRawTextureParameters} from 'neuroglancer/webgl/texture';
 import {makeIcon} from 'neuroglancer/widget/icon';
-import {LegendShaderOptions, ShaderControlsOptions} from 'neuroglancer/widget/shader_controls';
+import {LegendShaderOptions} from 'neuroglancer/widget/shader_controls';
 import {Tab} from 'neuroglancer/widget/tab_view';
-import {HistogramPanel} from 'neuroglancer/widget/histogram';
 
 const inputEventMap = EventActionMap.fromObject({
-  'mousedown0': {action: 'set'},
-  'shift+mousedown0': {action: 'adjust-window-via-drag'},
-  'wheel': {action: 'zoom-via-wheel'},
+  'shift?+mousedown0': {action: 'set'},
+  'shift?+alt+mousedown0': {action: 'adjust-window-via-drag'},
+  'shift?+wheel': {action: 'zoom-via-wheel'},
 });
+
+export class CdfController<T extends RangeAndWindowIntervals> extends RefCounted {
+  constructor(
+      public element: HTMLElement, public dataType: DataType, public getModel: () => T,
+      public setModel: (value: T) => void) {
+    super();
+    element.title = inputEventMap.describe();
+    this.registerDisposer(new MouseEventBinder(element, inputEventMap));
+    registerActionListener<MouseEvent>(element, 'set', actionEvent => {
+      const mouseEvent = actionEvent.detail;
+      const bounds = this.getModel();
+      const value = this.getTargetValue(mouseEvent);
+      if (value === undefined) return;
+      const clampedRange = getClampedInterval(bounds.window, bounds.range);
+      const endpoint = getClosestEndpoint(clampedRange, value);
+      const setEndpoint = (value: number|Uint64) => {
+        const bounds = this.getModel();
+        this.setModel(getUpdatedRangeAndWindowParameters(bounds, 'range', endpoint, value));
+      };
+      setEndpoint(value);
+      startRelativeMouseDrag(mouseEvent, (newEvent: MouseEvent) => {
+        const value = this.getTargetValue(newEvent);
+        if (value === undefined) return;
+        setEndpoint(value);
+      });
+    });
+
+    registerActionListener<MouseEvent>(element, 'adjust-window-via-drag', actionEvent => {
+      // If user starts drag on left half, then right bound is fixed, and left bound is adjusted to
+      // keep the value under the mouse fixed.  If user starts drag on right half, the left bound is
+      // fixed and right bound is adjusted.
+      const mouseEvent = actionEvent.detail;
+      const initialRelativeX = this.getTargetFraction(mouseEvent);
+      const initialValue = this.getWindowLerp(initialRelativeX);
+      const endpointIndex = (initialRelativeX < 0.5) ? 0 : 1;
+      const setEndpoint = (value: number|Uint64) => {
+        const bounds = this.getModel();
+        this.setModel(getUpdatedRangeAndWindowParameters(bounds, 'window', endpointIndex, value));
+      };
+      startRelativeMouseDrag(mouseEvent, (newEvent: MouseEvent) => {
+        const window = this.getModel().window;
+        const relativeX = this.getTargetFraction(newEvent);
+        if (endpointIndex === 0) {
+          // Need to find x such that: lerp([x, window[1]], relativeX) == initialValue
+          // Equivalently: lerp([initialValue, window[1]], -relativeX / ( 1 - relativeX))
+          setEndpoint(computeLerp(
+              [initialValue, window[1]] as DataTypeInterval, this.dataType,
+              -relativeX / (1 - relativeX)));
+        } else {
+          // Need to find x such that: lerp([window[0], x], relativeX) == initialValue
+          // Equivalently: lerp([window[0], initialValue], 1 / relativeX)
+          setEndpoint(computeLerp(
+              [window[0], initialValue] as DataTypeInterval, this.dataType, 1 / relativeX));
+        }
+      });
+    });
+
+    registerActionListener<WheelEvent>(element, 'zoom-via-wheel', actionEvent => {
+      const wheelEvent = actionEvent.detail;
+      const zoomAmount = getWheelZoomAmount(wheelEvent);
+      const relativeX = this.getTargetFraction(wheelEvent);
+      const {dataType} = this;
+      const bounds = this.getModel();
+      const newLower = computeLerp(bounds.window, dataType, relativeX * (1 - zoomAmount));
+      const newUpper =
+          computeLerp(bounds.window, dataType, (1 - relativeX) * zoomAmount + relativeX);
+      this.setModel({
+        ...bounds,
+        window: [newLower, newUpper] as DataTypeInterval,
+        range: bounds.range,
+      });
+    });
+  }
+
+  getTargetFraction(event: MouseEvent) {
+    const clientRect = this.element.getBoundingClientRect();
+    return (event.clientX - clientRect.left) / clientRect.width;
+  }
+
+  getWindowLerp(relativeX: number) {
+    return computeLerp(this.getModel().window, this.dataType, relativeX);
+  }
+
+  getTargetValue(event: MouseEvent): number|Uint64|undefined {
+    const targetFraction = this.getTargetFraction(event);
+    if (!Number.isFinite(targetFraction)) return undefined;
+    return this.getWindowLerp(targetFraction);
+  }
+}
 
 const histogramSamplerTextureUnit = Symbol('histogramSamplerTexture');
 
-function getUpdatedParameters(
-    existingBounds: InvlerpParameters, boundType: 'range'|'window', endpointIndex: number,
-    newEndpoint: number|Uint64, fitRangeInWindow = false) {
+export interface RangeAndWindowIntervals {
+  range: DataTypeInterval;
+  window: DataTypeInterval;
+}
+
+export function getUpdatedRangeAndWindowParameters<T extends RangeAndWindowIntervals>(
+    existingBounds: T, boundType: 'range'|'window', endpointIndex: number,
+    newEndpoint: number|Uint64, fitRangeInWindow = false): T {
   const newBounds = {...existingBounds};
   const existingInterval = existingBounds[boundType];
   newBounds[boundType] = [existingInterval[0], existingInterval[1]] as DataTypeInterval;
@@ -83,91 +178,19 @@ function getUpdatedParameters(
 const NUM_HISTOGRAM_BINS_IN_RANGE = 254;
 const NUM_CDF_LINES = NUM_HISTOGRAM_BINS_IN_RANGE + 1;
 
-class CdfPanel extends RenderedPanel {
+class CdfPanel extends IndirectRenderedPanel {
   get drawOrder() {
     return 100;
   }
+  controller = this.registerDisposer(new CdfController(
+      this.element, this.parent.dataType, () => this.parent.trackable.value,
+      (value: InvlerpParameters) => {
+        this.parent.trackable.value = value;
+      }));
   constructor(public parent: InvlerpWidget) {
     super(parent.display, document.createElement('div'), parent.visibility);
     const {element} = this;
     element.classList.add('neuroglancer-invlerp-cdfpanel');
-    element.title = inputEventMap.describe();
-    this.registerDisposer(new MouseEventBinder(element, inputEventMap));
-    registerActionListener<MouseEvent>(element, 'set', actionEvent => {
-      const mouseEvent = actionEvent.detail;
-      const {trackable: {value: bounds}} = this.parent;
-      const value = this.getTargetValue(mouseEvent);
-      const clampedRange = getClampedInterval(bounds.window, bounds.range);
-      const endpoint = getClosestEndpoint(clampedRange, value);
-      const setEndpoint = (value: number|Uint64) => {
-        const {trackable: {value: bounds}} = this.parent;
-        this.parent.trackable.value = getUpdatedParameters(bounds, 'range', endpoint, value);
-      };
-      setEndpoint(value);
-      startRelativeMouseDrag(mouseEvent, (newEvent: MouseEvent) => {
-        const value = this.getTargetValue(newEvent);
-        setEndpoint(value);
-      });
-    });
-
-    registerActionListener<MouseEvent>(element, 'adjust-window-via-drag', actionEvent => {
-      // If user starts drag on left half, then right bound is fixed, and left bound is adjusted to
-      // keep the value under the mouse fixed.  If user starts drag on right half, the left bound is
-      // fixed and right bound is adjusted.
-      const mouseEvent = actionEvent.detail;
-      const initialRelativeX = this.getTargetFraction(mouseEvent);
-      const initialValue = this.getWindowLerp(initialRelativeX);
-      const endpointIndex = (initialRelativeX < 0.5) ? 0 : 1;
-      const setEndpoint = (value: number|Uint64) => {
-        const {trackable: {value: bounds}} = this.parent;
-        this.parent.trackable.value = getUpdatedParameters(bounds, 'window', endpointIndex, value);
-      };
-      startRelativeMouseDrag(mouseEvent, (newEvent: MouseEvent) => {
-        const {trackable: {value: {window}}} = this.parent;
-        const relativeX = this.getTargetFraction(newEvent);
-        if (endpointIndex === 0) {
-          // Need to find x such that: lerp([x, window[1]], relativeX) == initialValue
-          // Equivalently: lerp([initialValue, window[1]], -relativeX / ( 1 - relativeX))
-          setEndpoint(computeLerp(
-              [initialValue, window[1]] as DataTypeInterval, this.parent.dataType,
-              -relativeX / (1 - relativeX)));
-        } else {
-          // Need to find x such that: lerp([window[0], x], relativeX) == initialValue
-          // Equivalently: lerp([window[0], initialValue], 1 / relativeX)
-          setEndpoint(computeLerp(
-              [window[0], initialValue] as DataTypeInterval, this.parent.dataType, 1 / relativeX));
-        }
-      });
-    });
-
-    registerActionListener<WheelEvent>(element, 'zoom-via-wheel', actionEvent => {
-      const wheelEvent = actionEvent.detail;
-      const zoomAmount = getWheelZoomAmount(wheelEvent);
-      const relativeX = this.getTargetFraction(wheelEvent);
-      const {dataType, trackable: {value: bounds}} = this.parent;
-      const newLower = computeLerp(bounds.window, dataType, relativeX * (1 - zoomAmount));
-      const newUpper =
-          computeLerp(bounds.window, dataType, (1 - relativeX) * zoomAmount + relativeX);
-      this.parent.trackable.value = {
-        window: [newLower, newUpper] as DataTypeInterval,
-        range: bounds.range,
-        channel: bounds.channel,
-      };
-    });
-  }
-
-  getTargetFraction(event: MouseEvent) {
-    const clientRect = this.element.getBoundingClientRect();
-    return (event.clientX - clientRect.left) / clientRect.width;
-  }
-
-  getWindowLerp(relativeX: number) {
-    const {parent} = this;
-    return computeLerp(parent.trackable.value.window, parent.dataType, relativeX);
-  }
-
-  getTargetValue(event: MouseEvent) {
-    return this.getWindowLerp(this.getTargetFraction(event));
   }
 
   private dataValuesBuffer =
@@ -212,8 +235,8 @@ for (int i = 0; i <= dataValue; ++i) {
   cumSum += getCount(i);
 }
 float total = cumSum + getCount(dataValue + 1);
-float cumSumEnd = dataValue == ${NUM_CDF_LINES-1} ? cumSum : total;
-if (dataValue == ${NUM_CDF_LINES-1}) {
+float cumSumEnd = dataValue == ${NUM_CDF_LINES - 1} ? cumSum : total;
+if (dataValue == ${NUM_CDF_LINES - 1}) {
   cumSum + getCount(dataValue + 1);
 }
 for (int i = dataValue + 2; i < 256; ++i) {
@@ -247,9 +270,11 @@ out_color = uColor;
     return builder.build();
   })());
 
-  draw() {
+  drawIndirect() {
     const {lineShader, gl, regionShader, parent: {dataType, trackable: {value: bounds}}} = this;
     this.setGLLogicalViewport();
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.clear(WebGL2RenderingContext.COLOR_BUFFER_BIT);
     gl.enable(WebGL2RenderingContext.BLEND);
     gl.blendFunc(WebGL2RenderingContext.SRC_ALPHA, WebGL2RenderingContext.ONE_MINUS_SRC_ALPHA);
     gl.disable(WebGL2RenderingContext.DEPTH_TEST);
@@ -301,13 +326,13 @@ out_color = uColor;
 
 function dummyColorLegendShaderModule() {}
 
-class ColorLegendPanel extends RenderedPanel {
+class ColorLegendPanel extends IndirectRenderedPanel {
   private shaderOptions: LegendShaderOptions;
   constructor(public parent: InvlerpWidget) {
     super(parent.display, document.createElement('div'), parent.visibility);
     const {element} = this;
     element.classList.add('neuroglancer-invlerp-legend-panel');
-    const shaderOptions = this.shaderOptions = parent.shaderControlsOptions.legendShaderOptions!;
+    const shaderOptions = this.shaderOptions = parent.legendShaderOptions!;
     this.shaderGetter = parameterizedEmitterDependentShaderGetter(this, this.gl, {
       ...shaderOptions,
       memoizeKey: {id: `colorLegendShader`, base: shaderOptions.memoizeKey},
@@ -349,14 +374,16 @@ ${shaderDataType} getInterpolatedDataValue(int dummyChannel) {
 
   private cornersBuffer = getSquareCornersBuffer(this.gl, -1, -1, 1, 1);
 
-  draw() {
+  drawIndirect() {
     const shaderResult = this.shaderGetter(dummyColorLegendShaderModule);
     const {shader} = shaderResult;
     if (shader === null) return;
     this.setGLLogicalViewport();
+    const {gl} = this;
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.clear(WebGL2RenderingContext.COLOR_BUFFER_BIT);
     shader.bind();
     this.shaderOptions.initializeShader(shaderResult);
-    const {gl} = this;
     gl.enable(WebGL2RenderingContext.BLEND);
     const {trackable: {value: {window}}, dataType} = this.parent;
     enableLerpShaderFunction(shader, 'ng_colorLegendLerp', this.parent.dataType, window);
@@ -412,7 +439,7 @@ function createRangeBoundInputs(
       const existingInterval = existingBounds[boundType];
       try {
         const value = parseDataTypeValue(dataType, input.value);
-        model.value = getUpdatedParameters(
+        model.value = getUpdatedRangeAndWindowParameters(
             existingBounds, boundType, endpointIndex, value, /*fitRangeInWindow=*/ true);
       } catch {
         updateInputBoundValue(input, existingInterval[endpointIndex]);
@@ -451,9 +478,33 @@ function updateInputBoundValue(inputElement: HTMLInputElement, bound: number|Uin
   updateInputBoundWidth(inputElement);
 }
 
+export function invertInvlerpRange(trackable: WatchableValueInterface<InvlerpParameters>) {
+  const bounds = trackable.value;
+  const {range} = bounds;
+  trackable.value = {...bounds, range: [range[1], range[0]] as DataTypeInterval};
+}
+
+export function adjustInvlerpContrast(
+    dataType: DataType, trackable: WatchableValueInterface<InvlerpParameters>,
+    scaleFactor: number) {
+  const bounds = trackable.value;
+  const newLower = computeLerp(bounds.range, dataType, 0.5 - scaleFactor / 2);
+  const newUpper = computeLerp(bounds.range, dataType, 0.5 + scaleFactor / 2);
+  trackable.value = {...bounds, range: [newLower, newUpper] as DataTypeInterval};
+}
+
+export function adjustInvlerpBrightnessContrast(
+    dataType: DataType, trackable: WatchableValueInterface<InvlerpParameters>,
+    baseRange: DataTypeInterval, brightnessAmount: number, contrastAmount: number) {
+  const scaleFactor = Math.exp(contrastAmount);
+  const bounds = trackable.value;
+  const newLower = computeLerp(baseRange, dataType, 0.5 - scaleFactor / 2 + brightnessAmount);
+  const newUpper = computeLerp(baseRange, dataType, 0.5 + scaleFactor / 2 + brightnessAmount);
+  trackable.value = {...bounds, range: [newLower, newUpper] as DataTypeInterval};
+}
+
 export class InvlerpWidget extends Tab {
   cdfPanel = this.registerDisposer(new CdfPanel(this));
-  histogramPanel = this.registerDisposer(new HistogramPanel(this, NUM_CDF_LINES, histogramSamplerTextureUnit));
   boundElements = {
     range: createRangeBoundInputs('range', this.dataType, this.trackable),
     window: createRangeBoundInputs('window', this.dataType, this.trackable),
@@ -464,26 +515,18 @@ export class InvlerpWidget extends Tab {
         .colorBuffers[0]
         .texture;
   }
-  get dataType() {
-    return this.control.dataType;
-  }
   private invertRange() {
-    const {trackable} = this;
-    const bounds = trackable.value;
-    const {range} = bounds;
-    trackable.value = {...bounds, range: [range[1], range[0]] as DataTypeInterval};
+    invertInvlerpRange(this.trackable);
   }
   constructor(
       visibility: WatchableVisibilityPriority, public display: DisplayContext,
-      public control: ShaderInvlerpControl,
-      public trackable: WatchableValueInterface<InvlerpParameters>,
+      public dataType: DataType, public trackable: WatchableValueInterface<InvlerpParameters>,
       public histogramSpecifications: HistogramSpecifications, public histogramIndex: number,
-      public shaderControlsOptions: ShaderControlsOptions) {
+      public legendShaderOptions: LegendShaderOptions|undefined) {
     super(visibility);
     this.registerDisposer(histogramSpecifications.visibility.add(this.visibility));
     const {element, boundElements} = this;
-    if (control.default.channel.length === 0 &&
-        shaderControlsOptions.legendShaderOptions !== undefined) {
+    if (legendShaderOptions !== undefined) {
       const legendPanel = this.registerDisposer(new ColorLegendPanel(this));
       element.appendChild(legendPanel.element);
     }
@@ -501,7 +544,6 @@ export class InvlerpWidget extends Tab {
     this.invertArrows = [makeArrow(svg_arrowRight), makeArrow(svg_arrowLeft)];
     element.appendChild(boundElements.range.container);
     element.appendChild(this.cdfPanel.element);
-    element.appendChild(this.histogramPanel.element);
     element.classList.add('neuroglancer-invlerp-widget');
     element.appendChild(boundElements.window.container);
     this.updateView();

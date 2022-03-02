@@ -242,10 +242,10 @@ setuptools.setup(
         "numpy>=1.11.0",
         'requests',
         'tornado',
-        'sockjs-tornado',
         'six',
         'google-apitools',
         'google-auth',
+        'atomicwrites'
     ],
     extras_require={
         'test': [
@@ -255,12 +255,7 @@ setuptools.setup(
         ],
         'test-browser': [
             'selenium>=3.141.0',
-        ],
-        'test-firefox': [
-            "geckodriver_autoinstaller>=0.1.0 ; python_version>='3.6'",
-        ],
-        'test-chrome': [
-            'chromedriver-binary',
+            'webdriver-manager>=3.5.0',
         ],
     },
     ext_modules=[
