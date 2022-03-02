@@ -421,13 +421,11 @@ export class AnnotationLayerView extends Tab {
         const isInstance = this.layer.tool.value instanceof PlacePolygonTool;
         if (!isInstance) {
           this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.DRAW);
-          setPolygonDrawModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
         }
         else {
           const polygonTool = <PlacePolygonTool>this.layer.tool.value;
           if (polygonTool.mode === PolygonToolMode.EDIT) {
             this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.DRAW);
-            setPolygonDrawModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
           }
           else {
             this.layer.tool.value = undefined;
@@ -438,12 +436,10 @@ export class AnnotationLayerView extends Tab {
         const isInstance = this.layer.tool.value instanceof PlacePolygonTool;
         if (!isInstance) {
           this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.EDIT);
-          setPolygonEditModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
         } else {
           const polygonTool = <PlacePolygonTool>this.layer.tool.value;
           if (polygonTool.mode === PolygonToolMode.DRAW) {
             this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.EDIT);
-            setPolygonEditModeInputEventBindings(this.layer.tool.value, window['viewer'].inputEventBindings);
           }
           else {
             this.layer.tool.value = undefined;
@@ -666,14 +662,17 @@ export class AnnotationLayerView extends Tab {
       if (state.chunkTransform.value.error !== undefined) continue;
       const {source} = state;
       const annotations = Array.from(source);
-      info.annotations = annotations;
+      info.annotations.length = 0;
       const {idToIndex} = info;
       idToIndex.clear();
       for (let i = 0, length = annotations.length; i < length; ++i) {
-        idToIndex.set(annotations[i].id, i);
-      }
-      for (const annotation of annotations) {
-        listElements.push({state, annotation});
+        const annotation = annotations[i];
+        if (annotation.parentAnnotationId) continue;
+        const index = info.annotations.length;
+        info.annotations.push(annotation);
+        info.idToIndex.set(annotation.id, index);
+        const spliceStart = info.listOffset + index;
+        this.listElements.splice(spliceStart, 0, {state, annotation});
       }
     }
     const oldLength = this.virtualListSource.length;
@@ -1125,6 +1124,11 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     super(layer, options);
     this.mode = mode;
     this.childTool = new PlaceLineTool(layer, {...options, parent: this});
+    if (mode === PolygonToolMode.DRAW) {
+      setPolygonDrawModeInputEventBindings(this, window['viewer'].inputEventBindings);
+    } else {
+      setPolygonEditModeInputEventBindings(this, window['viewer'].inputEventBindings);
+    }
   }
 
   trigger(mouseState: MouseSelectionState) {

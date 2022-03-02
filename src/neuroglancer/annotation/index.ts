@@ -712,7 +712,7 @@ export function restoreAnnotation(obj: any, schema: AnnotationSchema, allowMissi
         expectArray(propsObj, schema.properties.length),
         (x, i) => annotationPropertyTypeHandlers[propSpecs[i].type].deserializeJson(x));
   });
-  const parentAnnotationId = verifyObjectProperty(obj, 'parentAnnotationid', verifyOptionalString);
+  const parentAnnotationId = verifyObjectProperty(obj, 'parentAnnotationId', verifyOptionalString);
   const result: Annotation = {
     id,
     description: verifyObjectProperty(obj, 'description', verifyOptionalString),
@@ -936,7 +936,7 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     if (obj !== undefined) {
       parseArray(obj, x => {
         const annotation = restoreAnnotation(x, this);
-        annotationMap.set(annotation.id, annotation);
+        this.add(annotation);
       });
     }
     for (const reference of this.references.values()) {
