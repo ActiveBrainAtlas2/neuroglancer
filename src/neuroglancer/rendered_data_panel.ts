@@ -692,6 +692,10 @@ export abstract class RenderedDataPanel extends RenderedPanel {
           e.stopPropagation();
           let annotationRef = annotationLayer.source.getReference(selectedAnnotationId)!;
           let ann = <Annotation>annotationRef.value;
+          if (ann.parentAnnotationId) {
+            annotationRef.dispose();
+            return;
+          }
           const handler = getAnnotationTypeRenderHandler(ann.type);
           const pickedOffset = mouseState.pickedOffset;
           const {chunkTransform: {value: chunkTransform}} = annotationLayer;

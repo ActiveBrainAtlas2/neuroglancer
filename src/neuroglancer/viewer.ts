@@ -64,6 +64,7 @@ import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
 import { MultiStepAnnotationTool, PlacePointTool, PlacePolygonTool } from './ui/annotations';
+import { getPolygonDrawModeBindings, getPolygonEditModeBindings, polygonDrawModeBindings, polygonEditModeBindings } from './ui/default_input_event_bindings';
 
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
@@ -788,10 +789,14 @@ export class Viewer extends RefCounted implements ViewerState {
 
   showHelpDialog() {
     const {inputEventBindings} = this;
+    getPolygonDrawModeBindings();
+    getPolygonEditModeBindings();
     new InputEventBindingHelpDialog([
       ['Global', inputEventBindings.global],
       ['Cross section view', inputEventBindings.sliceView],
       ['3-D projection view', inputEventBindings.perspectiveView],
+      ['Polygon draw mode', polygonDrawModeBindings!],
+      ['Polygon edit mode', polygonEditModeBindings!],
     ]);
   }
 

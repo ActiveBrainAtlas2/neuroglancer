@@ -147,7 +147,7 @@ export function getDefaultSliceViewPanelBindings() {
   return defaultSliceViewPanelBindings;
 }
 
-let polygonDrawModeBindings: EventActionMap|undefined;
+export let polygonDrawModeBindings: EventActionMap|undefined;
 export function getPolygonDrawModeBindings() {
   if (polygonDrawModeBindings === undefined) {
     polygonDrawModeBindings = EventActionMap.fromObject(
@@ -163,7 +163,7 @@ export function getPolygonDrawModeBindings() {
 }
 
 
-let polygonEditModeBindings: EventActionMap|undefined;
+export let polygonEditModeBindings: EventActionMap|undefined;
 export function getPolygonEditModeBindings() {
   if (polygonEditModeBindings === undefined) {
     polygonEditModeBindings = EventActionMap.fromObject(
@@ -177,6 +177,7 @@ export function getPolygonEditModeBindings() {
         'control+equal': 'scale-polygon-enlarge',
         'control+shift+equal': 'scale-polygon-enlarge',
         'control+minus': 'scale-polygon-shrink',
+        'control+shift-minus': 'scale-polygon-shrink',
         'at:touchrotate': 'rotate-polygon-via-touchrotate',
         'at:touchpinch': 'zoom-polygon-via-touchpinch',
       }
