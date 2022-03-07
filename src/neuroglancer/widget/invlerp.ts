@@ -44,12 +44,14 @@ import {setRawTextureParameters} from 'neuroglancer/webgl/texture';
 import {makeIcon} from 'neuroglancer/widget/icon';
 import {LegendShaderOptions} from 'neuroglancer/widget/shader_controls';
 import {Tab} from 'neuroglancer/widget/tab_view';
+import {HistogramPanel} from 'neuroglancer/widget/histogram';
 
 const inputEventMap = EventActionMap.fromObject({
   'shift?+mousedown0': {action: 'set'},
   'shift?+alt+mousedown0': {action: 'adjust-window-via-drag'},
   'shift?+wheel': {action: 'zoom-via-wheel'},
 });
+
 
 export class CdfController<T extends RangeAndWindowIntervals> extends RefCounted {
   constructor(
@@ -505,6 +507,8 @@ export function adjustInvlerpBrightnessContrast(
 
 export class InvlerpWidget extends Tab {
   cdfPanel = this.registerDisposer(new CdfPanel(this));
+  histogramPanel = this.registerDisposer(new HistogramPanel(this, NUM_CDF_LINES, histogramSamplerTextureUnit));
+
   boundElements = {
     range: createRangeBoundInputs('range', this.dataType, this.trackable),
     window: createRangeBoundInputs('window', this.dataType, this.trackable),
@@ -544,6 +548,7 @@ export class InvlerpWidget extends Tab {
     this.invertArrows = [makeArrow(svg_arrowRight), makeArrow(svg_arrowLeft)];
     element.appendChild(boundElements.range.container);
     element.appendChild(this.cdfPanel.element);
+    element.appendChild(this.histogramPanel.element);
     element.classList.add('neuroglancer-invlerp-widget');
     element.appendChild(boundElements.window.container);
     this.updateView();
