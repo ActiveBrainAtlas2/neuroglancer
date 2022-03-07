@@ -19,7 +19,7 @@ interface TransformJSON {
 interface TransformInfo {
   prep_id: string;
   input_type: string;
-  person_id: number;
+  owner_id: number;
   username: string;
   count?: number;
 }
@@ -57,7 +57,7 @@ export class FetchTransformationWidget extends RefCounted{
     this.element.appendChild(this.fetchButton)
 
     this.registerDisposer(() => removeFromParent(this.element));
-  };
+  }
 
   public display(transform: WatchableCoordinateSpaceTransform, url: string) {
     this.transform = transform;
@@ -78,7 +78,7 @@ export class FetchTransformationWidget extends RefCounted{
     const urlNames = [...new Set(urlNameMatches.map(m => m[1]))];
     if (urlNames.length === 1) {
       const animal = urlNames[0];
-      for(var i = 0; i < this.transformSelection.options.length; i++) {
+      for(let i = 0; i < this.transformSelection.options.length; i++) {
         const optionVal = this.transformSelection.options[i].value;
         if (optionVal.indexOf(animal) == 0) {
           this.transformSelection.value = optionVal;
@@ -106,9 +106,9 @@ export class FetchTransformationWidget extends RefCounted{
       transformSelectionFetched.add(defaultOption);
 
       response.forEach(info => {
-        const {prep_id, input_type, person_id, username, count} = info;
-        var option = document.createElement('option');
-        option.value = `${prep_id}/${input_type}/${person_id}`;
+        const {prep_id, input_type, owner_id, username, count} = info;
+        const option = document.createElement('option');
+        option.value = `${prep_id}/${input_type}/${owner_id}`;
         option.text = `${prep_id} ${input_type} ${username}`;
         option.text += count? (count > 1)? ` - ${count} structures`: ` - ${count} structure`: ``;
         transformSelectionFetched.add(option);
