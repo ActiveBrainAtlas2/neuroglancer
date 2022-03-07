@@ -38,7 +38,7 @@ import { makeAddButton } from 'neuroglancer/widget/add_button';
 import { CoordinateSpaceTransformWidget } from 'neuroglancer/widget/coordinate_transform';
 import { AutocompleteTextInput, makeCompletionElementWithDescription } from 'neuroglancer/widget/multiline_autocomplete';
 import { Tab } from 'neuroglancer/widget/tab_view';
-// import {FetchTransformationWidget} from 'src/neuroglancer/widget/fetch_transformation';
+import {FetchTransformationWidget} from 'src/neuroglancer/widget/fetch_transformation';
 
 class SourceUrlAutocomplete extends AutocompleteTextInput {
     dataSourceView: DataSourceView;
@@ -234,11 +234,10 @@ export class DataSourceView extends RefCounted {
     seenGeneration = 0;
     generation = -1;
     private loadedView: LoadedDataSourceView | undefined;
-    /* START OF CHANGE: Retrieve Matrix Button 
+    /* START OF CHANGE: Retrieve Matrix Button */
     private fetchMatrixWidget: FetchTransformationWidget | undefined;
-     END OF CHANGE: Retrieve Matrix Button 
-    **/
-
+    /* END OF CHANGE: Retrieve Matrix Button */
+   
     constructor(public tab: Borrowed<LayerDataSourcesTab>, public source: Borrowed<LayerDataSource>) {
         super();
         const urlInput = this.urlInput = this.registerDisposer(new SourceUrlAutocomplete(this));
@@ -290,10 +289,9 @@ export class DataSourceView extends RefCounted {
         this.urlInput.dirty.value = false;
         const { loadState } = this.source;
         let { loadedView } = this;
-        /* START OF CHANGE: Retrieve Matrix Button 
+        /* START OF CHANGE: Retrieve Matrix Button */
         this.fetchMatrixWidget?.hide();
-        END OF CHANGE: Retrieve Matrix Button 
-        **/
+        /* END OF CHANGE: Retrieve Matrix Button */
         if (loadedView !== undefined) {
             if (loadedView.source === loadState) {
                 return;
@@ -304,13 +302,13 @@ export class DataSourceView extends RefCounted {
         if (loadState instanceof LoadedLayerDataSource) {
             loadedView = this.loadedView = new LoadedDataSourceView(loadState);
             this.element.appendChild(loadedView.element);
-            /* START OF CHANGE: Retrieve Matrix Button 
+            /* START OF CHANGE: Retrieve Matrix Button */
             if (this.fetchMatrixWidget === undefined) {
                 this.fetchMatrixWidget = this.registerDisposer(new FetchTransformationWidget());
                 this.element.appendChild(this.fetchMatrixWidget.element)
             }
             this.fetchMatrixWidget.display(loadState.transform, this.urlInput.value);
-            END OF CHANGE: Retrieve Matrix Button */
+            /* END OF CHANGE: Retrieve Matrix Button */
         }
     }
 
