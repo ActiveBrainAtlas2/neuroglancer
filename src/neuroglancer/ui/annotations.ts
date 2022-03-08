@@ -20,7 +20,7 @@
 
 import './annotations.css';
 import {AppSettings} from 'neuroglancer/services/service';
-import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Ellipsoid, Line, Polygon} from 'neuroglancer/annotation';
+import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Collection, Ellipsoid, isChildDummyAnnotation, isTypeCollection, Line, Polygon} from 'neuroglancer/annotation';
 import {AnnotationDisplayState, AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
 import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
 import {AnnotationLayer, PerspectiveViewAnnotationLayer, SliceViewAnnotationLayer} from 'neuroglancer/annotation/renderlayer';
@@ -70,6 +70,7 @@ import {ActionEvent, dispatchEvent, EventActionMapInterface} from 'neuroglancer/
 import {getPolygonEditModeBindings} from 'neuroglancer/ui/default_input_event_bindings';
 import { Viewer } from '../viewer';
 import { cloneAnnotationSequence } from '../annotation/polygon';
+import { update } from 'lodash';
 
 interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -242,6 +243,7 @@ interface AnnotationLayerViewAttachedState {
   annotations: Annotation[];
   idToIndex: Map<AnnotationId, number>;
   listOffset: number;
+  idToLevel: Map<AnnotationId, number>;
 }
 
 export class AnnotationLayerView extends Tab {
@@ -298,7 +300,7 @@ export class AnnotationLayerView extends Tab {
       }
       refCounted.registerDisposer(state.transform.changed.add(this.forceUpdateView));
       newAttachedAnnotationStates.set(
-          state, {refCounted, annotations: [], idToIndex: new Map(), listOffset: 0});
+          state, {refCounted, annotations: [], idToIndex: new Map(), listOffset: 0, idToLevel: new Map()});
     }
     this.attachedAnnotationStates = newAttachedAnnotationStates;
     attachedAnnotationStates.clear();
@@ -497,7 +499,7 @@ export class AnnotationLayerView extends Tab {
     const {previousSelectedState: state} = this;
     if (state === undefined) return;
     this.previousSelectedState = undefined;
-    const reference = state.annotationLayerState.source.getTopMostParentReference(state.annotationId);
+    const reference = state.annotationLayerState.source.getNonDummyAnnotationReference(state.annotationId);
     if (reference.value === null) return;
     const element =
         this.getRenderedAnnotationListElement(state.annotationLayerState, reference.value!.id);
@@ -548,7 +550,7 @@ export class AnnotationLayerView extends Tab {
     this.clearSelectionClass();
     this.previousSelectedState = selectionState;
     if (selectionState === undefined) return;
-    const reference = selectionState.annotationLayerState.source.getTopMostParentReference(selectionState.annotationId);
+    const reference = selectionState.annotationLayerState.source.getNonDummyAnnotationReference(selectionState.annotationId);
     if (reference.value === null) return;
     const annotationId = reference.value!.id;
     const element = this.getRenderedAnnotationListElement(
@@ -668,11 +670,15 @@ export class AnnotationLayerView extends Tab {
       for (let i = 0, length = annotations.length; i < length; ++i) {
         const annotation = annotations[i];
         if (annotation.parentAnnotationId) continue;
-        const index = info.annotations.length;
-        info.annotations.push(annotation);
-        info.idToIndex.set(annotation.id, index);
-        const spliceStart = info.listOffset + index;
-        this.listElements.splice(spliceStart, 0, {state, annotation});
+        const annotationList = this.getAllAnnotationsUnderRoot(annotation.id, state);
+        for (let ann of annotationList) {
+          const index = info.annotations.length;
+          info.annotations.push(ann);
+          info.idToIndex.set(ann.id, index);
+          info.idToLevel.set(annotation.id, this.getAnnotationLevel(annotation.id, state));
+          const spliceStart = info.listOffset + index;
+          this.listElements.splice(spliceStart, 0, {state, annotation:ann});
+        }
       }
     }
     const oldLength = this.virtualListSource.length;
@@ -701,12 +707,22 @@ export class AnnotationLayerView extends Tab {
       this.updateView();
       return;
     }
-    if (annotation.parentAnnotationId) return; 
     const info = this.attachedAnnotationStates.get(state);
+    if (info !== undefined && info.idToIndex.get(annotation.id)) return;
     if (info !== undefined) {
-      const index = info.annotations.length;
-      info.annotations.push(annotation);
+      let index: number;
+      if (annotation.parentAnnotationId) {
+        const parentIndex = info.idToIndex.get(annotation.parentAnnotationId);
+        index = (parentIndex !== undefined)? parentIndex + 1 : info.annotations.length;
+      } else {
+        index = info.annotations.length;
+      }
+      info.annotations.splice(index, 0, annotation);
       info.idToIndex.set(annotation.id, index);
+      info.idToLevel.set(annotation.id, this.getAnnotationLevel(annotation.id, state));
+      for (let i = index + 1, length = info.annotations.length; i < length; ++i) {
+        info.idToIndex.set(info.annotations[i].id, i);
+      }
       const spliceStart = info.listOffset + index;
       this.listElements.splice(spliceStart, 0, {state, annotation});
       this.updateListLength();
@@ -725,11 +741,11 @@ export class AnnotationLayerView extends Tab {
       this.updateView();
       return;
     }
-    if (annotation.parentAnnotationId) return;
     const info = this.attachedAnnotationStates.get(state);
     if (info !== undefined) {
       const index = info.idToIndex.get(annotation.id);
       if (index !== undefined) {
+        info.idToLevel.set(annotation.id, this.getAnnotationLevel(annotation.id, state));
         const updateStart = info.listOffset + index;
         info.annotations[index] = annotation;
         this.listElements[updateStart].annotation = annotation;
@@ -751,13 +767,14 @@ export class AnnotationLayerView extends Tab {
     }
     const info = this.attachedAnnotationStates.get(state);
     if (info !== undefined) {
-      const {idToIndex} = info;
+      const {idToIndex, idToLevel} = info;
       const index = idToIndex.get(annotationId);
       if (index !== undefined) {
         const spliceStart = info.listOffset + index;
         const {annotations} = info;
         annotations.splice(index, 1);
         idToIndex.delete(annotationId);
+        idToLevel.delete(annotationId);
         for (let i = index, length = annotations.length; i < length; ++i) {
           idToIndex.set(annotations[i].id, i);
         }
@@ -768,6 +785,42 @@ export class AnnotationLayerView extends Tab {
       }
     }
     this.resetOnUpdate();
+  }
+
+  private getAnnotationLevel(annotationId: AnnotationId, state: AnnotationLayerState): number {
+    let depth = 0;
+    let curAnnotationId = annotationId;
+    const curRef = state.source.getReference(curAnnotationId);
+    if (!curRef.value) {
+      curRef.dispose();
+      return -1;
+    }
+    const annotation = curRef.value;
+    if (annotation.parentAnnotationId) {
+      depth = 1 + this.getAnnotationLevel(annotation.parentAnnotationId, state);
+    }
+    curRef.dispose();
+    return depth;
+  }
+
+  private getAllAnnotationsUnderRoot(annotationId: AnnotationId, state: AnnotationLayerState) : Annotation[] {
+    const reference = state.source.getReference(annotationId);
+    let annotationList : Annotation[] = [];
+    if (!reference.value) {
+      reference.dispose();
+      return annotationList;
+    }
+    let annotation : Annotation | undefined;
+    annotation = reference.value;
+    annotationList.push(annotation);
+    if (isTypeCollection(annotation)) {
+      const collection = <Collection>annotation;
+      for (let i = 0; annotation && i < collection.childAnnotationIds!.length; i++) {
+        annotationList = [...annotationList, ...this.getAllAnnotationsUnderRoot(collection.childAnnotationIds[i], state)];
+      }
+    }
+    reference.dispose();
+    return annotationList;
   }
 
   private resetOnUpdate() {
@@ -783,6 +836,11 @@ export class AnnotationLayerView extends Tab {
     const element = document.createElement('div');
     element.classList.add('neuroglancer-annotation-list-entry');
     element.style.gridTemplateColumns = this.gridTemplate;
+    const info = this.attachedAnnotationStates.get(state);
+    if (info !== undefined) {
+      const depth = info.idToLevel.get(annotation.id);
+      if (depth !== undefined) element.style.paddingLeft = (2.0*depth + 0.5) + 'em';
+    }
     const icon = document.createElement('div');
     icon.className = 'neuroglancer-annotation-icon';
     icon.textContent = annotationTypeHandlers[annotation.type].icon;
@@ -860,32 +918,55 @@ export class AnnotationLayerView extends Tab {
       };
       this.layer.selectAnnotation(state, annotation.id, false);
     });
-    element.addEventListener('action:select-position', event => {
-      event.stopPropagation();
-      this.layer.selectAnnotation(state, annotation.id, 'toggle');
-    });
 
-    element.addEventListener('action:pin-annotation', event => {
-      event.stopPropagation();
-      this.layer.selectAnnotation(state, annotation.id, true);
-    });
+    let addEventsToElement = true;
 
-    element.addEventListener('action:move-to-annotation', event => {
-      event.stopPropagation();
-      event.preventDefault();
-      const {layerRank} = chunkTransform;
-      const chunkPosition = new Float32Array(layerRank);
-      const layerPosition = new Float32Array(layerRank);
-      getCenterPosition(chunkPosition, annotation);
-      matrix.transformPoint(
-          layerPosition, chunkTransform.chunkToLayerTransform, layerRank + 1, chunkPosition,
-          layerRank);
-      setLayerPosition(this.layer, chunkTransform, layerPosition);
-    });
+    if (annotation.parentAnnotationId) {
+      const parentRef = state.source.getReference(annotation.parentAnnotationId);
+      if (parentRef.value && isChildDummyAnnotation(parentRef.value)) {
+        addEventsToElement = false;
+      }
+    }
+
+    if (addEventsToElement) {
+      element.addEventListener('action:select-position', event => {
+        event.stopPropagation();
+        this.layer.selectAnnotation(state, annotation.id, 'toggle');
+      });
+
+      element.addEventListener('action:pin-annotation', event => {
+        event.stopPropagation();
+        this.layer.selectAnnotation(state, annotation.id, true);
+      });
+
+      element.addEventListener('action:move-to-annotation', event => {
+        event.stopPropagation();
+        event.preventDefault();
+        const {layerRank} = chunkTransform;
+        const chunkPosition = new Float32Array(layerRank);
+        const layerPosition = new Float32Array(layerRank);
+        getCenterPosition(chunkPosition, annotation);
+        matrix.transformPoint(
+            layerPosition, chunkTransform.chunkToLayerTransform, layerRank + 1, chunkPosition,
+            layerRank);
+        setLayerPosition(this.layer, chunkTransform, layerPosition);
+      });
+
+      element.addEventListener('action:display-annotation-children', event => {
+        event.stopPropagation();
+        if (isTypeCollection(annotation)) {
+          const collection = <Collection>annotation;
+          const reference = state.source.getReference(annotation.id);
+          if (!reference.value) return;
+          const newAnn = {...collection, childrenVisible: !collection.childrenVisible};
+          state.source.update(reference, <Annotation>newAnn);
+        }
+      });
+    }
 
     const selectionState = this.selectedAnnotationState.value;
     if (selectionState !== undefined && selectionState.annotationLayerState === state) {
-      const reference = selectionState.annotationLayerState.source.getTopMostParentReference(selectionState.annotationId);
+      const reference = selectionState.annotationLayerState.source.getNonDummyAnnotationReference(selectionState.annotationId);
       if (reference.value !== null && reference.value!.id === annotation.id) {
         element.classList.add('neuroglancer-annotation-selected');
       }
@@ -1098,6 +1179,7 @@ abstract class PlaceCollectionAnnotationTool extends MultiStepAnnotationTool {
       source: point,
       properties: annotationLayer.source.properties.map(x => x.default),
       childAnnotationIds: [],
+      childrenVisible: false,
     };
   }
 
@@ -1744,7 +1826,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
           if (pickedAnnotationLayer !== undefined &&
               this.annotationStates.states.includes(pickedAnnotationLayer)) {
             const existingValue = this.annotationDisplayState.hoverState.value;
-            const reference = pickedAnnotationLayer.source.getTopMostParentReference(mouseState.pickedAnnotationId!);
+            const reference = pickedAnnotationLayer.source.getNonDummyAnnotationReference(mouseState.pickedAnnotationId!);
             if (reference.value === null) return;
             const annotationId = reference.value!.id;
             if (existingValue === undefined || existingValue.id !== annotationId

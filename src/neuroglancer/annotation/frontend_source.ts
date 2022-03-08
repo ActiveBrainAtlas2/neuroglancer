@@ -15,7 +15,7 @@
  */
 
 import { values } from 'lodash';
-import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationPropertySpec, AnnotationReference, AnnotationSourceSignals, AnnotationType, annotationTypeHandlers, annotationTypes, fixAnnotationAfterStructuredCloning, makeAnnotationId, SerializedAnnotations} from 'neuroglancer/annotation';
+import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationPropertySpec, AnnotationReference, AnnotationSourceSignals, AnnotationType, annotationTypeHandlers, annotationTypes, fixAnnotationAfterStructuredCloning, isChildDummyAnnotation, makeAnnotationId, SerializedAnnotations} from 'neuroglancer/annotation';
 import {ANNOTATION_COMMIT_UPDATE_RESULT_RPC_ID, ANNOTATION_COMMIT_UPDATE_RPC_ID, ANNOTATION_GEOMETRY_CHUNK_SOURCE_RPC_ID, ANNOTATION_METADATA_CHUNK_SOURCE_RPC_ID, ANNOTATION_REFERENCE_ADD_RPC_ID, ANNOTATION_REFERENCE_DELETE_RPC_ID, ANNOTATION_SUBSET_GEOMETRY_CHUNK_SOURCE_RPC_ID, AnnotationGeometryChunkSpecification} from 'neuroglancer/annotation/base';
 import {getAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
 import {Chunk, ChunkManager, ChunkSource} from 'neuroglancer/chunk_manager/frontend';
@@ -525,12 +525,21 @@ export class MultiscaleAnnotationSource extends SharedObject implements
     return existing;
   }
 
-  getTopMostParentReference(id: AnnotationId): Owned<AnnotationReference> {
+  getNonDummyAnnotationReference(id: AnnotationId): AnnotationReference {
     const reference = this.getReference(id);
-    if (reference.value !== null && reference.value!.parentAnnotationId) {
-      reference.dispose();
-      return this.getTopMostParentReference(reference!.value!.parentAnnotationId);
+    if (!reference.value) return reference;
+
+    const annotation = reference.value;
+    if (annotation.parentAnnotationId) {
+      const parentRef = this.getReference(annotation.parentAnnotationId);
+      if (parentRef.value && isChildDummyAnnotation(parentRef.value)) {
+        reference.dispose();
+        parentRef.dispose();
+        return this.getNonDummyAnnotationReference(annotation.parentAnnotationId);
+      }
+      parentRef.dispose();
     }
+    
     return reference;
   }
 
