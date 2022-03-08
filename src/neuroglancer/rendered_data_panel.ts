@@ -470,8 +470,8 @@ export abstract class RenderedDataPanel extends RenderedPanel {
         }
         if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
 
-        const reference = selectedAnnotationLayer.source.getTopMostParentReference(selectedAnnotationId);
-        if (reference.value!.type != AnnotationType.POLYGON) return;
+        const reference = selectedAnnotationLayer.source.getNonDummyAnnotationReference(selectedAnnotationId);
+        if (!reference.value || reference.value!.type != AnnotationType.POLYGON) return;
 
         rotatePolygon(this.navigationState, selectedAnnotationLayer, reference, signVal*0.1);
       });
@@ -502,8 +502,8 @@ export abstract class RenderedDataPanel extends RenderedPanel {
         }
         if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
 
-        const reference = selectedAnnotationLayer.source.getTopMostParentReference(selectedAnnotationId);
-        if (reference.value!.type != AnnotationType.POLYGON) return;
+        const reference = selectedAnnotationLayer.source.getNonDummyAnnotationReference(selectedAnnotationId);
+        if (!reference.value || reference.value!.type != AnnotationType.POLYGON) return;
 
         scalePolygon(this.navigationState, selectedAnnotationLayer, reference, scale);
       });
@@ -790,8 +790,8 @@ export abstract class RenderedDataPanel extends RenderedPanel {
           }
           if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
 
-          const reference = selectedAnnotationLayer.source.getTopMostParentReference(selectedAnnotationId);
-          if (reference.value!.type != AnnotationType.POLYGON) return;
+          const reference = selectedAnnotationLayer.source.getNonDummyAnnotationReference(selectedAnnotationId);
+          if (!reference.value || reference.value!.type != AnnotationType.POLYGON) return;
 
           rotatePolygon(this.navigationState, selectedAnnotationLayer, reference, -(detail.angle - detail.prevAngle));
         }
@@ -823,8 +823,8 @@ export abstract class RenderedDataPanel extends RenderedPanel {
       }
       if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
 
-      const reference = selectedAnnotationLayer.source.getTopMostParentReference(selectedAnnotationId);
-      if (reference.value!.type != AnnotationType.POLYGON) return;
+      const reference = selectedAnnotationLayer.source.getNonDummyAnnotationReference(selectedAnnotationId);
+      if (!reference.value || reference.value!.type != AnnotationType.POLYGON) return;
 
       scalePolygon(this.navigationState, selectedAnnotationLayer, reference, scale);
     });

@@ -62,7 +62,8 @@ export function getDefaultAnnotationListBindings() {
     defaultAnnotationListBindings = EventActionMap.fromObject(
         {
           'click0': 'pin-annotation',
-          'mousedown2': 'move-to-annotation',
+          'control+mousedown0': 'move-to-annotation',
+          'mousedown2': 'display-annotation-children',
         },
         {parents: [[getDefaultSelectBindings(), 0]]});
   }

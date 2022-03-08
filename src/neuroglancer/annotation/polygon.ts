@@ -116,7 +116,7 @@ function findNormalVectorToPolygon(childRefs: AnnotationReference[], orientation
 
 export function cloneAnnotationSequence(navigationState: NavigationState, annotationLayer: AnnotationLayerState, 
   annotationId: string, startOffset: number, polygonCnt: number, stepSize: number): void {
-  const reference = annotationLayer.source.getTopMostParentReference(annotationId);
+  const reference = annotationLayer.source.getNonDummyAnnotationReference(annotationId);
   if(reference.value === null || reference.value!.type !== AnnotationType.POLYGON) return;
   const childAnnotationRefs : AnnotationReference[] = [];
   const ann = <Polygon>reference.value;
@@ -146,6 +146,7 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
     source: cloneSource,
     properties: annotationLayer.source.properties.map(x => x.default),
     childAnnotationIds: [],
+    childrenVisible: false
   }, false);
 
   const disposeAnnotation = () : boolean => {

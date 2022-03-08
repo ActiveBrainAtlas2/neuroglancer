@@ -277,6 +277,14 @@ export const annotationPropertyTypeHandlers:
       },
     };
 
+export function isTypeCollection(annotation: Annotation) : boolean {
+  return annotation.type === AnnotationType.POLYGON;
+}
+
+export function isChildDummyAnnotation(annotation: Annotation) : boolean {
+  return annotation.type === AnnotationType.POLYGON;
+}
+
 export function getPropertyOffsets(
     rank: number, propertySpecs: readonly Readonly<AnnotationPropertySpec>[]) {
   let serializedBytes = 0;
@@ -437,6 +445,7 @@ export interface Ellipsoid extends AnnotationBase {
 export interface Collection extends AnnotationBase {
   source: Float32Array;
   childAnnotationIds: string[];
+  childrenVisible: boolean;
 }
 
 export interface Polygon extends Collection {
@@ -644,6 +653,7 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
           obj, 'source', x => parseFixedLengthArray(new Float32Array(rank), x, verifyFiniteFloat));
       annotation.childAnnotationIds = verifyObjectProperty(
           obj, 'childAnnotationIds', verifyStringArray);
+      annotation.childrenVisible = false;
     },
     serializedBytes: rank => rank * 4,
     serialize: (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, annotation: Polygon) => {
@@ -652,7 +662,7 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
     deserialize: (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, id: string): Polygon => {
       const source = new Float32Array(rank);
       deserializeFloatVector(buffer, offset, isLittleEndian, rank, source);
-      return {type: AnnotationType.POLYGON, source, id, properties: [], childAnnotationIds: []};
+      return {type: AnnotationType.POLYGON, source, id, properties: [], childAnnotationIds: [], childrenVisible: false};
     },
     visitGeometry(annotation: Polygon, callback) {
       callback(annotation.source, false);
@@ -765,7 +775,7 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     } else if (this.annotationMap.has(annotation.id)) {
       throw new Error(`Annotation id already exists: ${JSON.stringify(annotation.id)}.`);
     }
-    if(parentRef) {
+    if(parentRef && isTypeCollection(parentRef.value!)) {
       annotation.parentAnnotationId = parentRef.id;
       let parAnnotation = <Collection>parentRef.value!;
       parAnnotation.childAnnotationIds.push(annotation.id);
@@ -776,7 +786,23 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
     this.annotationMap.set(annotation.id, annotation);
     this.changed.dispatch();
-    this.childAdded.dispatch(annotation);
+    if (!annotation.parentAnnotationId) {
+      this.childAdded.dispatch(annotation);
+    }
+    if (isTypeCollection(annotation)) {
+      const collection = <Collection>annotation;
+      if (collection.childrenVisible) {
+        for (let childId of collection.childAnnotationIds) {
+          const childRef = this.getReference(childId);
+          if (childRef.value) this.childAdded.dispatch(childRef.value);
+          childRef.dispose();
+        }
+      } else {
+        for (let childId of collection.childAnnotationIds) {
+          this.childDeleted.dispatch(childId);
+        }
+      }
+    }
     if (!commit) {
       this.pending.add(annotation.id);
     }
@@ -805,7 +831,7 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     this.annotationMap.set(annotation.id, annotation);
     if (annotation.parentAnnotationId) {
       const parentRef = this.getReference(annotation.parentAnnotationId);
-      if (parentRef.value) {
+      if (parentRef.value && isTypeCollection(parentRef.value)) {
         let parAnnotation = <Collection>parentRef.value;
         if (parAnnotation.type === AnnotationType.POLYGON) {
           parAnnotation = <Collection>this.getUpdatedSourceVertex(<Polygon>parAnnotation);
@@ -816,6 +842,20 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
     reference.changed.dispatch();
     this.changed.dispatch();
+    if (isTypeCollection(annotation)) {
+      const collection = <Collection>annotation;
+      if (collection.childrenVisible) {
+        for (let childId of collection.childAnnotationIds) {
+          const childRef = this.getReference(childId);
+          if (childRef.value) this.childAdded.dispatch(childRef.value);
+          childRef.dispose();
+        }
+      } else {
+        for (let childId of collection.childAnnotationIds) {
+          this.childDeleted.dispatch(childId);
+        }
+      }
+    }
     this.childUpdated.dispatch(annotation);
   }
 
@@ -833,13 +873,14 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     if (reference.value === null) {
       return;
     }
-    if (reference.value!.parentAnnotationId && fromParent === false) {
-      const msg = new StatusMessage();
-      msg.setErrorMessage('Cannot delete child annotations');
-      return;
-    }
     if (reference.value!.parentAnnotationId) {
       const parentRef = this.getReference(reference.value!.parentAnnotationId);
+      if (parentRef.value && isChildDummyAnnotation(parentRef.value) && !fromParent) {
+        parentRef.dispose();
+        const msg = new StatusMessage();
+        msg.setErrorMessage('Cannot delete child annotations');
+        return;
+      }
       if (parentRef.value) {
         let parAnnotation = <Collection>parentRef.value;
         const index = parAnnotation.childAnnotationIds.indexOf(reference.value!.id, 0);
@@ -853,7 +894,7 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
       }
       parentRef.dispose();
     }
-    if(reference.value!.type == AnnotationType.POLYGON) {
+    if(isTypeCollection(reference.value!)) {
       const annotation = <Collection>reference.value;
       const childAnnotationIds = Object.assign([], annotation.childAnnotationIds);
       childAnnotationIds.forEach((childId) => {
@@ -882,12 +923,21 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     return existing;
   }
 
-  getTopMostParentReference(id: AnnotationId): AnnotationReference {
+  getNonDummyAnnotationReference(id: AnnotationId): AnnotationReference {
     const reference = this.getReference(id);
-    if (reference.value !== null && reference.value!.parentAnnotationId) {
-      reference.dispose();
-      return this.getTopMostParentReference(reference!.value!.parentAnnotationId);
+    if (!reference.value) return reference;
+
+    const annotation = reference.value;
+    if (annotation.parentAnnotationId) {
+      const parentRef = this.getReference(annotation.parentAnnotationId);
+      if (parentRef.value && isChildDummyAnnotation(parentRef.value)) {
+        reference.dispose();
+        parentRef.dispose();
+        return this.getNonDummyAnnotationReference(annotation.parentAnnotationId);
+      }
+      parentRef.dispose();
     }
+    
     return reference;
   }
 
