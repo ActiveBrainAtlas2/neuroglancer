@@ -39,8 +39,9 @@ import { arraysEqual } from './util/array';
 import { PersistentViewerSelectionState } from './layer';
 import { UserLayerWithAnnotations } from './ui/annotations';
 import { ClonePolygonDialog } from './ui/clone_polygon';
-import { rotatePolygon, scalePolygon } from './annotation/polygon';
+import { cloneAnnotationSequence, polygonRotateAngle, polygonScalePercentage, polygonSectionOffset, rotatePolygon, scalePolygon } from './annotation/polygon';
 import { SliceView } from './sliceview/frontend';
+import { StatusMessage } from './status';
 
 const tempVec3 = vec3.create();
 
@@ -422,8 +423,16 @@ export abstract class RenderedDataPanel extends RenderedPanel {
 
     registerActionListener(element, 'clone-polygon-annotation', () => {
       const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.value;
-      if (!this.viewer.selectionDetailsState.pin.value) return;
-      if (selectionState === undefined) return;
+      if (!this.viewer.selectionDetailsState.pin.value) {
+        const msg = new StatusMessage();
+        msg.setErrorMessage('Pin an annotation of an annotation layer to clone');
+        return;
+      }
+      if (selectionState === undefined) {
+        const msg = new StatusMessage();
+        msg.setErrorMessage('Pin an annotation of an annotation layer to clone');
+        return;
+      }
       let selectedAnnotationId = undefined;
       let selectedAnnotationLayer = undefined;
 
@@ -440,9 +449,16 @@ export abstract class RenderedDataPanel extends RenderedPanel {
         selectedAnnotationLayer = annotationLayer;
         break;
       }
-      if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) return;
+      if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) {
+        const msg = new StatusMessage();
+        msg.setErrorMessage('Pin an annotation of an annotation layer to clone');
+        return;
+      }
 
-      new ClonePolygonDialog(this.navigationState, selectedAnnotationId, selectedAnnotationLayer);
+      const numPolygons = 1;
+      const stepSize = 1;
+      cloneAnnotationSequence(this.navigationState, selectedAnnotationLayer, 
+        selectedAnnotationId, polygonSectionOffset.value, numPolygons, stepSize);
     });
 
     for (const sign of [-1, +1]) {
@@ -473,7 +489,8 @@ export abstract class RenderedDataPanel extends RenderedPanel {
         const reference = selectedAnnotationLayer.source.getNonDummyAnnotationReference(selectedAnnotationId);
         if (!reference.value || reference.value!.type != AnnotationType.POLYGON) return;
 
-        rotatePolygon(this.navigationState, selectedAnnotationLayer, reference, signVal*0.1);
+        const angle = signVal*Math.PI*polygonRotateAngle.value/180.0;
+        rotatePolygon(this.navigationState, selectedAnnotationLayer, reference, angle);
       });
     }
 
@@ -482,7 +499,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
       registerActionListener(element, `scale-polygon-${signStr}`, () => {
         const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.value;
         if (!this.viewer.selectionDetailsState.pin.value) return;
-        const scale = (sign < 0) ? 0.9 : 1.1;
+        const scale = (sign < 0) ? 1 - polygonScalePercentage.value/100.0 : 1 + polygonScalePercentage.value/100.0;
         if (selectionState === undefined) return;
         let selectedAnnotationId = undefined;
         let selectedAnnotationLayer = undefined;

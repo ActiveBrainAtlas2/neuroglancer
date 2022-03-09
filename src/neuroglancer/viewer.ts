@@ -65,6 +65,7 @@ import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
 import { MultiStepAnnotationTool, PlacePointTool, PlacePolygonTool } from './ui/annotations';
 import { getPolygonDrawModeBindings, getPolygonEditModeBindings, polygonDrawModeBindings, polygonEditModeBindings } from './ui/default_input_event_bindings';
+import { PolygonOptionsDialog } from './ui/polygon_options';
 
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
@@ -540,6 +541,17 @@ export class Viewer extends RefCounted implements ViewerState {
       topRow.appendChild(button);
     }
 
+    {
+      const button = makeIcon({text: '△', title: 'Edit Polygon Options'});
+      button.style.paddingBottom = '0.24em';
+      this.registerEventListener(button, 'click', () => {
+        this.editPolygonOptions();
+      });
+      this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
+          this.uiControlVisibility.showEditStateButton, button));
+      topRow.appendChild(button);
+    }
+
 
     {
       const button = makeIcon({text: 'Wiki', title: 'Wiki'});
@@ -806,6 +818,10 @@ export class Viewer extends RefCounted implements ViewerState {
 
   editJsonState() {
     new StateEditorDialog(this);
+  }
+
+  editPolygonOptions() {
+    new PolygonOptionsDialog();
   }
 
   showStatistics(value: boolean|undefined = undefined) {

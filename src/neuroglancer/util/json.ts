@@ -413,6 +413,22 @@ export function verifyPositiveInt(obj: any) {
   return result;
 }
 
+export function verifyNonNegativeFloat(obj: any) {
+  let result = verifyFloat(obj);
+  if (result < 0) {
+    throw new Error(`Expected non negative float, but received: ${result}.`);
+  }
+  return result;
+}
+
+export function verifyNonNegativeInt(obj: any) {
+  let result = verifyInt(obj);
+  if (result < 0) {
+    throw new Error(`Expected non negative integer, but received: ${result}.`);
+  }
+  return result;
+}
+
 export function verifyMapKey<U>(obj: any, map: Map<string, U>) {
   let result = map.get(obj);
   if (result === undefined) {
