@@ -665,8 +665,9 @@ export class AnnotationLayerView extends Tab {
       const {source} = state;
       const annotations = Array.from(source);
       info.annotations.length = 0;
-      const {idToIndex} = info;
+      const {idToIndex, idToLevel} = info;
       idToIndex.clear();
+      idToLevel.clear();
       for (let i = 0, length = annotations.length; i < length; ++i) {
         const annotation = annotations[i];
         if (annotation.parentAnnotationId) continue;
@@ -675,7 +676,7 @@ export class AnnotationLayerView extends Tab {
           const index = info.annotations.length;
           info.annotations.push(ann);
           info.idToIndex.set(ann.id, index);
-          info.idToLevel.set(annotation.id, this.getAnnotationLevel(annotation.id, state));
+          info.idToLevel.set(ann.id, this.getAnnotationLevel(ann.id, state));
           const spliceStart = info.listOffset + index;
           this.listElements.splice(spliceStart, 0, {state, annotation:ann});
         }
@@ -815,8 +816,10 @@ export class AnnotationLayerView extends Tab {
     annotationList.push(annotation);
     if (isTypeCollection(annotation)) {
       const collection = <Collection>annotation;
-      for (let i = 0; annotation && i < collection.childAnnotationIds!.length; i++) {
-        annotationList = [...annotationList, ...this.getAllAnnotationsUnderRoot(collection.childAnnotationIds[i], state)];
+      if (collection.childrenVisible) {
+        for (let i = 0; annotation && i < collection.childAnnotationIds!.length; i++) {
+          annotationList = [...annotationList, ...this.getAllAnnotationsUnderRoot(collection.childAnnotationIds[i], state)];
+        }
       }
     }
     reference.dispose();
