@@ -542,7 +542,7 @@ export class Viewer extends RefCounted implements ViewerState {
     }
 
     {
-      const button = makeIcon({text: '△', title: 'Edit Polygon Options'});
+      const button = makeIcon({text: '△', title: 'Edit Polygon Configuration'});
       button.style.paddingBottom = '0.24em';
       this.registerEventListener(button, 'click', () => {
         this.editPolygonOptions();
@@ -600,7 +600,7 @@ export class Viewer extends RefCounted implements ViewerState {
     this.registerDisposer(
         this.selectionDetailsState.changed.add(sidePanelVisible.changed.dispatch));
     this.registerDisposer(new DragResizablePanel(
-        sidePanel, sidePanelVisible, this.selectedLayer.size, 'horizontal', 290));
+        sidePanel, sidePanelVisible, this.selectedLayer.size, 'horizontal', 350));
     const layerInfoPanel =
         this.registerDisposer(new LayerInfoPanelContainer(this.selectedLayer.addRef()));
     this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
