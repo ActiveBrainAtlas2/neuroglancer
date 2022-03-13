@@ -18,7 +18,7 @@
  * @file Basic annotation data structures.
  */
 
-import { child } from '@firebase/database';
+import { child, update } from '@firebase/database';
 import {BoundingBox, CoordinateSpaceTransform, WatchableCoordinateSpaceTransform} from 'neuroglancer/coordinate_transform';
 import {arraysEqual} from 'neuroglancer/util/array';
 import {packColor, parseRGBAColorSpecification, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA} from 'neuroglancer/util/color';
@@ -952,6 +952,24 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     const newAnn = {...ann, source: line.pointA};
     reference.dispose();
     return newAnn;
+  }
+
+  updateColor(reference: AnnotationReference, color: number) {
+    if (!reference.value) return;
+    const newAnn = {...reference.value};
+    const colorIdx = this.properties.findIndex(x => x.identifier === 'color');
+    if (newAnn.properties.length <= colorIdx) return;
+    newAnn.properties[colorIdx] = color;
+    this.update(reference, newAnn);
+
+    if (isTypeCollection(newAnn)) {
+      const collection = <Collection>newAnn;
+      for (let i = 0; i < collection.childAnnotationIds.length; i++) {
+        const childRef = this.getReference(collection.childAnnotationIds[i]);
+        this.updateColor(childRef, color);
+        childRef.dispose();
+      }
+    }
   }
 
   references = new Map<AnnotationId, Borrowed<AnnotationReference>>();

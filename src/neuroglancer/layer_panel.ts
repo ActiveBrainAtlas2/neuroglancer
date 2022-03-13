@@ -270,6 +270,14 @@ class LayerWidget extends RefCounted {
   }
 }
 
+export const defaultAnnotationPropertiesSchema = [
+  {
+    id: 'color',
+    type: 'rgb',
+    default: 'yellow'
+  }
+];
+
 export class LayerPanel extends RefCounted {
   layerWidgets = new Map<ManagedUserLayer, LayerWidget>();
   element = document.createElement('div');
@@ -325,7 +333,8 @@ export class LayerPanel extends RefCounted {
     const addLayer = (event: MouseEvent) => {
       if (event.ctrlKey || event.metaKey || event.type === 'contextmenu') {
         const layer = makeLayer(
-            this.manager, 'annotation', {type: 'annotation', 'source': 'local://annotations'});
+            this.manager, 'annotation', {type: 'annotation', 'source': 'local://annotations', 
+            'annotationProperties': defaultAnnotationPropertiesSchema});
         this.manager.add(layer);
         this.selectedLayer.layer = layer;
         this.selectedLayer.visible = true;
