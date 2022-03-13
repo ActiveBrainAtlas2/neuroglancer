@@ -39,7 +39,7 @@ import {registerTool, Tool} from 'neuroglancer/ui/tool';
 import {animationFrameDebounce} from 'neuroglancer/util/animation_frame_debounce';
 import {arraysEqual, ArraySpliceOp, gatherUpdate} from 'neuroglancer/util/array';
 import {setClipboard} from 'neuroglancer/util/clipboard';
-import {serializeColor, unpackRGB, unpackRGBA, useWhiteBackground} from 'neuroglancer/util/color';
+import {packColor, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA, useWhiteBackground} from 'neuroglancer/util/color';
 import {Borrowed, disposableOnce, RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren} from 'neuroglancer/util/dom';
 import {ValueOrError} from 'neuroglancer/util/error';
@@ -53,7 +53,7 @@ import {formatIntegerBounds, formatIntegerPoint} from 'neuroglancer/util/spatial
 import {Uint64} from 'neuroglancer/util/uint64';
 import * as vector from 'neuroglancer/util/vector';
 import {makeAddButton} from 'neuroglancer/widget/add_button';
-import {ColorWidget} from 'neuroglancer/widget/color';
+import {AnnotationColorWidget, ColorWidget} from 'neuroglancer/widget/color';
 import {makeCopyButton} from 'neuroglancer/widget/copy_button';
 import {makeDeleteButton} from 'neuroglancer/widget/delete_button';
 import {DependentViewContext, DependentViewWidget} from 'neuroglancer/widget/dependent_view_widget';
@@ -252,6 +252,7 @@ export class AnnotationLayerView extends Tab {
           undefined;
   private previousHoverId: string|undefined = undefined;
   private previousHoverAnnotationLayerState: AnnotationLayerState|undefined = undefined;
+  private annotationColorPicker: AnnotationColorWidget|undefined = undefined;
 
   private virtualListSource: VirtualListSource = {
     length: 0,
@@ -379,6 +380,10 @@ export class AnnotationLayerView extends Tab {
             displayState.shaderControls.processedFragmentMain),
         colorPicker.element));
     toolbox.appendChild(colorPicker.element);
+    
+    this.layer.setAnnotationColorPicker();
+    if (this.layer.annotationColorPicker !== undefined) toolbox.append(this.layer.annotationColorPicker.element);
+
     const {mutableControls} = this;
     const pointButton = makeIcon({
       text: annotationTypeHandlers[AnnotationType.POINT].icon,
@@ -1019,6 +1024,10 @@ abstract class PlaceAnnotationTool extends Tool {
     }
     return undefined;
   }
+
+  get annotationColorPicker(): AnnotationColorWidget|undefined {
+    return this.layer.annotationColorPicker;
+  }
 }
 
 const ANNOTATE_POINT_TOOL_ID = 'annotatePoint';
@@ -1029,7 +1038,7 @@ const ANNOTATE_POLYGON_TOOL_ID = 'annotatePolygon';
 
 export class PlacePointTool extends PlaceAnnotationTool {
   trigger(mouseState: MouseSelectionState) {
-    const {annotationLayer} = this;
+    const {annotationLayer, annotationColorPicker} = this;
     if (annotationLayer === undefined) {
       // Not yet ready.
       return;
@@ -1043,7 +1052,12 @@ export class PlacePointTool extends PlaceAnnotationTool {
         relatedSegments: getSelectedAssociatedSegments(annotationLayer),
         point,
         type: AnnotationType.POINT,
-        properties: annotationLayer.source.properties.map(x => x.default),
+        properties: annotationLayer.source.properties.map(x => {
+          if (x.identifier !== 'color') return x.default;
+          if (x.identifier === 'color' && annotationColorPicker === undefined) return x.default;
+          const colorInNum = packColor(parseRGBColorSpecification(annotationColorPicker!.getColor()));
+          return colorInNum;
+        }),
       };
       const reference = annotationLayer.source.add(annotation, /*commit=*/ true);
       this.layer.selectAnnotation(annotationLayer, reference.id, true);
@@ -1106,8 +1120,11 @@ abstract class TwoStepAnnotationTool extends PlaceAnnotationTool {
       };
 
       if (this.inProgressAnnotation === undefined) {
-        const reference = annotationLayer.source.add(
-            this.getInitialAnnotation(mouseState, annotationLayer), /*commit=*/ false, parentRef);
+        const initAnn = this.getInitialAnnotation(mouseState, annotationLayer);
+        if (parentRef) {
+          initAnn.properties = Object.assign([], parentRef.value!.properties)
+        }
+        const reference = annotationLayer.source.add(initAnn, /*commit=*/ false, parentRef);
         this.layer.selectAnnotation(annotationLayer, reference.id, true);
         const mouseDisposer = mouseState.changed.add(updatePointB);
         const disposer = () => {
@@ -1175,12 +1192,18 @@ abstract class PlaceCollectionAnnotationTool extends MultiStepAnnotationTool {
 
   getInitialAnnotation(mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState): Annotation {
     const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+    const {annotationColorPicker} = this;
     return <Polygon> {
       id: '',
       type: this.annotationType,
       description: '',
       source: point,
-      properties: annotationLayer.source.properties.map(x => x.default),
+      properties: annotationLayer.source.properties.map(x => {
+        if (x.identifier !== 'color') return x.default;
+        if (x.identifier === 'color' && annotationColorPicker === undefined) return x.default;
+        const colorInNum = packColor(parseRGBColorSpecification(annotationColorPicker!.getColor()));
+        return colorInNum;
+      }),
       childAnnotationIds: [],
       childrenVisible: false,
     };
@@ -1360,7 +1383,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   addVertexPolygon(mouseState: MouseSelectionState) {
-    const {mode} = this;
+    const {mode, annotationColorPicker} = this;
     if (mode === PolygonToolMode.DRAW) return;
     const selectedAnnotationId = mouseState.pickedAnnotationId;
     const annotationLayer = mouseState.pickedAnnotationLayer;
@@ -1387,7 +1410,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       description: '',
       pointA: (<Line>annotationRef.value).pointA,
       pointB: point,
-      properties: annotationLayer.source.properties.map(x => x.default),
+      properties: Object.assign([], parentAnnotationRef.value!.properties),
     };
     const newAnn2 = <Line>{
       id: '',
@@ -1395,7 +1418,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       description: '',
       pointA: point,
       pointB: (<Line>annotationRef.value).pointB,
-      properties: annotationLayer.source.properties.map(x => x.default),
+      properties: Object.assign([], parentAnnotationRef.value!.properties),
     };
     const newAnnRef1 = annotationLayer.source.add(newAnn1, false, parentAnnotationRef);
     const newAnnRef2 = annotationLayer.source.add(newAnn2, false, parentAnnotationRef);
@@ -1409,7 +1432,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   deleteVertexPolygon(mouseState: MouseSelectionState) {
-    const {mode} = this;
+    const {mode, annotationColorPicker} = this;
     if (mode === PolygonToolMode.DRAW) return;
     const selectedAnnotationId = mouseState.pickedAnnotationId;
     const annotationLayer = mouseState.pickedAnnotationLayer;
@@ -1459,7 +1482,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       description: '',
       pointA: (<Line>annotationRef1.value).pointA,
       pointB: (<Line>annotationRef2.value).pointB,
-      properties: annotationLayer.source.properties.map(x => x.default),
+      properties: Object.assign([], parentAnnotationRef.value!.properties),
     };
     const newAnnRef = annotationLayer.source.add(newAnn, false, parentAnnotationRef);
     annotationLayer.source.delete(annotationRef1, true);
@@ -1490,6 +1513,7 @@ abstract class PlaceTwoCornerAnnotationTool extends TwoStepAnnotationTool {
 
   getInitialAnnotation(mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState):
       Annotation {
+    const {annotationColorPicker} = this;
     const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
     return <AxisAlignedBoundingBox|Line>{
       id: '',
@@ -1497,7 +1521,12 @@ abstract class PlaceTwoCornerAnnotationTool extends TwoStepAnnotationTool {
       description: '',
       pointA: point,
       pointB: point,
-      properties: annotationLayer.source.properties.map(x => x.default),
+      properties: annotationLayer.source.properties.map(x => {
+        if (x.identifier !== 'color') return x.default;
+        if (x.identifier === 'color' && annotationColorPicker === undefined) return x.default;
+        const colorInNum = packColor(parseRGBColorSpecification(annotationColorPicker!.getColor()));
+        return colorInNum;
+      }),
     };
   }
 
@@ -1565,7 +1594,7 @@ class PlaceEllipsoidTool extends TwoStepAnnotationTool {
   getInitialAnnotation(mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState):
       Annotation {
     const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
-
+    const {annotationColorPicker} = this;
     return <Ellipsoid>{
       type: AnnotationType.ELLIPSOID,
       id: '',
@@ -1573,7 +1602,12 @@ class PlaceEllipsoidTool extends TwoStepAnnotationTool {
       segments: getSelectedAssociatedSegments(annotationLayer),
       center: point,
       radii: vec3.fromValues(0, 0, 0),
-      properties: annotationLayer.source.properties.map(x => x.default),
+      properties: annotationLayer.source.properties.map(x => {
+        if (x.identifier !== 'color') return x.default;
+        if (x.identifier === 'color' && annotationColorPicker === undefined) return x.default;
+        const colorInNum = packColor(parseRGBColorSpecification(annotationColorPicker!.getColor()));
+        return colorInNum;
+      }),
     };
   }
 
@@ -1799,6 +1833,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
     annotationCrossSectionRenderScaleTarget = trackableRenderScaleTarget(8);
     annotationProjectionRenderScaleHistogram = new RenderScaleHistogram();
     annotationProjectionRenderScaleTarget = trackableRenderScaleTarget(8);
+    annotationColorPicker : AnnotationColorWidget|undefined = undefined;
 
     constructor(...args: any[]) {
       super(...args);
@@ -1847,6 +1882,20 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
         }
         this.annotationDisplayState.hoverState.value = undefined;
       }));
+    }
+
+    setAnnotationColorPicker() {
+      for (const state of this.annotationStates.states) {
+        if (!state.source.readonly) {
+          const colorProperties = state.source.properties.filter(x => x.identifier === 'color');
+          if (colorProperties.length === 0) continue;
+          const defaultColor = serializeColor(unpackRGB(colorProperties[0].default));
+          this.annotationColorPicker = this.registerDisposer(new AnnotationColorWidget());
+          this.annotationColorPicker.element.title = 'Pick color to draw annotation';
+          this.annotationColorPicker.setColor(defaultColor);
+          break;
+        }
+      }
     }
 
     initializeAnnotationLayerViewTab(tab: AnnotationLayerView) {
@@ -1913,7 +1962,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                x.subsourceId === state.annotationSubsource));
       if (annotationLayer === undefined) return false;
       const reference =
-          context.registerDisposer(annotationLayer.source.getReference(state.annotationId));
+          context.registerDisposer(annotationLayer.source.getNonDummyAnnotationReference(state.annotationId));
       parent.appendChild(
           context.registerDisposer(new DependentViewWidget(
                   context.registerDisposer(
@@ -2082,36 +2131,54 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                       if (description !== undefined) {
                         label.title = description;
                       }
+                      let valueElement: HTMLSpanElement;
+                      let colorElement : HTMLInputElement;
                       const value = annotation.properties[i];
-                      const valueElement = document.createElement('span');
-                      valueElement.classList.add('neuroglancer-annotation-property-value');
                       switch (property.type) {
                         case 'float32':
+                          valueElement = document.createElement('span');
+                          valueElement.classList.add('neuroglancer-annotation-property-value');
                           valueElement.textContent = value.toPrecision(6);
+                          label.appendChild(valueElement);
                           break;
                         case 'rgb': {
+                          colorElement = document.createElement('input');
+                          if (reference.value && reference.value.parentAnnotationId) {
+                            colorElement.disabled = true;
+                          };
+                          colorElement.type = 'color';
                           const colorVec = unpackRGB(value);
                           const hex = serializeColor(colorVec);
-                          valueElement.textContent = hex;
-                          valueElement.style.backgroundColor = hex;
-                          valueElement.style.color =
+                          colorElement.value = hex;
+                          colorElement.style.backgroundColor =
                               useWhiteBackground(colorVec) ? 'white' : 'black';
+                          colorElement.addEventListener('change', () => {
+                            const colorInNum = packColor(parseRGBColorSpecification(colorElement.value));
+                            annotationLayer.source.updateColor(reference, colorInNum);
+                          });
+                          label.appendChild(colorElement);
                           break;
                         }
                         case 'rgba': {
+                          valueElement = document.createElement('span');
+                          valueElement.classList.add('neuroglancer-annotation-property-value');
                           const colorVec = unpackRGB(value >>> 8);
                           valueElement.textContent = serializeColor(unpackRGBA(value));
                           valueElement.style.backgroundColor =
                               serializeColor(unpackRGB(value >>> 8));
                           valueElement.style.color =
                               useWhiteBackground(colorVec) ? 'white' : 'black';
+                          label.appendChild(valueElement);
                           break;
                         }
                         default:
+                          valueElement = document.createElement('span');
+                          valueElement.classList.add('neuroglancer-annotation-property-value');
                           valueElement.textContent = value.toString();
+                          label.appendChild(valueElement);
                           break;
                       }
-                      label.appendChild(valueElement);
+                      
                       parent.appendChild(label);
                     }
 

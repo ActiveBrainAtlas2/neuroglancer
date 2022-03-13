@@ -153,10 +153,12 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
     type: AnnotationType.POLYGON,
     description: '',
     source: cloneSource,
-    properties: annotationLayer.source.properties.map(x => x.default),
+    properties: Object.assign([], ann.properties),
     childAnnotationIds: [],
     childrenVisible: false
   }, false);
+
+  
 
   const disposeAnnotation = () : boolean => {
     annotationLayer.source.delete(cloneAnnRef);
@@ -184,7 +186,7 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
       description: '',
       pointA: pointA,
       pointB: pointB,
-      properties: annotationLayer.source.properties.map(x => x.default),
+      properties: Object.assign([], cloneAnnRef.value!.properties),
     }, true, cloneAnnRef);
     cloneLineRef.dispose();
   });

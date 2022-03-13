@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import {TrackableRGB} from 'neuroglancer/util/color';
+import {serializeColor, TrackableRGB, unpackRGB} from 'neuroglancer/util/color';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeFromParent} from 'neuroglancer/util/dom';
+import { AnnotationColorPropertySpec } from '../annotation';
+import { AnnotationLayerState } from '../annotation/annotation_layer_state';
+import { AnnotationLayerView } from '../ui/annotations';
 
 export class ColorWidget extends RefCounted {
   element = document.createElement('input');
@@ -35,6 +38,30 @@ export class ColorWidget extends RefCounted {
   }
   private updateModel() {
     this.model.restoreState(this.element.value);
+  }
+
+  disposed() {
+    removeFromParent(this.element);
+    super.disposed();
+  }
+}
+
+export class AnnotationColorWidget extends RefCounted {
+  element = document.createElement('input');
+
+  constructor() {
+    super();
+    const {element} = this;
+    element.classList.add('neuroglancer-color-widget');
+    element.type = 'color';
+  }
+
+  setColor(color: string) {
+    this.element.value = color;
+  }
+
+  getColor() {
+    return this.element.value;
   }
 
   disposed() {

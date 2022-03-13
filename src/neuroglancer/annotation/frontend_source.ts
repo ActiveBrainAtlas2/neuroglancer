@@ -15,7 +15,7 @@
  */
 
 import { values } from 'lodash';
-import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationPropertySpec, AnnotationReference, AnnotationSourceSignals, AnnotationType, annotationTypeHandlers, annotationTypes, fixAnnotationAfterStructuredCloning, isChildDummyAnnotation, makeAnnotationId, SerializedAnnotations} from 'neuroglancer/annotation';
+import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationPropertySpec, AnnotationReference, AnnotationSourceSignals, AnnotationType, annotationTypeHandlers, annotationTypes, Collection, fixAnnotationAfterStructuredCloning, isChildDummyAnnotation, isTypeCollection, makeAnnotationId, SerializedAnnotations} from 'neuroglancer/annotation';
 import {ANNOTATION_COMMIT_UPDATE_RESULT_RPC_ID, ANNOTATION_COMMIT_UPDATE_RPC_ID, ANNOTATION_GEOMETRY_CHUNK_SOURCE_RPC_ID, ANNOTATION_METADATA_CHUNK_SOURCE_RPC_ID, ANNOTATION_REFERENCE_ADD_RPC_ID, ANNOTATION_REFERENCE_DELETE_RPC_ID, ANNOTATION_SUBSET_GEOMETRY_CHUNK_SOURCE_RPC_ID, AnnotationGeometryChunkSpecification} from 'neuroglancer/annotation/base';
 import {getAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
 import {Chunk, ChunkManager, ChunkSource} from 'neuroglancer/chunk_manager/frontend';
@@ -541,6 +541,24 @@ export class MultiscaleAnnotationSource extends SharedObject implements
     }
     
     return reference;
+  }
+
+  updateColor(reference: AnnotationReference, color: number) {
+    if (!reference.value) return;
+    const newAnn = {...reference.value};
+    const colorIdx = this.properties.findIndex(x => x.identifier === 'color');
+    if (newAnn.properties.length <= colorIdx) return;
+    newAnn.properties[colorIdx] = color;
+    this.update(reference, newAnn);
+
+    if (isTypeCollection(newAnn)) {
+      const collection = <Collection>newAnn;
+      for (let i = 0; i < collection.childAnnotationIds.length; i++) {
+        const childRef = this.getReference(collection.childAnnotationIds[i]);
+        this.updateColor(childRef, color);
+        childRef.dispose();
+      }
+    }
   }
 
   private forEachPossibleChunk(
