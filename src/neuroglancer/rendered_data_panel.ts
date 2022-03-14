@@ -422,6 +422,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     });
 
     registerActionListener(element, 'clone-polygon-annotation', () => {
+      console.log('Clone annotation triggered');
       const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.value;
       if (!this.viewer.selectionDetailsState.pin.value) {
         const msg = new StatusMessage();
@@ -435,10 +436,11 @@ export abstract class RenderedDataPanel extends RenderedPanel {
       }
       let selectedAnnotationId = undefined;
       let selectedAnnotationLayer = undefined;
+      let userLayerWithAnnotations = undefined;
 
       for (let layer of selectionState.layers) {
         if (layer.state.annotationId === undefined) continue;
-        const userLayerWithAnnotations = <UserLayerWithAnnotations>layer.layer;
+        userLayerWithAnnotations = <UserLayerWithAnnotations>layer.layer;
         const annotationLayer = userLayerWithAnnotations.annotationStates.states.find(
           x => x.sourceIndex === layer.state.annotationSourceIndex &&
               (layer.state.annotationSubsource === undefined ||
@@ -449,7 +451,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
         selectedAnnotationLayer = annotationLayer;
         break;
       }
-      if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) {
+      if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined || userLayerWithAnnotations === undefined) {
         const msg = new StatusMessage();
         msg.setErrorMessage('Pin an annotation of an annotation layer to clone');
         return;
@@ -457,7 +459,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
 
       const numPolygons = 1;
       const stepSize = 1;
-      cloneAnnotationSequence(this.navigationState, selectedAnnotationLayer, 
+      cloneAnnotationSequence(userLayerWithAnnotations, this.navigationState, selectedAnnotationLayer, 
         selectedAnnotationId, polygonSectionOffset.value, numPolygons, stepSize);
     });
 
@@ -762,7 +764,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
       const annotationLayer = mouseState.pickedAnnotationLayer;
       if (annotationLayer !== undefined && !annotationLayer.source.readonly &&
           selectedAnnotationId !== undefined) {
-        const ref = annotationLayer.source.getReference(selectedAnnotationId);
+        const ref = annotationLayer.source.getNonDummyAnnotationReference(selectedAnnotationId);
         try {
           annotationLayer.source.delete(ref);
         } finally {

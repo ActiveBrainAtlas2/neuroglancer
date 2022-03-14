@@ -1279,6 +1279,13 @@ export class SelectedLayerState extends RefCounted implements Trackable {
     }
     this.layer_ = layer;
     if (layer !== undefined) {
+      const userLayer = layer.layer;
+      if (userLayer !== null) {
+        const tool = userLayer.tool.value;
+        if (tool !== undefined) {
+          tool.setActive(true);
+        }
+      }
       const layerDisposed = () => {
         this.layer_ = undefined;
         this.visible = false;

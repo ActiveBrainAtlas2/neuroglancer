@@ -26,7 +26,7 @@ import {DataSourceProviderRegistry} from 'neuroglancer/datasource';
 import {getDefaultDataSourceProvider} from 'neuroglancer/datasource/default_provider';
 import {DisplayContext, TrackableWindowedViewport} from 'neuroglancer/display_context';
 import {InputEventBindingHelpDialog} from 'neuroglancer/help/input_event_bindings';
-import {addNewLayer, LayerManager, LayerSelectedValues, MouseSelectionState, SelectedLayerState, TopLevelLayerListSpecification, TrackableDataSelectionState} from 'neuroglancer/layer';
+import {addNewLayer, LayerManager, LayerSelectedValues, MouseSelectionState, SelectedLayerState, TopLevelLayerListSpecification, TrackableDataSelectionState, UserLayer} from 'neuroglancer/layer';
 import {RootLayoutContainer} from 'neuroglancer/layer_groups_layout';
 import {DisplayPose, NavigationState, OrientationState, Position, TrackableCrossSectionZoom, TrackableDepthRange, TrackableDisplayDimensions, TrackableProjectionZoom, TrackableRelativeDisplayScales, WatchableDisplayDimensionRenderInfo} from 'neuroglancer/navigation_state';
 import {overlaysOpen} from 'neuroglancer/overlay';
@@ -63,7 +63,7 @@ import {RPC} from 'neuroglancer/worker_rpc';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
-import { MultiStepAnnotationTool, PlacePointTool, PlacePolygonTool } from './ui/annotations';
+import { MultiStepAnnotationTool, PlacePointTool, PlacePolygonTool, PlaceVolumeTool, PolygonToolMode, VolumeToolMode } from './ui/annotations';
 import { getPolygonDrawModeBindings, getPolygonEditModeBindings, polygonDrawModeBindings, polygonEditModeBindings } from './ui/default_input_event_bindings';
 import { PolygonOptionsDialog } from './ui/polygon_options';
 
@@ -600,7 +600,7 @@ export class Viewer extends RefCounted implements ViewerState {
     this.registerDisposer(
         this.selectionDetailsState.changed.add(sidePanelVisible.changed.dispatch));
     this.registerDisposer(new DragResizablePanel(
-        sidePanel, sidePanelVisible, this.selectedLayer.size, 'horizontal', 350));
+        sidePanel, sidePanelVisible, this.selectedLayer.size, 'horizontal', 375));
     const layerInfoPanel =
         this.registerDisposer(new LayerInfoPanelContainer(this.selectedLayer.addRef()));
     this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
@@ -712,6 +712,70 @@ export class Viewer extends RefCounted implements ViewerState {
       userLayer.tool.value.trigger(this.mouseState);
     });
 
+    this.bindAction('switch-to-polygon-draw-mode', () => {
+      const selectedLayer = this.selectedLayer.layer;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+
+      if (userLayer.tool.value instanceof PlaceVolumeTool) {
+        const collectionTool = <PlaceVolumeTool>userLayer.tool.value;
+        const toolLayer = collectionTool.layer;
+        if (collectionTool.mode === VolumeToolMode.DRAW) {
+          userLayer.tool.value = undefined;
+          return;
+        }
+        userLayer.tool.value = new PlaceVolumeTool(toolLayer, {}, VolumeToolMode.DRAW);
+      } else if (userLayer.tool.value instanceof PlacePolygonTool) {
+        const collectionTool = <PlacePolygonTool>userLayer.tool.value;
+        const toolLayer = collectionTool.layer;
+        if (collectionTool.mode === PolygonToolMode.DRAW) {
+          userLayer.tool.value = undefined;
+          return;
+        }
+        userLayer.tool.value = new PlacePolygonTool(toolLayer, {}, PolygonToolMode.DRAW);
+      }
+    });
+
+    this.bindAction('switch-to-polygon-edit-mode', () => {
+      const selectedLayer = this.selectedLayer.layer;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+
+      if (userLayer.tool.value instanceof PlaceVolumeTool) {
+        const collectionTool = <PlaceVolumeTool>userLayer.tool.value;
+        const toolLayer = collectionTool.layer;
+        if (collectionTool.mode === VolumeToolMode.EDIT) {
+          userLayer.tool.value = undefined;
+          return;
+        }
+        userLayer.tool.value = new PlaceVolumeTool(toolLayer, {}, VolumeToolMode.EDIT);
+      } else if (userLayer.tool.value instanceof PlacePolygonTool) {
+        const collectionTool = <PlacePolygonTool>userLayer.tool.value;
+        const toolLayer = collectionTool.layer;
+        if (collectionTool.mode === PolygonToolMode.EDIT) {
+          userLayer.tool.value = undefined;
+          return;
+        }
+        userLayer.tool.value = new PlacePolygonTool(toolLayer, {}, PolygonToolMode.EDIT);
+      }
+    });
+
     this.bindAction('add-vertex-polygon', () => {
       const selectedLayer = this.selectedLayer.layer;
       if (selectedLayer === undefined) {
@@ -725,12 +789,12 @@ export class Viewer extends RefCounted implements ViewerState {
         return;
       }
 
-      if (!(userLayer.tool.value instanceof PlacePolygonTool)) {
+      if (!(userLayer.tool.value instanceof PlacePolygonTool || userLayer.tool.value instanceof PlaceVolumeTool)) {
         StatusMessage.showTemporaryMessage(`Please select polygon tool in edit mode to perform this operation`);
         return;
       }
 
-      (<PlacePolygonTool>userLayer.tool.value).addVertexPolygon(this.mouseState);
+      userLayer.tool.value.addVertexPolygon(this.mouseState);
     });
 
     this.bindAction('delete-vertex-polygon', () => {
@@ -746,12 +810,12 @@ export class Viewer extends RefCounted implements ViewerState {
         return;
       }
 
-      if (!(userLayer.tool.value instanceof PlacePolygonTool)) {
+      if (!(userLayer.tool.value instanceof PlacePolygonTool || userLayer.tool.value instanceof PlaceVolumeTool)) {
         StatusMessage.showTemporaryMessage(`Please select polygon tool in edit mode to perform this operation`);
         return;
       }
 
-      (<PlacePolygonTool>userLayer.tool.value).deleteVertexPolygon(this.mouseState);
+      userLayer.tool.value.deleteVertexPolygon(this.mouseState);
     });
 
     this.bindAction('complete-annotation', () => {

@@ -20,7 +20,7 @@
 
 import './annotations.css';
 import {AppSettings} from 'neuroglancer/services/service';
-import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Collection, Ellipsoid, isChildDummyAnnotation, isTypeCollection, Line, Polygon} from 'neuroglancer/annotation';
+import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Collection, Ellipsoid, isChildDummyAnnotation, isTypeCollection, Line, Polygon, Volume} from 'neuroglancer/annotation';
 import {AnnotationDisplayState, AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
 import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
 import {AnnotationLayer, PerspectiveViewAnnotationLayer, SliceViewAnnotationLayer} from 'neuroglancer/annotation/renderlayer';
@@ -455,6 +455,41 @@ export class AnnotationLayerView extends Tab {
       }
     });
     mutableControls.appendChild(polygonButton);
+
+    const volumeButton = makeIcon({
+      text: annotationTypeHandlers[AnnotationType.VOLUME].icon,
+      title: 'Annotate Volume',
+      onClick: () => {
+        const isInstance = this.layer.tool.value instanceof PlaceVolumeTool;
+        if (!isInstance) {
+          this.layer.tool.value = new PlaceVolumeTool(this.layer, {}, VolumeToolMode.DRAW);
+        }
+        else {
+          const volumeTool = <PlaceVolumeTool>this.layer.tool.value;
+          if (volumeTool.mode === VolumeToolMode.EDIT) {
+            this.layer.tool.value = new PlaceVolumeTool(this.layer, {}, VolumeToolMode.DRAW);
+          }
+          else {
+            this.layer.tool.value = undefined;
+          }
+        }
+      },
+      onRightClick: () => {
+        const isInstance = this.layer.tool.value instanceof PlaceVolumeTool;
+        if (!isInstance) {
+          this.layer.tool.value = new PlaceVolumeTool(this.layer, {}, VolumeToolMode.EDIT);
+        } else {
+          const volumeTool = <PlaceVolumeTool>this.layer.tool.value;
+          if (volumeTool.mode === VolumeToolMode.DRAW) {
+            this.layer.tool.value = new PlaceVolumeTool(this.layer, {}, VolumeToolMode.EDIT);
+          }
+          else {
+            this.layer.tool.value = undefined;
+          }
+        }
+      }
+    });
+    mutableControls.appendChild(volumeButton);
 
     toolbox.appendChild(mutableControls);
     this.element.appendChild(toolbox);
@@ -1035,6 +1070,7 @@ const ANNOTATE_LINE_TOOL_ID = 'annotateLine';
 const ANNOTATE_BOUNDING_BOX_TOOL_ID = 'annotateBoundingBox';
 const ANNOTATE_ELLIPSOID_TOOL_ID = 'annotateSphere';
 const ANNOTATE_POLYGON_TOOL_ID = 'annotatePolygon';
+const ANNOTATE_VOLUME_TOOL_ID = 'annotateVolume';
 
 export class PlacePointTool extends PlaceAnnotationTool {
   trigger(mouseState: MouseSelectionState) {
@@ -1188,12 +1224,12 @@ export abstract class MultiStepAnnotationTool extends PlaceAnnotationTool {
 }
 
 abstract class PlaceCollectionAnnotationTool extends MultiStepAnnotationTool {
-  annotationType: AnnotationType.POLYGON;
+  annotationType: AnnotationType.POLYGON | AnnotationType.VOLUME;
 
   getInitialAnnotation(mouseState: MouseSelectionState, annotationLayer: AnnotationLayerState): Annotation {
     const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
     const {annotationColorPicker} = this;
-    return <Polygon> {
+    return <Polygon|Volume> {
       id: '',
       type: this.annotationType,
       description: '',
@@ -1227,19 +1263,23 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   sourceMouseState: MouseSelectionState;
   sourcePosition: any;
   mode: PolygonToolMode;
+  bindingsRef: RefCounted;
+  active: boolean;
 
   constructor(public layer: UserLayerWithAnnotations, options: any, mode: PolygonToolMode = PolygonToolMode.DRAW) {
     super(layer, options);
     this.mode = mode;
+    this.active = true;
     this.childTool = new PlaceLineTool(layer, {...options, parent: this});
+    this.bindingsRef = new RefCounted();
     if (mode === PolygonToolMode.DRAW) {
-      setPolygonDrawModeInputEventBindings(this, window['viewer'].inputEventBindings);
+      setPolygonDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     } else {
-      setPolygonEditModeInputEventBindings(this, window['viewer'].inputEventBindings);
+      setPolygonEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     }
   }
 
-  trigger(mouseState: MouseSelectionState) {
+  trigger(mouseState: MouseSelectionState, parentRef?: AnnotationReference) {
     const {annotationLayer, mode} = this;
     if (annotationLayer === undefined || mode === PolygonToolMode.EDIT) {
       // Not yet ready.
@@ -1250,7 +1290,10 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
         this.sourceMouseState = <MouseSelectionState>{...mouseState};
         this.sourcePosition = this.sourceMouseState.position.slice();
         const annotation = this.getInitialAnnotation(mouseState, annotationLayer);
-        const reference = annotationLayer.source.add(annotation, /*commit=*/ false);
+        if (parentRef) {
+          annotation.properties = Object.assign([], parentRef.value!.properties)
+        }
+        const reference = annotationLayer.source.add(annotation, /*commit=*/ false, parentRef);
         this.layer.selectAnnotation(annotationLayer, reference.id, true);
         this.childTool.trigger(mouseState, reference);
         const disposer = () => {
@@ -1276,6 +1319,29 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     // completely delete the annotation
     this.disposeAnnotation();
     super.dispose();
+  }
+
+  setActive(_value: boolean) {
+    if (this.active !== _value) {
+      this.active = _value;
+      if (this.active) {
+        const {mode} = this;
+        if (mode === PolygonToolMode.DRAW) {
+          setPolygonDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+        } else {
+          setPolygonEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+        }
+      } 
+      this.childTool.setActive(_value);
+      super.setActive(_value);
+    }
+  }
+
+  deactivate() {
+    this.active = false;
+    this.bindingsRef.dispose();
+    this.childTool.deactivate();
+    super.deactivate();
   }
 
   complete(): boolean {
@@ -1383,7 +1449,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   addVertexPolygon(mouseState: MouseSelectionState) {
-    const {mode, annotationColorPicker} = this;
+    const {mode} = this;
     if (mode === PolygonToolMode.DRAW) return;
     const selectedAnnotationId = mouseState.pickedAnnotationId;
     const annotationLayer = mouseState.pickedAnnotationLayer;
@@ -1432,7 +1498,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   deleteVertexPolygon(mouseState: MouseSelectionState) {
-    const {mode, annotationColorPicker} = this;
+    const {mode} = this;
     if (mode === PolygonToolMode.DRAW) return;
     const selectedAnnotationId = mouseState.pickedAnnotationId;
     const annotationLayer = mouseState.pickedAnnotationLayer;
@@ -1507,6 +1573,139 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 }
 PlacePolygonTool.prototype.annotationType = AnnotationType.POLYGON;
+
+export enum VolumeToolMode {
+  DRAW,
+  EDIT
+}
+
+export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
+  childTool: PlacePolygonTool;
+  sourceMouseState: MouseSelectionState;
+  sourcePosition: any;
+  mode: VolumeToolMode;
+  active: boolean;
+
+  constructor(public layer: UserLayerWithAnnotations, options: any, mode: VolumeToolMode = VolumeToolMode.DRAW) {
+    super(layer, options);
+    this.mode = mode;
+    this.active = true;
+    if (mode === VolumeToolMode.DRAW) {
+      this.childTool = new PlacePolygonTool(layer, {...options, parent: this}, PolygonToolMode.DRAW);
+    } else {
+      this.childTool = new PlacePolygonTool(layer, {...options, parent: this}, PolygonToolMode.EDIT);
+    }
+  }
+
+  trigger(mouseState: MouseSelectionState) {
+    const {annotationLayer, mode} = this;
+    if (annotationLayer === undefined || mode === VolumeToolMode.EDIT) {
+      // Not yet ready.
+      return;
+    }
+    if (mouseState.updateUnconditionally()) {
+      if (this.inProgressAnnotation === undefined) {
+        this.sourceMouseState = <MouseSelectionState>{...mouseState};
+        this.sourcePosition = this.sourceMouseState.position.slice();
+        const annotation = this.getInitialAnnotation(mouseState, annotationLayer);
+        const collection = <Collection>annotation;
+        collection.childrenVisible = true;
+        const reference = annotationLayer.source.add(annotation, /*commit=*/ false);
+        this.layer.selectAnnotation(annotationLayer, reference.id, true);
+        this.childTool.trigger(mouseState, reference);
+        const disposer = () => {
+          reference.dispose();
+        };
+        this.inProgressAnnotation = {
+          annotationLayer,
+          reference,
+          disposer,
+        };
+      } else {
+        this.childTool.trigger(mouseState, this.inProgressAnnotation.reference);
+      }
+    }
+  }
+
+  dispose() {
+    if (this.childTool) {
+      this.childTool.dispose();
+    }
+    // completely delete the annotation
+    this.disposeAnnotation();
+    super.dispose();
+  }
+
+  setActive(_value: boolean) {
+    if (this.active !== _value) {
+      this.active = _value;
+      this.childTool.setActive(_value);
+      super.setActive(_value);
+    }
+  }
+
+  deactivate() {
+    this.active = false;
+    this.childTool.deactivate();
+    super.deactivate();
+  }
+
+  complete(): boolean {
+    const {annotationLayer, mode} = this;
+    const state = this.inProgressAnnotation;
+
+    if(annotationLayer === undefined || state === undefined || mode === VolumeToolMode.EDIT) {
+      return false;
+    }
+
+    if(this.childTool.complete()) {
+      annotationLayer.source.commit(this.inProgressAnnotation!.reference);
+      this.layer.selectAnnotation(annotationLayer, this.inProgressAnnotation!.reference.id, true);
+      this.inProgressAnnotation!.disposer();
+      this.inProgressAnnotation = undefined;
+      return true;
+    }
+
+    return false;
+  }
+
+  private disposeAnnotation() {
+    if (this.inProgressAnnotation && this.annotationLayer) {
+      this.annotationLayer.source.delete(this.inProgressAnnotation.reference);
+      this.inProgressAnnotation.disposer();
+      this.inProgressAnnotation = undefined;
+    }
+  }
+
+  undo(mouseState: MouseSelectionState): boolean {
+    const undoOp = this.childTool.undo(mouseState);
+    if (this.childTool.inProgressAnnotation === undefined) {
+      this.disposeAnnotation();
+    }
+    return undoOp;
+  }
+
+  addVertexPolygon(mouseState: MouseSelectionState) {
+    this.childTool.addVertexPolygon(mouseState);
+  }
+
+  deleteVertexPolygon(mouseState: MouseSelectionState) {
+    this.childTool.deleteVertexPolygon(mouseState);
+  }
+
+  get description() {
+    const {mode} = this;
+    if (mode === VolumeToolMode.DRAW) {
+      return `annotate volume (draw mode)`;
+    }
+    return `annotate volume (edit mode)`;
+  }
+
+  toJSON() {
+    return ANNOTATE_VOLUME_TOOL_ID;
+  }
+}
+PlaceVolumeTool.prototype.annotationType = AnnotationType.VOLUME;
 
 abstract class PlaceTwoCornerAnnotationTool extends TwoStepAnnotationTool {
   annotationType: AnnotationType.LINE|AnnotationType.AXIS_ALIGNED_BOUNDING_BOX;
@@ -1650,6 +1849,9 @@ registerTool(
 registerTool(
     ANNOTATE_POLYGON_TOOL_ID,
     (layer, options) => new PlacePolygonTool(<UserLayerWithAnnotations>layer, options));
+registerTool(
+  ANNOTATE_VOLUME_TOOL_ID,
+  (layer, options) => new PlaceVolumeTool(<UserLayerWithAnnotations>layer, options));
 
 const newRelatedSegmentKeyMap = EventActionMap.fromObject({
   'enter': {action: 'commit'},

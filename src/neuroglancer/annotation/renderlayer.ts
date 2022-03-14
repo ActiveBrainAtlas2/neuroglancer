@@ -19,6 +19,7 @@ import 'neuroglancer/annotation/line';
 import 'neuroglancer/annotation/point';
 import 'neuroglancer/annotation/ellipsoid';
 import 'neuroglancer/annotation/polygon';
+import 'neuroglancer/annotation/volume';
 
 import {AnnotationBase, AnnotationSerializer, AnnotationSource, annotationTypeHandlers, annotationTypes, SerializedAnnotations} from 'neuroglancer/annotation';
 import {AnnotationLayerState, OptionalSegmentationDisplayState} from 'neuroglancer/annotation/annotation_layer_state';
