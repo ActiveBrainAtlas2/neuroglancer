@@ -157,6 +157,8 @@ export function getPolygonDrawModeBindings() {
         'at:mousedown2': 'complete-annotation',
         'at:keyz': 'undo-annotation',
         'at:control+keyc': 'clone-polygon-annotation',
+        'at:control+keyd': 'switch-to-polygon-draw-mode',
+        'at:control+keyf': 'switch-to-polygon-edit-mode',
       }
     );
   }
@@ -181,6 +183,9 @@ export function getPolygonEditModeBindings() {
         'control+shift-minus': 'scale-polygon-shrink',
         'at:touchrotate': 'rotate-polygon-via-touchrotate',
         'at:touchpinch': 'zoom-polygon-via-touchpinch',
+        'at:control+keyd': 'switch-to-polygon-draw-mode',
+        'at:control+keyf': 'switch-to-polygon-edit-mode',
+        'at:control+keyc': 'clone-polygon-annotation',
       }
     );
   }
@@ -195,14 +200,14 @@ export function setDefaultInputEventBindings(inputEventBindings: InputEventBindi
       getDefaultPerspectivePanelBindings(), Number.NEGATIVE_INFINITY);
 }
 
-export function setPolygonDrawModeInputEventBindings<T extends RefCounted> (annotationTool: T, 
+export function setPolygonDrawModeInputEventBindings<T extends RefCounted> (bindingsRef: T, 
   inputEventBindings: InputEventBindings) {
-  annotationTool.registerDisposer(inputEventBindings.sliceView.addParent(getPolygonDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
-  annotationTool.registerDisposer(inputEventBindings.perspectiveView.addParent(getPolygonDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
+  bindingsRef.registerDisposer(inputEventBindings.sliceView.addParent(getPolygonDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
+  bindingsRef.registerDisposer(inputEventBindings.perspectiveView.addParent(getPolygonDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
 }
 
-export function setPolygonEditModeInputEventBindings<T extends RefCounted> (annotationTool: T,
+export function setPolygonEditModeInputEventBindings<T extends RefCounted> (bindingsRef: T,
   inputEventBindings: InputEventBindings) {
-  annotationTool.registerDisposer(inputEventBindings.sliceView.addParent(getPolygonEditModeBindings(), Number.NEGATIVE_INFINITY+1));
-  annotationTool.registerDisposer(inputEventBindings.perspectiveView.addParent(getPolygonEditModeBindings(), Number.NEGATIVE_INFINITY+1));
+  bindingsRef.registerDisposer(inputEventBindings.sliceView.addParent(getPolygonEditModeBindings(), Number.NEGATIVE_INFINITY+1));
+  bindingsRef.registerDisposer(inputEventBindings.perspectiveView.addParent(getPolygonEditModeBindings(), Number.NEGATIVE_INFINITY+1));
 }

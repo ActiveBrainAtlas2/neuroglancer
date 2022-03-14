@@ -51,7 +51,8 @@ export enum AnnotationType {
   LINE,
   AXIS_ALIGNED_BOUNDING_BOX,
   ELLIPSOID,
-  POLYGON
+  POLYGON,
+  VOLUME
 }
 
 export const annotationTypes = [
@@ -59,7 +60,8 @@ export const annotationTypes = [
   AnnotationType.LINE,
   AnnotationType.AXIS_ALIGNED_BOUNDING_BOX,
   AnnotationType.ELLIPSOID,
-  AnnotationType.POLYGON
+  AnnotationType.POLYGON,
+  AnnotationType.VOLUME,
 ];
 
 export interface AnnotationPropertySpecBase {
@@ -278,7 +280,7 @@ export const annotationPropertyTypeHandlers:
     };
 
 export function isTypeCollection(annotation: Annotation) : boolean {
-  return annotation.type === AnnotationType.POLYGON;
+  return annotation.type === AnnotationType.POLYGON || annotation.type === AnnotationType.VOLUME;
 }
 
 export function isChildDummyAnnotation(annotation: Annotation) : boolean {
@@ -452,7 +454,11 @@ export interface Polygon extends Collection {
   type: AnnotationType.POLYGON;
 }
 
-export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid|Polygon;
+export interface Volume extends Collection {
+  type: AnnotationType.VOLUME;
+}
+
+export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid|Polygon|Volume;
 
 export interface AnnotationTypeHandler<T extends Annotation = Annotation> {
   icon: string;
@@ -665,6 +671,35 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
       return {type: AnnotationType.POLYGON, source, id, properties: [], childAnnotationIds: [], childrenVisible: false};
     },
     visitGeometry(annotation: Polygon, callback) {
+      callback(annotation.source, false);
+    },
+  },
+  [AnnotationType.VOLUME]: {
+    icon: 'ⅴ',
+    description: 'Volume',
+    toJSON: (annotation: Volume) => {
+      return {
+        source: Array.from(annotation.source),
+        childAnnotationIds: annotation.childAnnotationIds,
+      }
+    },
+    restoreState: (annotation: Volume, obj: any, rank: number) => {
+      annotation.source = verifyObjectProperty(
+          obj, 'source', x => parseFixedLengthArray(new Float32Array(rank), x, verifyFiniteFloat));
+      annotation.childAnnotationIds = verifyObjectProperty(
+          obj, 'childAnnotationIds', verifyStringArray);
+      annotation.childrenVisible = false;
+    },
+    serializedBytes: rank => rank * 4,
+    serialize: (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, annotation: Volume) => {
+      serializeFloatVector(buffer, offset, isLittleEndian, rank, annotation.source);
+    },
+    deserialize: (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, id: string): Volume => {
+      const source = new Float32Array(rank);
+      deserializeFloatVector(buffer, offset, isLittleEndian, rank, source);
+      return {type: AnnotationType.VOLUME, source, id, properties: [], childAnnotationIds: [], childrenVisible: false};
+    },
+    visitGeometry(annotation: Volume, callback) {
       callback(annotation.source, false);
     },
   },
@@ -1165,7 +1200,7 @@ function serializeAnnotations(
 }
 
 export class AnnotationSerializer {
-  annotations: [Point[], Line[], AxisAlignedBoundingBox[], Ellipsoid[], Polygon[]] = [[], [], [], [], []];
+  annotations: [Point[], Line[], AxisAlignedBoundingBox[], Ellipsoid[], Polygon[], Volume[]] = [[], [], [], [], [], []];
   constructor(public propertySerializer: AnnotationPropertySerializer) {}
   add(annotation: Annotation) {
     (<Annotation[]>this.annotations[annotation.type]).push(annotation);

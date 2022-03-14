@@ -23,6 +23,7 @@
  import {AnnotationRenderContext, AnnotationRenderHelper, getAnnotationTypeRenderHandler, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
  import { DisplayPose, NavigationState } from '../navigation_state';
  import { TrackableValue } from '../trackable_value';
+import { UserLayerWithAnnotations } from '../ui/annotations';
  import { verifyInt, verifyNonNegativeFloat } from '../util/json';
  import { Viewer } from '../viewer';
  import { AnnotationLayerState } from './annotation_layer_state';
@@ -123,7 +124,7 @@ function findNormalVectorToPolygon(childRefs: AnnotationReference[], orientation
   return crossProductVec;
 }
 
-export function cloneAnnotationSequence(navigationState: NavigationState, annotationLayer: AnnotationLayerState, 
+export function cloneAnnotationSequence(layer: UserLayerWithAnnotations, navigationState: NavigationState, annotationLayer: AnnotationLayerState, 
   annotationId: string, startOffset: number, polygonCnt: number, stepSize: number): void {
   const reference = annotationLayer.source.getNonDummyAnnotationReference(annotationId);
   if(reference.value === null || reference.value!.type !== AnnotationType.POLYGON) return;
@@ -135,18 +136,32 @@ export function cloneAnnotationSequence(navigationState: NavigationState, annota
     childAnnotationRefs.push(annotationLayer.source.getReference(childAnnotationId));
   });
   const normalVector = findNormalVectorToPolygon(childAnnotationRefs, pose.orientation.orientation);
+  let lastCloneId : string | undefined;  
   for (let depth = startOffset, cnt = 0; cnt < polygonCnt; depth += stepSize, cnt++) {
-    cloneAnnotation(pose, annotationLayer, reference, childAnnotationRefs, depth, normalVector);
+    const cloneId = cloneAnnotation(pose, annotationLayer, reference, childAnnotationRefs, depth, normalVector);
+    if (cloneId !== undefined) lastCloneId = cloneId;
+  }
+  if (lastCloneId !== undefined) {
+    const cloneRef = annotationLayer.source.getReference(lastCloneId);
+    if (cloneRef.value) {
+      layer.selectAnnotation(annotationLayer, cloneRef.id, true);
+      const source = Object.assign([], (<Polygon>cloneRef.value).source);
+      navigationState.position.value = source;
+    }
+    cloneRef.dispose();
   }
   reference.dispose();
 }
 
 function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerState, reference: AnnotationReference, 
-  childAnnotationRefs: AnnotationReference[], depth: number, normalVector: Float32Array): boolean {
+  childAnnotationRefs: AnnotationReference[], depth: number, normalVector: Float32Array): string | undefined {
   
   const ann = <Polygon>reference.value;
   const cloneSource = getTransformedPoint(pose, ann.source, normalVector, depth);
-  if (cloneSource === undefined) return false;
+  if (cloneSource === undefined) return undefined;
+
+  let volumeRef : AnnotationReference|undefined = undefined;
+  if (ann.parentAnnotationId) volumeRef = annotationLayer.source.getReference(ann.parentAnnotationId); 
 
   const cloneAnnRef = annotationLayer.source.add(<Polygon>{
     id: '',
@@ -155,21 +170,21 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
     source: cloneSource,
     properties: Object.assign([], ann.properties),
     childAnnotationIds: [],
-    childrenVisible: false
-  }, false);
+    childrenVisible: false,
+  }, false, volumeRef);
 
   
 
-  const disposeAnnotation = () : boolean => {
+  const disposeAnnotation = () => {
     annotationLayer.source.delete(cloneAnnRef);
     cloneAnnRef.dispose();
-    return false;
+    return undefined;
   };
 
-  const success = () : boolean => {
+  const success = () => {
+    const cloneId = cloneAnnRef.value!.id;
     annotationLayer.source.commit(cloneAnnRef);
-    cloneAnnRef.dispose();
-    return true;
+    return cloneId;
   };
 
   childAnnotationRefs.forEach((childAnnotationRef) => {
