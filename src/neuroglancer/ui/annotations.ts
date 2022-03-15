@@ -1263,7 +1263,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   sourceMouseState: MouseSelectionState;
   sourcePosition: any;
   mode: PolygonToolMode;
-  bindingsRef: RefCounted;
+  bindingsRef: RefCounted|undefined;
   active: boolean;
 
   constructor(public layer: UserLayerWithAnnotations, options: any, mode: PolygonToolMode = PolygonToolMode.DRAW) {
@@ -1313,7 +1313,8 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   dispose() {
-    this.bindingsRef.dispose();
+    if(this.bindingsRef) this.bindingsRef.dispose();
+    this.bindingsRef = undefined;
     if (this.childTool) {
       this.childTool.dispose();
     }
@@ -1327,12 +1328,17 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       this.active = _value;
       if (this.active) {
         const {mode} = this;
-        if (mode === PolygonToolMode.DRAW) {
+        if (this.bindingsRef) {
+          this.bindingsRef.dispose();
+          this.bindingsRef = undefined;
+        }
+        this.bindingsRef = new RefCounted();
+        if (mode === PolygonToolMode.DRAW && this.bindingsRef) {
           setPolygonDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
-        } else {
+        } else if (this.bindingsRef) {
           setPolygonEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
         }
-      } 
+      }
       this.childTool.setActive(_value);
       super.setActive(_value);
     }
@@ -1340,7 +1346,8 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
 
   deactivate() {
     this.active = false;
-    this.bindingsRef.dispose();
+    if (this.bindingsRef) this.bindingsRef.dispose();
+    this.bindingsRef = undefined;
     this.childTool.deactivate();
     super.deactivate();
   }
