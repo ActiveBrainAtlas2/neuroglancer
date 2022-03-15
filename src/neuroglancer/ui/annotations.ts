@@ -1313,6 +1313,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   }
 
   dispose() {
+    this.bindingsRef.dispose();
     if (this.childTool) {
       this.childTool.dispose();
     }

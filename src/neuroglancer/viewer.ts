@@ -45,7 +45,7 @@ import {AutomaticallyFocusedElement} from 'neuroglancer/util/automatic_focus';
 import {TrackableRGB} from 'neuroglancer/util/color';
 import {Borrowed, Owned, RefCounted} from 'neuroglancer/util/disposable';
 import {removeFromParent} from 'neuroglancer/util/dom';
-import {registerActionListener} from 'neuroglancer/util/event_action_map';
+import {ActionEvent, registerActionListener} from 'neuroglancer/util/event_action_map';
 import {vec3} from 'neuroglancer/util/geom';
 import {parseFixedLengthArray, verifyFinitePositiveFloat, verifyObject, verifyOptionalObjectProperty} from 'neuroglancer/util/json';
 import {EventActionMap, KeyboardEventBinder} from 'neuroglancer/util/keyboard_bindings';
@@ -63,9 +63,10 @@ import {RPC} from 'neuroglancer/worker_rpc';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
-import { MultiStepAnnotationTool, PlacePointTool, PlacePolygonTool, PlaceVolumeTool, PolygonToolMode, VolumeToolMode } from './ui/annotations';
+import { AnnotationLayerView, MultiStepAnnotationTool, PlacePointTool, PlacePolygonTool, PlaceVolumeTool, PolygonToolMode, UserLayerWithAnnotations, UserLayerWithAnnotationsMixin, VolumeToolMode } from './ui/annotations';
 import { getPolygonDrawModeBindings, getPolygonEditModeBindings, polygonDrawModeBindings, polygonEditModeBindings } from './ui/default_input_event_bindings';
 import { PolygonOptionsDialog } from './ui/polygon_options';
+import { AnnotationUserLayer } from './annotation/user_layer';
 
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
@@ -712,67 +713,62 @@ export class Viewer extends RefCounted implements ViewerState {
       userLayer.tool.value.trigger(this.mouseState);
     });
 
-    this.bindAction('switch-to-polygon-draw-mode', () => {
+    this.bindAction('switch-to-volume-draw-mode', () => {
       const selectedLayer = this.selectedLayer.layer;
       if (selectedLayer === undefined) {
         StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
         return;
       }
       const userLayer = selectedLayer.layer;
-      if (userLayer === null || userLayer.tool.value === undefined) {
+      if (userLayer === null) {
         StatusMessage.showTemporaryMessage(`The selected layer (${
             JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
         return;
       }
 
-      if (userLayer.tool.value instanceof PlaceVolumeTool) {
-        const collectionTool = <PlaceVolumeTool>userLayer.tool.value;
-        const toolLayer = collectionTool.layer;
-        if (collectionTool.mode === VolumeToolMode.DRAW) {
-          userLayer.tool.value = undefined;
-          return;
+      if (!(userLayer instanceof AnnotationUserLayer)) return;
+
+      const isInstance = userLayer.tool.value instanceof PlaceVolumeTool;
+      if (!isInstance) {
+        userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, VolumeToolMode.DRAW);
+      }
+      else {
+        const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
+        if (volumeTool.mode === VolumeToolMode.EDIT) {
+          userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, VolumeToolMode.DRAW);
         }
-        userLayer.tool.value = new PlaceVolumeTool(toolLayer, {}, VolumeToolMode.DRAW);
-      } else if (userLayer.tool.value instanceof PlacePolygonTool) {
-        const collectionTool = <PlacePolygonTool>userLayer.tool.value;
-        const toolLayer = collectionTool.layer;
-        if (collectionTool.mode === PolygonToolMode.DRAW) {
+        else {
           userLayer.tool.value = undefined;
-          return;
         }
-        userLayer.tool.value = new PlacePolygonTool(toolLayer, {}, PolygonToolMode.DRAW);
       }
     });
 
-    this.bindAction('switch-to-polygon-edit-mode', () => {
+    this.bindAction('switch-to-volume-edit-mode', () => {
       const selectedLayer = this.selectedLayer.layer;
       if (selectedLayer === undefined) {
         StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
         return;
       }
       const userLayer = selectedLayer.layer;
-      if (userLayer === null || userLayer.tool.value === undefined) {
+      if (userLayer === null) {
         StatusMessage.showTemporaryMessage(`The selected layer (${
             JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
         return;
       }
 
-      if (userLayer.tool.value instanceof PlaceVolumeTool) {
-        const collectionTool = <PlaceVolumeTool>userLayer.tool.value;
-        const toolLayer = collectionTool.layer;
-        if (collectionTool.mode === VolumeToolMode.EDIT) {
-          userLayer.tool.value = undefined;
-          return;
+      if (!(userLayer instanceof AnnotationUserLayer)) return;
+
+      const isInstance = userLayer.tool.value instanceof PlaceVolumeTool;
+      if (!isInstance) {
+        userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, VolumeToolMode.EDIT);
+      } else {
+        const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
+        if (volumeTool.mode === VolumeToolMode.DRAW) {
+          userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, VolumeToolMode.EDIT);
         }
-        userLayer.tool.value = new PlaceVolumeTool(toolLayer, {}, VolumeToolMode.EDIT);
-      } else if (userLayer.tool.value instanceof PlacePolygonTool) {
-        const collectionTool = <PlacePolygonTool>userLayer.tool.value;
-        const toolLayer = collectionTool.layer;
-        if (collectionTool.mode === PolygonToolMode.EDIT) {
+        else {
           userLayer.tool.value = undefined;
-          return;
         }
-        userLayer.tool.value = new PlacePolygonTool(toolLayer, {}, PolygonToolMode.EDIT);
       }
     });
 
