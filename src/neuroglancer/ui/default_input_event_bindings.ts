@@ -111,6 +111,8 @@ export function getDefaultRenderedDataPanelBindings() {
           'at:touchhold1': 'move-to-mouse-position',
           'at:touchtap1x2': 'select',
           'at:touchtap2x3': 'snap',
+          'at:control+keyz': 'switch-to-volume-draw-mode',
+          'at:control+keyx': 'switch-to-volume-edit-mode',
         },
         {
           label: 'All Data Panels',
@@ -157,8 +159,6 @@ export function getPolygonDrawModeBindings() {
         'at:mousedown2': 'complete-annotation',
         'at:keyz': 'undo-annotation',
         'at:control+keyc': 'clone-polygon-annotation',
-        'at:control+keyd': 'switch-to-polygon-draw-mode',
-        'at:control+keyf': 'switch-to-polygon-edit-mode',
       }
     );
   }
@@ -183,8 +183,6 @@ export function getPolygonEditModeBindings() {
         'control+shift-minus': 'scale-polygon-shrink',
         'at:touchrotate': 'rotate-polygon-via-touchrotate',
         'at:touchpinch': 'zoom-polygon-via-touchpinch',
-        'at:control+keyd': 'switch-to-polygon-draw-mode',
-        'at:control+keyf': 'switch-to-polygon-edit-mode',
         'at:control+keyc': 'clone-polygon-annotation',
       }
     );
