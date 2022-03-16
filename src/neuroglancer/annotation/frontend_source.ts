@@ -561,6 +561,21 @@ export class MultiscaleAnnotationSource extends SharedObject implements
     }
   }
 
+  updateDescription(reference: AnnotationReference, description: string|undefined) {
+    if (!reference.value) return;
+    const newAnn = {...reference.value, description};
+    this.update(reference, newAnn);
+
+    if (isTypeCollection(newAnn)) {
+      const collection = <Collection>newAnn;
+      for (let i = 0; i < collection.childAnnotationIds.length; i++) {
+        const childRef = this.getReference(collection.childAnnotationIds[i]);
+        this.updateDescription(childRef, description);
+        childRef.dispose();
+      }
+    }
+  }
+
   private forEachPossibleChunk(
       annotation: Annotation,
       callback: (chunk: AnnotationGeometryChunk|AnnotationSubsetGeometryChunk) => void) {
