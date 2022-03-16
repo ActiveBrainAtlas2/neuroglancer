@@ -54,6 +54,16 @@
           msg.setErrorMessage("Enter valid values for polygon config");
           return;
         }
+        if (scaleVal < 0 || scaleVal > 99) {
+          const msg = new StatusMessage();
+          msg.setErrorMessage("Enter a scale percentage between 0 and 99");
+          return;
+        }
+        if (rotateVal < 0 || rotateVal > 360) {
+          const msg = new StatusMessage();
+          msg.setErrorMessage("Enter an angle between 0° and 360°");
+          return;
+        }
         polygonScalePercentage.value = scaleVal;
         polygonRotateAngle.value = rotateVal;
         polygonSectionOffset.value = offsetVal;
@@ -111,20 +121,20 @@
       const element = document.createElement('tr');
 
       const descCell = document.createElement('td');
-      descCell.append("Scale factor: ");
-      const scalePercentEle = document.createElement('text');
-      scalePercentEle.textContent = polygonScalePercentage.value.toString() + '%';
-      descCell.appendChild(scalePercentEle);
+      descCell.append("Scale factor: [0-99]%");
+      // const scalePercentEle = document.createElement('text');
+      // scalePercentEle.textContent = polygonScalePercentage.value.toString() + '%';
+      // descCell.appendChild(scalePercentEle);
 
       const inputCell = document.createElement('td');
       const scaleFactorSlider :HTMLInputElement = document.createElement('input');
-      scaleFactorSlider.setAttribute('type', 'range');
-      scaleFactorSlider.setAttribute('min', '0.0');
-      scaleFactorSlider.setAttribute('max', '99.0');
-      scaleFactorSlider.setAttribute('step', '0.01');
-      scaleFactorSlider.addEventListener('input', () => {
-        scalePercentEle.textContent = scaleFactorSlider.value + '%';
-      });
+      scaleFactorSlider.setAttribute('type', 'number');
+      // scaleFactorSlider.setAttribute('min', '0.0');
+      // scaleFactorSlider.setAttribute('max', '99.0');
+      // scaleFactorSlider.setAttribute('step', '1.0');
+      // scaleFactorSlider.addEventListener('input', () => {
+      //   scalePercentEle.textContent = scaleFactorSlider.value + '%';
+      // });
       this.scalePolygonTextEle = scaleFactorSlider;
       inputCell.appendChild(scaleFactorSlider);
 
@@ -135,10 +145,10 @@
       resetButton.addEventListener('click', () => {
         polygonScalePercentage.reset();
         scaleFactorSlider.value = polygonScalePercentage.value.toString();
-        scalePercentEle.textContent = polygonScalePercentage.value.toString() + '%';
+        // scalePercentEle.textContent = polygonScalePercentage.value.toString() + '%';
       });
       scaleFactorSlider.value = polygonScalePercentage.value.toString();
-      scalePercentEle.textContent = polygonScalePercentage.value.toString() + '%';
+      // scalePercentEle.textContent = polygonScalePercentage.value.toString() + '%';
       resetCell.appendChild(resetButton);
 
       element.appendChild(descCell);
@@ -152,20 +162,20 @@
       const element = document.createElement('tr');
 
       const descCell = document.createElement('td');
-      descCell.append('Rotate angle: ');
-      const rotateAngleEle = document.createElement('text');
-      rotateAngleEle.textContent = polygonRotateAngle.value.toString() + '°';
-      descCell.appendChild(rotateAngleEle);
+      descCell.append('Rotate angle: [0-360]°');
+      // const rotateAngleEle = document.createElement('text');
+      // rotateAngleEle.textContent = polygonRotateAngle.value.toString() + '°';
+      // descCell.appendChild(rotateAngleEle);
 
       const inputCell = document.createElement('td');
       const rotateFactorSlider :HTMLInputElement = document.createElement('input');
-      rotateFactorSlider.setAttribute('type', 'range');
-      rotateFactorSlider.setAttribute('min', '0.0');
-      rotateFactorSlider.setAttribute('max', '360.0');
-      rotateFactorSlider.setAttribute('step', '0.01');
-      rotateFactorSlider.addEventListener('input', () => {
-        rotateAngleEle.textContent = rotateFactorSlider.value + '°';
-      });
+      rotateFactorSlider.setAttribute('type', 'number');
+      // rotateFactorSlider.setAttribute('min', '0.0');
+      // rotateFactorSlider.setAttribute('max', '360.0');
+      // rotateFactorSlider.setAttribute('step', '1.0');
+      // rotateFactorSlider.addEventListener('input', () => {
+      //   rotateAngleEle.textContent = rotateFactorSlider.value + '°';
+      // });
       this.rotatePolygonTextEle = rotateFactorSlider;
       inputCell.appendChild(rotateFactorSlider);
 
@@ -176,10 +186,10 @@
       resetButton.addEventListener('click', () => {
         polygonRotateAngle.reset();
         rotateFactorSlider.value = polygonRotateAngle.value.toString();
-        rotateAngleEle.textContent = polygonRotateAngle.value.toString() + '°';
+        // rotateAngleEle.textContent = polygonRotateAngle.value.toString() + '°';
       });
       rotateFactorSlider.value = polygonRotateAngle.value.toString();
-      rotateAngleEle.textContent = polygonRotateAngle.value.toString() + '°';
+      // rotateAngleEle.textContent = polygonRotateAngle.value.toString() + '°';
       resetCell.appendChild(resetButton);
 
       element.appendChild(descCell);

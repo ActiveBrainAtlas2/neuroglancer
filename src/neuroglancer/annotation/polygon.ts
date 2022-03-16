@@ -29,9 +29,9 @@ import { UserLayerWithAnnotations } from '../ui/annotations';
  import { AnnotationLayerState } from './annotation_layer_state';
  import { AnnotationLayer } from './renderlayer';
  
- export const DEFAULT_POLYGON_SCALE_PERCENTAGE = 10;
+ export const DEFAULT_POLYGON_SCALE_PERCENTAGE = 1;
  export const polygonScalePercentage = new TrackableValue<number>(DEFAULT_POLYGON_SCALE_PERCENTAGE, verifyNonNegativeFloat);
- export const DEFAULT_POLYGON_ROTATE_ANGLE = 20;
+ export const DEFAULT_POLYGON_ROTATE_ANGLE = 1;
  export const polygonRotateAngle = new TrackableValue<number>(DEFAULT_POLYGON_ROTATE_ANGLE, verifyNonNegativeFloat);
  export const DEFAULT_POLYGON_CLONE_SECTION_OFFSET = 1;
  export const polygonSectionOffset = new TrackableValue<number>(DEFAULT_POLYGON_CLONE_SECTION_OFFSET, verifyInt);

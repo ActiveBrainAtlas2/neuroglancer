@@ -1007,6 +1007,21 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
   }
 
+  updateDescription(reference: AnnotationReference, description: string|undefined) {
+    if (!reference.value) return;
+    const newAnn = {...reference.value, description};
+    this.update(reference, newAnn);
+
+    if (isTypeCollection(newAnn)) {
+      const collection = <Collection>newAnn;
+      for (let i = 0; i < collection.childAnnotationIds.length; i++) {
+        const childRef = this.getReference(collection.childAnnotationIds[i]);
+        this.updateDescription(childRef, description);
+        childRef.dispose();
+      }
+    }
+  }
+
   references = new Map<AnnotationId, Borrowed<AnnotationReference>>();
 
   protected ensureUpdated() {}
