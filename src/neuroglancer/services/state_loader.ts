@@ -146,7 +146,7 @@ export class StateAPI {
         }).then(json => {
             return {
                 state_id: json['id'],
-                owner_id: json['owner_id'],
+                owner: json['owner'],
                 comments: json['comments'],
                 user_date: json['user_date'],
                 url: json['url'],
@@ -155,7 +155,7 @@ export class StateAPI {
             StatusMessage.showTemporaryMessage('The URL is deleted from database. Please check again.');
             return {
                 state_id: 0,
-                owner_id: 0,
+                owner: 0,
                 comments: err,
                 user_date: "0",
                 url: {},
@@ -167,12 +167,12 @@ export class StateAPI {
         const url = this.stateUrl;
         const body = {
             id: state['state_id'],
-            owner_id: state['owner_id'],
+            owner: state['owner'],
             comments: state['comments'],
             user_date: state['user_date'],
             url: state['url'],
         };
-
+        console.log(body);
         return fetchOk(url, {
             method: 'POST',
             credentials: 'omit', // Required to pass CSRF Failed error
@@ -189,7 +189,7 @@ export class StateAPI {
             urlParams.stateID = json['id'];
             return {
                 state_id: json['id'],
-                owner_id: json['owner_id'],
+                owner: json['owner'],
                 comments: json['comments'],
                 user_date: json['user_date'],
                 url: json['url'],
@@ -201,7 +201,7 @@ export class StateAPI {
         const url = `${this.stateUrl}/${stateID}`;
         const body = {
             id: state['state_id'],
-            owner_id: state['owner_id'],
+            owner: state['owner'],
             comments: state['comments'],
             user_date: state['user_date'],
             url: state['url'],
@@ -219,7 +219,7 @@ export class StateAPI {
         }).then(json => {
             return {
                 state_id: json['id'],
-                owner_id: json['owner_id'],
+                owner: json['owner'],
                 comments: json['comments'],
                 user_date: json['user_date'],
                 url: json['url'],
@@ -317,10 +317,9 @@ export class StateLoader extends RefCounted {
             StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
             return;
         }
-
         const state = {
             state_id: this.stateID,
-            owner_id: this.user.user_id,
+            owner: this.user.user_id,
             comments: comments,
             user_date: String(Date.now()),
             url: getCachedJson(this.viewer.state).value,
@@ -340,10 +339,11 @@ export class StateLoader extends RefCounted {
             StatusMessage.showTemporaryMessage(`Error: the comment cannot be empty.`);
             return;
         }
+        console.log('user id ' + this.user.user_id);
 
         const state = {
             state_id: this.stateID,
-            owner_id: this.user.user_id,
+            owner: this.user.user_id,
             comments: comments,
             user_date: String(Date.now()),
             url: getCachedJson(this.viewer.state).value,
