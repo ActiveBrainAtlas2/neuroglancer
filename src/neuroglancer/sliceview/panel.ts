@@ -37,6 +37,8 @@ import { getAnnotationTypeRenderHandler } from '../annotation/type_handler';
 import { displayToLayerCoordinates, layerToDisplayCoordinates } from '../render_coordinate_transform';
 import { arraysEqual } from '../util/array';
 import * as matrix from 'neuroglancer/util/matrix';
+import { StatusMessage } from '../status';
+import { PlaceVolumeTool } from '../ui/annotations';
 
 export interface SliceViewerState extends RenderedDataViewerState {
   showScaleBar: TrackableBoolean;
@@ -157,9 +159,24 @@ export class SliceViewPanel extends RenderedDataPanel {
     
     registerActionListener(element, 'move-polygon-vertex', (e: ActionEvent<MouseEvent>) => {
       const {mouseState} = this.viewer;
+      const selectedLayer = this.viewer.selectedLayer.layer;
       const selectedAnnotationId = mouseState.pickedAnnotationId;
       const annotationLayer = mouseState.pickedAnnotationLayer;
       if (annotationLayer === undefined || selectedAnnotationId === undefined) return;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+      if (userLayer.tool.value instanceof PlaceVolumeTool) {
+        const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
+        if (!volumeTool.validateSession(selectedAnnotationId, annotationLayer)) return;
+      }
       e.stopPropagation();
       let annotationRef = annotationLayer.source.getReference(selectedAnnotationId)!;
       let ann = <Annotation>annotationRef.value;

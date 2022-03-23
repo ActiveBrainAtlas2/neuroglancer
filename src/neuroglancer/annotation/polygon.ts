@@ -166,7 +166,7 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
   const cloneAnnRef = annotationLayer.source.add(<Polygon>{
     id: '',
     type: AnnotationType.POLYGON,
-    description: '',
+    description: ann.description,
     source: cloneSource,
     properties: Object.assign([], ann.properties),
     childAnnotationIds: [],
