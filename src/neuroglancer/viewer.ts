@@ -730,15 +730,17 @@ export class Viewer extends RefCounted implements ViewerState {
 
       const isInstance = userLayer.tool.value instanceof PlaceVolumeTool;
       if (!isInstance) {
-        userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, VolumeToolMode.DRAW);
+        return;
       }
       else {
         const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
-        if (volumeTool.mode === VolumeToolMode.EDIT) {
-          userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, VolumeToolMode.DRAW);
+        if (volumeTool.mode !== VolumeToolMode.DRAW) {
+          userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
+            VolumeToolMode.DRAW, volumeTool.sessionWidgetDiv);
         }
         else {
-          userLayer.tool.value = undefined;
+          userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
+            VolumeToolMode.NOOP, volumeTool.sessionWidgetDiv);
         }
       }
     });
@@ -760,14 +762,16 @@ export class Viewer extends RefCounted implements ViewerState {
 
       const isInstance = userLayer.tool.value instanceof PlaceVolumeTool;
       if (!isInstance) {
-        userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, VolumeToolMode.EDIT);
+        return;
       } else {
         const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
-        if (volumeTool.mode === VolumeToolMode.DRAW) {
-          userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, VolumeToolMode.EDIT);
+        if (volumeTool.mode !== VolumeToolMode.EDIT) {
+          userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
+            VolumeToolMode.EDIT, volumeTool.sessionWidgetDiv);
         }
         else {
-          userLayer.tool.value = undefined;
+          userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
+            VolumeToolMode.NOOP, volumeTool.sessionWidgetDiv);
         }
       }
     });
@@ -786,7 +790,7 @@ export class Viewer extends RefCounted implements ViewerState {
       }
 
       if (!(userLayer.tool.value instanceof PlacePolygonTool || userLayer.tool.value instanceof PlaceVolumeTool)) {
-        StatusMessage.showTemporaryMessage(`Please select polygon tool in edit mode to perform this operation`);
+        StatusMessage.showTemporaryMessage(`Please select polygon or volume tool in edit mode to perform this operation`);
         return;
       }
 

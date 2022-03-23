@@ -543,6 +543,20 @@ export class MultiscaleAnnotationSource extends SharedObject implements
     return reference;
   }
 
+  getTopMostAnnotationReference(id: AnnotationId): AnnotationReference {
+    const reference = this.getReference(id);
+    if (!reference.value) return reference;
+
+    const annotation = reference.value;
+    if (annotation.parentAnnotationId) {
+      const parentId = annotation.parentAnnotationId;
+      reference.dispose();
+      return this.getTopMostAnnotationReference(parentId);
+    }
+    
+    return reference;
+  }
+
   updateColor(reference: AnnotationReference, color: number) {
     if (!reference.value) return;
     const newAnn = {...reference.value};
