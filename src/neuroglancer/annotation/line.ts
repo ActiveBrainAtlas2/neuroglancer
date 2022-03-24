@@ -38,6 +38,7 @@ void setEndpointMarkerSize(float startSize, float endSize) {}
 void setEndpointMarkerBorderWidth(float startSize, float endSize) {}
 void setEndpointMarkerColor(vec4 startColor, vec4 endColor) {}
 void setEndpointMarkerBorderColor(vec4 startColor, vec4 endColor) {}
+void setEndpointOpacity(float opacity) {}
 `);
 }
 
@@ -45,6 +46,7 @@ function defineNoOpLineSetters(builder: ShaderBuilder) {
   builder.addVertexCode(`
 void setLineWidth(float width) {}
 void setLineColor(vec4 startColor, vec4 endColor) {}
+void setLineOpacity(float opacity) {}
 `);
 }
 
@@ -66,6 +68,7 @@ class RenderHelper extends AnnotationRenderHelper {
         this.defineShader(builder);
         defineLineShader(builder);
         builder.addVarying(`highp float[${rank}]`, 'vModelPosition');
+        builder.addVarying(`highp float`, 'vLineOpacity');
         builder.addVertexCode(`
 float ng_LineWidth;
 `);
@@ -73,6 +76,9 @@ float ng_LineWidth;
         builder.addVertexCode(`
 void setLineWidth(float width) {
   ng_LineWidth = width;
+}
+void setLineOpacity(float opacity) {
+  vLineOpacity = opacity;
 }
 void setLineColor(vec4 startColor, vec4 endColor) {
   vColor = mix(startColor, endColor, getLineEndpointCoefficient());
@@ -85,6 +91,7 @@ for (int i = 0; i < ${rank}; ++i) {
   vModelPosition[i] = mix(modelPositionA[i], modelPositionB[i], getLineEndpointCoefficient());
 }
 ng_LineWidth = 1.0;
+vLineOpacity = 1.0;
 vColor = vec4(0.0, 0.0, 0.0, 0.0);
 ${this.invokeUserMain}
 emitLine(uModelViewProjection * vec4(projectModelVectorToSubspace(modelPositionA), 1.0),
@@ -96,7 +103,7 @@ ${this.setPartIndex(builder)};
 float clipCoefficient = getSubspaceClipCoefficient(vModelPosition);
 emitAnnotation(vec4(vColor.rgb, vColor.a * getLineAlpha() *
                                 ${this.getCrossSectionFadeFactor()} *
-                                clipCoefficient));
+                                clipCoefficient * vLineOpacity));
 `);
       });
 
@@ -106,6 +113,7 @@ emitAnnotation(vec4(vColor.rgb, vColor.a * getLineAlpha() *
         this.defineShader(builder);
         defineCircleShader(builder, this.targetIsSliceView);
         builder.addVarying('highp float', 'vClipCoefficient');
+        builder.addVarying('highp float', 'vEndpointOpacity');
         builder.addVarying('highp vec4', 'vBorderColor');
         defineNoOpLineSetters(builder);
         builder.addVertexCode(`
@@ -126,6 +134,9 @@ void setEndpointMarkerColor(vec4 startColor, vec4 endColor) {
 void setEndpointMarkerBorderColor(vec4 startColor, vec4 endColor) {
   vBorderColor = mix(startColor, endColor, float(getEndpointIndex()));
 }
+void setEndpointOpacity(float opacity) {
+  vEndpointOpacity = opacity;
+}
 `);
         builder.setVertexMain(`
 float modelPosition[${rank}] = getVertexPosition0();
@@ -133,6 +144,7 @@ float modelPositionB[${rank}] = getVertexPosition1();
 for (int i = 0; i < ${rank}; ++i) {
   modelPosition[i] = mix(modelPosition[i], modelPositionB[i], float(getEndpointIndex()));
 }
+vEndpointOpacity = 1.0;
 vClipCoefficient = getSubspaceClipCoefficient(modelPosition);
 vColor = vec4(0.0, 0.0, 0.0, 0.0);
 vBorderColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -145,6 +157,7 @@ ${this.setPartIndex(builder, 'uint(getEndpointIndex()) + 1u')};
         builder.setFragmentMain(`
 vec4 color = getCircleColor(vColor, vBorderColor);
 color.a *= vClipCoefficient;
+color.a *= vEndpointOpacity;
 emitAnnotation(color);
 `);
       });
