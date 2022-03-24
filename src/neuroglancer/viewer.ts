@@ -601,7 +601,7 @@ export class Viewer extends RefCounted implements ViewerState {
     this.registerDisposer(
         this.selectionDetailsState.changed.add(sidePanelVisible.changed.dispatch));
     this.registerDisposer(new DragResizablePanel(
-        sidePanel, sidePanelVisible, this.selectedLayer.size, 'horizontal', 375));
+        sidePanel, sidePanelVisible, this.selectedLayer.size, 'horizontal', 475));
     const layerInfoPanel =
         this.registerDisposer(new LayerInfoPanelContainer(this.selectedLayer.addRef()));
     this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
