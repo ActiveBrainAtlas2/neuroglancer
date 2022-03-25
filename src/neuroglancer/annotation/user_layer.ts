@@ -44,6 +44,7 @@ import {RenderScaleWidget} from 'neuroglancer/widget/render_scale_widget';
 import {ShaderCodeWidget} from 'neuroglancer/widget/shader_code_widget';
 import {ShaderControls} from 'neuroglancer/widget/shader_controls';
 import {Tab} from 'neuroglancer/widget/tab_view';
+import { defaultAnnotationPropertiesSchema } from '../layer_panel';
 
 const POINTS_JSON_KEY = 'points';
 const ANNOTATIONS_JSON_KEY = 'annotations';
@@ -349,6 +350,11 @@ export class AnnotationUserLayer extends Base {
     this.localAnnotationsJson = specification[ANNOTATIONS_JSON_KEY];
     this.localAnnotationProperties = verifyOptionalObjectProperty(
         specification, ANNOTATION_PROPERTIES_JSON_KEY, parseAnnotationPropertySpecs);
+    if (this.localAnnotationProperties === undefined) {
+      specification[ANNOTATION_PROPERTIES_JSON_KEY] = this.getDefaultAnnotationPropertySpecs();
+      this.localAnnotationProperties = verifyOptionalObjectProperty(
+        specification, ANNOTATION_PROPERTIES_JSON_KEY, parseAnnotationPropertySpecs);
+    }
     this.localAnnotationRelationships = verifyOptionalObjectProperty(
         specification, ANNOTATION_RELATIONSHIPS_JSON_KEY, verifyStringArray, ['segments']);
     this.pointAnnotationsJson = specification[POINTS_JSON_KEY];
@@ -361,6 +367,10 @@ export class AnnotationUserLayer extends Base {
     this.annotationDisplayState.shader.restoreState(specification[SHADER_JSON_KEY]);
     this.annotationDisplayState.shaderControls.restoreState(
         specification[SHADER_CONTROLS_JSON_KEY]);
+  }
+
+  getDefaultAnnotationPropertySpecs() {
+    return defaultAnnotationPropertiesSchema
   }
 
   getLegacyDataSourceSpecifications(
