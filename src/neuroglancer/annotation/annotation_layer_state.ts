@@ -86,6 +86,7 @@ const DEFAULT_FRAGMENT_MAIN = `
 #uicontrol float polygon_vertex_size slider(min=0, max=10, default=7)
 #uicontrol float polygon_vertex_border_width slider(min=0, max=5, default=3)
 #uicontrol float polygon_opacity slider(min=0, max=1, default=1)
+#uicontrol float polygon_line_width slider(min=0, max=5, default=1)
 void main() {
   setColor(prop_color());
   setPointMarkerSize(size);
@@ -93,6 +94,7 @@ void main() {
   setEndpointMarkerBorderWidth(polygon_vertex_border_width);
   setEndpointOpacity(polygon_opacity);
   setLineOpacity(polygon_opacity);
+  setLineWidth(polygon_line_width);
 }
 `;
 /* END OF CHANGE: Point Annotation Marker Size */
