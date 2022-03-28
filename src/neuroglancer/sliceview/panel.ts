@@ -39,6 +39,7 @@ import { arraysEqual } from '../util/array';
 import * as matrix from 'neuroglancer/util/matrix';
 import { StatusMessage } from '../status';
 import { PlaceVolumeTool } from '../ui/annotations';
+import { checkIfSameZCoordinate, copyZCoordinate } from '../annotation/polygon';
 
 export interface SliceViewerState extends RenderedDataViewerState {
   showScaleBar: TrackableBoolean;
@@ -231,10 +232,14 @@ export class SliceViewPanel extends RenderedDataPanel {
               matrix.transformPoint(
                   newPoint, chunkTransform.layerToChunkTransform, layerRank + 1, layerPoint,
                   layerRank);
+              copyZCoordinate((<Polygon>parAnn).source, newPoint);
               pickedAnnotations.forEach((pickedAnnotation) => {
                 let newAnnotation = handler.updateViaRepresentativePoint(pickedAnnotation.annotationRef.value!, 
                   newPoint, pickedAnnotation.partIndex);
-                annotationLayer.source.update(pickedAnnotation.annotationRef, newAnnotation);
+                let newLineAnn = <Line>newAnnotation;
+                if (checkIfSameZCoordinate(newLineAnn.pointA, newLineAnn.pointB)) {
+                  annotationLayer.source.update(pickedAnnotation.annotationRef, newAnnotation);
+                }
               });
             },
             (_event) => {

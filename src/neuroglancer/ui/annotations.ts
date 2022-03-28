@@ -70,9 +70,10 @@ import { getEndPointBasedOnPartIndex, isCornerPicked } from '../annotation/line'
 import {ActionEvent, dispatchEvent, EventActionMapInterface} from 'neuroglancer/util/event_action_map';
 import {getPolygonEditModeBindings} from 'neuroglancer/ui/default_input_event_bindings';
 import { Viewer } from '../viewer';
-import { cloneAnnotationSequence } from '../annotation/polygon';
+import { checkIfSameZCoordinate, cloneAnnotationSequence, getZCoordinate } from '../annotation/polygon';
 import { update } from 'lodash';
 import { VolumeSessionDialog } from './volume_session';
+import { isSectionValid } from '../annotation/volume';
 
 export interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -1259,6 +1260,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   mode: PolygonToolMode;
   bindingsRef: RefCounted|undefined;
   active: boolean;
+  zCoordinate: number|undefined;
 
   constructor(public layer: UserLayerWithAnnotations, options: any, mode: PolygonToolMode = PolygonToolMode.DRAW) {
     super(layer, options);
@@ -1279,8 +1281,19 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       // Not yet ready.
       return;
     }
+
     if (mouseState.updateUnconditionally()) {
       if (this.inProgressAnnotation === undefined) {
+        if (parentRef) {
+          const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+          if (point === undefined) return;
+          this.zCoordinate = getZCoordinate(point);
+          if (this.zCoordinate === undefined) return;
+          if (!isSectionValid(annotationLayer, parentRef.id, this.zCoordinate)) {
+            StatusMessage.showTemporaryMessage("Cannot draw polygon in this section for the volume");
+            return;
+          }
+        }
         this.sourceMouseState = <MouseSelectionState>{...mouseState};
         this.sourcePosition = this.sourceMouseState.position.slice();
         const annotation = this.getInitialAnnotation(mouseState, annotationLayer);
@@ -1300,6 +1313,17 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
           disposer,
         };
       } else {
+        if (parentRef) {
+          const {zCoordinate} = this;
+          const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+          if (point === undefined) return;
+          const newZCoordinate = getZCoordinate(point);
+          if (zCoordinate === undefined || newZCoordinate === undefined) return;
+          if (zCoordinate !== newZCoordinate) {
+            StatusMessage.showTemporaryMessage("All vertices of polygon must be in same plane");
+            return;
+          }
+        }
         this.childTool.trigger(mouseState, this.inProgressAnnotation.reference);
         //start new annotation
         this.childTool.trigger(mouseState, this.inProgressAnnotation.reference);
