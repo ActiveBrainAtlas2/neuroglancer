@@ -18,8 +18,11 @@
  * @file Support for rendering volume annotations.
  */
 
- import {AnnotationType, Volume} from 'neuroglancer/annotation';
+ import {AnnotationType, Line, Polygon, Volume} from 'neuroglancer/annotation';
  import {AnnotationRenderContext, AnnotationRenderHelper, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
+import { AnnotationLayerView } from '../ui/annotations';
+import { AnnotationLayerState } from './annotation_layer_state';
+import { checkIfSameZCoordinate, getZCoordinate } from './polygon';
 
  class RenderHelper extends AnnotationRenderHelper {
 
@@ -45,3 +48,18 @@
      return {...oldAnnotation, source: new Float32Array(position)};
    }
  });
+
+ export function isSectionValid(annotationLayer: AnnotationLayerState, id: string, zCoordinate: number) : boolean {
+  const reference = annotationLayer.source.getReference(id);
+  if (!reference.value || reference.value.type !== AnnotationType.VOLUME) return false;
+  const childIds = reference.value.childAnnotationIds;
+
+  for (let idx = 0; idx < childIds.length; idx++) {
+    const childId = childIds[idx];
+    const childRef = annotationLayer.source.getReference(childId);
+    if (!childRef.value) continue;
+    const polygon = <Polygon>(childRef.value);
+    if (getZCoordinate(polygon.source) === zCoordinate) return false;
+  }
+  return true;
+ }

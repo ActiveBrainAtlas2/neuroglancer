@@ -22,12 +22,14 @@
  import {AnnotationReference, AnnotationType, Line, Polygon} from 'neuroglancer/annotation';
  import {AnnotationRenderContext, AnnotationRenderHelper, getAnnotationTypeRenderHandler, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
  import { DisplayPose, NavigationState } from '../navigation_state';
+import { StatusMessage } from '../status';
  import { TrackableValue } from '../trackable_value';
 import { UserLayerWithAnnotations } from '../ui/annotations';
  import { verifyInt, verifyNonNegativeFloat } from '../util/json';
  import { Viewer } from '../viewer';
  import { AnnotationLayerState } from './annotation_layer_state';
  import { AnnotationLayer } from './renderlayer';
+import { isSectionValid } from './volume';
  
  export const DEFAULT_POLYGON_SCALE_PERCENTAGE = 1;
  export const polygonScalePercentage = new TrackableValue<number>(DEFAULT_POLYGON_SCALE_PERCENTAGE, verifyNonNegativeFloat);
@@ -159,6 +161,13 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
   const ann = <Polygon>reference.value;
   const cloneSource = getTransformedPoint(pose, ann.source, normalVector, depth);
   if (cloneSource === undefined) return undefined;
+  if (ann.parentAnnotationId) {
+    const zCoordinate = getZCoordinate(cloneSource);
+    if (zCoordinate !== undefined && !isSectionValid(annotationLayer, ann.parentAnnotationId, zCoordinate)) {
+      StatusMessage.showTemporaryMessage("Failed to clone, polygon already exists in the section for the volume");
+      return undefined;
+    }
+  }
 
   let volumeRef : AnnotationReference|undefined = undefined;
   if (ann.parentAnnotationId) volumeRef = annotationLayer.source.getReference(ann.parentAnnotationId); 
@@ -194,6 +203,8 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
     if (pointA === undefined || pointB === undefined) {
       return disposeAnnotation();
     }
+    copyZCoordinate(cloneSource, pointA);
+    copyZCoordinate(cloneSource, pointB);
 
     const cloneLineRef = annotationLayer.source.add(<Line>{
       id: '',
@@ -341,4 +352,23 @@ function getCentroidPolygon(childAnnotationRefs: AnnotationReference[]) : Float3
   for (let i = 0; i < rank; i++) centroid[i] /= (2*childAnnotationRefs.length);
 
   return centroid;
+}
+
+export function getZCoordinate(point: Float32Array): number|undefined {
+  if (point.length < 3) return undefined;
+  return point[2];
+}
+
+export function checkIfSameZCoordinate(point1: Float32Array, point2: Float32Array): boolean {
+  const z1 = getZCoordinate(point1);
+  const z2 = getZCoordinate(point2);
+  if (z1 === undefined || z2 === undefined) return false;
+  return z1 === z2;
+}
+
+export function copyZCoordinate(point1: Float32Array|undefined, point2: Float32Array|undefined): void {
+  if (point1 === undefined || point2 === undefined) return;
+  if (point1.length < 3 || point2.length < 3) return;
+  point2[2] = point1[2];
+  return;
 }
