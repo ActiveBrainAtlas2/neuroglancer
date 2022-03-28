@@ -46,7 +46,7 @@ export function restoreTool(layer: UserLayer, obj: any) {
   return getter(layer, obj);
 }
 
-export type ToolGetter = (layer: UserLayer, options: any) => Owned<Tool>;
+export type ToolGetter = (layer: UserLayer, options: any) => Owned<Tool>|undefined;
 
 const tools = new Map<string, ToolGetter>();
 

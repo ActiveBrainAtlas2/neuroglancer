@@ -2044,7 +2044,7 @@ registerTool(
     (layer, options) => new PlacePolygonTool(<UserLayerWithAnnotations>layer, options));
 registerTool(
   ANNOTATE_VOLUME_TOOL_ID,
-  (layer, options) => new PlaceVolumeTool(<UserLayerWithAnnotations>layer, options));
+  (layer, options) => undefined);
 
 const newRelatedSegmentKeyMap = EventActionMap.fromObject({
   'enter': {action: 'commit'},
