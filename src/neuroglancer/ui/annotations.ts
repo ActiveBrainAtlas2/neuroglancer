@@ -1290,7 +1290,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
           this.zCoordinate = getZCoordinate(point);
           if (this.zCoordinate === undefined) return;
           if (!isSectionValid(annotationLayer, parentRef.id, this.zCoordinate)) {
-            StatusMessage.showTemporaryMessage("Cannot draw polygon in this section for the volume");
+            StatusMessage.showTemporaryMessage("A polygon already exists in this section for the volume, only one polygon per section is allowed for a volume");
             return;
           }
         }
@@ -1622,7 +1622,7 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
   sessionWidgetDiv: HTMLElement|undefined;
 
   constructor(public layer: UserLayerWithAnnotations, options: any, session: VolumeSession|undefined = undefined,
-     mode: VolumeToolMode = VolumeToolMode.DRAW, sessionDiv: HTMLElement|undefined = undefined) {
+     mode: VolumeToolMode = VolumeToolMode.NOOP, sessionDiv: HTMLElement|undefined = undefined) {
     super(layer, options);
     this.mode = mode;
     const func = this.displayVolumeSession.bind(this);
@@ -1890,7 +1890,7 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
     } else if (mode === VolumeToolMode.EDIT) {
       return `volume session (edit mode)`;
     } else {
-      return `volume session (no op mode)`;
+      return `volume session`;
     }
   }
 

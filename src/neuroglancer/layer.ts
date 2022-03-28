@@ -1037,7 +1037,7 @@ export class TrackableDataSelectionState extends RefCounted implements
   select() {
     const {pin, visible} = this;
     visible.value = true;
-    pin.value = !pin.value;
+    pin.value = true;
     if (pin.value) {
       this.capture();
     }
