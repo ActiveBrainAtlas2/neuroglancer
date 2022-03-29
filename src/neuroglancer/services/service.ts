@@ -3,5 +3,5 @@ export const AppSettings = {
         GOOGLE_LOGIN: 'https://webdev.dk.ucsd.edu/activebrainatlas/accounts/google/login/?next=',
         LOCAL_LOGIN: 'https://webdev.dk.ucsd.edu/activebrainatlas/admin/login/?next=/devlogin',
         DISPLAY_FETCH: true,
-        DISPLAY_GOOGLE: true
+        DISPLAY_GOOGLE: false
 };
