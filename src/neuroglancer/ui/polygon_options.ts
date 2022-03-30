@@ -50,18 +50,15 @@
         const scaleVal = parseFloat(this.scalePolygonTextEle.value);
         const rotateVal = parseFloat(this.rotatePolygonTextEle.value);
         if (isNaN(offsetVal) || isNaN(scaleVal) || isNaN(rotateVal)) {
-          const msg = new StatusMessage();
-          msg.setErrorMessage("Enter valid values for polygon config");
+          StatusMessage.showTemporaryMessage("Enter valid values for polygon config");
           return;
         }
         if (scaleVal < 0 || scaleVal > 99) {
-          const msg = new StatusMessage();
-          msg.setErrorMessage("Enter a scale percentage between 0 and 99");
+          StatusMessage.showTemporaryMessage("Enter a scale percentage between 0 and 99");
           return;
         }
         if (rotateVal < 0 || rotateVal > 360) {
-          const msg = new StatusMessage();
-          msg.setErrorMessage("Enter an angle between 0° and 360°");
+          StatusMessage.showTemporaryMessage("Enter an angle between 0° and 360°");
           return;
         }
         polygonScalePercentage.value = scaleVal;

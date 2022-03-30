@@ -425,13 +425,11 @@ export abstract class RenderedDataPanel extends RenderedPanel {
       const selectionState : PersistentViewerSelectionState|undefined = this.viewer.selectionDetailsState.value;
       const selectedLayer = this.viewer.selectedLayer.layer;
       if (!this.viewer.selectionDetailsState.pin.value) {
-        const msg = new StatusMessage();
-        msg.setErrorMessage('Pin an annotation of an annotation layer to clone');
+        StatusMessage.showTemporaryMessage('Pin an annotation of an annotation layer to clone');
         return;
       }
       if (selectionState === undefined) {
-        const msg = new StatusMessage();
-        msg.setErrorMessage('Pin an annotation of an annotation layer to clone');
+        StatusMessage.showTemporaryMessage('Pin an annotation of an annotation layer to clone');
         return;
       }
       let selectedAnnotationId = undefined;
@@ -452,8 +450,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
         break;
       }
       if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined || userLayerWithAnnotations === undefined) {
-        const msg = new StatusMessage();
-        msg.setErrorMessage('Pin an annotation of an annotation layer to clone');
+        StatusMessage.showTemporaryMessage('Pin an annotation of an annotation layer to clone');
         return;
       }
       if (selectedLayer === undefined) {

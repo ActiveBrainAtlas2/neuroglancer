@@ -68,8 +68,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
         let description = (this.labelInputEle)? this.labelInputEle.value : undefined;
         const ref = volumeTool.createNewVolumeAnn(description, color);
         if (ref === undefined || !ref.value) {
-          const msg = new StatusMessage();
-          msg.setErrorMessage("Failed to create new volume");
+          StatusMessage.showTemporaryMessage("Failed to create new volume");
           this.annotationLayerView.layer.tool.value = undefined;
           if (ref) ref.dispose();
         } else {
@@ -136,8 +135,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
         this.annotationLayerView.layer.manager.root.selectionState.value;
 
         if (!this.annotationLayerView.layer.manager.root.selectionState.pin.value || selectionState === undefined) {
-          const msg = new StatusMessage();
-          msg.setErrorMessage("Please select and pin a volume annotation in current layer to start editing");
+          StatusMessage.showTemporaryMessage("Please select and pin a volume annotation in current layer to start editing");
           return;
         }
         let selectedAnnotationId = undefined;
@@ -161,15 +159,13 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
           break;
         }
         if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined) {
-          const msg = new StatusMessage();
-          msg.setErrorMessage("Please select and pin a volume annotation in current layer to start editing");
+          StatusMessage.showTemporaryMessage("Please select and pin a volume annotation in current layer to start editing");
           return;
         }
 
         const ref = selectedAnnotationLayer.source.getReference(selectedAnnotationId);
         if (!ref.value || ref.value.type !== AnnotationType.VOLUME) {
-          const msg = new StatusMessage();
-          msg.setErrorMessage("Please select and pin a volume annotation in current layer to start editing");
+          StatusMessage.showTemporaryMessage("Please select and pin a volume annotation in current layer to start editing");
           if (ref) ref.dispose();
           return;
         }
