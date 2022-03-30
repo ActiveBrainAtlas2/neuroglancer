@@ -26,7 +26,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
  import './volume_session.css';
  
   export class VolumeSessionDialog extends Overlay {
-    labelInputEle : HTMLInputElement|undefined = undefined;
+    landmarkDropdown : HTMLSelectElement|undefined = undefined;
     colorInput: HTMLInputElement|undefined = undefined;
     constructor(public annotationLayerView: AnnotationLayerView) {
       super();
@@ -55,7 +55,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       const row = document.createElement('tr');
       const col = document.createElement('td');
       col.style.textAlign = 'center';
-      col.colSpan = 3;
+      col.colSpan = 2;
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
@@ -65,7 +65,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
           undefined, VolumeToolMode.DRAW, this.annotationLayerView.volumeSession, this.annotationLayerView.volumeButton);
         const volumeTool = <PlaceVolumeTool>this.annotationLayerView.layer.tool.value;
         let color = (this.colorInput)? this.colorInput.value : undefined;
-        let description = (this.labelInputEle)? this.labelInputEle.value : undefined;
+        let description = (this.landmarkDropdown)? this.landmarkDropdown.options[this.landmarkDropdown.selectedIndex].value : undefined;
         const ref = volumeTool.createNewVolumeAnn(description, color);
         if (ref === undefined || !ref.value) {
           StatusMessage.showTemporaryMessage("Failed to create new volume");
@@ -87,19 +87,10 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       const labelRow = document.createElement('tr');
       const labelDesc = document.createElement('td');
       labelDesc.textContent = "Description: ";
-      const labelInput = document.createElement('td');
-      const labelInputEle = document.createElement('input');
-      labelInputEle.setAttribute('type', 'text');
-      labelInput.appendChild(labelInputEle);
       const landmarkCol = document.createElement('td');
       const landmarkDropdown = this.getLandMarkDropDown();
-      landmarkDropdown.addEventListener('change', () => {
-        const text = landmarkDropdown.options[landmarkDropdown.selectedIndex].value;
-        if (text && labelInputEle) labelInputEle.value = text;
-      });
       landmarkCol.appendChild(landmarkDropdown);
       labelRow.appendChild(labelDesc);
-      labelRow.appendChild(labelInput);
       labelRow.appendChild(landmarkCol);
 
       const colorRow = document.createElement('tr');
@@ -115,7 +106,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       colorRow.appendChild(colorDesc);
       colorRow.appendChild(colorInput);
 
-      this.labelInputEle = labelInputEle;
+      this.landmarkDropdown = landmarkDropdown;
       this.colorInput = colorInput;
 
       return [labelRow, colorRow];
@@ -125,7 +116,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       const row = document.createElement('tr');
       const col = document.createElement('td');
       col.style.textAlign = 'center';
-      col.colSpan = 3;
+      col.colSpan = 2;
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
@@ -188,7 +179,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       const row = document.createElement('tr');
       const col = document.createElement('td');
       col.style.textAlign = 'center';
-      col.colSpan = 3;
+      col.colSpan = 2;
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
