@@ -71,7 +71,7 @@ import { AnnotationUserLayer } from './annotation/user_layer';
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
 
-const WIKI_ADDRESS="https://github.com/ActiveBrainAtlasPipeline/neuroglancer/wiki/Help";
+const WIKI_ADDRESS="https://github.com/ActiveBrainAtlas2/neuroglancer/wiki";
 
 export class DataManagementContext extends RefCounted {
   worker: Worker;
