@@ -103,13 +103,14 @@ export class FetchAnnotationWidget extends RefCounted{
       StatusMessage.showTemporaryMessage('Please select the annotation to fetch.');
       return;
     }
-    StatusMessage.showTemporaryMessage('Fetching annotations...');
+    const msg =  StatusMessage.showMessage('Fetching annotations, this might take a while ...');
     const annotationURL = `${AppSettings.API_ENDPOINT}/annotation/${annotation}`;
 
     try {
       const annotationJSON:Array<AnnotationJSON> = await fetchOk(annotationURL, {
         method: 'GET',
       }).then(response => {
+        
         return response.json();
       });
 
@@ -125,6 +126,7 @@ export class FetchAnnotationWidget extends RefCounted{
           duplicateCount++;
         }
       });
+      msg.dispose();
       if (duplicateCount) {
         StatusMessage.showTemporaryMessage(`${addedCount} annotations added; ${duplicateCount} duplicate annotations not added.`);
       } else {
@@ -136,4 +138,3 @@ export class FetchAnnotationWidget extends RefCounted{
     }
   }
 }
-

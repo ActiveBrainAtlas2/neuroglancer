@@ -317,7 +317,6 @@ export class StateLoader extends RefCounted {
             StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
             return;
         }
-
         const state = {
             state_id: this.stateID,
             owner_id: this.user.user_id,
