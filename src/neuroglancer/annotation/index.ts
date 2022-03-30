@@ -908,8 +908,7 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
       const parentRef = this.getReference(reference.value!.parentAnnotationId);
       if (parentRef.value && isChildDummyAnnotation(parentRef.value) && !fromParent) {
         parentRef.dispose();
-        const msg = new StatusMessage();
-        msg.setErrorMessage('Cannot delete child annotations');
+        StatusMessage.showTemporaryMessage('Cannot delete child annotations');
         return;
       }
       if (parentRef.value && isTypeCollection(parentRef.value)) {
