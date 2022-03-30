@@ -281,6 +281,7 @@ export class AnnotationLayerView extends Tab {
   private mutableControls = document.createElement('div');
   private headerRow = document.createElement('div');
   volumeSession = document.createElement('div');
+  volumeButton: HTMLElement;
 
   get annotationStates() {
     return this.layer.annotationStates;
@@ -473,20 +474,25 @@ export class AnnotationLayerView extends Tab {
     });
     mutableControls.appendChild(polygonButton);
 
-    const volumeButton = makeIcon({
+    this.volumeButton = makeIcon({
       text: annotationTypeHandlers[AnnotationType.VOLUME].icon,
       title: 'Annotate Volume',
       onClick: () => {
         new VolumeSessionDialog(this);
       }
     });
-    mutableControls.appendChild(volumeButton);
+    mutableControls.appendChild(this.volumeButton);
 
     toolbox.appendChild(mutableControls);
     this.element.appendChild(toolbox);
 
     volumeSession.classList.add('volume-session-display');
     this.element.appendChild(volumeSession);
+    if (this.layer.tool.value instanceof PlaceVolumeTool) {
+      this.layer.tool.value.sessionWidgetDiv = volumeSession;
+      this.layer.tool.value.session.changed.dispatch();
+      this.layer.tool.value.icon.value = this.volumeButton;
+    }
 
     this.element.appendChild(this.headerRow);
     const {virtualList} = this;
@@ -1620,9 +1626,11 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
   session: WatchableValue<VolumeSession|undefined> = new WatchableValue(undefined);
   sessionWidget: RefCounted|undefined;
   sessionWidgetDiv: HTMLElement|undefined;
+  icon: WatchableValue<HTMLElement|undefined> = new WatchableValue(undefined);
 
   constructor(public layer: UserLayerWithAnnotations, options: any, session: VolumeSession|undefined = undefined,
-     mode: VolumeToolMode = VolumeToolMode.NOOP, sessionDiv: HTMLElement|undefined = undefined) {
+     mode: VolumeToolMode = VolumeToolMode.NOOP, sessionDiv: HTMLElement|undefined = undefined,
+     iconDiv: HTMLElement|undefined = undefined) {
     super(layer, options);
     this.mode = mode;
     const func = this.displayVolumeSession.bind(this);
@@ -1636,6 +1644,32 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
       this.childTool = new PlacePolygonTool(layer, {...options, parent: this}, PolygonToolMode.EDIT);
     } else {
       this.childTool = undefined;
+    }
+    this.icon.changed.add(this.setIconColor.bind(this));
+    this.icon.value = iconDiv;
+    // this.registerDisposer(() => {
+    //   const iconDiv = this.icon.value;
+    //   if (iconDiv === undefined) return;
+    //   iconDiv.style.backgroundColor = '';
+    //   this.icon.value = undefined;
+    // });
+  }
+
+  setIconColor() {
+    const iconDiv = this.icon.value;
+    if (iconDiv === undefined) return;
+    switch (this.mode) {
+      case VolumeToolMode.DRAW: {
+        iconDiv.style.backgroundColor = 'green';
+        break;
+      }
+      case VolumeToolMode.EDIT: {
+        iconDiv.style.backgroundColor = 'red';
+        break;
+      }
+      default: {
+        iconDiv.style.backgroundColor = 'grey';
+      }
     }
   }
 
