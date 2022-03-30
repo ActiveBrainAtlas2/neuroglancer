@@ -38,7 +38,7 @@ export class UserLoader {
             const stateID = urlParams.stateID;
 
             this.googleLoginButton = makeIcon({ text: 'Google', title: 'Login with your Google account.' });
-            this.localLoginButton = makeIcon({ text: 'Local', title: 'Login as a local user.' });
+            this.localLoginButton = makeIcon({ text: 'Login', title: 'Login as a local user.' });
             this.logoutButton = makeIcon({ text: 'Leave', title: 'Leave multi-user mode. You will be directed to database portal.' });
 
             registerEventListener(this.googleLoginButton, 'click', () => {
@@ -101,7 +101,6 @@ export class UserLoader {
         this.localLoginButton.style.removeProperty('display');
         this.userList.style.display = 'none';
         this.logoutButton.style.display = 'none';
-        //TODO fixme migrate web 8 -> 9 userDataRef.off("child_changed");
         off(userDataRef, "child_changed");
     }
 
