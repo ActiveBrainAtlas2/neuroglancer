@@ -59,7 +59,7 @@ export class FetchAnnotationWidget extends RefCounted{
     this.element.appendChild(this.fetchButton);
 
     this.registerDisposer(() => removeFromParent(this.element));
-  };
+  }
 
   async setUpAnnotationList() {
     const url = `${AppSettings.API_ENDPOINT}/annotations`;
@@ -80,7 +80,7 @@ export class FetchAnnotationWidget extends RefCounted{
 
       response.forEach(AnnotationLayerInfo => {
         const {prep_id, label, input_type, input_type_id} = AnnotationLayerInfo;
-        var option = document.createElement('option');
+        const option = document.createElement('option');
         option.value = `${prep_id}/${encodeURIComponent(label)}/${input_type_id}`;
         option.text = `${prep_id}/${label}/${input_type}`;
         annotationSelectionFetched.add(option);
@@ -103,13 +103,14 @@ export class FetchAnnotationWidget extends RefCounted{
       StatusMessage.showTemporaryMessage('Please select the annotation to fetch.');
       return;
     }
-    StatusMessage.showTemporaryMessage('Fetching annotations...');
+    const msg =  StatusMessage.showMessage('Fetching annotations, this might take a while ...');
     const annotationURL = `${AppSettings.API_ENDPOINT}/annotation/${annotation}`;
 
     try {
       const annotationJSON:Array<AnnotationJSON> = await fetchOk(annotationURL, {
         method: 'GET',
       }).then(response => {
+        
         return response.json();
       });
 
@@ -125,6 +126,7 @@ export class FetchAnnotationWidget extends RefCounted{
           duplicateCount++;
         }
       });
+      msg.dispose();
       if (duplicateCount) {
         StatusMessage.showTemporaryMessage(`${addedCount} annotations added; ${duplicateCount} duplicate annotations not added.`);
       } else {
