@@ -62,7 +62,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       button.textContent = 'Start a new volume';
       button.addEventListener('click', () => {
         this.annotationLayerView.layer.tool.value = new PlaceVolumeTool(this.annotationLayerView.layer, {}, 
-          undefined, VolumeToolMode.DRAW, this.annotationLayerView.volumeSession);
+          undefined, VolumeToolMode.DRAW, this.annotationLayerView.volumeSession, this.annotationLayerView.volumeButton);
         const volumeTool = <PlaceVolumeTool>this.annotationLayerView.layer.tool.value;
         let color = (this.colorInput)? this.colorInput.value : undefined;
         let description = (this.labelInputEle)? this.labelInputEle.value : undefined;
@@ -175,7 +175,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
         }
 
         this.annotationLayerView.layer.tool.value = new PlaceVolumeTool(this.annotationLayerView.layer, {}, 
-          undefined, VolumeToolMode.EDIT, this.annotationLayerView.volumeSession);
+          undefined, VolumeToolMode.EDIT, this.annotationLayerView.volumeSession, this.annotationLayerView.volumeButton);
         const volumeTool = <PlaceVolumeTool>this.annotationLayerView.layer.tool.value;
         volumeTool.session.value = <VolumeSession>{reference: ref};
 
@@ -202,7 +202,12 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
         if (isInstance) {
           this.annotationLayerView.layer.tool.value!.registerDisposer(() => {
             this.dispose();
-          })
+          });
+          this.annotationLayerView.layer.tool.value!.registerDisposer(() => {
+            const iconDiv = (<PlaceVolumeTool>this.annotationLayerView.layer.tool.value!).icon.value;
+            if (iconDiv === undefined) return;
+            iconDiv.style.backgroundColor = '';
+          });
           this.annotationLayerView.layer.tool.value!.dispose();
         } else {
           this.dispose();

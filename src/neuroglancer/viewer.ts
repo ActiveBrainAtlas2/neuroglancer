@@ -736,11 +736,11 @@ export class Viewer extends RefCounted implements ViewerState {
         const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
         if (volumeTool.mode !== VolumeToolMode.DRAW) {
           userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
-            VolumeToolMode.DRAW, volumeTool.sessionWidgetDiv);
+            VolumeToolMode.DRAW, volumeTool.sessionWidgetDiv, volumeTool.icon.value);
         }
         else {
           userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
-            VolumeToolMode.NOOP, volumeTool.sessionWidgetDiv);
+            VolumeToolMode.NOOP, volumeTool.sessionWidgetDiv, volumeTool.icon.value);
         }
       }
     });
@@ -767,11 +767,11 @@ export class Viewer extends RefCounted implements ViewerState {
         const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
         if (volumeTool.mode !== VolumeToolMode.EDIT) {
           userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
-            VolumeToolMode.EDIT, volumeTool.sessionWidgetDiv);
+            VolumeToolMode.EDIT, volumeTool.sessionWidgetDiv, volumeTool.icon.value);
         }
         else {
           userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
-            VolumeToolMode.NOOP, volumeTool.sessionWidgetDiv);
+            VolumeToolMode.NOOP, volumeTool.sessionWidgetDiv, volumeTool.icon.value);
         }
       }
     });
