@@ -803,7 +803,7 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     this.annotationPropertySerializer = new AnnotationPropertySerializer(rank, properties);
   }
 
-  add(annotation: Annotation, commit: boolean = true, parentRef?: AnnotationReference): AnnotationReference {
+  add(annotation: Annotation, commit: boolean = true, parentRef?: AnnotationReference, index?: number): AnnotationReference {
     this.ensureUpdated();
     if (!annotation.id) {
       annotation.id = makeAnnotationId();
@@ -813,7 +813,8 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     if(parentRef && isTypeCollection(parentRef.value!)) {
       annotation.parentAnnotationId = parentRef.id;
       let parAnnotation = <Collection>parentRef.value!;
-      parAnnotation.childAnnotationIds.push(annotation.id);
+      if (index === undefined) index = parAnnotation.childAnnotationIds.length;
+      parAnnotation.childAnnotationIds.splice(index, 0, annotation.id);
       parAnnotation = this.getUpdatedSourceVertex(parAnnotation);
       this.update(parentRef, <Annotation>parAnnotation);
     }
