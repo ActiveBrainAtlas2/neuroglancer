@@ -1506,7 +1506,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     const newAnn1 = <Line>{
       id: '',
       type: AnnotationType.LINE,
-      description: '',
+      description: parentAnnotationRef.value!.description,
       pointA: (<Line>annotationRef.value).pointA,
       pointB: point,
       properties: Object.assign([], parentAnnotationRef.value!.properties),
@@ -1514,13 +1514,15 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     const newAnn2 = <Line>{
       id: '',
       type: AnnotationType.LINE,
-      description: '',
+      description: parentAnnotationRef.value!.description,
       pointA: point,
       pointB: (<Line>annotationRef.value).pointB,
       properties: Object.assign([], parentAnnotationRef.value!.properties),
     };
-    const newAnnRef1 = annotationLayer.source.add(newAnn1, false, parentAnnotationRef);
-    const newAnnRef2 = annotationLayer.source.add(newAnn2, false, parentAnnotationRef);
+    let index = (<Polygon>parentAnnotationRef.value!).childAnnotationIds.indexOf(annotationRef.id);
+    if (index === -1) index = (<Polygon>parentAnnotationRef.value!).childAnnotationIds.length;
+    const newAnnRef1 = annotationLayer.source.add(newAnn1, false, parentAnnotationRef, index);
+    const newAnnRef2 = annotationLayer.source.add(newAnn2, false, parentAnnotationRef, index+1);
     annotationLayer.source.delete(annotationRef, true);
     annotationLayer.source.commit(newAnnRef1);
     annotationLayer.source.commit(newAnnRef2);
@@ -1578,7 +1580,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     const newAnn = <Line>{
       id: '',
       type: AnnotationType.LINE,
-      description: '',
+      description: parentAnnotationRef.value!.description,
       pointA: (<Line>annotationRef1.value).pointA,
       pointB: (<Line>annotationRef2.value).pointB,
       properties: Object.assign([], parentAnnotationRef.value!.properties),
