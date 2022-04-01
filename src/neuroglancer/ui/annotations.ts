@@ -1926,7 +1926,7 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
     } else if (mode === VolumeToolMode.EDIT) {
       return `volume session (edit mode)`;
     } else {
-      return `volume session`;
+      return `volume session (no op mode)`;
     }
   }
 
