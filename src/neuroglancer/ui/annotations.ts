@@ -1585,7 +1585,10 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       pointB: (<Line>annotationRef2.value).pointB,
       properties: Object.assign([], parentAnnotationRef.value!.properties),
     };
-    const newAnnRef = annotationLayer.source.add(newAnn, false, parentAnnotationRef);
+
+    let index = (<Polygon>parentAnnotationRef.value!).childAnnotationIds.indexOf(annotationRef1.id);
+    if (index === -1) index = (<Polygon>parentAnnotationRef.value!).childAnnotationIds.length;
+    const newAnnRef = annotationLayer.source.add(newAnn, false, parentAnnotationRef, index);
     annotationLayer.source.delete(annotationRef1, true);
     annotationLayer.source.delete(annotationRef2, true);
     annotationLayer.source.commit(newAnnRef);
@@ -2356,6 +2359,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
       var idx = select.selectedIndex; 
       var text = select.options[idx].value
       const text_element = document.createElement('textarea');
+      text_element.disabled = true;
       text_element.value = text;
       text_element.rows = 3;
       text_element.className = 'neuroglancer-annotation-details-description';
@@ -2611,6 +2615,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                         parent.appendChild(description);
                       } else {
                         const description = document.createElement('textarea');
+                        description.disabled = true;
                         description.value = annotation.description || '';
                         description.rows = 3;
                         description.className = 'neuroglancer-annotation-details-description';
