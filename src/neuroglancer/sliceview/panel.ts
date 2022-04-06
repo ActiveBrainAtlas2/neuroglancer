@@ -158,6 +158,99 @@ export class SliceViewPanel extends RenderedDataPanel {
           }
         });
     
+    registerActionListener(element, 'move-polygon-annotation', (e: ActionEvent<MouseEvent>) => {
+      const {mouseState} = this.viewer;
+      const selectedAnnotationId = mouseState.pickedAnnotationId;
+      const annotationLayer = mouseState.pickedAnnotationLayer;
+      const selectedLayer = this.viewer.selectedLayer.layer;
+
+      if(selectedAnnotationId === undefined || annotationLayer === undefined) return;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+      if (userLayer.tool.value instanceof PlaceVolumeTool) {
+        const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
+        if (!volumeTool.validateSession(selectedAnnotationId, annotationLayer)) return;
+      }
+      
+      let selectedAnnotationRef = annotationLayer.source.getReference(selectedAnnotationId)!;
+      let selectedAnn = <Annotation>selectedAnnotationRef.value;
+      if(selectedAnn.parentAnnotationId === undefined) return;
+      let parAnnotationRef = annotationLayer.source.getReference(selectedAnn.parentAnnotationId)!;
+      let parAnn = <Annotation>parAnnotationRef.value;
+      if(parAnn.type !== AnnotationType.POLYGON) return;
+      const {chunkTransform: {value: chunkTransform}} = annotationLayer;
+      if (chunkTransform.error !== undefined) return;
+
+      const handler = getAnnotationTypeRenderHandler(parAnn.type);
+      const childHandler = getAnnotationTypeRenderHandler(selectedAnn.type);
+      const pickedOffset = mouseState.pickedOffset;
+      const {layerRank} = chunkTransform;
+      const repPoint = new Float32Array(layerRank);
+      handler.getRepresentativePoint(repPoint, parAnn, mouseState.pickedOffset);
+      const childAnnotationRefs : AnnotationReference[] = [];
+      parAnn.childAnnotationIds.forEach((childAnnotationId) => {
+        childAnnotationRefs.push(annotationLayer.source.getReference(childAnnotationId));
+      });
+
+      let totDeltaVec = vec2.set(vec2.create(), 0, 0);
+      if (mouseState.updateUnconditionally()) {
+        startRelativeMouseDrag(
+            e.detail,
+            (_event, deltaX, deltaY) => {
+              vec2.add(totDeltaVec, totDeltaVec, [deltaX, deltaY]);
+              const layerPoint = new Float32Array(layerRank);
+              matrix.transformPoint(
+                  layerPoint, chunkTransform.chunkToLayerTransform, layerRank + 1, repPoint,
+                  layerRank);
+              const renderPt = tempVec3;
+              const {displayDimensionIndices} =
+                  this.navigationState.pose.displayDimensions.value;
+              layerToDisplayCoordinates(
+                  renderPt, layerPoint, chunkTransform.modelTransform, displayDimensionIndices);
+              this.translateDataPointByViewportPixels(
+                  renderPt, renderPt, totDeltaVec[0], totDeltaVec[1]);
+              displayToLayerCoordinates(
+                  layerPoint, renderPt, chunkTransform.modelTransform, displayDimensionIndices);
+              const newPoint = new Float32Array(layerRank);
+              matrix.transformPoint(
+                  newPoint, chunkTransform.layerToChunkTransform, layerRank + 1, layerPoint,
+                  layerRank);
+              const oldPoint = new Float32Array((<Polygon>parAnnotationRef.value!).source.length);
+              for (let i = 0; i < oldPoint.length; ++i) {
+                oldPoint[i] = (<Polygon>parAnnotationRef.value!).source[i];
+              }
+              let newAnnotation =
+                  handler.updateViaRepresentativePoint(parAnn, newPoint, pickedOffset);
+              annotationLayer.source.update(parAnnotationRef, newAnnotation);
+              childAnnotationRefs.forEach((childAnnotationRef) => {
+                const childAnn = <Line>childAnnotationRef.value;
+                const newPointA = new Float32Array(oldPoint.length);
+                const newPointB = new Float32Array(oldPoint.length);
+                for (let i = 0; i < oldPoint.length; ++i) {
+                  newPointA[i] = newPoint[i] - oldPoint[i] + childAnn.pointA[i];
+                  newPointB[i] = newPoint[i] - oldPoint[i] + childAnn.pointB[i];
+                }
+                const newChildAnnotation = {...childAnn, pointA: newPointA, pointB: newPointB};
+                annotationLayer.source.update(childAnnotationRef, newChildAnnotation);
+              });
+            },
+            (_event) => {
+              childAnnotationRefs.forEach((childAnnotationRef) => annotationLayer.source.commit(childAnnotationRef));
+              annotationLayer.source.commit(parAnnotationRef);
+              childAnnotationRefs.forEach((childAnnotationRef) => childAnnotationRef.dispose());
+              parAnnotationRef.dispose();
+            });
+      }
+    });
+    
     registerActionListener(element, 'move-polygon-vertex', (e: ActionEvent<MouseEvent>) => {
       const {mouseState} = this.viewer;
       const selectedLayer = this.viewer.selectedLayer.layer;
