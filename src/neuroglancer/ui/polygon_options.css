@@ -1,0 +1,23 @@
+.neuroglancer-polygon-control-sheet td, th{
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+};
+
+.neuroglancer-polygon-control-sheet {
+    width: 100%;
+}
+
+.neuroglancer-polygon-options-content {
+    overflow: auto;
+    max-height: 80vh;
+}
+
+.neuroglancer-polygon-options-config-table {
+    width: 100%;
+}
+
+.neuroglancer-polygon-options-config-table td, th{
+    text-align: left;
+    padding: 8px;
+}
