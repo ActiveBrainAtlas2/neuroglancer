@@ -188,9 +188,9 @@ class LayerWidget extends RefCounted {
     valueElement.className = 'neuroglancer-layer-item-value';
     const closeElement = makeCloseButton();
     /* START OF CHANGE: Action remapping */
-    closeElement.title = 'Hide layer from this layer group';
+    closeElement.title = 'Click to hide layer from this layer group. control+click/right click/⌘+click to delete the layer.';
     this.registerEventListener(closeElement, 'click', (event: MouseEvent) => {
-      if (event.ctrlKey) {
+      if (event.ctrlKey || event.metaKey || event.type === 'contextmenu') {
         this.panel.layerManager.removeManagedLayer(this.layer);
         event.stopPropagation();
       }
@@ -214,7 +214,7 @@ class LayerWidget extends RefCounted {
     element.appendChild(closeElement);
     this.registerEventListener(element, 'click', (event: MouseEvent) => {
       /* START OF CHANGE: Action remapping */
-      if (event.ctrlKey) {
+      if (event.ctrlKey|| event.metaKey || event.type === 'contextmenu') {
         this.panel.layerManager.removeManagedLayer(this.layer);
         event.stopPropagation();
       } else if (event.altKey) {
