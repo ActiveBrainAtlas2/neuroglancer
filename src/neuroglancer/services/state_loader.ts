@@ -228,7 +228,7 @@ export class StateAPI {
     }
 
     public segmentVolume(stateID: number | string, volumeId: string): Promise<Segmentation> {
-        const url = `${this.stateUrl}/contour_to_segmentation/${stateID}/${volumeId}`;
+        const url = `${this.stateUrl.substring(0, this.stateUrl.lastIndexOf('/'))}/contour_to_segmentation/${stateID}/${volumeId}`;
 
         return fetchOk(url, {
             method: 'GET',
