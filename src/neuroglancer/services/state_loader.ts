@@ -389,8 +389,8 @@ export class StateLoader extends RefCounted {
 
         this.stateAPI.saveState(this.stateID, state).then(() => {
             //StatusMessage.showTemporaryMessage(`The data was saved successfully.`);
+            StatusMessage.showTemporaryMessage(`Segmentation process started...please wait for a while to finish`, 10000);
             this.stateAPI.segmentVolume(this.stateID, volumeId).then((res) => {
-                StatusMessage.showTemporaryMessage(`Segmentation process started...please wait for a few minutes to finish`);
                 successCallback(res);
                 StatusMessage.showTemporaryMessage(`Segmentation process completed successfully.`);
             }).catch(err => {
