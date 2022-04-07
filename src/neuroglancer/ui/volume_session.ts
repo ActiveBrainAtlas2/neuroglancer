@@ -19,7 +19,10 @@
  */
  import { Overlay } from 'neuroglancer/overlay';
 import { AnnotationType } from '../annotation';
-import { PersistentViewerSelectionState } from '../layer';
+import { AnnotationLayerState } from '../annotation/annotation_layer_state';
+import { makeLayer, PersistentViewerSelectionState } from '../layer';
+import { Segmentation } from '../services/state';
+import { StateLoader } from '../services/state_loader';
 import { StatusMessage } from '../status';
 import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnnotations, VolumeSession, VolumeToolMode } from './annotations';
  
@@ -39,6 +42,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       const newVolumeRow = this.getNewVolumeRow();
       const editVolumeRow = this.getEditVolumeRow();
       const closeSessionRow = this.closeSessionRow();
+      const segmentationRow = this.getSegmentationRow();
 
       volumeInfoRows.forEach(volumeInfoRow => {
         configTable.appendChild(volumeInfoRow);
@@ -46,6 +50,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       configTable.appendChild(newVolumeRow);
       configTable.appendChild(editVolumeRow);
       configTable.appendChild(closeSessionRow);
+      configTable.appendChild(segmentationRow);
       configTable.classList.add('volume-session-table');
 
       this.content.appendChild(configTable);
@@ -228,6 +233,80 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       });
 
       return landmarkDropdown;
+    }
+
+    getSegmentationRow() : HTMLTableRowElement {
+      const row = document.createElement('tr');
+      const col = document.createElement('td');
+      col.style.textAlign = 'center';
+      col.colSpan = 2;
+      const button = document.createElement('button');
+
+      button.setAttribute('type', 'button');
+      button.textContent = 'Segment selected volume';
+      button.addEventListener('click', () => {
+        const selectionState : PersistentViewerSelectionState|undefined = 
+        this.annotationLayerView.layer.manager.root.selectionState.value;
+
+        if (!this.annotationLayerView.layer.manager.root.selectionState.pin.value || selectionState === undefined) {
+          StatusMessage.showTemporaryMessage("Please select and pin a volume annotation in current layer to segment");
+          return;
+        }
+        let selectedAnnotationId :string|undefined = undefined;
+        let selectedAnnotationLayer :AnnotationLayerState|undefined = undefined;
+        let selectedUserLayer :UserLayerWithAnnotations|undefined = undefined;
+
+        for (let layer of selectionState.layers) {
+          if (layer.state.annotationId === undefined) continue;
+          const userLayerWithAnnotations = <UserLayerWithAnnotations>layer.layer;
+          const annotationLayer = userLayerWithAnnotations.annotationStates.states.find(
+            x => x.sourceIndex === layer.state.annotationSourceIndex &&
+                (layer.state.annotationSubsource === undefined ||
+                x.subsourceId === layer.state.annotationSubsource) && !x.source.readonly);
+          if (annotationLayer === undefined) continue;
+          selectedAnnotationLayer = this.annotationLayerView.layer.annotationStates.states.find(
+            x => x === annotationLayer 
+          );
+          if (selectedAnnotationLayer === undefined) continue;
+          
+          selectedAnnotationId = layer.state.annotationId;
+          selectedAnnotationLayer = annotationLayer;
+          selectedUserLayer = userLayerWithAnnotations;
+          break;
+        }
+        if (selectedAnnotationId === undefined || selectedAnnotationLayer === undefined || selectedUserLayer === undefined) {
+          StatusMessage.showTemporaryMessage("Please select and pin a volume annotation in current layer to segment");
+          return;
+        }
+
+        const ref = selectedAnnotationLayer.source.getReference(selectedAnnotationId);
+        if (!ref.value || ref.value.type !== AnnotationType.VOLUME) {
+          StatusMessage.showTemporaryMessage("Please select and pin a volume annotation in current layer to segment");
+          if (ref) ref.dispose();
+          return;
+        }
+
+        const stateLoader = <StateLoader>(window['viewer'].stateLoader);
+        const successCallback = (res: Segmentation) => {
+          const manager = selectedUserLayer!.manager;
+          const segmentationLayer = makeLayer(manager, `segmentationLayer: ${ref.value!.description}`, {type: 'segmentation', 'source': res.url});
+          manager.add(segmentationLayer);
+          console.log('Received response:', res);
+        }
+        stateLoader.segmentVolume(ref.id, successCallback);
+
+        // const resTemp : Segmentation = {
+        //   url: 'testURL'
+        // };
+        // successCallback(resTemp);
+
+        this.dispose();
+      });
+      button.classList.add('volume-session-btn');
+
+      col.appendChild(button);
+      row.appendChild(col);
+      return row;
     }
   }
   

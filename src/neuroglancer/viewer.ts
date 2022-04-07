@@ -347,6 +347,7 @@ export class Viewer extends RefCounted implements ViewerState {
 
   uiConfiguration: ViewerUIConfiguration;
   urlHashBinding: UrlHashBinding;
+  stateLoader: StateLoader;
 
   private makeUiControlVisibilityState(key: keyof ViewerUIOptions) {
     const showUIControls = this.uiConfiguration.showUIControls;
@@ -526,10 +527,10 @@ export class Viewer extends RefCounted implements ViewerState {
         this.uiControlVisibility.showAnnotationToolStatus, annotationToolStatus.element));
 
     /* START OF CHANGE: Add state loader */
-    const stateLoader = new StateLoader(this);
+    this.stateLoader = new StateLoader(this);
     const userLoader = new UserLoader();
     topRow.appendChild(userLoader.element);
-    topRow.appendChild(stateLoader.element);
+    topRow.appendChild(this.stateLoader.element);
     /* END OF CHANGE: Add state loader */
 
     {

@@ -5,3 +5,7 @@ export interface State {
     user_date: string;
     url: Record<string, unknown>;
 }
+
+export interface Segmentation {
+    url: string;
+}
