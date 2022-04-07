@@ -1126,7 +1126,6 @@ class SegmentDisplayTab extends Tab {
                   matchCheckbox.addEventListener('click', event => {
                     if (!toggleMatches()) event.preventDefault();
                   });
-                  toggleMatches();
                   const matchStatusMessage = document.createElement('span');
                   matchStatusContainer.appendChild(matchCopyButton);
                   matchStatusContainer.appendChild(matchCheckbox);
