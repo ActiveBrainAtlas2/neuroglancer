@@ -11,7 +11,7 @@ import { makeIcon } from 'neuroglancer/widget/icon';
 import { getCachedJson } from 'neuroglancer/util/trackable';
 import { AppSettings } from 'neuroglancer/services/service';
 import { User } from 'neuroglancer/services/user_loader';
-import { State } from 'neuroglancer/services/state';
+import { Segmentation, State } from 'neuroglancer/services/state';
 /**
  * Fuzzy search algorithm from https://github.com/bevacqua/fuzzysearch in Typescript.
  * @param needle
@@ -226,6 +226,20 @@ export class StateAPI {
             };
         });
     }
+
+    public segmentVolume(stateID: number | string, volumeId: string): Promise<Segmentation> {
+        const url = `${this.stateUrl}/contour_to_segmentation/${stateID}/${volumeId}`;
+
+        return fetchOk(url, {
+            method: 'GET',
+        }).then(response => {
+            return response.json();
+        }).then(json => {
+            return {
+                url: json['url'],
+            };
+        });
+    }
 }
 
 export const stateAPI = new StateAPI(
@@ -352,6 +366,36 @@ export class StateLoader extends RefCounted {
         this.stateAPI.newState(state).then((newState) => {
             this.validateState(newState);
             StatusMessage.showTemporaryMessage(`A new data state has been created.`);
+        }).catch(err => {
+            StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
+            console.log(err);
+        });
+    }
+
+    public segmentVolume(volumeId: string, successCallback: (_ :Segmentation) => void): void {
+        const comments = this.input.value;
+        if (comments.length === 0) {
+            StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
+            return;
+        }
+        const state = {
+            state_id: this.stateID,
+            owner: this.user.user_id,
+            comments: comments,
+            user_date: String(Date.now()),
+            url: getCachedJson(this.viewer.state).value,
+        };
+
+        this.stateAPI.saveState(this.stateID, state).then(() => {
+            //StatusMessage.showTemporaryMessage(`The data was saved successfully.`);
+            this.stateAPI.segmentVolume(this.stateID, volumeId).then((res) => {
+                successCallback(res);
+                StatusMessage.showTemporaryMessage(`Segmentation has been performed successfully.`);
+            }).catch(err => {
+                StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
+                console.log(err);
+            });
+
         }).catch(err => {
             StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
             console.log(err);
