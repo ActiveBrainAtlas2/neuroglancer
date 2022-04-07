@@ -289,9 +289,8 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
         const stateLoader = <StateLoader>(window['viewer'].stateLoader);
         const successCallback = (res: Segmentation) => {
           const manager = selectedUserLayer!.manager;
-          const segmentationLayer = makeLayer(manager, `segmentationLayer: ${ref.value!.description}`, {type: 'segmentation', 'source': res.url});
+          const segmentationLayer = makeLayer(manager, res.name, {type: 'segmentation', 'source': res.url});
           manager.add(segmentationLayer);
-          console.log('Received response:', res);
         }
         stateLoader.segmentVolume(ref.id, successCallback);
 

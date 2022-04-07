@@ -237,6 +237,7 @@ export class StateAPI {
         }).then(json => {
             return {
                 url: json['url'],
+                name: json['name']
             };
         });
     }
@@ -389,8 +390,9 @@ export class StateLoader extends RefCounted {
         this.stateAPI.saveState(this.stateID, state).then(() => {
             //StatusMessage.showTemporaryMessage(`The data was saved successfully.`);
             this.stateAPI.segmentVolume(this.stateID, volumeId).then((res) => {
+                StatusMessage.showTemporaryMessage(`Segmentation process started...please wait for a few minutes to finish`);
                 successCallback(res);
-                StatusMessage.showTemporaryMessage(`Segmentation has been performed successfully.`);
+                StatusMessage.showTemporaryMessage(`Segmentation process completed successfully.`);
             }).catch(err => {
                 StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
                 console.log(err);

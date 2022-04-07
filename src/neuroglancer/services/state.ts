@@ -8,4 +8,5 @@ export interface State {
 
 export interface Segmentation {
     url: string;
+    name: string;
 }
