@@ -289,13 +289,15 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
         const stateLoader = <StateLoader>(window['viewer'].stateLoader);
         const successCallback = (res: Segmentation) => {
           const manager = selectedUserLayer!.manager;
-          const segmentationLayer = makeLayer(manager, res.name, {type: 'segmentation', 'source': res.url});
+          const segmentationLayer = makeLayer(manager, res.name, {type: 'segmentation', 
+          'source': res.url, 'tab': 'segments', 'segments': ["1"]});
           manager.add(segmentationLayer);
         }
         stateLoader.segmentVolume(ref.id, successCallback);
 
         // const resTemp : Segmentation = {
-        //   url: 'testURL'
+        //   url: 'testURL',
+        //   name: 'testName'
         // };
         // successCallback(resTemp);
 
