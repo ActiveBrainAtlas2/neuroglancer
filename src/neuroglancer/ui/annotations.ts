@@ -2080,7 +2080,7 @@ registerTool(
     (layer, options) => new PlaceEllipsoidTool(<UserLayerWithAnnotations>layer, options));
 registerTool(
     ANNOTATE_POLYGON_TOOL_ID,
-    (layer, options) => new PlacePolygonTool(<UserLayerWithAnnotations>layer, options));
+    (layer, options) => undefined);
 registerTool(
   ANNOTATE_VOLUME_TOOL_ID,
   (layer, options) => undefined);
