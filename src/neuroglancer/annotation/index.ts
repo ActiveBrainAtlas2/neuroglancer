@@ -827,13 +827,13 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
       const collection = <Collection>annotation;
       if (collection.childrenVisible) {
         for (let childId of collection.childAnnotationIds) {
-          const childRef = this.getReference(childId);
-          if (childRef.value) this.childAdded.dispatch(childRef.value);
-          childRef.dispose();
+          this.getAllAnnsUnderRootToDisplay(childId, true);
         }
       } else {
-        for (let childId of collection.childAnnotationIds) {
-          this.childDeleted.dispatch(childId);
+        const annList = this.getAllAnnsUnderRoot(collection.id);
+        annList.shift(); // remove current annotation from list
+        for (let ann of annList) {
+          this.childDeleted.dispatch(ann.id);
         }
       }
     }
@@ -878,13 +878,13 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
       const collection = <Collection>annotation;
       if (collection.childrenVisible) {
         for (let childId of collection.childAnnotationIds) {
-          const childRef = this.getReference(childId);
-          if (childRef.value) this.childAdded.dispatch(childRef.value);
-          childRef.dispose();
+          this.getAllAnnsUnderRootToDisplay(childId, true);
         }
       } else {
-        for (let childId of collection.childAnnotationIds) {
-          this.childDeleted.dispatch(childId);
+        const annList = this.getAllAnnsUnderRoot(collection.id);
+        annList.shift(); // remove current annotation from list
+        for (let ann of annList) {
+          this.childDeleted.dispatch(ann.id);
         }
       }
     }
@@ -1039,6 +1039,47 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
         childRef.dispose();
       }
     }
+  }
+
+  private getAllAnnsUnderRoot(annotationId: AnnotationId) : Annotation[] {
+    const reference = this.getReference(annotationId);
+    let annotationList : Annotation[] = [];
+    if (!reference.value) {
+      reference.dispose();
+      return annotationList;
+    }
+    let annotation : Annotation | undefined;
+    annotation = reference.value;
+    annotationList.push(annotation);
+    if (isTypeCollection(annotation)) {
+      const collection = <Collection>annotation;
+      for (let i = 0; annotation && i < collection.childAnnotationIds!.length; i++) {
+        annotationList = [...annotationList, ...this.getAllAnnsUnderRoot(collection.childAnnotationIds[i])];
+      }
+    }
+    reference.dispose();
+    return annotationList;
+  }
+
+  private getAllAnnsUnderRootToDisplay(annotationId: AnnotationId, visible: boolean = false) : void {
+    const reference = this.getReference(annotationId);
+    if (!reference.value) {
+      reference.dispose();
+      return;
+    }
+    let annotation : Annotation | undefined;
+    annotation = reference.value;
+    if (visible) {
+      this.childAdded.dispatch(annotation);
+    }
+    if (isTypeCollection(annotation)) {
+      const collection = <Collection>annotation;
+      for (let i = 0; annotation && i < collection.childAnnotationIds!.length; i++) {
+        this.getAllAnnsUnderRootToDisplay(collection.childAnnotationIds[i], collection.childrenVisible);
+      }
+    }
+    reference.dispose();
+    return;
   }
 
   references = new Map<AnnotationId, Borrowed<AnnotationReference>>();
