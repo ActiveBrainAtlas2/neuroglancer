@@ -8,7 +8,8 @@ import {makeIcon} from 'neuroglancer/widget/icon';
 import {AppSettings} from 'neuroglancer/services/service';
 
 const pattern_animal = /precomputed:\/\/https:\/\/activebrainatlas.ucsd.edu\/data\/([A-Z0-9]+)\//g;
-const buttonText = 'Align';
+const buttonText = 'Align stack to atlas';
+const stackButtonText = 'Align atlas to stack';
 const buttonTitle = 'The transformation will only be applied on the current layer.';
 
 interface TransformJSON {
@@ -29,6 +30,7 @@ export class FetchTransformationWidget extends RefCounted{
   private transformSelection: HTMLSelectElement;
   private transformSelectionDefault: HTMLSelectElement;
   private fetchButton: HTMLElement;
+  private fetchStackButton: HTMLElement;
   private transform: WatchableCoordinateSpaceTransform;
   private url: string|null = null;
 
@@ -52,9 +54,16 @@ export class FetchTransformationWidget extends RefCounted{
       onClick: () => {this.applyTransformation()},
     });
 
+    this.fetchStackButton = makeIcon({
+      text: stackButtonText,
+      title: buttonTitle,
+      onClick: () => {this.applyStackTransformation()},
+    });
+
     this.element = document.createElement('div');
     this.element.appendChild(this.transformSelection);
     this.element.appendChild(this.fetchButton)
+    this.element.appendChild(this.fetchStackButton)
 
     this.registerDisposer(() => removeFromParent(this.element));
   }
@@ -117,6 +126,7 @@ export class FetchTransformationWidget extends RefCounted{
       const newElement = document.createElement('div');
       newElement.appendChild(transformSelectionFetched);
       newElement.appendChild(this.fetchButton)
+      newElement.appendChild(this.fetchStackButton)
       this.element.parentNode?.replaceChild(newElement, this.element);
       this.transformSelection = transformSelectionFetched;
       this.matchURL();
@@ -153,6 +163,40 @@ export class FetchTransformationWidget extends RefCounted{
       ])
       this.transform.transform = dimensionTransform(newTransform, rank);
       StatusMessage.showTemporaryMessage(`Transformation applied: ${selectionName}`);
+    } catch (e) {
+      StatusMessage.showTemporaryMessage('Unable to fetch the transformation.');
+      throw e;
+    }
+  }
+
+  async applyStackTransformation() {
+    const selection = this.transformSelection.value;
+    if (!selection) {
+      StatusMessage.showTemporaryMessage('Please select the transformation to apply.');
+      return;
+    }
+    const selectionName = this.transformSelection.options[this.transformSelection.selectedIndex].text;
+    const transformURL = `${AppSettings.API_ENDPOINT}/rotation/${selection}/1`;
+
+    StatusMessage.showTemporaryMessage(`Fetching stack transformation: ${selectionName}`);
+
+    try {
+      const transformJSON:TransformJSON = await fetchOk(transformURL, {
+        method: 'GET',
+      }).then(response => {
+        return response.json();
+      });
+      const {rotation, translation} = transformJSON;
+
+      const rank = this.transform.value.rank;
+      const newTransform = Float64Array.from([
+        rotation[0][0], rotation[1][0], rotation[2][0], 0,
+        rotation[0][1], rotation[1][1], rotation[2][1], 0,
+        rotation[0][2], rotation[1][2], rotation[2][2], 0,
+        translation[0][0], translation[1][0], translation[2][0], 1,
+      ])
+      this.transform.transform = dimensionTransform(newTransform, rank);
+      StatusMessage.showTemporaryMessage(`Stack transformation applied: ${selectionName}`);
     } catch (e) {
       StatusMessage.showTemporaryMessage('Unable to fetch the transformation.');
       throw e;
