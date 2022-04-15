@@ -63,7 +63,7 @@
     {
       function: "select polygon",
       control: "control+right mouse click",
-      mode: "draw/edit/no op"
+      mode: "draw/edit/view"
     },
     {
       function: "translate polygon",
@@ -86,22 +86,22 @@
       mode: "edit"
     },
     {
-      function: "switch edit/noop -> draw mode",
+      function: "switch edit/view -> draw mode",
       control: "control+z",
-      mode: "edit/noop"
+      mode: "edit/view"
     },
     {
-      function: "switch draw/noop -> edit mode",
+      function: "switch draw/view -> edit mode",
       control: "control+x",
-      mode: "draw/noop"
+      mode: "draw/view"
     },
     {
-      function: "switch draw -> noop mode",
+      function: "switch draw -> view mode",
       control: "control+z",
       mode: "draw"
     },
     {
-      function: "switch edit -> noop mode",
+      function: "switch edit -> view mode",
       control: "control+x",
       mode: "edit"
     }
