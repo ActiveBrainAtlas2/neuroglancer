@@ -174,7 +174,7 @@ export function getPolygonEditModeBindings() {
         'at:mousedown0': 'move-polygon-vertex',
         'at:control+alt+mousedown0': 'add-vertex-polygon',
         'at:control+alt+mousedown2': 'delete-vertex-polygon',
-        'at:control+shift+mousedown0': 'delete-polygon',
+        // 'at:control+shift+mousedown0': 'delete-polygon',
         'at:shift+mousedown0': 'move-polygon-annotation',
         'at:keyr': 'rotate-polygon-z+',
         'at:keye': 'rotate-polygon-z-',
