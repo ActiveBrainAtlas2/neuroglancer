@@ -74,6 +74,7 @@ import { checkIfSameZCoordinate, cloneAnnotationSequence, getZCoordinate } from 
 import { update } from 'lodash';
 import { VolumeSessionDialog } from './volume_session';
 import { isSectionValid } from '../annotation/volume';
+import { SaveAnnotationWidget } from '../widget/save_annotation';
 
 export interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -379,6 +380,9 @@ export class AnnotationLayerView extends Tab {
 
     const fetchAnnotationWidget = this.registerDisposer(new FetchAnnotationWidget(this));
     this.element.appendChild(fetchAnnotationWidget.element);
+
+    const saveAnnotationWidget = this.registerDisposer(new SaveAnnotationWidget(this));
+    this.element.appendChild(saveAnnotationWidget.element);
 
     this.element.classList.add('neuroglancer-annotation-layer-view');
     this.registerDisposer(this.visibility.changed.add(() => this.updateView()));

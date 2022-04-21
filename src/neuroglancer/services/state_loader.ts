@@ -241,6 +241,16 @@ export class StateAPI {
             };
         });
     }
+
+    public saveAnnotations(stateId: number | string, layerName: string): Promise<any> {
+        const url = `${this.stateUrl.substring(0, this.stateUrl.lastIndexOf('/'))}/save_annotations/${stateId}/${layerName}`;
+        console.log(url);
+        return fetchOk(url, {
+            method: 'GET',
+        }).then(response => {
+            return response.json();
+        });
+    }
 }
 
 export const stateAPI = new StateAPI(
@@ -393,6 +403,34 @@ export class StateLoader extends RefCounted {
             this.stateAPI.segmentVolume(this.stateID, volumeId).then((res) => {
                 successCallback(res);
                 StatusMessage.showTemporaryMessage(`Segmentation process completed successfully.`);
+            }).catch(err => {
+                StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
+                console.log(err);
+            });
+
+        }).catch(err => {
+            StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
+            console.log(err);
+        });
+    }
+
+    public saveAnnotations(layerName: string): void {
+        const comments = this.input.value;
+        if (comments.length === 0) {
+            StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
+            return;
+        }
+        const state = {
+            state_id: this.stateID,
+            owner: this.user.user_id,
+            comments: comments,
+            user_date: String(Date.now()),
+            url: getCachedJson(this.viewer.state).value,
+        };
+
+        this.stateAPI.saveState(this.stateID, state).then(() => {
+            this.stateAPI.saveAnnotations(this.stateID, layerName).then((res) => {
+                StatusMessage.showTemporaryMessage(`Annotations saved completed successfully.`);
             }).catch(err => {
                 StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
                 console.log(err);
