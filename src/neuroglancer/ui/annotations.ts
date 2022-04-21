@@ -1929,7 +1929,7 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
     } else if (mode === VolumeToolMode.EDIT) {
       return `volume session (edit mode)`;
     } else {
-      return `volume session (no op mode)`;
+      return `volume session (view mode)`;
     }
   }
 
