@@ -244,7 +244,6 @@ export class StateAPI {
 
     public saveAnnotations(stateId: number | string, layerName: string): Promise<any> {
         const url = `${this.stateUrl.substring(0, this.stateUrl.lastIndexOf('/'))}/save_annotations/${stateId}/${layerName}`;
-        console.log(url);
         return fetchOk(url, {
             method: 'GET',
         }).then(response => {
