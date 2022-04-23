@@ -476,7 +476,7 @@ export class AnnotationLayerView extends Tab {
         }
       }
     });
-    mutableControls.appendChild(polygonButton);
+    //mutableControls.appendChild(polygonButton);
 
     this.volumeButton = makeIcon({
       text: annotationTypeHandlers[AnnotationType.VOLUME].icon,
