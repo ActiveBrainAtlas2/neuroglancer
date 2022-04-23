@@ -389,6 +389,27 @@ export class AnnotationLayerView extends Tab {
     this.registerDisposer(
         layer.annotationStates.changed.add(() => this.updateAttachedAnnotationLayerStates()));
     this.headerRow.classList.add('neuroglancer-annotation-list-header');
+    let toolColorFunc = () => {
+      if (this.layer.tool.value instanceof PlaceVolumeTool) {
+        const iconDiv = this.layer.tool.value.icon.value;
+        if (iconDiv === undefined) return;
+        switch (this.layer.tool.value.mode) {
+          case VolumeToolMode.DRAW: {
+            iconDiv.style.backgroundColor = 'green';
+            break;
+          }
+          case VolumeToolMode.EDIT: {
+            iconDiv.style.backgroundColor = 'red';
+            break;
+          }
+          default: {
+            iconDiv.style.backgroundColor = 'grey';
+          }
+        }
+      }
+    };
+    toolColorFunc = toolColorFunc.bind(this);
+    this.registerDisposer(this.layer.tool.changed.add(() => toolColorFunc()));
 
     const toolbox = document.createElement('div');
     toolbox.className = 'neuroglancer-annotation-toolbox';
@@ -476,7 +497,7 @@ export class AnnotationLayerView extends Tab {
         }
       }
     });
-    //mutableControls.appendChild(polygonButton);
+    mutableControls.appendChild(polygonButton);
 
     this.volumeButton = makeIcon({
       text: annotationTypeHandlers[AnnotationType.VOLUME].icon,
@@ -1656,12 +1677,12 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
     }
     this.icon.changed.add(this.setIconColor.bind(this));
     this.icon.value = iconDiv;
-    // this.registerDisposer(() => {
-    //   const iconDiv = this.icon.value;
-    //   if (iconDiv === undefined) return;
-    //   iconDiv.style.backgroundColor = '';
-    //   this.icon.value = undefined;
-    // });
+    this.registerDisposer(() => {
+      const iconDiv = this.icon.value;
+      if (iconDiv === undefined) return;
+      iconDiv.style.backgroundColor = '';
+      this.icon.value = undefined;
+    });
   }
 
   setIconColor() {
