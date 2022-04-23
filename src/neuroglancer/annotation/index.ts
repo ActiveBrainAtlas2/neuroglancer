@@ -925,10 +925,21 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
     if(isTypeCollection(reference.value!)) {
       const annotation = <Collection>reference.value;
-      const childAnnotationIds = Object.assign([], annotation.childAnnotationIds);
-      childAnnotationIds.forEach((childId) => {
-        this.delete(this.getReference(childId), true);
-      });
+      const allAnnsUnderRoot = this.getAllAnnsUnderRoot(annotation.id);
+      for (let idx = 1; idx < allAnnsUnderRoot.length; idx++) {
+        const ann = allAnnsUnderRoot[idx];
+        const ref = this.getReference(ann.id);
+        ref.value = null;
+        this.annotationMap.delete(ref.id);
+        this.pending.delete(ref.id);
+        ref.changed.dispatch();
+        this.changed.dispatch();
+        this.childDeleted.dispatch(ref.id);
+      }
+      // const childAnnotationIds = Object.assign([], annotation.childAnnotationIds);
+      // childAnnotationIds.forEach((childId) => {
+      //   this.delete(this.getReference(childId), true);
+      // });
     }
     reference.value = null;
     this.annotationMap.delete(reference.id);
