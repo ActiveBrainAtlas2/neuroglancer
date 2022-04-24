@@ -293,7 +293,46 @@
       const table = document.createElement('table');
       table.classList.add('neuroglancer-polygon-control-sheet');
       table.caption = table.createCaption();
-      table.caption.innerHTML = `<h2>Polygon controls sheet <a href="${polygonDocLink}" target="_blank">[Wiki]</a></h2>`;
+      const headerElement = document.createElement('h2');
+      headerElement.innerHTML = `Polygon controls sheet <a href="${polygonDocLink}" target="_blank">[Wiki]</a>`;
+      const printElement = document.createElement('a');
+      printElement.setAttribute('target', '_blank');
+      printElement.setAttribute('href', '#');
+      printElement.innerText = '[Print]';
+      printElement.addEventListener('click', (e: Event) => {
+        e.preventDefault();
+        const printWindow = window.open();
+        if (!printWindow) return;
+        printWindow.document.write('<html><head><title>Polygon Controls Sheet</title>');
+ 
+        //Print the Table CSS.
+        printWindow.document.write('<style type = "text/css">');
+        printWindow.document.write(
+          `.neuroglancer-polygon-control-sheet td, th{
+              border: 1px solid #dddddd;
+              text-align: left;
+              padding: 8px;
+          }
+          
+          .neuroglancer-polygon-control-sheet {
+              width: 100%;
+          }`
+        );
+        printWindow.document.write('</style>');
+        printWindow.document.write('</head>');
+
+        //Print the Table HTML.
+        printWindow.document.write('<body>');
+        printWindow.document.write(table.outerHTML);
+        printWindow.document.write('</body>');
+ 
+        printWindow.document.write('</html>');
+        printWindow.document.close();
+        printWindow.print();
+        return false;
+      });
+      headerElement.appendChild(printElement);
+      table.caption.appendChild(headerElement);
 
       const headerRow = document.createElement('tr');
       const keyCell = document.createElement('th');
