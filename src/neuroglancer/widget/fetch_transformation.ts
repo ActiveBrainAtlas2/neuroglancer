@@ -6,6 +6,7 @@ import {fetchOk} from 'neuroglancer/util/http_request';
 import {dimensionTransform} from 'neuroglancer/util/matrix';
 import {makeIcon} from 'neuroglancer/widget/icon';
 import {AppSettings} from 'neuroglancer/services/service';
+import { updateCoordinateSpaceScaleValues } from './coordinate_transform';
 
 const pattern_animal = /precomputed:\/\/https:\/\/activebrainatlas.ucsd.edu\/data\/([A-Z0-9]+)\//g;
 const buttonText = 'Align stack to atlas';
@@ -15,6 +16,7 @@ const buttonTitle = 'The transformation will only be applied on the current laye
 interface TransformJSON {
   rotation: Array<Array<number>>;
   translation: Array<Array<number>>;
+  resolution: Array<number>; // in microns
 }
 
 interface TransformInfo {
@@ -152,7 +154,7 @@ export class FetchTransformationWidget extends RefCounted{
       }).then(response => {
         return response.json();
       });
-      const {rotation, translation} = transformJSON;
+      const {rotation, translation, resolution} = transformJSON;
 
       const rank = this.transform.value.rank;
       const newTransform = Float64Array.from([
@@ -160,8 +162,17 @@ export class FetchTransformationWidget extends RefCounted{
         rotation[0][1], rotation[1][1], rotation[2][1], 0,
         rotation[0][2], rotation[1][2], rotation[2][2], 0,
         translation[0][0], translation[1][0], translation[2][0], 1,
-      ])
+      ]);
+      const scalesAndUnits : {scale: number; unit: string;}[] = resolution.map(x => {
+        return {scale: x*1e-6, unit: 'm'}
+      });
+      const modified = new Array<boolean>(rank);
+      modified[0] = true;
+      modified[1] = true;
+      modified[2] = true;
+
       this.transform.transform = dimensionTransform(newTransform, rank);
+      updateCoordinateSpaceScaleValues(scalesAndUnits, modified, this.transform.inputSpace);
       StatusMessage.showTemporaryMessage(`Transformation applied: ${selectionName}`);
     } catch (e) {
       StatusMessage.showTemporaryMessage('Unable to fetch the transformation.');
@@ -186,7 +197,7 @@ export class FetchTransformationWidget extends RefCounted{
       }).then(response => {
         return response.json();
       });
-      const {rotation, translation} = transformJSON;
+      const {rotation, translation, resolution} = transformJSON;
 
       const rank = this.transform.value.rank;
       const newTransform = Float64Array.from([
@@ -195,7 +206,16 @@ export class FetchTransformationWidget extends RefCounted{
         rotation[0][2], rotation[1][2], rotation[2][2], 0,
         translation[0][0], translation[1][0], translation[2][0], 1,
       ])
+      const scalesAndUnits : {scale: number; unit: string;}[] = resolution.map(x => {
+        return {scale: x*1e-6, unit: 'm'}
+      });
+      const modified = new Array<boolean>(rank);
+      modified[0] = true;
+      modified[1] = true;
+      modified[2] = true;
+
       this.transform.transform = dimensionTransform(newTransform, rank);
+      updateCoordinateSpaceScaleValues(scalesAndUnits, modified, this.transform.inputSpace);
       StatusMessage.showTemporaryMessage(`Stack transformation applied: ${selectionName}`);
     } catch (e) {
       StatusMessage.showTemporaryMessage('Unable to fetch the transformation.');
