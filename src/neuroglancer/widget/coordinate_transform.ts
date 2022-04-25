@@ -145,6 +145,40 @@ function updateCoordinateSpaceScales(
   return true;
 }
 
+export function updateCoordinateSpaceScaleValues(
+  scalesAndUnits: ({scale: number; unit: string;} | undefined)[], modified: boolean[],
+  watchable: WatchableValueInterface<CoordinateSpace>): boolean {
+  if (scalesAndUnits.includes(undefined)) {
+    return false;
+  }
+  const newScales = Float64Array.from(scalesAndUnits, x => x!.scale);
+  const newUnits = Array.from(scalesAndUnits, x => x!.unit);
+  const existing = watchable.value;
+  const {scales, units, rank} = existing;
+  for (let i = 0; i < rank; ++i) {
+    if (!modified[i]) {
+      newScales[i] = scales[i];
+      newUnits[i] = units[i];
+    }
+  }
+  if (arraysEqual(scales, newScales) && arraysEqual(units, newUnits)) return false;
+  const timestamps = existing.timestamps.map(
+      (t, i) => (newScales[i] === scales[i] && newUnits[i] === units[i]) ? t : Date.now());
+  const newSpace = makeCoordinateSpace({
+    valid: existing.valid,
+    rank: existing.rank,
+    scales: newScales,
+    units: newUnits,
+    timestamps,
+    ids: existing.ids,
+    names: existing.names,
+    boundingBoxes: existing.boundingBoxes,
+    coordinateArrays: existing.coordinateArrays,
+  });
+  watchable.value = newSpace;
+  return true;
+}
+
 function updateCoordinateSpaceSingleDimensionScale(
     space: CoordinateSpace, dimIndex: number, scale: number, unit: string): CoordinateSpace {
   const scales = new Float64Array(space.scales);
