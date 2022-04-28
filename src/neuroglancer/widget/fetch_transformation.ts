@@ -149,12 +149,20 @@ export class FetchTransformationWidget extends RefCounted{
     StatusMessage.showTemporaryMessage(`Fetching transformation: ${selectionName}`);
 
     try {
-      const transformJSON:TransformJSON = await fetchOk(transformURL, {
+      const transformJSONResolution:TransformJSON = await fetchOk(transformURL, {
         method: 'GET',
       }).then(response => {
         return response.json();
       });
-      const {rotation, translation, resolution} = transformJSON;
+      const {resolution} = transformJSONResolution;
+
+      const transformJSON:TransformJSON = await fetchOk(`${transformURL}/${resolution}`, {
+        method: 'GET',
+      }).then(response => {
+        return response.json();
+      });
+
+      const {translation, rotation} = transformJSON;
 
       const rank = this.transform.value.rank;
       const newTransform = Float64Array.from([
@@ -192,12 +200,20 @@ export class FetchTransformationWidget extends RefCounted{
     StatusMessage.showTemporaryMessage(`Fetching stack transformation: ${selectionName}`);
 
     try {
-      const transformJSON:TransformJSON = await fetchOk(transformURL, {
+      const transformJSONResolution:TransformJSON = await fetchOk(transformURL, {
         method: 'GET',
       }).then(response => {
         return response.json();
       });
-      const {rotation, translation, resolution} = transformJSON;
+      const {resolution} = transformJSONResolution;
+
+      const transformJSON:TransformJSON = await fetchOk(`${transformURL}/${resolution}`, {
+        method: 'GET',
+      }).then(response => {
+        return response.json();
+      });
+
+      const {translation, rotation} = transformJSON;
 
       const rank = this.transform.value.rank;
       const newTransform = Float64Array.from([
