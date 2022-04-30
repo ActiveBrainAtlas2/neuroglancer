@@ -579,14 +579,12 @@ export class LayerManager extends RefCounted {
 
   private setCoordinateSpaceToImageLayer() {
     const coordinateSpace = <TrackableCoordinateSpace>(window['viewer'].coordinateSpace);
-    console.log('SET LAYERS: ', this.layerSet);
     for (const layer of this.layerSet) {
       if (layer.layer && layer.layer.type === 'image') {
         if (layer.layer.dataSources.length > 0) {
           const loadedDataSource = <LoadedLayerDataSource>(layer.layer.dataSources[0].loadState);
           if (loadedDataSource !== undefined) {
             const transform = loadedDataSource.transform;
-            console.log('LAYERS INPUT VALUE', transform.inputSpace.value);
             coordinateSpace.value = transform.inputSpace.value;
             break;
           }
