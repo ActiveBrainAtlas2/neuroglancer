@@ -7,6 +7,10 @@ import {removeFromParent} from 'neuroglancer/util/dom';
 import {fetchOk} from 'neuroglancer/util/http_request';
 import {makeIcon} from 'neuroglancer/widget/icon';
 import {AppSettings} from 'neuroglancer/services/service';
+import { LoadedLayerDataSource } from '../layer_data_source';
+import { WatchableCoordinateSpaceTransform } from '../coordinate_transform';
+import { updateCoordinateSpaceScaleValues } from './coordinate_transform';
+import { TransformJSON } from './fetch_transformation';
 
 const buttonText = 'Import';
 const buttonTitle = 'Import annotation';
@@ -105,6 +109,7 @@ export class FetchAnnotationWidget extends RefCounted{
     }
     const msg =  StatusMessage.showMessage('Fetching annotations, this might take a while ...');
     const annotationURL = `${AppSettings.API_ENDPOINT}/annotation/${annotation}`;
+    const transformURL = `${AppSettings.API_ENDPOINT}/rotation/${annotation}`;
 
     try {
       const annotationJSON:Array<AnnotationJSON> = await fetchOk(annotationURL, {
@@ -113,8 +118,16 @@ export class FetchAnnotationWidget extends RefCounted{
         
         return response.json();
       });
+      const transformJSONResolution:TransformJSON = await fetchOk(transformURL, {
+        method: 'GET',
+      }).then(response => {
+        return response.json();
+      });
+      const {resolution} = transformJSONResolution;
 
       const state = this.layerView.annotationStates.states[0].source as AnnotationSource;
+      const transform = (<LoadedLayerDataSource>this.layerView.layer.dataSources[0].loadState).transform;
+
       let addedCount:number = 0;
       let duplicateCount:number = 0;
       annotationJSON.forEach((anno) =>{
@@ -126,6 +139,16 @@ export class FetchAnnotationWidget extends RefCounted{
           duplicateCount++;
         }
       });
+
+      const scalesAndUnits : {scale: number; unit: string;}[] = resolution.map(x => {
+        return {scale: x*1e-6, unit: 'm'}
+      });
+      const modified = new Array<boolean>(transform.value.rank);
+      modified[0] = true;
+      modified[1] = true;
+      modified[2] = true;
+      updateCoordinateSpaceScaleValues(scalesAndUnits, modified, transform.inputSpace);
+
       msg.dispose();
       if (duplicateCount) {
         StatusMessage.showTemporaryMessage(`${addedCount} annotations added; ${duplicateCount} duplicate annotations not added.`);
