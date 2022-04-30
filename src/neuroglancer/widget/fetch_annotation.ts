@@ -126,7 +126,13 @@ export class FetchAnnotationWidget extends RefCounted{
       const {resolution} = transformJSONResolution;
 
       const state = this.layerView.annotationStates.states[0].source as AnnotationSource;
-      const transform = (<LoadedLayerDataSource>this.layerView.layer.dataSources[0].loadState).transform;
+      let transform : WatchableCoordinateSpaceTransform | undefined = undefined;
+      if (this.layerView.layer.dataSources.length > 0) {
+        const loaded = <LoadedLayerDataSource>(this.layerView.layer.dataSources[0].loadState);
+        if (loaded) {
+          transform = loaded.transform;
+        }
+      }
 
       let addedCount:number = 0;
       let duplicateCount:number = 0;
@@ -140,14 +146,16 @@ export class FetchAnnotationWidget extends RefCounted{
         }
       });
 
-      const scalesAndUnits : {scale: number; unit: string;}[] = resolution.map(x => {
-        return {scale: x*1e-6, unit: 'm'}
-      });
-      const modified = new Array<boolean>(transform.value.rank);
-      modified[0] = true;
-      modified[1] = true;
-      modified[2] = true;
-      updateCoordinateSpaceScaleValues(scalesAndUnits, modified, transform.inputSpace);
+      if (transform !== undefined) {
+        const scalesAndUnits : {scale: number; unit: string;}[] = resolution.map(x => {
+          return {scale: x*1e-6, unit: 'm'}
+        });
+        const modified = new Array<boolean>(transform.value.rank);
+        modified[0] = true;
+        modified[1] = true;
+        modified[2] = true;
+        updateCoordinateSpaceScaleValues(scalesAndUnits, modified, transform.inputSpace);
+      }
 
       msg.dispose();
       if (duplicateCount) {
