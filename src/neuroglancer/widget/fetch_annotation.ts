@@ -11,6 +11,7 @@ import { LoadedLayerDataSource } from '../layer_data_source';
 import { WatchableCoordinateSpaceTransform } from '../coordinate_transform';
 import { updateCoordinateSpaceScaleValues } from './coordinate_transform';
 import { TransformJSON } from './fetch_transformation';
+import { packColor, parseRGBColorSpecification } from '../util/color';
 
 const buttonText = 'Import';
 const buttonTitle = 'Import annotation';
@@ -136,8 +137,23 @@ export class FetchAnnotationWidget extends RefCounted{
 
       let addedCount:number = 0;
       let duplicateCount:number = 0;
+      let colorIdx = -1;
+      let colorValue :number|undefined = undefined;
+      if (this.layerView.layer.annotationColorPicker !== undefined) {
+        colorValue = packColor(parseRGBColorSpecification(this.layerView.layer.annotationColorPicker!.getColor()));
+      }
+      for (let idx = 0; idx < state.properties.length; idx++) {
+        const property = state.properties[idx];
+        if (property.identifier === 'color') {
+          colorIdx = idx;
+          break;
+        }
+      }
       annotationJSON.forEach((anno) =>{
         const annotation = restoreAnnotation(anno, state);
+        if (!Object.prototype.hasOwnProperty.call(anno, 'props') && colorIdx >= 0 && colorValue !== undefined) {
+          annotation.properties[colorIdx] = colorValue;
+        }
         try {
           state.add(annotation);
           addedCount++;
