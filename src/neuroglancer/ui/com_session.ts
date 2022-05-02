@@ -18,6 +18,7 @@
  * @file Support for editing Neuroglancer state as JSON directly within browser.
  */
  import { Overlay } from 'neuroglancer/overlay';
+import { AnnotationType } from '../annotation';
 import { AnnotationLayerView, getLandmarkList, PlaceComTool, COMSession, ComToolMode } from './annotations';
  
  import './com_session.css';
@@ -166,7 +167,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceComTool, COMSession, ComTool
       defaultOption.disabled = true;
       defaultOption.selected = true;
       landmarkDropdown.add(defaultOption);
-      getLandmarkList().then(function(result) {
+      getLandmarkList(AnnotationType.COM).then(function(result) {
         const n_landmark = result.length
         for (let i = 0; i < n_landmark; i++){
           const landmarki = result[i];

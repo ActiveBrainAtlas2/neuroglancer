@@ -18,12 +18,14 @@
  * @file Support for editing Neuroglancer state as JSON directly within browser.
  */
  import { Overlay } from 'neuroglancer/overlay';
-import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellToolMode } from './annotations';
+import { AnnotationType } from '../annotation';
+import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellToolMode, getCategoryList } from './annotations';
  
  import './cell_session.css';
  
   export class CellSessionDialog extends Overlay {
     landmarkDropdown : HTMLSelectElement|undefined = undefined;
+    categoryDropdown : HTMLSelectElement|undefined = undefined;
     colorInput: HTMLInputElement|undefined = undefined;
     constructor(public annotationLayerView: AnnotationLayerView) {
       super();
@@ -60,10 +62,11 @@ import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellT
       button.addEventListener('click', () => {
         let color = (this.colorInput)? this.colorInput.value : undefined;
         let description = (this.landmarkDropdown)? this.landmarkDropdown.options[this.landmarkDropdown.selectedIndex].value : undefined;
+        let category = (this.categoryDropdown)? this.categoryDropdown.options[this.categoryDropdown.selectedIndex].value : undefined;
         this.annotationLayerView.layer.tool.value = new PlaceCellTool(this.annotationLayerView.layer, {}, 
           undefined, CellToolMode.DRAW, this.annotationLayerView.cellSession, this.annotationLayerView.cellButton);
         const cellTool = <PlaceCellTool>this.annotationLayerView.layer.tool.value;
-        cellTool.session.value = <CellSession>{label: description, color: color};
+        cellTool.session.value = <CellSession>{label: description, color: color, category: category};
         this.dispose();
       });
       button.classList.add('cell-session-btn');
@@ -83,6 +86,15 @@ import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellT
       labelRow.appendChild(labelDesc);
       labelRow.appendChild(landmarkCol);
 
+      const categoryRow = document.createElement('tr');
+      const categoryDesc = document.createElement('td');
+      categoryDesc.textContent = "Category: ";
+      const categoryCol = document.createElement('td');
+      const categoryDropdown = this.getCategoryDropDown();
+      categoryCol.appendChild(categoryDropdown);
+      categoryRow.appendChild(categoryDesc);
+      categoryRow.appendChild(categoryCol);
+
       const colorRow = document.createElement('tr');
       const colorDesc = document.createElement('td');
       colorDesc.textContent = "Color: ";
@@ -97,9 +109,10 @@ import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellT
       colorRow.appendChild(colorInput);
 
       this.landmarkDropdown = landmarkDropdown;
+      this.categoryDropdown = categoryDropdown;
       this.colorInput = colorInput;
 
-      return [labelRow, colorRow];
+      return [labelRow, categoryRow, colorRow];
     }
 
     getEditCellRow() : HTMLTableRowElement {
@@ -161,22 +174,43 @@ import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellT
       const landmarkDropdown = document.createElement('select');
       landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');
       const defaultOption = document.createElement('option');
-      defaultOption.text = 'Select landmark';
+      defaultOption.text = 'Select label';
       defaultOption.value = '';
       defaultOption.disabled = true;
       defaultOption.selected = true;
       landmarkDropdown.add(defaultOption);
-      getLandmarkList().then(function(result) {
+      getLandmarkList(AnnotationType.CELL).then(function(result) {
         const n_landmark = result.length
         for (let i = 0; i < n_landmark; i++){
           const landmarki = result[i];
           const option = document.createElement('option');
           option.value = landmarki; 
           option.text = landmarki;
-          landmarkDropdown.add(option)
+          landmarkDropdown.add(option);
         }
       });
+      return landmarkDropdown;
+    }
 
+    getCategoryDropDown() : HTMLSelectElement {
+      const landmarkDropdown = document.createElement('select');
+      landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');
+      const defaultOption = document.createElement('option');
+      defaultOption.text = 'Select category';
+      defaultOption.value = '';
+      defaultOption.disabled = true;
+      defaultOption.selected = true;
+      landmarkDropdown.add(defaultOption);
+      getCategoryList().then(function(result) {
+        const n_landmark = result.length
+        for (let i = 0; i < n_landmark; i++){
+          const landmarki = result[i];
+          const option = document.createElement('option');
+          option.value = landmarki; 
+          option.text = landmarki;
+          landmarkDropdown.add(option);
+        }
+      });
       return landmarkDropdown;
     }
   }
