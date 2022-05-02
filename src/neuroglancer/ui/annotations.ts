@@ -102,7 +102,6 @@ export async function getLandmarkList(type: AnnotationType) {
 }
 
 export async function getCategoryList() {
-  return ["ABC", "XYZ"];
   const landmarkURL = `${AppSettings.API_ENDPOINT}/cell_types`;
   const categoryJSON:CategoryListJSON = await fetchOk(landmarkURL, {
     method: 'GET',
