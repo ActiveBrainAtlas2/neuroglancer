@@ -82,14 +82,24 @@ export class WatchableAnnotationRelationshipStates extends
 
 /* START OF CHANGE: Point Annotation Marker Size */
 const DEFAULT_FRAGMENT_MAIN = `
-#uicontrol float size slider(min=0, max=10, default=1)
+#uicontrol float com_vertex_size slider(min=0, max=10, default=1)
+#uicontrol float com_vertex_border_width slider(min=0, max=5, default=1)
+#uicontrol float com_opacity slider(min=0, max=1, default=1)
+#uicontrol float cell_vertex_size slider(min=0, max=10, default=1)
+#uicontrol float cell_vertex_border_width slider(min=0, max=5, default=1)
+#uicontrol float cell_opacity slider(min=0, max=1, default=1)
 #uicontrol float polygon_vertex_size slider(min=0, max=10, default=7)
 #uicontrol float polygon_vertex_border_width slider(min=0, max=5, default=3)
 #uicontrol float polygon_opacity slider(min=0, max=1, default=1)
 #uicontrol float polygon_line_width slider(min=0, max=5, default=1)
 void main() {
   setColor(prop_color());
-  setPointMarkerSize(size);
+  setCellMarkerSize(cell_vertex_size);
+  setCellMarkerBorderWidth(cell_vertex_border_width);
+  setCellOpacity(cell_opacity);
+  setComMarkerSize(com_vertex_size);
+  setComMarkerBorderWidth(com_vertex_border_width);
+  setComOpacity(com_opacity);
   setEndpointMarkerSize(polygon_vertex_size);
   setEndpointMarkerBorderWidth(polygon_vertex_border_width);
   setEndpointOpacity(polygon_opacity);

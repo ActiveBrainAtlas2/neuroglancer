@@ -160,6 +160,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
         }
 
         const ref = selectedAnnotationLayer.source.getReference(selectedAnnotationId);
+        console.log(ref.value, AnnotationType.VOLUME);
         if (!ref.value || ref.value.type !== AnnotationType.VOLUME) {
           StatusMessage.showTemporaryMessage("Please select and pin a volume annotation in current layer to start editing");
           if (ref) ref.dispose();
