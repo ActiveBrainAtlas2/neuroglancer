@@ -469,6 +469,7 @@ export interface Com extends AnnotationBase {
 
 export interface Cell extends AnnotationBase {
   point: Float32Array;
+  category?: string|undefined;
   type: AnnotationType.CELL;
 }
 
@@ -752,11 +753,13 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
     toJSON: (annotation: Cell) => {
       return {
         point: Array.from(annotation.point),
+        category: annotation.category
       };
     },
     restoreState: (annotation: Cell, obj: any, rank: number) => {
       annotation.point = verifyObjectProperty(
           obj, 'point', x => parseFixedLengthArray(new Float32Array(rank), x, verifyFiniteFloat));
+      annotation.category = verifyObjectProperty(obj, 'category', verifyOptionalString);
     },
     serializedBytes: rank => rank * 4,
     serialize:

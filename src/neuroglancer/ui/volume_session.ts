@@ -222,7 +222,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       defaultOption.disabled = true;
       defaultOption.selected = true;
       landmarkDropdown.add(defaultOption);
-      getLandmarkList().then(function(result) {
+      getLandmarkList(AnnotationType.VOLUME).then(function(result) {
         const n_landmark = result.length
         for (let i = 0; i < n_landmark; i++){
           const landmarki = result[i];

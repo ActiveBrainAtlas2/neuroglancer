@@ -84,7 +84,14 @@ export interface LandmarkListJSON {
   land_marks: Array<string>,
 }
 
-export async function getLandmarkList(){
+export interface CategoryListJSON {
+  categories: Array<string>,
+}
+
+export async function getLandmarkList(type: AnnotationType) {
+  if (type === AnnotationType.CELL) {
+    return ["positive", "negative"];
+  }
   const landmarkURL = `${AppSettings.API_ENDPOINT}/landmark_list`;
   const landmarkListJSON:LandmarkListJSON = await fetchOk(landmarkURL, {
     method: 'GET',
@@ -92,6 +99,17 @@ export async function getLandmarkList(){
     return response.json();});
   const {land_marks} = landmarkListJSON;
   return land_marks
+}
+
+export async function getCategoryList() {
+  return ["ABC", "XYZ"];
+  const landmarkURL = `${AppSettings.API_ENDPOINT}/cell_types`;
+  const categoryJSON:CategoryListJSON = await fetchOk(landmarkURL, {
+    method: 'GET',
+  }).then(response => {
+    return response.json();});
+  const {categories} = categoryJSON;
+  return categories;
 }
 
 export class MergedAnnotationStates extends RefCounted implements
@@ -1065,6 +1083,13 @@ export class AnnotationLayerView extends Tab {
       description.textContent = annotation.description;
       element.appendChild(description);
     }
+    if (annotation.type === AnnotationType.CELL && annotation.category) {
+      ++numRows;
+      const category = document.createElement('div');
+      category.classList.add('neuroglancer-annotation-description');
+      category.textContent = annotation.category;
+      element.appendChild(category);
+    }
     icon.style.gridRow = `span ${numRows}`;
     if (deleteButton !== undefined) {
       deleteButton.style.gridRow = `span ${numRows}`;
@@ -1760,6 +1785,7 @@ export enum CellToolMode {
 export interface CellSession {
   label: string|undefined;
   color: string|undefined;
+  category: string|undefined;
 }
 
 export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
@@ -2259,6 +2285,20 @@ export class PlaceCellTool extends PlaceAnnotationTool {
                         useWhiteBackground(parseRGBAColorSpecification(session.color)) ? 'white' : 'black';
                     colorElement.disabled = true;
                     label.appendChild(colorElement);
+                    sessionBody.appendChild(label);
+                  }
+
+                  if (session.category !== undefined) {
+                    const label = document.createElement('label');
+                    label.classList.add('neuroglancer-annotation-property');
+                    const idElement = document.createElement('span');
+                    idElement.classList.add('neuroglancer-annotation-property-label');
+                    idElement.textContent = "Category";
+                    label.appendChild(idElement);
+                    const valueElement = document.createElement('span');
+                    valueElement.classList.add('neuroglancer-annotation-property-description');
+                    valueElement.textContent = session.category || '';
+                    label.appendChild(valueElement);
                     sessionBody.appendChild(label);
                   }
 
@@ -2980,6 +3020,33 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
         parent.children[text_childi].replaceWith(text_element) 
       }
     }
+
+    async addCategoryText(parent: HTMLElement, select:HTMLSelectElement,annotationLayer:AnnotationLayerState,
+      reference:AnnotationReference,annotation:Annotation) {
+      if (annotation.type !== AnnotationType.CELL) return;
+      var idx = select.selectedIndex; 
+      var text = select.options[idx].value
+      const text_element = document.createElement('textarea');
+      text_element.disabled = true;
+      text_element.value = text;
+      text_element.rows = 3;
+      text_element.className = 'neuroglancer-annotation-details-description';
+      text_element.placeholder = 'Description';
+      const description = text ? text : undefined;
+      annotationLayer.source.update(reference, {...annotation, category: description});
+      annotationLayer.source.commit(reference);
+      const n_child = parent.children.length
+      var text_childi:number = -1
+      for (let childi = 0; childi < n_child; childi++){
+        if (parent.children[childi].className == 'neuroglancer-annotation-details-description'){
+          text_childi = childi;
+        }
+      }
+      if (!(text_childi == -1)){
+        parent.children[text_childi].replaceWith(text_element) 
+      }
+    }
+
     displayAnnotationState(state: this['selectionState'], parent: HTMLElement, context: RefCounted):
         boolean {
       if (state.annotationId === undefined) return false;
@@ -3215,6 +3282,12 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                         description.className = 'neuroglancer-annotation-details-description';
                         description.textContent = annotation.description || '';
                         parent.appendChild(description);
+                        if (annotation.type === AnnotationType.CELL) {
+                          const category = document.createElement('div');
+                          category.className = 'neuroglancer-annotation-details-description';
+                          category.textContent = annotation.category || '';
+                          parent.appendChild(category);
+                        }
                       } else {
                         const description = document.createElement('textarea');
                         description.disabled = true;
@@ -3233,14 +3306,14 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                         const landmarkDropdown = document.createElement('select');
                         landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');
                         const defaultOption = document.createElement('option');
-                        defaultOption.text = 'Select landmark';
+                        defaultOption.text = (annotation.type !== AnnotationType.CELL)? 'Select landmark' : 'Select label';
                         defaultOption.value = '';
                         defaultOption.disabled = true;
                         defaultOption.selected = true;
                         landmarkDropdown.add(defaultOption);
                         landmarkDropdown.addEventListener('change', () => {this.addText(parent,landmarkDropdown,annotationLayer,
                           reference,annotation)})
-                        getLandmarkList().then(function(result) {
+                        getLandmarkList(annotation.type).then(function(result) {
                           const n_landmark = result.length
                           for (let i = 0; i < n_landmark; i++){
                             const landmarki = result[i];
@@ -3252,6 +3325,44 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                           dropdownElement.appendChild(landmarkDropdown);
                           })
                         parent.appendChild(dropdownElement)
+                        if (annotation.type === AnnotationType.CELL) {
+                          const category = document.createElement('textarea');
+                          category.disabled = true;
+                          category.value = annotation.category || '';
+                          category.rows = 3;
+                          category.className = 'neuroglancer-annotation-details-description';
+                          category.placeholder = 'Category';
+                          category.addEventListener('change', () => {
+                            const x = category.value;
+                            const descString = x ? x : undefined
+                            annotationLayer.source.update(reference, {...annotation, category: descString});
+                            annotationLayer.source.commit(reference);
+                          });
+                          parent.appendChild(category);
+                          var dropDownCategoryElement :HTMLElement = document.createElement('div')
+                          const categoryDropdown = document.createElement('select');
+                          categoryDropdown.classList.add('neuroglancer-landmarks-dropdown');
+                          const defaultOption = document.createElement('option');
+                          defaultOption.text = 'Select category';
+                          defaultOption.value = '';
+                          defaultOption.disabled = true;
+                          defaultOption.selected = true;
+                          categoryDropdown.add(defaultOption);
+                          categoryDropdown.addEventListener('change', () => {this.addCategoryText(parent,categoryDropdown,annotationLayer,
+                            reference,annotation)})
+                          getCategoryList().then(function(result) {
+                            const n_landmark = result.length
+                            for (let i = 0; i < n_landmark; i++){
+                              const landmarki = result[i];
+                              const option = document.createElement('option');
+                              option.value = landmarki; 
+                              option.text = landmarki;
+                              categoryDropdown.add(option)}
+                              dropDownCategoryElement.classList.add('neuroglancer-landmarks-dropdown-tool');
+                              dropDownCategoryElement.appendChild(categoryDropdown);
+                            })
+                          parent.appendChild(dropDownCategoryElement)
+                        }
                       }
                     }}
                   ))
