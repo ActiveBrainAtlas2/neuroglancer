@@ -123,7 +123,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellT
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Edit selected cell';
+      button.textContent = 'Edit cells';
       button.addEventListener('click', () => {
         this.annotationLayerView.layer.tool.value = new PlaceCellTool(this.annotationLayerView.layer, {}, 
           undefined, CellToolMode.EDIT, this.annotationLayerView.cellSession, this.annotationLayerView.cellButton);
