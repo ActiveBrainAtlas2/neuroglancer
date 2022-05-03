@@ -38,7 +38,7 @@ import { displayToLayerCoordinates, layerToDisplayCoordinates } from '../render_
 import { arraysEqual } from '../util/array';
 import * as matrix from 'neuroglancer/util/matrix';
 import { StatusMessage } from '../status';
-import { PlaceVolumeTool } from '../ui/annotations';
+import { PlaceCellTool, PlaceComTool, PlaceVolumeTool } from '../ui/annotations';
 import { checkIfSameZCoordinate, copyZCoordinate } from '../annotation/polygon';
 
 export interface SliceViewerState extends RenderedDataViewerState {
@@ -248,6 +248,82 @@ export class SliceViewPanel extends RenderedDataPanel {
               childAnnotationRefs.forEach((childAnnotationRef) => childAnnotationRef.dispose());
               parAnnotationRef.dispose();
             });
+      }
+    });
+
+    registerActionListener(element, 'move-point-annotation', (e: ActionEvent<MouseEvent>) => {
+      const {mouseState} = this.viewer;
+      const selectedLayer = this.viewer.selectedLayer.layer;
+      const selectedAnnotationId = mouseState.pickedAnnotationId;
+      const annotationLayer = mouseState.pickedAnnotationLayer;
+      if (selectedLayer === undefined) {
+        StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
+        return;
+      }
+      const userLayer = selectedLayer.layer;
+      if (userLayer === null || userLayer.tool.value === undefined) {
+        StatusMessage.showTemporaryMessage(`The selected layer (${
+            JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
+        return;
+      }
+      if (userLayer.tool.value instanceof PlaceCellTool) {
+        const cellTool = <PlaceCellTool>userLayer.tool.value;
+        if (!cellTool.validateSession(selectedAnnotationId, annotationLayer)) return;
+      } else if (userLayer.tool.value instanceof PlaceComTool) {
+        const comTool = <PlaceComTool>userLayer.tool.value;
+        if (!comTool.validateSession(selectedAnnotationId, annotationLayer)) return;
+      } else {
+        return;
+      }
+      if (annotationLayer !== undefined) {
+        if (selectedAnnotationId !== undefined) {
+          e.stopPropagation();
+          let annotationRef = annotationLayer.source.getReference(selectedAnnotationId)!;
+          let ann = <Annotation>annotationRef.value;
+          if (ann.parentAnnotationId) {
+            annotationRef.dispose();
+            return;
+          }
+          const handler = getAnnotationTypeRenderHandler(ann.type);
+          const pickedOffset = mouseState.pickedOffset;
+          const {chunkTransform: {value: chunkTransform}} = annotationLayer;
+          if (chunkTransform.error !== undefined) return;
+          const {layerRank} = chunkTransform;
+          const repPoint = new Float32Array(layerRank);
+          handler.getRepresentativePoint(repPoint, ann, mouseState.pickedOffset);
+          let totDeltaVec = vec2.set(vec2.create(), 0, 0);
+          if (mouseState.updateUnconditionally()) {
+            startRelativeMouseDrag(
+                e.detail,
+                (_event, deltaX, deltaY) => {
+                  vec2.add(totDeltaVec, totDeltaVec, [deltaX, deltaY]);
+                  const layerPoint = new Float32Array(layerRank);
+                  matrix.transformPoint(
+                      layerPoint, chunkTransform.chunkToLayerTransform, layerRank + 1, repPoint,
+                      layerRank);
+                  const renderPt = tempVec3;
+                  const {displayDimensionIndices} =
+                      this.navigationState.pose.displayDimensions.value;
+                  layerToDisplayCoordinates(
+                      renderPt, layerPoint, chunkTransform.modelTransform, displayDimensionIndices);
+                  this.translateDataPointByViewportPixels(
+                      renderPt, renderPt, totDeltaVec[0], totDeltaVec[1]);
+                  displayToLayerCoordinates(
+                      layerPoint, renderPt, chunkTransform.modelTransform, displayDimensionIndices);
+                  const newPoint = new Float32Array(layerRank);
+                  matrix.transformPoint(
+                      newPoint, chunkTransform.layerToChunkTransform, layerRank + 1, layerPoint,
+                      layerRank);
+                  let newAnnotation =
+                      handler.updateViaRepresentativePoint(ann, newPoint, pickedOffset);
+                  annotationLayer.source.update(annotationRef, newAnnotation);
+                },
+                (_event) => {
+                  annotationLayer.source.commit(annotationRef);
+                  annotationRef.dispose();
+                });
+          }
+        }
       }
     });
     

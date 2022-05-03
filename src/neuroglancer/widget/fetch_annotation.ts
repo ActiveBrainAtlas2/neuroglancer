@@ -7,6 +7,11 @@ import {removeFromParent} from 'neuroglancer/util/dom';
 import {fetchOk} from 'neuroglancer/util/http_request';
 import {makeIcon} from 'neuroglancer/widget/icon';
 import {AppSettings} from 'neuroglancer/services/service';
+import { LoadedLayerDataSource } from '../layer_data_source';
+import { WatchableCoordinateSpaceTransform } from '../coordinate_transform';
+import { updateCoordinateSpaceScaleValues } from './coordinate_transform';
+import { TransformJSON } from './fetch_transformation';
+import { packColor, parseRGBColorSpecification } from '../util/color';
 
 const buttonText = 'Import';
 const buttonTitle = 'Import annotation';
@@ -105,6 +110,7 @@ export class FetchAnnotationWidget extends RefCounted{
     }
     const msg =  StatusMessage.showMessage('Fetching annotations, this might take a while ...');
     const annotationURL = `${AppSettings.API_ENDPOINT}/annotation/${annotation}`;
+    const transformURL = `${AppSettings.API_ENDPOINT}/rotation/${annotation}`;
 
     try {
       const annotationJSON:Array<AnnotationJSON> = await fetchOk(annotationURL, {
@@ -113,12 +119,41 @@ export class FetchAnnotationWidget extends RefCounted{
         
         return response.json();
       });
+      const transformJSONResolution:TransformJSON = await fetchOk(transformURL, {
+        method: 'GET',
+      }).then(response => {
+        return response.json();
+      });
+      const {resolution} = transformJSONResolution;
 
       const state = this.layerView.annotationStates.states[0].source as AnnotationSource;
+      let transform : WatchableCoordinateSpaceTransform | undefined = undefined;
+      if (this.layerView.layer.dataSources.length > 0) {
+        const loaded = <LoadedLayerDataSource>(this.layerView.layer.dataSources[0].loadState);
+        if (loaded) {
+          transform = loaded.transform;
+        }
+      }
+
       let addedCount:number = 0;
       let duplicateCount:number = 0;
+      let colorIdx = -1;
+      let colorValue :number|undefined = undefined;
+      if (this.layerView.layer.annotationColorPicker !== undefined) {
+        colorValue = packColor(parseRGBColorSpecification(this.layerView.layer.annotationColorPicker!.getColor()));
+      }
+      for (let idx = 0; idx < state.properties.length; idx++) {
+        const property = state.properties[idx];
+        if (property.identifier === 'color') {
+          colorIdx = idx;
+          break;
+        }
+      }
       annotationJSON.forEach((anno) =>{
         const annotation = restoreAnnotation(anno, state);
+        if (!Object.prototype.hasOwnProperty.call(anno, 'props') && colorIdx >= 0 && colorValue !== undefined) {
+          annotation.properties[colorIdx] = colorValue;
+        }
         try {
           state.add(annotation);
           addedCount++;
@@ -126,6 +161,18 @@ export class FetchAnnotationWidget extends RefCounted{
           duplicateCount++;
         }
       });
+
+      if (transform !== undefined) {
+        const scalesAndUnits : {scale: number; unit: string;}[] = resolution.map(x => {
+          return {scale: x*1e-6, unit: 'm'}
+        });
+        const modified = new Array<boolean>(transform.value.rank);
+        modified[0] = true;
+        modified[1] = true;
+        modified[2] = true;
+        updateCoordinateSpaceScaleValues(scalesAndUnits, modified, transform.inputSpace);
+      }
+
       msg.dispose();
       if (duplicateCount) {
         StatusMessage.showTemporaryMessage(`${addedCount} annotations added; ${duplicateCount} duplicate annotations not added.`);

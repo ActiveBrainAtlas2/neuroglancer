@@ -111,8 +111,8 @@ export function getDefaultRenderedDataPanelBindings() {
           'at:touchhold1': 'move-to-mouse-position',
           'at:touchtap1x2': 'select',
           'at:touchtap2x3': 'snap',
-          'at:control+keyz': 'switch-to-volume-draw-mode',
-          'at:control+keyx': 'switch-to-volume-edit-mode',
+          'at:control+keyz': 'switch-to-tool-draw-mode',
+          'at:control+keyx': 'switch-to-tool-edit-mode',
         },
         {
           label: 'All Data Panels',
@@ -191,6 +191,31 @@ export function getPolygonEditModeBindings() {
   return polygonEditModeBindings;
 }
 
+export let pointDrawModeBindings: EventActionMap|undefined;
+export function getPointDrawModeBindings() {
+  if (pointDrawModeBindings === undefined) {
+    pointDrawModeBindings = EventActionMap.fromObject(
+      {
+        'at:mousedown0': 'annotate',
+      }
+    );
+  }
+  return pointDrawModeBindings;
+}
+
+
+export let pointEditModeBindings: EventActionMap|undefined;
+export function getPointEditModeBindings() {
+  if (pointEditModeBindings === undefined) {
+    pointEditModeBindings = EventActionMap.fromObject(
+      {
+        'at:mousedown0': 'move-point-annotation',
+      }
+    );
+  }
+  return pointEditModeBindings;
+}
+
 export function setDefaultInputEventBindings(inputEventBindings: InputEventBindings) {
   inputEventBindings.global.addParent(getDefaultGlobalBindings(), Number.NEGATIVE_INFINITY);
   inputEventBindings.sliceView.addParent(
@@ -209,4 +234,16 @@ export function setPolygonEditModeInputEventBindings<T extends RefCounted> (bind
   inputEventBindings: InputEventBindings) {
   bindingsRef.registerDisposer(inputEventBindings.sliceView.addParent(getPolygonEditModeBindings(), Number.NEGATIVE_INFINITY+1));
   bindingsRef.registerDisposer(inputEventBindings.perspectiveView.addParent(getPolygonEditModeBindings(), Number.NEGATIVE_INFINITY+1));
+}
+
+export function setPointDrawModeInputEventBindings<T extends RefCounted> (bindingsRef: T, 
+  inputEventBindings: InputEventBindings) {
+  bindingsRef.registerDisposer(inputEventBindings.sliceView.addParent(getPointDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
+  bindingsRef.registerDisposer(inputEventBindings.perspectiveView.addParent(getPointDrawModeBindings(), Number.NEGATIVE_INFINITY+1));
+}
+
+export function setPointEditModeInputEventBindings<T extends RefCounted> (bindingsRef: T,
+  inputEventBindings: InputEventBindings) {
+  bindingsRef.registerDisposer(inputEventBindings.sliceView.addParent(getPointEditModeBindings(), Number.NEGATIVE_INFINITY+1));
+  bindingsRef.registerDisposer(inputEventBindings.perspectiveView.addParent(getPointEditModeBindings(), Number.NEGATIVE_INFINITY+1));
 }

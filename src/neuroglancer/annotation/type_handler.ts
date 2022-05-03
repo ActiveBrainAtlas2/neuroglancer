@@ -282,6 +282,18 @@ void setPointMarkerSize(float size);
 void setPointMarkerBorderWidth(float size);
 void setPointMarkerBorderColor(vec3 color) { setPointMarkerBorderColor(vec4(color, 1.0)); }
 
+void setCellMarkerColor(vec4 color);
+void setCellMarkerBorderColor(vec4 color);
+void setCellMarkerSize(float size);
+void setCellMarkerBorderWidth(float size);
+void setCellMarkerBorderColor(vec3 color) { setCellMarkerBorderColor(vec4(color, 1.0)); }
+
+void setComMarkerColor(vec4 color);
+void setComMarkerBorderColor(vec4 color);
+void setComMarkerSize(float size);
+void setComMarkerBorderWidth(float size);
+void setComMarkerBorderColor(vec3 color) { setComMarkerBorderColor(vec4(color, 1.0)); }
+
 void setEllipsoidFillColor(vec4 color);
 
 void setBoundingBoxBorderColor(vec4 color);
@@ -305,6 +317,8 @@ void setLineColor(vec3 color) { setLineColor(vec4(color, 1.0)); }
 void setLineColor(vec3 startColor, vec3 endColor) { setLineColor(vec4(startColor, 1.0), vec4(endColor, 1.0)); }
 void setColor(vec4 color) {
   setPointMarkerColor(color);
+  setCellMarkerColor(color);
+  setComMarkerColor(color);
   setLineColor(color);
   setEndpointMarkerColor(color);
   setBoundingBoxBorderColor(color);
