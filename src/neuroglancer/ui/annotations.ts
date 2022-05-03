@@ -102,7 +102,7 @@ export async function getLandmarkList(type: AnnotationType) {
 }
 
 export async function getCategoryList() {
-  const landmarkURL = `${AppSettings.API_ENDPOINT}/cell_types`;
+  const landmarkURL = `https://webdev.dk.ucsd.edu/django_test/cell_types`;
   const categoryJSON:CategoryListJSON = await fetchOk(landmarkURL, {
     method: 'GET',
   }).then(response => {
