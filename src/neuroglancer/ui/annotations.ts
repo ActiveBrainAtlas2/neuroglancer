@@ -85,7 +85,7 @@ export interface LandmarkListJSON {
 }
 
 export interface CategoryListJSON {
-  categories: Array<string>,
+  cell_type: Array<string>,
 }
 
 export async function getLandmarkList(type: AnnotationType) {
@@ -107,8 +107,8 @@ export async function getCategoryList() {
     method: 'GET',
   }).then(response => {
     return response.json();});
-  const {categories} = categoryJSON;
-  return categories;
+  const {cell_type} = categoryJSON;
+  return cell_type;
 }
 
 export class MergedAnnotationStates extends RefCounted implements
@@ -2172,6 +2172,7 @@ export class PlaceCellTool extends PlaceAnnotationTool {
       const annotation: Annotation = {
         id: '',
         description: session.value.label,
+        category: session.value.category,
         relatedSegments: getSelectedAssociatedSegments(annotationLayer),
         point,
         type: AnnotationType.CELL,
