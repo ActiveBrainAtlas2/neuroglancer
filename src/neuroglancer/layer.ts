@@ -22,7 +22,7 @@ import {CoordinateSpace, CoordinateSpaceCombiner, CoordinateTransformSpecificati
 import {DataSourceSpecification, makeEmptyDataSourceSpecification} from 'neuroglancer/datasource';
 import {DataSourceProviderRegistry, DataSubsource} from 'neuroglancer/datasource';
 import {DisplayContext, RenderedPanel} from 'neuroglancer/display_context';
-import {LayerDataSource, layerDataSourceSpecificationFromJson, LoadedDataSubsource} from 'neuroglancer/layer_data_source';
+import {LayerDataSource, layerDataSourceSpecificationFromJson, LoadedDataSubsource, LoadedLayerDataSource} from 'neuroglancer/layer_data_source';
 import {DisplayDimensions, Position, WatchableDisplayDimensionRenderInfo} from 'neuroglancer/navigation_state';
 import {RENDERED_VIEW_ADD_LAYER_RPC_ID, RENDERED_VIEW_REMOVE_LAYER_RPC_ID} from 'neuroglancer/render_layer_common';
 import {RenderLayer, RenderLayerRole, VisibilityTrackedRenderLayer} from 'neuroglancer/renderlayer';
@@ -574,6 +574,23 @@ export class LayerManager extends RefCounted {
   constructor() {
     super();
     this.layersChanged.add(this.scheduleRemoveLayersWithSingleRef);
+    this.layersChanged.add(this.setCoordinateSpaceToImageLayer.bind(this));
+  }
+
+  private setCoordinateSpaceToImageLayer() {
+    const coordinateSpace = <TrackableCoordinateSpace>(window['viewer'].coordinateSpace);
+    for (const layer of this.layerSet) {
+      if (layer.layer && layer.layer.type === 'image') {
+        if (layer.layer.dataSources.length > 0) {
+          const loadedDataSource = <LoadedLayerDataSource>(layer.layer.dataSources[0].loadState);
+          if (loadedDataSource !== undefined) {
+            const transform = loadedDataSource.transform;
+            coordinateSpace.value = transform.inputSpace.value;
+            break;
+          }
+        }
+      }
+    }
   }
 
   private scheduleRemoveLayersWithSingleRef =

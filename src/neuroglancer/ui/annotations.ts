@@ -20,6 +20,8 @@
 
 import './annotations.css';
 import './volume_session.css';
+import './cell_session.css';
+import './com_session.css';
 import {AppSettings} from 'neuroglancer/services/service';
 import {Annotation, AnnotationId, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Collection, Ellipsoid, isChildDummyAnnotation, isTypeCollection, Line, Polygon, Volume} from 'neuroglancer/annotation';
 import {AnnotationDisplayState, AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
@@ -35,12 +37,12 @@ import {RenderLayerRole} from 'neuroglancer/renderlayer';
 import {bindSegmentListWidth, registerCallbackWhenSegmentationDisplayStateChanged, SegmentationDisplayState, SegmentWidgetFactory} from 'neuroglancer/segmentation_display_state/frontend';
 import {ElementVisibilityFromTrackableBoolean} from 'neuroglancer/trackable_boolean';
 import {AggregateWatchableValue, makeCachedLazyDerivedWatchableValue, registerNested, WatchableValue, WatchableValueInterface} from 'neuroglancer/trackable_value';
-import {getDefaultAnnotationListBindings, setPolygonDrawModeInputEventBindings, setPolygonEditModeInputEventBindings} from 'neuroglancer/ui/default_input_event_bindings';
+import {getDefaultAnnotationListBindings, setPointDrawModeInputEventBindings, setPointEditModeInputEventBindings, setPolygonDrawModeInputEventBindings, setPolygonEditModeInputEventBindings} from 'neuroglancer/ui/default_input_event_bindings';
 import {registerTool, Tool} from 'neuroglancer/ui/tool';
 import {animationFrameDebounce} from 'neuroglancer/util/animation_frame_debounce';
 import {arraysEqual, ArraySpliceOp, gatherUpdate} from 'neuroglancer/util/array';
 import {setClipboard} from 'neuroglancer/util/clipboard';
-import {packColor, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA, useWhiteBackground} from 'neuroglancer/util/color';
+import {packColor, parseColorSerialization, parseRGBAColorSpecification, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA, useWhiteBackground} from 'neuroglancer/util/color';
 import {Borrowed, disposableOnce, RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren} from 'neuroglancer/util/dom';
 import {ValueOrError} from 'neuroglancer/util/error';
@@ -75,12 +77,21 @@ import { update } from 'lodash';
 import { VolumeSessionDialog } from './volume_session';
 import { isSectionValid } from '../annotation/volume';
 import { SaveAnnotationWidget } from '../widget/save_annotation';
+import { CellSessionDialog } from './cell_session';
+import { ComSessionDialog } from './com_session';
 
 export interface LandmarkListJSON {
   land_marks: Array<string>,
 }
 
-export async function getLandmarkList(){
+export interface CategoryListJSON {
+  cell_type: Array<string>,
+}
+
+export async function getLandmarkList(type: AnnotationType) {
+  if (type === AnnotationType.CELL) {
+    return ["positive", "negative"];
+  }
   const landmarkURL = `${AppSettings.API_ENDPOINT}/landmark_list`;
   const landmarkListJSON:LandmarkListJSON = await fetchOk(landmarkURL, {
     method: 'GET',
@@ -88,6 +99,16 @@ export async function getLandmarkList(){
     return response.json();});
   const {land_marks} = landmarkListJSON;
   return land_marks
+}
+
+export async function getCategoryList() {
+  const landmarkURL = `https://webdev.dk.ucsd.edu/django_test/cell_types`;
+  const categoryJSON:CategoryListJSON = await fetchOk(landmarkURL, {
+    method: 'GET',
+  }).then(response => {
+    return response.json();});
+  const {cell_type} = categoryJSON;
+  return cell_type;
 }
 
 export class MergedAnnotationStates extends RefCounted implements
@@ -191,6 +212,15 @@ export function getPositionSummary(
     case AnnotationType.POLYGON:
       element.appendChild(makePointLinkWithTransform(annotation.source));
       break;
+    case AnnotationType.CELL:
+      element.appendChild(makePointLinkWithTransform(annotation.point));
+      break;
+    case AnnotationType.COM:
+      element.appendChild(makePointLinkWithTransform(annotation.point));
+      break;
+    case AnnotationType.VOLUME:
+      element.appendChild(makePointLinkWithTransform(annotation.source));
+      break;
     case AnnotationType.ELLIPSOID:
       element.appendChild(makePointLinkWithTransform(annotation.center));
       const rank = chunkTransform.layerRank;
@@ -220,6 +250,12 @@ function getCenterPosition(center: Float32Array, annotation: Annotation) {
       break;
     case AnnotationType.VOLUME:
       center.set(annotation.source);
+      break;
+    case AnnotationType.CELL:
+      center.set(annotation.point);
+      break;
+    case AnnotationType.COM:
+      center.set(annotation.point);
       break;
   }
 }
@@ -282,7 +318,11 @@ export class AnnotationLayerView extends Tab {
   private mutableControls = document.createElement('div');
   private headerRow = document.createElement('div');
   volumeSession = document.createElement('div');
+  cellSession = document.createElement('div');
+  comSession = document.createElement('div');
   volumeButton: HTMLElement;
+  cellButton: HTMLElement;
+  comButton: HTMLElement;
 
   get annotationStates() {
     return this.layer.annotationStates;
@@ -407,6 +447,40 @@ export class AnnotationLayerView extends Tab {
           }
         }
       }
+      else if (this.layer.tool.value instanceof PlaceCellTool) {
+        const iconDiv = this.layer.tool.value.icon.value;
+        if (iconDiv === undefined) return;
+        switch (this.layer.tool.value.mode) {
+          case CellToolMode.DRAW: {
+            iconDiv.style.backgroundColor = 'green';
+            break;
+          }
+          case CellToolMode.EDIT: {
+            iconDiv.style.backgroundColor = 'red';
+            break;
+          }
+          default: {
+            iconDiv.style.backgroundColor = 'grey';
+          }
+        }
+      }
+      else if (this.layer.tool.value instanceof PlaceComTool) {
+        const iconDiv = this.layer.tool.value.icon.value;
+        if (iconDiv === undefined) return;
+        switch (this.layer.tool.value.mode) {
+          case ComToolMode.DRAW: {
+            iconDiv.style.backgroundColor = 'green';
+            break;
+          }
+          case ComToolMode.EDIT: {
+            iconDiv.style.backgroundColor = 'red';
+            break;
+          }
+          default: {
+            iconDiv.style.backgroundColor = 'grey';
+          }
+        }
+      }
     };
     toolColorFunc = toolColorFunc.bind(this);
     this.registerDisposer(this.layer.tool.changed.add(() => toolColorFunc()));
@@ -427,77 +501,95 @@ export class AnnotationLayerView extends Tab {
     this.layer.setAnnotationColorPicker();
     if (this.layer.annotationColorPicker !== undefined) toolbox.append(this.layer.annotationColorPicker.element);
 
-    const {mutableControls, volumeSession} = this;
-    const pointButton = makeIcon({
-      text: annotationTypeHandlers[AnnotationType.POINT].icon,
-      title: 'Annotate point',
-      onClick: () => {
-        this.layer.tool.value = new PlacePointTool(this.layer, {});
-      },
-    });
-    mutableControls.appendChild(pointButton);
+    const {mutableControls, volumeSession, cellSession, comSession} = this;
+    // const pointButton = makeIcon({
+    //   text: annotationTypeHandlers[AnnotationType.POINT].icon,
+    //   title: 'Annotate point',
+    //   onClick: () => {
+    //     this.layer.tool.value = new PlacePointTool(this.layer, {});
+    //   },
+    // });
+    // mutableControls.appendChild(pointButton);
 
-    const boundingBoxButton = makeIcon({
-      text: annotationTypeHandlers[AnnotationType.AXIS_ALIGNED_BOUNDING_BOX].icon,
-      title: 'Annotate bounding box',
+    this.cellButton = makeIcon({
+      text: annotationTypeHandlers[AnnotationType.CELL].icon,
+      title: 'Annotate cell',
       onClick: () => {
-        this.layer.tool.value = new PlaceBoundingBoxTool(this.layer, {});
+        new CellSessionDialog(this);
       },
     });
-    mutableControls.appendChild(boundingBoxButton);
+    mutableControls.appendChild(this.cellButton);
 
-    const lineButton = makeIcon({
-      text: annotationTypeHandlers[AnnotationType.LINE].icon,
-      title: 'Annotate line',
+    this.comButton = makeIcon({
+      text: annotationTypeHandlers[AnnotationType.COM].icon,
+      title: 'Annotate centre of mass',
       onClick: () => {
-        this.layer.tool.value = new PlaceLineTool(this.layer, {});
+        new ComSessionDialog(this);
       },
     });
-    mutableControls.appendChild(lineButton);
+    mutableControls.appendChild(this.comButton);
 
-    const ellipsoidButton = makeIcon({
-      text: annotationTypeHandlers[AnnotationType.ELLIPSOID].icon,
-      title: 'Annotate ellipsoid',
-      onClick: () => {
-        this.layer.tool.value = new PlaceEllipsoidTool(this.layer, {});
-      },
-    });
-    mutableControls.appendChild(ellipsoidButton);
+    // const boundingBoxButton = makeIcon({
+    //   text: annotationTypeHandlers[AnnotationType.AXIS_ALIGNED_BOUNDING_BOX].icon,
+    //   title: 'Annotate bounding box',
+    //   onClick: () => {
+    //     this.layer.tool.value = new PlaceBoundingBoxTool(this.layer, {});
+    //   },
+    // });
+    // mutableControls.appendChild(boundingBoxButton);
 
-    const polygonButton = makeIcon({
-      text: annotationTypeHandlers[AnnotationType.POLYGON].icon,
-      title: 'Annotate polygon',
-      onClick: () => {
-        const isInstance = this.layer.tool.value instanceof PlacePolygonTool;
-        if (!isInstance) {
-          this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.DRAW);
-        }
-        else {
-          const polygonTool = <PlacePolygonTool>this.layer.tool.value;
-          if (polygonTool.mode === PolygonToolMode.EDIT) {
-            this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.DRAW);
-          }
-          else {
-            this.layer.tool.value = undefined;
-          }
-        }
-      },
-      onRightClick: () => {
-        const isInstance = this.layer.tool.value instanceof PlacePolygonTool;
-        if (!isInstance) {
-          this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.EDIT);
-        } else {
-          const polygonTool = <PlacePolygonTool>this.layer.tool.value;
-          if (polygonTool.mode === PolygonToolMode.DRAW) {
-            this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.EDIT);
-          }
-          else {
-            this.layer.tool.value = undefined;
-          }
-        }
-      }
-    });
-    mutableControls.appendChild(polygonButton);
+    // const lineButton = makeIcon({
+    //   text: annotationTypeHandlers[AnnotationType.LINE].icon,
+    //   title: 'Annotate line',
+    //   onClick: () => {
+    //     this.layer.tool.value = new PlaceLineTool(this.layer, {});
+    //   },
+    // });
+    // mutableControls.appendChild(lineButton);
+
+    // const ellipsoidButton = makeIcon({
+    //   text: annotationTypeHandlers[AnnotationType.ELLIPSOID].icon,
+    //   title: 'Annotate ellipsoid',
+    //   onClick: () => {
+    //     this.layer.tool.value = new PlaceEllipsoidTool(this.layer, {});
+    //   },
+    // });
+    // mutableControls.appendChild(ellipsoidButton);
+
+    // const polygonButton = makeIcon({
+    //   text: annotationTypeHandlers[AnnotationType.POLYGON].icon,
+    //   title: 'Annotate polygon',
+    //   onClick: () => {
+    //     const isInstance = this.layer.tool.value instanceof PlacePolygonTool;
+    //     if (!isInstance) {
+    //       this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.DRAW);
+    //     }
+    //     else {
+    //       const polygonTool = <PlacePolygonTool>this.layer.tool.value;
+    //       if (polygonTool.mode === PolygonToolMode.EDIT) {
+    //         this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.DRAW);
+    //       }
+    //       else {
+    //         this.layer.tool.value = undefined;
+    //       }
+    //     }
+    //   },
+    //   onRightClick: () => {
+    //     const isInstance = this.layer.tool.value instanceof PlacePolygonTool;
+    //     if (!isInstance) {
+    //       this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.EDIT);
+    //     } else {
+    //       const polygonTool = <PlacePolygonTool>this.layer.tool.value;
+    //       if (polygonTool.mode === PolygonToolMode.DRAW) {
+    //         this.layer.tool.value = new PlacePolygonTool(this.layer, {}, PolygonToolMode.EDIT);
+    //       }
+    //       else {
+    //         this.layer.tool.value = undefined;
+    //       }
+    //     }
+    //   }
+    // });
+    // mutableControls.appendChild(polygonButton);
 
     this.volumeButton = makeIcon({
       text: annotationTypeHandlers[AnnotationType.VOLUME].icon,
@@ -517,6 +609,22 @@ export class AnnotationLayerView extends Tab {
       this.layer.tool.value.sessionWidgetDiv = volumeSession;
       this.layer.tool.value.session.changed.dispatch();
       this.layer.tool.value.icon.value = this.volumeButton;
+    }
+
+    comSession.classList.add('com-session-display');
+    this.element.appendChild(comSession);
+    if (this.layer.tool.value instanceof PlaceComTool) {
+      this.layer.tool.value.sessionWidgetDiv = comSession;
+      this.layer.tool.value.session.changed.dispatch();
+      this.layer.tool.value.icon.value = this.comButton;
+    }
+
+    comSession.classList.add('cell-session-display');
+    this.element.appendChild(cellSession);
+    if (this.layer.tool.value instanceof PlaceCellTool) {
+      this.layer.tool.value.sessionWidgetDiv = cellSession;
+      this.layer.tool.value.session.changed.dispatch();
+      this.layer.tool.value.icon.value = this.cellButton;
     }
 
     this.element.appendChild(this.headerRow);
@@ -974,6 +1082,13 @@ export class AnnotationLayerView extends Tab {
       description.textContent = annotation.description;
       element.appendChild(description);
     }
+    if (annotation.type === AnnotationType.CELL && annotation.category) {
+      ++numRows;
+      const category = document.createElement('div');
+      category.classList.add('neuroglancer-annotation-description');
+      category.textContent = annotation.category;
+      element.appendChild(category);
+    }
     icon.style.gridRow = `span ${numRows}`;
     if (deleteButton !== undefined) {
       deleteButton.style.gridRow = `span ${numRows}`;
@@ -1096,6 +1211,8 @@ const ANNOTATE_BOUNDING_BOX_TOOL_ID = 'annotateBoundingBox';
 const ANNOTATE_ELLIPSOID_TOOL_ID = 'annotateSphere';
 const ANNOTATE_POLYGON_TOOL_ID = 'annotatePolygon';
 const ANNOTATE_VOLUME_TOOL_ID = 'annotateVolume';
+const ANNOTATE_CELL_TOOL_ID = 'annotateCell';
+const ANNOTATE_COM_TOOL_ID = 'annotateCom';
 
 export class PlacePointTool extends PlaceAnnotationTool {
   trigger(mouseState: MouseSelectionState) {
@@ -1385,7 +1502,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
         this.bindingsRef = new RefCounted();
         if (mode === PolygonToolMode.DRAW && this.bindingsRef) {
           setPolygonDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
-        } else if (this.bindingsRef) {
+        } else if (this.bindingsRef && mode === PolygonToolMode.EDIT) {
           setPolygonEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
         }
       }
@@ -1645,6 +1762,29 @@ export enum VolumeToolMode {
 
 export interface VolumeSession {
   reference: AnnotationReference;
+}
+
+export enum ComToolMode {
+  DRAW,
+  EDIT,
+  NOOP
+}
+
+export interface COMSession {
+  label: string|undefined;
+  color: string|undefined;
+}
+
+export enum CellToolMode {
+  DRAW,
+  EDIT,
+  NOOP
+}
+
+export interface CellSession {
+  label: string|undefined;
+  color: string|undefined;
+  category: string|undefined;
 }
 
 export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
@@ -1964,6 +2104,477 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
 }
 PlaceVolumeTool.prototype.annotationType = AnnotationType.VOLUME;
 
+export class PlaceCellTool extends PlaceAnnotationTool {
+  mode: CellToolMode;
+  active: boolean;
+  session: WatchableValue<CellSession|undefined> = new WatchableValue(undefined);
+  sessionWidget: RefCounted|undefined;
+  sessionWidgetDiv: HTMLElement|undefined;
+  icon: WatchableValue<HTMLElement|undefined> = new WatchableValue(undefined);
+  bindingsRef: RefCounted|undefined;
+
+  constructor(public layer: UserLayerWithAnnotations, options: any, session: CellSession|undefined = undefined,
+     mode: CellToolMode = CellToolMode.NOOP, sessionDiv: HTMLElement|undefined = undefined,
+     iconDiv: HTMLElement|undefined = undefined) {
+    super(layer, options);
+    this.mode = mode;
+    const func = this.displayCellSession.bind(this);
+    this.sessionWidgetDiv = sessionDiv;
+    this.session.changed.add(() => func());
+    this.session.value = session;
+    this.active = true;
+    this.bindingsRef = new RefCounted();
+    if (mode === CellToolMode.DRAW) {
+      setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+    } else if (mode === CellToolMode.EDIT) {
+      setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+    }
+    this.icon.changed.add(this.setIconColor.bind(this));
+    this.icon.value = iconDiv;
+    this.registerDisposer(() => {
+      const iconDiv = this.icon.value;
+      if (iconDiv === undefined) return;
+      iconDiv.style.backgroundColor = '';
+      this.icon.value = undefined;
+    });
+  }
+
+  setIconColor() {
+    const iconDiv = this.icon.value;
+    if (iconDiv === undefined) return;
+    switch (this.mode) {
+      case CellToolMode.DRAW: {
+        iconDiv.style.backgroundColor = 'green';
+        break;
+      }
+      case CellToolMode.EDIT: {
+        iconDiv.style.backgroundColor = 'red';
+        break;
+      }
+      default: {
+        iconDiv.style.backgroundColor = 'grey';
+      }
+    }
+  }
+
+  trigger(mouseState: MouseSelectionState) {
+    const {annotationLayer, mode} = this;
+    const {session} = this;
+    if (annotationLayer === undefined || mode !== CellToolMode.DRAW || session.value === undefined) {
+      // Not yet ready.
+      return;
+    }
+    if (!session.value.color) return;
+
+    if (mouseState.updateUnconditionally()) {
+      const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+      if (point === undefined) return;
+      const annotation: Annotation = {
+        id: '',
+        description: session.value.label,
+        category: session.value.category,
+        relatedSegments: getSelectedAssociatedSegments(annotationLayer),
+        point,
+        type: AnnotationType.CELL,
+        properties: annotationLayer.source.properties.map(x => {
+          if (x.identifier !== 'color') return x.default;
+          if (x.identifier === 'color' && session.value!.color === undefined) return x.default;
+          const colorInNum = packColor(parseRGBColorSpecification(session.value!.color));
+          return colorInNum;
+        }),
+      };
+      const reference = annotationLayer.source.add(annotation, /*commit=*/ true);
+      this.layer.selectAnnotation(annotationLayer, reference.id, true);
+      reference.dispose();
+    }
+  }
+
+  dispose() {
+    // completely delete the session
+    if(this.bindingsRef) this.bindingsRef.dispose();
+    this.bindingsRef = undefined;
+    this.disposeSession();
+    super.dispose();
+  }
+
+  setActive(_value: boolean) {
+    if (this.active !== _value) {
+      this.active = _value;
+      if (this.active) {
+        const {mode} = this;
+        if (this.bindingsRef) {
+          this.bindingsRef.dispose();
+          this.bindingsRef = undefined;
+        }
+        this.bindingsRef = new RefCounted();
+        if (mode === CellToolMode.DRAW && this.bindingsRef) {
+          setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+        } else if (this.bindingsRef && mode === CellToolMode.EDIT) {
+          setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+        }
+      }
+      super.setActive(_value);
+    }
+  }
+
+  deactivate() {
+    this.active = false;
+    if (this.bindingsRef) this.bindingsRef.dispose();
+    this.bindingsRef = undefined;
+    super.deactivate();
+  }
+
+  private disposeSession() {
+    this.session.value = undefined;
+    if (this.sessionWidget) this.sessionWidget.dispose();
+    this.sessionWidget = undefined;
+  }
+
+  validateSession(annotationId: string|undefined, annotationLayer: AnnotationLayerState|undefined) : boolean {
+    if (this.session.value === undefined || annotationId === undefined || annotationLayer === undefined) return false;
+    if (!this.active) return false;
+    const reference = annotationLayer.source.getTopMostAnnotationReference(annotationId);
+    if (!reference.value) return false;
+    const annotation = reference.value;
+    if (annotation.type !== AnnotationType.CELL) return false;
+    return true;
+  }
+
+  displayCellSession() {
+    const {annotationLayer, session, sessionWidgetDiv} = this;
+    if (this.sessionWidget) this.sessionWidget.dispose();
+    this.sessionWidget = new RefCounted();
+    const {sessionWidget} = this; 
+    if (annotationLayer === undefined || session.value === undefined || sessionWidgetDiv === undefined) return;
+
+    sessionWidgetDiv.appendChild(
+      this.sessionWidget.registerDisposer(new DependentViewWidget(
+        this.sessionWidget.registerDisposer(
+                    new AggregateWatchableValue(() => ({
+                                                  session: session,
+                                                }))),
+                ({session}, parent, context) => {
+
+                  if (session === null || session === undefined) {
+                    const statusMessage = document.createElement('div');
+                    statusMessage.classList.add('neuroglancer-selection-annotation-status');
+                    statusMessage.textContent =
+                        (session === null) ? 'Session not found' : 'Loading...';
+                    parent.appendChild(statusMessage);
+                    return;
+                  }
+
+                  const sessionTitle = document.createElement('div');
+                  sessionTitle.classList.add('cell-session-display-title');
+                  sessionTitle.textContent = "Cell session";
+
+                  const sessionBody = document.createElement('div');
+                  sessionBody.classList.add('cell-session-display-body');
+
+                  if (session.color !== undefined) {
+                    const label = document.createElement('label');
+                    label.classList.add('neuroglancer-annotation-property');
+                    const idElement = document.createElement('span');
+                    idElement.classList.add('neuroglancer-annotation-property-label');
+                    idElement.textContent = 'color';
+                    label.appendChild(idElement);
+                    const colorElement = document.createElement('input');
+                    colorElement.type = 'color';
+                    colorElement.value = serializeColor(parseRGBAColorSpecification(session.color));
+                    colorElement.style.backgroundColor =
+                        useWhiteBackground(parseRGBAColorSpecification(session.color)) ? 'white' : 'black';
+                    colorElement.disabled = true;
+                    label.appendChild(colorElement);
+                    sessionBody.appendChild(label);
+                  }
+
+                  if (session.category !== undefined) {
+                    const label = document.createElement('label');
+                    label.classList.add('neuroglancer-annotation-property');
+                    const idElement = document.createElement('span');
+                    idElement.classList.add('neuroglancer-annotation-property-label');
+                    idElement.textContent = "Category";
+                    label.appendChild(idElement);
+                    const valueElement = document.createElement('span');
+                    valueElement.classList.add('neuroglancer-annotation-property-description');
+                    valueElement.textContent = session.category || '';
+                    label.appendChild(valueElement);
+                    sessionBody.appendChild(label);
+                  }
+
+                  if (session.label !== undefined) {
+                    const label = document.createElement('label');
+                    label.classList.add('neuroglancer-annotation-property');
+                    const idElement = document.createElement('span');
+                    idElement.classList.add('neuroglancer-annotation-property-label');
+                    idElement.textContent = "Label";
+                    label.appendChild(idElement);
+                    const valueElement = document.createElement('span');
+                    valueElement.classList.add('neuroglancer-annotation-property-description');
+                    valueElement.textContent = session.label || '';
+                    label.appendChild(valueElement);
+                    sessionBody.appendChild(label);
+                  }
+                  parent.appendChild(sessionTitle);
+                  parent.appendChild(sessionBody);
+                  
+                  sessionWidget.registerDisposer(() => {
+                    try {
+                      sessionWidgetDiv.removeChild(parent);
+                    }
+                    catch (e) {
+                      //ignore errors
+                    }
+                  });
+                }))
+            .element);
+    return;
+  }
+
+  get description() {
+    const {mode} = this;
+    if (mode === CellToolMode.DRAW) {
+      return `cell session (draw mode)`;
+    } else if (mode === CellToolMode.EDIT) {
+      return `cell session (edit mode)`;
+    } else {
+      return `cell session (view mode)`;
+    }
+  }
+
+  toJSON() {
+    return ANNOTATE_CELL_TOOL_ID;
+  }
+}
+
+export class PlaceComTool extends PlaceAnnotationTool {
+  mode: ComToolMode;
+  active: boolean;
+  session: WatchableValue<COMSession|undefined> = new WatchableValue(undefined);
+  sessionWidget: RefCounted|undefined;
+  sessionWidgetDiv: HTMLElement|undefined;
+  icon: WatchableValue<HTMLElement|undefined> = new WatchableValue(undefined);
+  bindingsRef: RefCounted|undefined;
+
+  constructor(public layer: UserLayerWithAnnotations, options: any, session: COMSession|undefined = undefined,
+     mode: ComToolMode = ComToolMode.NOOP, sessionDiv: HTMLElement|undefined = undefined,
+     iconDiv: HTMLElement|undefined = undefined) {
+    super(layer, options);
+    this.mode = mode;
+    const func = this.displayComSession.bind(this);
+    this.sessionWidgetDiv = sessionDiv;
+    this.session.changed.add(() => func());
+    this.session.value = session;
+    this.active = true;
+    this.bindingsRef = new RefCounted();
+    if (mode === ComToolMode.DRAW) {
+      setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+    } else if (mode === ComToolMode.EDIT) {
+      setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+    }
+    this.icon.changed.add(this.setIconColor.bind(this));
+    this.icon.value = iconDiv;
+    this.registerDisposer(() => {
+      const iconDiv = this.icon.value;
+      if (iconDiv === undefined) return;
+      iconDiv.style.backgroundColor = '';
+      this.icon.value = undefined;
+    });
+  }
+
+  setIconColor() {
+    const iconDiv = this.icon.value;
+    if (iconDiv === undefined) return;
+    switch (this.mode) {
+      case ComToolMode.DRAW: {
+        iconDiv.style.backgroundColor = 'green';
+        break;
+      }
+      case ComToolMode.EDIT: {
+        iconDiv.style.backgroundColor = 'red';
+        break;
+      }
+      default: {
+        iconDiv.style.backgroundColor = 'grey';
+      }
+    }
+  }
+
+  trigger(mouseState: MouseSelectionState) {
+    const {annotationLayer, mode} = this;
+    const {session} = this;
+    if (annotationLayer === undefined || mode !== ComToolMode.DRAW || session.value === undefined) {
+      // Not yet ready.
+      return;
+    }
+    if (!session.value.color) return;
+
+    if (mouseState.updateUnconditionally()) {
+      const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+      if (point === undefined) return;
+      const annotation: Annotation = {
+        id: '',
+        description: session.value.label,
+        relatedSegments: getSelectedAssociatedSegments(annotationLayer),
+        point,
+        type: AnnotationType.COM,
+        properties: annotationLayer.source.properties.map(x => {
+          if (x.identifier !== 'color') return x.default;
+          if (x.identifier === 'color' && session.value!.color === undefined) return x.default;
+          const colorInNum = packColor(parseRGBColorSpecification(session.value!.color));
+          return colorInNum;
+        }),
+      };
+      const reference = annotationLayer.source.add(annotation, /*commit=*/ true);
+      this.layer.selectAnnotation(annotationLayer, reference.id, true);
+      reference.dispose();
+    }
+  }
+
+  dispose() {
+    // completely delete the session
+    if(this.bindingsRef) this.bindingsRef.dispose();
+    this.bindingsRef = undefined;
+    this.disposeSession();
+    super.dispose();
+  }
+
+  setActive(_value: boolean) {
+    if (this.active !== _value) {
+      this.active = _value;
+      if (this.active) {
+        const {mode} = this;
+        if (this.bindingsRef) {
+          this.bindingsRef.dispose();
+          this.bindingsRef = undefined;
+        }
+        this.bindingsRef = new RefCounted();
+        if (mode === ComToolMode.DRAW && this.bindingsRef) {
+          setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+        } else if (this.bindingsRef && mode === ComToolMode.EDIT) {
+          setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
+        }
+      }
+      super.setActive(_value);
+    }
+  }
+
+  deactivate() {
+    this.active = false;
+    if (this.bindingsRef) this.bindingsRef.dispose();
+    this.bindingsRef = undefined;
+    super.deactivate();
+  }
+
+  private disposeSession() {
+    this.session.value = undefined;
+    if (this.sessionWidget) this.sessionWidget.dispose();
+    this.sessionWidget = undefined;
+  }
+
+  validateSession(annotationId: string|undefined, annotationLayer: AnnotationLayerState|undefined) : boolean {
+    if (this.session.value === undefined || annotationId === undefined || annotationLayer === undefined) return false;
+    if (!this.active) return false;
+    const reference = annotationLayer.source.getTopMostAnnotationReference(annotationId);
+    if (!reference.value) return false;
+    const annotation = reference.value;
+    if (annotation.type !== AnnotationType.COM) return false;
+    return true;
+  }
+
+  displayComSession() {
+    const {annotationLayer, session, sessionWidgetDiv} = this;
+    if (this.sessionWidget) this.sessionWidget.dispose();
+    this.sessionWidget = new RefCounted();
+    const {sessionWidget} = this; 
+    if (annotationLayer === undefined || session.value === undefined || sessionWidgetDiv === undefined) return;
+
+    sessionWidgetDiv.appendChild(
+      this.sessionWidget.registerDisposer(new DependentViewWidget(
+        this.sessionWidget.registerDisposer(
+                    new AggregateWatchableValue(() => ({
+                                                  session: session,
+                                                }))),
+                ({session}, parent, context) => {
+
+                  if (session === null || session === undefined) {
+                    const statusMessage = document.createElement('div');
+                    statusMessage.classList.add('neuroglancer-selection-annotation-status');
+                    statusMessage.textContent =
+                        (session === null) ? 'Session not found' : 'Loading...';
+                    parent.appendChild(statusMessage);
+                    return;
+                  }
+
+                  const sessionTitle = document.createElement('div');
+                  sessionTitle.classList.add('com-session-display-title');
+                  sessionTitle.textContent = "Com session";
+
+                  const sessionBody = document.createElement('div');
+                  sessionBody.classList.add('com-session-display-body');
+
+                  if (session.color !== undefined) {
+                    const label = document.createElement('label');
+                    label.classList.add('neuroglancer-annotation-property');
+                    const idElement = document.createElement('span');
+                    idElement.classList.add('neuroglancer-annotation-property-label');
+                    idElement.textContent = 'color';
+                    label.appendChild(idElement);
+                    const colorElement = document.createElement('input');
+                    colorElement.type = 'color';
+                    colorElement.value = serializeColor(parseRGBAColorSpecification(session.color));
+                    colorElement.style.backgroundColor =
+                        useWhiteBackground(parseRGBAColorSpecification(session.color)) ? 'white' : 'black';
+                    colorElement.disabled = true;
+                    label.appendChild(colorElement);
+                    sessionBody.appendChild(label);
+                  }
+
+                  if (session.label !== undefined) {
+                    const label = document.createElement('label');
+                    label.classList.add('neuroglancer-annotation-property');
+                    const idElement = document.createElement('span');
+                    idElement.classList.add('neuroglancer-annotation-property-label');
+                    idElement.textContent = "Label";
+                    label.appendChild(idElement);
+                    const valueElement = document.createElement('span');
+                    valueElement.classList.add('neuroglancer-annotation-property-description');
+                    valueElement.textContent = session.label || '';
+                    label.appendChild(valueElement);
+                    sessionBody.appendChild(label);
+                  }
+                  parent.appendChild(sessionTitle);
+                  parent.appendChild(sessionBody);
+                  
+                  sessionWidget.registerDisposer(() => {
+                    try {
+                      sessionWidgetDiv.removeChild(parent);
+                    }
+                    catch (e) {
+                      //ignore errors
+                    }
+                  });
+                }))
+            .element);
+    return;
+  }
+
+  get description() {
+    const {mode} = this;
+    if (mode === ComToolMode.DRAW) {
+      return `com session (draw mode)`;
+    } else if (mode === ComToolMode.EDIT) {
+      return `com session (edit mode)`;
+    } else {
+      return `com session (view mode)`;
+    }
+  }
+
+  toJSON() {
+    return ANNOTATE_COM_TOOL_ID;
+  }
+}
+
 abstract class PlaceTwoCornerAnnotationTool extends TwoStepAnnotationTool {
   annotationType: AnnotationType.LINE|AnnotationType.AXIS_ALIGNED_BOUNDING_BOX;
 
@@ -2108,6 +2719,12 @@ registerTool(
     (layer, options) => undefined);
 registerTool(
   ANNOTATE_VOLUME_TOOL_ID,
+  (layer, options) => undefined);
+registerTool(
+  ANNOTATE_CELL_TOOL_ID,
+  (layer, options) => undefined);
+registerTool(
+  ANNOTATE_COM_TOOL_ID,
   (layer, options) => undefined);
 
 const newRelatedSegmentKeyMap = EventActionMap.fromObject({
@@ -2403,6 +3020,33 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
         parent.children[text_childi].replaceWith(text_element) 
       }
     }
+
+    async addCategoryText(parent: HTMLElement, select:HTMLSelectElement,annotationLayer:AnnotationLayerState,
+      reference:AnnotationReference,annotation:Annotation) {
+      if (annotation.type !== AnnotationType.CELL) return;
+      var idx = select.selectedIndex; 
+      var text = select.options[idx].value
+      const text_element = document.createElement('textarea');
+      text_element.disabled = true;
+      text_element.value = text;
+      text_element.rows = 3;
+      text_element.className = 'neuroglancer-annotation-details-description';
+      text_element.placeholder = 'Description';
+      const description = text ? text : undefined;
+      annotationLayer.source.update(reference, {...annotation, category: description});
+      annotationLayer.source.commit(reference);
+      const n_child = parent.children.length
+      var text_childi:number = -1
+      for (let childi = 0; childi < n_child; childi++){
+        if (parent.children[childi].className == 'neuroglancer-annotation-details-description'){
+          text_childi = childi;
+        }
+      }
+      if (!(text_childi == -1)){
+        parent.children[text_childi].replaceWith(text_element) 
+      }
+    }
+
     displayAnnotationState(state: this['selectionState'], parent: HTMLElement, context: RefCounted):
         boolean {
       if (state.annotationId === undefined) return false;
@@ -2638,6 +3282,12 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                         description.className = 'neuroglancer-annotation-details-description';
                         description.textContent = annotation.description || '';
                         parent.appendChild(description);
+                        if (annotation.type === AnnotationType.CELL) {
+                          const category = document.createElement('div');
+                          category.className = 'neuroglancer-annotation-details-description';
+                          category.textContent = annotation.category || '';
+                          parent.appendChild(category);
+                        }
                       } else {
                         const description = document.createElement('textarea');
                         description.disabled = true;
@@ -2656,14 +3306,14 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                         const landmarkDropdown = document.createElement('select');
                         landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');
                         const defaultOption = document.createElement('option');
-                        defaultOption.text = 'Select landmark';
+                        defaultOption.text = (annotation.type !== AnnotationType.CELL)? 'Select landmark' : 'Select label';
                         defaultOption.value = '';
                         defaultOption.disabled = true;
                         defaultOption.selected = true;
                         landmarkDropdown.add(defaultOption);
                         landmarkDropdown.addEventListener('change', () => {this.addText(parent,landmarkDropdown,annotationLayer,
                           reference,annotation)})
-                        getLandmarkList().then(function(result) {
+                        getLandmarkList(annotation.type).then(function(result) {
                           const n_landmark = result.length
                           for (let i = 0; i < n_landmark; i++){
                             const landmarki = result[i];
@@ -2675,6 +3325,44 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                           dropdownElement.appendChild(landmarkDropdown);
                           })
                         parent.appendChild(dropdownElement)
+                        if (annotation.type === AnnotationType.CELL) {
+                          const category = document.createElement('textarea');
+                          category.disabled = true;
+                          category.value = annotation.category || '';
+                          category.rows = 3;
+                          category.className = 'neuroglancer-annotation-details-description';
+                          category.placeholder = 'Category';
+                          category.addEventListener('change', () => {
+                            const x = category.value;
+                            const descString = x ? x : undefined
+                            annotationLayer.source.update(reference, {...annotation, category: descString});
+                            annotationLayer.source.commit(reference);
+                          });
+                          parent.appendChild(category);
+                          var dropDownCategoryElement :HTMLElement = document.createElement('div')
+                          const categoryDropdown = document.createElement('select');
+                          categoryDropdown.classList.add('neuroglancer-landmarks-dropdown');
+                          const defaultOption = document.createElement('option');
+                          defaultOption.text = 'Select category';
+                          defaultOption.value = '';
+                          defaultOption.disabled = true;
+                          defaultOption.selected = true;
+                          categoryDropdown.add(defaultOption);
+                          categoryDropdown.addEventListener('change', () => {this.addCategoryText(parent,categoryDropdown,annotationLayer,
+                            reference,annotation)})
+                          getCategoryList().then(function(result) {
+                            const n_landmark = result.length
+                            for (let i = 0; i < n_landmark; i++){
+                              const landmarki = result[i];
+                              const option = document.createElement('option');
+                              option.value = landmarki; 
+                              option.text = landmarki;
+                              categoryDropdown.add(option)}
+                              dropDownCategoryElement.classList.add('neuroglancer-landmarks-dropdown-tool');
+                              dropDownCategoryElement.appendChild(categoryDropdown);
+                            })
+                          parent.appendChild(dropDownCategoryElement)
+                        }
                       }
                     }}
                   ))

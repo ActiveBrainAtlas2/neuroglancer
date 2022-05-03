@@ -63,7 +63,7 @@ import {RPC} from 'neuroglancer/worker_rpc';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
-import { AnnotationLayerView, MultiStepAnnotationTool, PlacePointTool, PlacePolygonTool, PlaceVolumeTool, PolygonToolMode, UserLayerWithAnnotations, UserLayerWithAnnotationsMixin, VolumeToolMode } from './ui/annotations';
+import { AnnotationLayerView, CellToolMode, ComToolMode, MultiStepAnnotationTool, PlaceCellTool, PlaceComTool, PlacePointTool, PlacePolygonTool, PlaceVolumeTool, PolygonToolMode, UserLayerWithAnnotations, UserLayerWithAnnotationsMixin, VolumeToolMode } from './ui/annotations';
 import { getPolygonDrawModeBindings, getPolygonEditModeBindings, polygonDrawModeBindings, polygonEditModeBindings } from './ui/default_input_event_bindings';
 import { PolygonOptionsDialog } from './ui/polygon_options';
 import { AnnotationUserLayer } from './annotation/user_layer';
@@ -714,7 +714,7 @@ export class Viewer extends RefCounted implements ViewerState {
       userLayer.tool.value.trigger(this.mouseState);
     });
 
-    this.bindAction('switch-to-volume-draw-mode', () => {
+    this.bindAction('switch-to-tool-draw-mode', () => {
       const selectedLayer = this.selectedLayer.layer;
       if (selectedLayer === undefined) {
         StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
@@ -729,11 +729,7 @@ export class Viewer extends RefCounted implements ViewerState {
 
       if (!(userLayer instanceof AnnotationUserLayer)) return;
 
-      const isInstance = userLayer.tool.value instanceof PlaceVolumeTool;
-      if (!isInstance) {
-        return;
-      }
-      else {
+      if (userLayer.tool.value instanceof PlaceVolumeTool) {
         const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
         if (volumeTool.mode !== VolumeToolMode.DRAW) {
           userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
@@ -744,9 +740,31 @@ export class Viewer extends RefCounted implements ViewerState {
             VolumeToolMode.NOOP, volumeTool.sessionWidgetDiv, volumeTool.icon.value);
         }
       }
+      else if (userLayer.tool.value instanceof PlaceComTool) {
+        const comTool = <PlaceComTool>userLayer.tool.value;
+        if (comTool.mode !== ComToolMode.DRAW) {
+          userLayer.tool.value = new PlaceComTool(userLayer, {}, comTool.session.value, 
+            ComToolMode.DRAW, comTool.sessionWidgetDiv, comTool.icon.value);
+        }
+        else {
+          userLayer.tool.value = new PlaceComTool(userLayer, {}, comTool.session.value, 
+            ComToolMode.NOOP, comTool.sessionWidgetDiv, comTool.icon.value);
+        }
+      }
+      else if (userLayer.tool.value instanceof PlaceCellTool) {
+        const cellTool = <PlaceCellTool>userLayer.tool.value;
+        if (cellTool.mode !== CellToolMode.DRAW) {
+          userLayer.tool.value = new PlaceCellTool(userLayer, {}, cellTool.session.value, 
+            CellToolMode.DRAW, cellTool.sessionWidgetDiv, cellTool.icon.value);
+        }
+        else {
+          userLayer.tool.value = new PlaceCellTool(userLayer, {}, cellTool.session.value, 
+            CellToolMode.NOOP, cellTool.sessionWidgetDiv, cellTool.icon.value);
+        }
+      }
     });
 
-    this.bindAction('switch-to-volume-edit-mode', () => {
+    this.bindAction('switch-to-tool-edit-mode', () => {
       const selectedLayer = this.selectedLayer.layer;
       if (selectedLayer === undefined) {
         StatusMessage.showTemporaryMessage('The annotate command requires a layer to be selected.');
@@ -761,10 +779,7 @@ export class Viewer extends RefCounted implements ViewerState {
 
       if (!(userLayer instanceof AnnotationUserLayer)) return;
 
-      const isInstance = userLayer.tool.value instanceof PlaceVolumeTool;
-      if (!isInstance) {
-        return;
-      } else {
+      if (userLayer.tool.value instanceof PlaceVolumeTool) {
         const volumeTool = <PlaceVolumeTool>userLayer.tool.value;
         if (volumeTool.mode !== VolumeToolMode.EDIT) {
           userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
@@ -773,6 +788,26 @@ export class Viewer extends RefCounted implements ViewerState {
         else {
           userLayer.tool.value = new PlaceVolumeTool(userLayer, {}, volumeTool.session.value, 
             VolumeToolMode.NOOP, volumeTool.sessionWidgetDiv, volumeTool.icon.value);
+        }
+      } else if (userLayer.tool.value instanceof PlaceComTool) {
+        const comTool = <PlaceComTool>userLayer.tool.value;
+        if (comTool.mode !== ComToolMode.EDIT) {
+          userLayer.tool.value = new PlaceComTool(userLayer, {}, comTool.session.value, 
+            ComToolMode.EDIT, comTool.sessionWidgetDiv, comTool.icon.value);
+        }
+        else {
+          userLayer.tool.value = new PlaceComTool(userLayer, {}, comTool.session.value, 
+            ComToolMode.NOOP, comTool.sessionWidgetDiv, comTool.icon.value);
+        }
+      } else if (userLayer.tool.value instanceof PlaceCellTool) {
+        const cellTool = <PlaceCellTool>userLayer.tool.value;
+        if (cellTool.mode !== CellToolMode.EDIT) {
+          userLayer.tool.value = new PlaceCellTool(userLayer, {}, cellTool.session.value, 
+            CellToolMode.EDIT, cellTool.sessionWidgetDiv, cellTool.icon.value);
+        }
+        else {
+          userLayer.tool.value = new PlaceCellTool(userLayer, {}, cellTool.session.value, 
+            CellToolMode.NOOP, cellTool.sessionWidgetDiv, cellTool.icon.value);
         }
       }
     });

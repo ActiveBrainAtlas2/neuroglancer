@@ -160,6 +160,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
         }
 
         const ref = selectedAnnotationLayer.source.getReference(selectedAnnotationId);
+        console.log(ref.value, AnnotationType.VOLUME);
         if (!ref.value || ref.value.type !== AnnotationType.VOLUME) {
           StatusMessage.showTemporaryMessage("Please select and pin a volume annotation in current layer to start editing");
           if (ref) ref.dispose();
@@ -221,7 +222,7 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       defaultOption.disabled = true;
       defaultOption.selected = true;
       landmarkDropdown.add(defaultOption);
-      getLandmarkList().then(function(result) {
+      getLandmarkList(AnnotationType.VOLUME).then(function(result) {
         const n_landmark = result.length
         for (let i = 0; i < n_landmark; i++){
           const landmarki = result[i];

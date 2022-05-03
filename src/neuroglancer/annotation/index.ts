@@ -52,7 +52,9 @@ export enum AnnotationType {
   AXIS_ALIGNED_BOUNDING_BOX,
   ELLIPSOID,
   POLYGON,
-  VOLUME
+  VOLUME,
+  COM,
+  CELL
 }
 
 export const annotationTypes = [
@@ -62,6 +64,8 @@ export const annotationTypes = [
   AnnotationType.ELLIPSOID,
   AnnotationType.POLYGON,
   AnnotationType.VOLUME,
+  AnnotationType.COM,
+  AnnotationType.CELL,
 ];
 
 export interface AnnotationPropertySpecBase {
@@ -458,7 +462,18 @@ export interface Volume extends Collection {
   type: AnnotationType.VOLUME;
 }
 
-export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid|Polygon|Volume;
+export interface Com extends AnnotationBase {
+  point: Float32Array;
+  type: AnnotationType.COM;
+}
+
+export interface Cell extends AnnotationBase {
+  point: Float32Array;
+  category?: string|undefined;
+  type: AnnotationType.CELL;
+}
+
+export type Annotation = Line|Point|AxisAlignedBoundingBox|Ellipsoid|Polygon|Volume|Com|Cell;
 
 export interface AnnotationTypeHandler<T extends Annotation = Annotation> {
   icon: string;
@@ -701,6 +716,66 @@ export const annotationTypeHandlers: Record<AnnotationType, AnnotationTypeHandle
     },
     visitGeometry(annotation: Volume, callback) {
       callback(annotation.source, false);
+    },
+  },
+  [AnnotationType.COM]: {
+    icon: 'COM',
+    description: 'COM',
+    toJSON: (annotation: Com) => {
+      return {
+        point: Array.from(annotation.point),
+      };
+    },
+    restoreState: (annotation: Com, obj: any, rank: number) => {
+      annotation.point = verifyObjectProperty(
+          obj, 'point', x => parseFixedLengthArray(new Float32Array(rank), x, verifyFiniteFloat));
+    },
+    serializedBytes: rank => rank * 4,
+    serialize:
+        (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number,
+         annotation: Com) => {
+          serializeFloatVector(buffer, offset, isLittleEndian, rank, annotation.point);
+        },
+    deserialize:
+        (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, id: string):
+            Com => {
+              const point = new Float32Array(rank);
+              deserializeFloatVector(buffer, offset, isLittleEndian, rank, point);
+              return {type: AnnotationType.COM, point, id, properties: []};
+            },
+    visitGeometry(annotation: Com, callback) {
+      callback(annotation.point, false);
+    },
+  },
+  [AnnotationType.CELL]: {
+    icon: 'CELL',
+    description: 'Cell',
+    toJSON: (annotation: Cell) => {
+      return {
+        point: Array.from(annotation.point),
+        category: annotation.category
+      };
+    },
+    restoreState: (annotation: Cell, obj: any, rank: number) => {
+      annotation.point = verifyObjectProperty(
+          obj, 'point', x => parseFixedLengthArray(new Float32Array(rank), x, verifyFiniteFloat));
+      annotation.category = verifyObjectProperty(obj, 'category', verifyOptionalString);
+    },
+    serializedBytes: rank => rank * 4,
+    serialize:
+        (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number,
+         annotation: Cell) => {
+          serializeFloatVector(buffer, offset, isLittleEndian, rank, annotation.point);
+        },
+    deserialize:
+        (buffer: DataView, offset: number, isLittleEndian: boolean, rank: number, id: string):
+            Cell => {
+              const point = new Float32Array(rank);
+              deserializeFloatVector(buffer, offset, isLittleEndian, rank, point);
+              return {type: AnnotationType.CELL, point, id, properties: []};
+            },
+    visitGeometry(annotation: Cell, callback) {
+      callback(annotation.point, false);
     },
   },
 };
@@ -1286,7 +1361,7 @@ function serializeAnnotations(
 }
 
 export class AnnotationSerializer {
-  annotations: [Point[], Line[], AxisAlignedBoundingBox[], Ellipsoid[], Polygon[], Volume[]] = [[], [], [], [], [], []];
+  annotations: [Point[], Line[], AxisAlignedBoundingBox[], Ellipsoid[], Polygon[], Volume[], Com[], Cell[]] = [[], [], [], [], [], [], [], []];
   constructor(public propertySerializer: AnnotationPropertySerializer) {}
   add(annotation: Annotation) {
     (<Annotation[]>this.annotations[annotation.type]).push(annotation);
