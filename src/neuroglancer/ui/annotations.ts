@@ -640,7 +640,7 @@ export class AnnotationLayerView extends Tab {
     this.virtualList.element.title = bindings.describe();
     this.registerDisposer(this.displayState.hoverState.changed.add(() => this.updateHoverView()));
     this.registerDisposer(
-        this.selectedAnnotationState.changed.add(() => this.updateSelectionView()));
+        this.selectedAnnotationState.changed.add(() => this.updateSelectionView(true)));
     this.registerDisposer(this.layer.localCoordinateSpace.changed.add(() => {
       this.updateCoordinateSpace();
       this.updateView();
@@ -710,7 +710,7 @@ export class AnnotationLayerView extends Tab {
     return {annotationId, annotationLayerState, pin};
   }, this.layer.manager.root.selectionState, this.layer.manager.root.selectionState.pin);
 
-  private updateSelectionView() {
+  private updateSelectionView(selectionStateUpdate : boolean = false) {
     const selectionState = this.selectedAnnotationState.value;
     const {previousSelectedState} = this;
     if (previousSelectedState === selectionState ||
@@ -726,6 +726,9 @@ export class AnnotationLayerView extends Tab {
     const reference = selectionState.annotationLayerState.source.getNonDummyAnnotationReference(selectionState.annotationId);
     if (reference.value === null) return;
     const annotationId = reference.value!.id;
+    if (selectionState.pin && selectionStateUpdate) {
+      selectionState.annotationLayerState.source.makeAllParentsVisible(annotationId);
+    }
     const element = this.getRenderedAnnotationListElement(
         selectionState.annotationLayerState, annotationId,
         /*scrollIntoView=*/ selectionState.pin);
@@ -885,7 +888,11 @@ export class AnnotationLayerView extends Tab {
     if (info !== undefined && info.idToIndex.get(annotation.id)) return;
     if (info !== undefined) {
       let index: number;
-      if (annotation.parentAnnotationId) {
+      if (annotation.parentAnnotationId && annotation.type === AnnotationType.POLYGON) {
+        const insertIndex = this.getSortedIndexBasedOnPolygonSection(annotation, info, state);
+        index = (insertIndex !== undefined)? insertIndex : info.annotations.length;
+      }
+      else if (annotation.parentAnnotationId) {
         const parentIndex = info.idToIndex.get(annotation.parentAnnotationId);
         index = (parentIndex !== undefined)? parentIndex + 1 : info.annotations.length;
       } else {
@@ -904,6 +911,53 @@ export class AnnotationLayerView extends Tab {
           [{retainCount: spliceStart, deleteCount: 0, insertCount: 1}]);
     }
     this.resetOnUpdate();
+  }
+
+  private getSortedIndexBasedOnPolygonSection(annotation: Annotation, info: AnnotationLayerViewAttachedState,
+    state: AnnotationLayerState): number | undefined {
+    if (annotation.type !== AnnotationType.POLYGON || !annotation.parentAnnotationId ) return undefined;
+    const parentRef = state.source.getReference(annotation.parentAnnotationId);
+    const zCoordinate = getZCoordinate((<Polygon>annotation).source);
+    if (!parentRef.value || !zCoordinate) {
+      parentRef.dispose();
+      return undefined;
+    }
+    const parAnn = <Collection>parentRef.value;
+    const childAnnList :Annotation[] = [];
+
+    const parentIdx = info.idToIndex.get(parAnn.id);
+    if (parentIdx === undefined) return undefined;
+    for(let i = parentIdx + 1; i < info.annotations.length; i++) {
+      if (info.annotations[i].parentAnnotationId === parAnn.id) {
+        childAnnList.push(info.annotations[i]);
+      }
+    }
+    if (childAnnList.length === 0) {
+      parentRef.dispose();
+      return parentIdx + 1;
+    }
+    let prevZ = -Infinity;
+    for (let i = 0; i < childAnnList.length; i++) {
+      const curZCoordinate = getZCoordinate((<Polygon>(childAnnList[i])).source);
+      if (curZCoordinate === undefined) return undefined;
+      if (prevZ <= zCoordinate && zCoordinate <= curZCoordinate) {
+        return info.idToIndex.get(childAnnList[i].id);
+      }
+      prevZ = curZCoordinate;
+    }
+    let lastIndex = info.idToIndex.get(childAnnList[childAnnList.length - 1].id);
+    if (lastIndex === undefined) {
+      parentRef.dispose();
+      return undefined;
+    }
+    lastIndex++;
+    for (let i = lastIndex; i < info.annotations.length; i++) {
+      if (info.annotations[i].parentAnnotationId === childAnnList[childAnnList.length - 1].id) {
+        lastIndex = i + 1;
+      }
+    }
+    parentRef.dispose();
+    return lastIndex;
   }
 
   private updateAnnotationElement(annotation: Annotation, state: AnnotationLayerState) {
@@ -990,6 +1044,18 @@ export class AnnotationLayerView extends Tab {
     if (isTypeCollection(annotation)) {
       const collection = <Collection>annotation;
       if (collection.childrenVisible) {
+        const sortedChildAnnotationIds :string[] = Object.assign([], collection.childAnnotationIds);
+        if (collection.type === AnnotationType.POLYGON) {
+          sortedChildAnnotationIds.sort((id1: string, id2: string): number => {
+            const ref1 = state.source.getReference(id1);
+            const ref2 = state.source.getReference(id2);
+            if (!ref1.value || !ref2.value) return 0;
+            const z1 = getZCoordinate((<Polygon>(ref1.value)).source);
+            const z2 = getZCoordinate((<Polygon>(ref2.value)).source);
+            if (z1 === undefined || z2 === undefined) return 0;
+            return z1 - z2;
+          });
+        }
         for (let i = 0; annotation && i < collection.childAnnotationIds!.length; i++) {
           annotationList = [...annotationList, ...this.getAllAnnotationsUnderRoot(collection.childAnnotationIds[i], state)];
         }
@@ -1059,7 +1125,7 @@ export class AnnotationLayerView extends Tab {
               if (layerDim !== -1) {
                 const coord = Math.floor(layerPosition[layerDim]);
                 const coordElement = document.createElement('div');
-                const text = coord.toString()
+                const text = (annotation.type === AnnotationType.VOLUME)? '' : coord.toString();
                 coordElement.textContent = text;
                 coordElement.classList.add('neuroglancer-annotation-coordinate');
                 coordElement.style.gridColumn = `dim ${i + 1}`;
@@ -1446,7 +1512,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
         this.sourcePosition = this.sourceMouseState.position.slice();
         const annotation = this.getInitialAnnotation(mouseState, annotationLayer);
         if (parentRef) {
-          annotation.description = parentRef.value!.description;
+          //annotation.description = parentRef.value!.description;
           annotation.properties = Object.assign([], parentRef.value!.properties);
         }
         const reference = annotationLayer.source.add(annotation, /*commit=*/ false, parentRef);

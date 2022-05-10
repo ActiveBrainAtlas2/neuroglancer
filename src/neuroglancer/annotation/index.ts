@@ -1116,15 +1116,6 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     if (!reference.value) return;
     const newAnn = {...reference.value, description};
     this.update(reference, newAnn);
-
-    if (isTypeCollection(newAnn)) {
-      const collection = <Collection>newAnn;
-      for (let i = 0; i < collection.childAnnotationIds.length; i++) {
-        const childRef = this.getReference(collection.childAnnotationIds[i]);
-        this.updateDescription(childRef, description);
-        childRef.dispose();
-      }
-    }
   }
 
   private getAllAnnsUnderRoot(annotationId: AnnotationId) : Annotation[] {
@@ -1166,6 +1157,31 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
     reference.dispose();
     return;
+  }
+
+  makeAllParentsVisible(annotationId: AnnotationId) : void {
+    const reference = this.getReference(annotationId);
+    if (!reference.value) {
+      reference.dispose();
+      return;
+    }
+    const annotation = reference.value;
+    if (annotation.parentAnnotationId) {
+      this.makeAllParentsVisible(annotation.parentAnnotationId);
+      const parentRef = this.getReference(annotation.parentAnnotationId);
+      if (parentRef.value && isTypeCollection(parentRef.value)) {
+        const newParentAnn = <Collection>{...parentRef.value};
+        newParentAnn.childrenVisible = true;
+        parentRef.value = <Annotation>newParentAnn;
+        this.annotationMap.set(newParentAnn.id, <Annotation>newParentAnn);
+        parentRef.changed.dispatch();
+        for (let childId of newParentAnn.childAnnotationIds) {
+          this.getAllAnnsUnderRootToDisplay(childId, true);
+        }
+      }
+      parentRef.dispose();
+    }
+    reference.dispose();
   }
 
   references = new Map<AnnotationId, Borrowed<AnnotationReference>>();
