@@ -478,6 +478,12 @@ export class Viewer extends RefCounted implements ViewerState {
     this.registerDisposer(setupPositionDropHandlers(element, this.navigationState.position));
 
     this.state = new TrackableViewerState(this);
+    const {crossSectionDepthRange} = this;
+    const {coordinateSpace} = this;
+    this.registerDisposer(this.coordinateSpace.changed.add(() => {
+      const {scales} = coordinateSpace.value;
+      crossSectionDepthRange.value = (scales[2])/(2*scales[0]);
+    }));
   }
 
   private updateShowBorders() {
