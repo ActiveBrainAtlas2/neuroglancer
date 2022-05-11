@@ -20,6 +20,7 @@
 
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {ActionEvent, dispatchEventWithModifiers, EventActionMap, EventActionMapInterface, registerActionListener} from 'neuroglancer/util/event_action_map';
+import { isFirefox, isMac } from './deviceTypes';
 
 export class MouseEventBinder<EventMap extends EventActionMapInterface> extends RefCounted {
   private dispatch(baseIdentifier: string, event: MouseEvent) {
@@ -43,7 +44,12 @@ export class MouseEventBinder<EventMap extends EventActionMapInterface> extends 
     });
     this.registerEventListener(target, 'mousedown', (event: MouseEvent) => {
       if (commonHandler !== undefined) commonHandler(event);
-      this.dispatch(`mousedown${event.button}`, event);
+      if (isFirefox() && isMac() && event.ctrlKey) {
+        const mouseType = (event.buttons === 1)? 0 : event.button;
+        this.dispatch(`mousedown${mouseType}`, event);
+      } else {
+        this.dispatch(`mousedown${event.button}`, event);
+      }
     });
     this.registerEventListener(target, 'mouseup', (event: MouseEvent) => {
       if (commonHandler !== undefined) commonHandler(event);
