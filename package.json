@@ -76,7 +76,7 @@
     "firebase": "^9.8.1",
     "gl-matrix": "3.1.0",
     "glsl-editor": "^1.0.0",
-    "ikonate": "^1.1.1",
+    "ikonate": "mikolajdobrucki/ikonate#a86b4107c6ec717e7877f880a930d1ccf0b59d89",
     "lodash": "^4.17.21",
     "nifti-reader-js": "^0.5.4",
     "node": "^17.7.2",
