@@ -129,6 +129,7 @@ export class StateAPI {
 
         return fetchOk(url, {
             method: 'GET',
+            credentials: 'include',
         }).then(response => {
             return response.json();
         }).then(json => {
