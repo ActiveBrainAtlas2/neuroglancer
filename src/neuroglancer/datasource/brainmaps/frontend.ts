@@ -15,14 +15,13 @@
  */
 
 import {AnnotationType, makeDataBoundsBoundingBoxAnnotationSet} from 'neuroglancer/annotation';
-import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
-import {AnnotationGeometryChunkSource} from 'neuroglancer/annotation/frontend_source';
+import {AnnotationGeometryChunkSource, MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
 import {ChunkManager, WithParameters} from 'neuroglancer/chunk_manager/frontend';
 import {BoundingBox, CoordinateSpace, makeCoordinateSpace, makeIdentityTransform, makeIdentityTransformedBoundingBox} from 'neuroglancer/coordinate_transform';
 import {CredentialsProvider} from 'neuroglancer/credentials_provider';
 import {WithCredentialsProvider} from 'neuroglancer/credentials_provider/chunk_source_frontend';
 import {CompleteUrlOptions, DataSource, DataSourceProvider, GetDataSourceOptions} from 'neuroglancer/datasource';
-import {BrainmapsCredentialsProvider, BrainmapsInstance, OAuth2Credentials, makeRequest} from 'neuroglancer/datasource/brainmaps/api';
+import {BrainmapsCredentialsProvider, BrainmapsInstance, makeRequest, OAuth2Credentials} from 'neuroglancer/datasource/brainmaps/api';
 import {AnnotationSourceParameters, AnnotationSpatialIndexSourceParameters, ChangeSpec, MeshSourceParameters, MultiscaleMeshInfo, MultiscaleMeshSourceParameters, SingleMeshInfo, SkeletonSourceParameters, VolumeChunkEncoding, VolumeSourceParameters} from 'neuroglancer/datasource/brainmaps/base';
 import {VertexPositionFormat} from 'neuroglancer/mesh/base';
 import {MeshSource, MultiscaleMeshSource} from 'neuroglancer/mesh/frontend';
@@ -36,7 +35,7 @@ import {transposeNestedArrays} from 'neuroglancer/util/array';
 import {applyCompletionOffset, completeQueryStringParametersFromTable, CompletionWithDescription, getPrefixMatches, getPrefixMatchesWithDescriptions} from 'neuroglancer/util/completion';
 import {Borrowed, Owned} from 'neuroglancer/util/disposable';
 import {mat4, vec3} from 'neuroglancer/util/geom';
-import {parseArray, parseQueryStringParameters, parseXYZ, verifyEnumString, verifyFiniteFloat, verifyFinitePositiveFloat, verifyMapKey, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyOptionalString, verifyPositiveInt, verifyString} from 'neuroglancer/util/json';
+import {parseArray, parseQueryStringParameters, parseXYZ, verifyEnumString, verifyFiniteFloat, verifyFinitePositiveFloat, verifyInt, verifyMapKey, verifyObject, verifyObjectProperty, verifyOptionalObjectProperty, verifyOptionalString, verifyPositiveInt, verifyString} from 'neuroglancer/util/json';
 import {getObjectId} from 'neuroglancer/util/object_id';
 import {defaultStringCompare} from 'neuroglancer/util/string';
 
@@ -294,6 +293,7 @@ export class MultiscaleVolumeInfo {
 export interface GetBrainmapsVolumeOptions {
   encoding?: VolumeChunkEncoding;
   chunkLayoutPreference?: ChunkLayoutPreference;
+  jpegQuality: number;
 }
 
 export class MultiscaleVolumeChunkSource extends GenericMultiscaleVolumeChunkSource {
@@ -309,6 +309,7 @@ export class MultiscaleVolumeChunkSource extends GenericMultiscaleVolumeChunkSou
   }
 
   encoding: VolumeChunkEncoding|undefined;
+  jpegQuality: number;
   chunkLayoutPreference: ChunkLayoutPreference|undefined;
   constructor(
       chunkManager: ChunkManager, public instance: BrainmapsInstance,
@@ -317,6 +318,7 @@ export class MultiscaleVolumeChunkSource extends GenericMultiscaleVolumeChunkSou
       options: GetBrainmapsVolumeOptions) {
     super(chunkManager);
     this.encoding = options.encoding;
+    this.jpegQuality = options.jpegQuality;
     this.chunkLayoutPreference = options.chunkLayoutPreference;
 
     // Infer the VolumeType from the data type and number of channels.
@@ -329,7 +331,8 @@ export class MultiscaleVolumeChunkSource extends GenericMultiscaleVolumeChunkSou
 
   getSources(volumeSourceOptions: VolumeSourceOptions) {
     let encoding = VolumeChunkEncoding.RAW;
-    if (this.dataType === DataType.UINT64 && this.volumeType === VolumeType.SEGMENTATION) {
+    if ((this.dataType === DataType.UINT64 || this.dataType === DataType.UINT32) &&
+        this.volumeType === VolumeType.SEGMENTATION && this.encoding !== VolumeChunkEncoding.RAW) {
       encoding = VolumeChunkEncoding.COMPRESSED_SEGMENTATION;
     } else if (
         this.volumeType === VolumeType.IMAGE && this.dataType === DataType.UINT8 &&
@@ -338,6 +341,8 @@ export class MultiscaleVolumeChunkSource extends GenericMultiscaleVolumeChunkSou
         encoding = VolumeChunkEncoding.JPEG;
       }
     }
+
+    const jpegQuality = encoding === VolumeChunkEncoding.JPEG ? this.jpegQuality : undefined;
 
     const baseScale = this.scales[0];
     const {upperVoxelBound: baseUpperVoxelBound} = baseScale;
@@ -384,6 +389,7 @@ export class MultiscaleVolumeChunkSource extends GenericMultiscaleVolumeChunkSou
                   'changeSpec': this.changeSpec,
                   'scaleIndex': scaleIndex,
                   'encoding': encoding,
+                  'jpegQuality': jpegQuality,
                   'instance': this.instance,
                 }
               }),
@@ -536,6 +542,11 @@ export class BrainmapsAnnotationSource extends MultiscaleAnnotationSourceBase {
     this.credentialsProvider = this.registerDisposer(options.credentialsProvider.addRef());
   }
 
+  hasNonSerializedProperties() {
+    // Has description field.
+    return true;
+  }
+
   getSources(): SliceViewSingleResolutionSource<AnnotationGeometryChunkSource>[][] {
     const {upperVoxelBound} = this.parameters;
     const spec = makeSliceViewChunkSpecification({
@@ -571,6 +582,10 @@ const supportedQueryParameters = [
       {value: 'isotropic', description: ''},
       {value: 'flat', description: ''},
     ]
+  },
+  {
+    key: {value: 'jpegQuality', description: 'JPEG quality (1 to 100)'},
+    values: [],
   },
 ];
 
@@ -621,9 +636,16 @@ export class BrainmapsDataSource extends DataSourceProvider {
     verifyObject(parameters);
     const encoding = verifyOptionalObjectProperty(
         parameters, 'encoding', x => verifyEnumString(x, VolumeChunkEncoding));
+    const jpegQuality = verifyOptionalObjectProperty(parameters, 'jpegQuality', x => {
+      const quality = verifyInt(x);
+      if (quality < 1 || quality > 100)
+        throw new Error(`Expected integer in range [1, 100], but received: ${x}`);
+      return quality;
+    }, 70);
     const chunkLayoutPreference = verifyOptionalObjectProperty(
         parameters, 'chunkLayout', x => verifyEnumString(x, ChunkLayoutPreference));
-    const brainmapsOptions: GetBrainmapsVolumeOptions = {encoding, chunkLayoutPreference};
+    const brainmapsOptions:
+        GetBrainmapsVolumeOptions = {encoding, chunkLayoutPreference, jpegQuality};
     return options.chunkManager.memoize.getUncounted(
         {type: 'brainmaps:get', instance: this.instance, volumeId, changeSpec, brainmapsOptions},
         async () => {

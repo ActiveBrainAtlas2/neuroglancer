@@ -38,7 +38,7 @@ import { makeAddButton } from 'neuroglancer/widget/add_button';
 import { CoordinateSpaceTransformWidget } from 'neuroglancer/widget/coordinate_transform';
 import { AutocompleteTextInput, makeCompletionElementWithDescription } from 'neuroglancer/widget/multiline_autocomplete';
 import { Tab } from 'neuroglancer/widget/tab_view';
-import { FetchTransformationWidget } from 'src/neuroglancer/widget/fetch_transformation';
+import {FetchTransformationWidget} from 'src/neuroglancer/widget/fetch_transformation';
 
 class SourceUrlAutocomplete extends AutocompleteTextInput {
     dataSourceView: DataSourceView;
@@ -237,7 +237,7 @@ export class DataSourceView extends RefCounted {
     /* START OF CHANGE: Retrieve Matrix Button */
     private fetchMatrixWidget: FetchTransformationWidget | undefined;
     /* END OF CHANGE: Retrieve Matrix Button */
-
+   
     constructor(public tab: Borrowed<LayerDataSourcesTab>, public source: Borrowed<LayerDataSource>) {
         super();
         const urlInput = this.urlInput = this.registerDisposer(new SourceUrlAutocomplete(this));

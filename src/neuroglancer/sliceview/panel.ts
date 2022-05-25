@@ -421,6 +421,18 @@ export class SliceViewPanel extends RenderedDataPanel {
       }
     });
 
+    registerActionListener(
+        element, 'rotate-in-plane-via-touchrotate', (e: ActionEvent<TouchRotateInfo>) => {
+          const {detail} = e;
+          const {mouseState} = this.viewer;
+          this.handleMouseMove(detail.centerX, detail.centerY);
+          if (mouseState.updateUnconditionally()) {
+            this.navigationState.pose.rotateAbsolute(
+                this.sliceView.projectionParameters.value.viewportNormalInCanonicalCoordinates,
+                detail.angle - detail.prevAngle, mouseState.position);
+          }
+        });
+
     this.registerDisposer(sliceView);
     // Create visible layer tracker after registering SliceView, to ensure it is destroyed before
     // SliceView backend is destroyed.
@@ -595,28 +607,40 @@ export class SliceViewPanel extends RenderedDataPanel {
         data, 0, 4, glWindowX, glWindowY, pickingData.viewportWidth, pickingData.viewportHeight);
     const {viewportWidth, viewportHeight} = pickingData;
     const numOffsets = pickOffsetSequence.length;
-    const setStateFromRelative = (relativeX: number, relativeY: number, pickId: number) => {
-      const x = glWindowX + relativeX - pickRadius;
-      const y = glWindowY + relativeY - pickRadius;
+    const {value: voxelCoordinates} = this.navigationState.position;
+    const rank = voxelCoordinates.length;
+    const displayDimensions = this.navigationState.pose.displayDimensions.value;
+    const {displayRank, displayDimensionIndices} = displayDimensions;
+
+    const setPosition = (xOffset: number, yOffset: number, position: Float32Array) => {
+      const x = glWindowX + xOffset;
+      const y = glWindowY + yOffset;
       tempVec3[0] = 2.0 * x / viewportWidth - 1.0;
       tempVec3[1] = 2.0 * y / viewportHeight - 1.0;
       tempVec3[2] = 0;
       vec3.transformMat4(tempVec3, tempVec3, pickingData.invTransform);
+      position.set(voxelCoordinates);
+      for (let i = 0; i < displayRank; ++i) {
+        position[displayDimensionIndices[i]] = tempVec3[i];
+      }
+    };
+
+    let {unsnappedPosition} = mouseState;
+    if (unsnappedPosition.length !== rank) {
+      unsnappedPosition = mouseState.unsnappedPosition = new Float32Array(rank);
+    }
+    mouseState.coordinateSpace = this.navigationState.coordinateSpace.value;
+    mouseState.displayDimensions = displayDimensions;
+
+    setPosition(0, 0, unsnappedPosition);
+
+    const setStateFromRelative = (relativeX: number, relativeY: number, pickId: number) => {
       let {position: mousePosition} = mouseState;
-      const {value: voxelCoordinates} = this.navigationState.position;
-      const rank = voxelCoordinates.length;
       if (mousePosition.length !== rank) {
         mousePosition = mouseState.position = new Float32Array(rank);
       }
-      mousePosition.set(voxelCoordinates);
-      mouseState.coordinateSpace = this.navigationState.coordinateSpace.value;
-      const displayDimensions = this.navigationState.pose.displayDimensions.value;
-      const {displayRank, displayDimensionIndices} = displayDimensions;
-      for (let i = 0; i < displayRank; ++i) {
-        mousePosition[displayDimensionIndices[i]] = tempVec3[i];
-      }
+      setPosition(relativeX - pickRadius, relativeY - pickRadius, mousePosition);
       this.pickIDs.setMouseState(mouseState, pickId);
-      mouseState.displayDimensions = displayDimensions;
       mouseState.setActive(true);
     };
     for (let i = 0; i < numOffsets; ++i) {

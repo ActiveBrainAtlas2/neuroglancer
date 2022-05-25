@@ -257,7 +257,7 @@ transformVector<Out extends TypedArray, Matrix extends TypedArray, Vector extend
  export function dimensionTransform(matrix: Float64Array, newRank: number) {
   const oldRank = 3;
 
-  let newMatrix = createIdentity(Float64Array, (newRank + 1));
+  const newMatrix = createIdentity(Float64Array, (newRank + 1));
   for (let i = 0; i < oldRank; i++) {
     newMatrix[newRank * (newRank + 1) + i] = matrix[oldRank * (oldRank + 1) + i];
     for (let j = 0; j < oldRank; j++) {

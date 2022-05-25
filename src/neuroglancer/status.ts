@@ -25,7 +25,6 @@ export type Delay = boolean | number;
 export class StatusMessage {
   element: HTMLElement;
   private timer: number|null;
-  private container: HTMLElement
   constructor(delay: Delay = false) {
     if (statusContainer === null) {
       statusContainer = document.createElement('ul');
@@ -37,8 +36,8 @@ export class StatusMessage {
         document.body.appendChild(statusContainer);
       }
     }
-    let container = document.createElement('li');
-    this.container = container;
+    let element = document.createElement('li');
+    this.element = element;
     if (delay === true) {
       delay = DEFAULT_STATUS_DELAY;
     }
@@ -48,22 +47,11 @@ export class StatusMessage {
     } else {
       this.timer = null;
     }
-    let element = document.createElement('div')
-    element.className = 'container';
-    this.element = element;
-    container.appendChild(element);
-    let button = document.createElement('button');
-    button.className = 'close';
-    button.innerHTML = '&times;';
-    button.addEventListener('click', () => {
-      this.dispose();
-    });
-    container.appendChild(button);
-    statusContainer.appendChild(container);
+    statusContainer.appendChild(element);
   }
   dispose() {
-    statusContainer!.removeChild(this.container);
-    this.container = <any>undefined;
+    statusContainer!.removeChild(this.element);
+    this.element = <any>undefined;
     if (this.timer !== null) {
       clearTimeout(this.timer);
     }
@@ -85,7 +73,7 @@ export class StatusMessage {
       clearTimeout(this.timer);
       this.timer = null;
     }
-    this.container.style.display = value ? 'block' : 'none';
+    this.element.style.display = value ? 'block' : 'none';
   }
 
   static forPromise<T>(
@@ -102,10 +90,8 @@ export class StatusMessage {
         msg = '' + reason;
       }
       let {errorPrefix = ''} = options;
-      if (status !== undefined) {
-        status.setErrorMessage(errorPrefix + msg);
-        status.setVisible(true);
-      }
+      status.setErrorMessage(errorPrefix + msg);
+      status.setVisible(true);
     });
     return promise;
   }

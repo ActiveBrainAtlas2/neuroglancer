@@ -22,17 +22,19 @@ import {WatchableRenderLayerTransform} from 'neuroglancer/render_coordinate_tran
 import {RenderScaleHistogram} from 'neuroglancer/render_scale_statistics';
 import {RenderLayer} from 'neuroglancer/renderlayer';
 import {getCssColor, SegmentColorHash} from 'neuroglancer/segment_color';
-import {forEachVisibleSegment, onVisibleSegmentsStateChanged, VISIBLE_SEGMENTS_STATE_PROPERTIES, VisibleSegmentsState} from 'neuroglancer/segmentation_display_state/base';
-import {SegmentLabelMap} from 'neuroglancer/segmentation_display_state/property_map';
+import {forEachVisibleSegment, onTemporaryVisibleSegmentsStateChanged, onVisibleSegmentsStateChanged, VISIBLE_SEGMENTS_STATE_PROPERTIES, VisibleSegmentsState} from 'neuroglancer/segmentation_display_state/base';
+import {InlineSegmentNumericalProperty, InlineSegmentProperty, PreprocessedSegmentPropertyMap} from 'neuroglancer/segmentation_display_state/property_map';
 import {SegmentationUserLayer} from 'neuroglancer/segmentation_user_layer';
 import {SharedWatchableValue} from 'neuroglancer/shared_watchable_value';
 import {TrackableAlphaValue} from 'neuroglancer/trackable_alpha';
-import {observeWatchable, TrackableValue, WatchableValueInterface} from 'neuroglancer/trackable_value';
+import {observeWatchable, registerNestedSync, TrackableValue, WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {isWithinSelectionPanel} from 'neuroglancer/ui/selection_details';
 import {Uint64Map} from 'neuroglancer/uint64_map';
 import {setClipboard} from 'neuroglancer/util/clipboard';
+import {useWhiteBackground} from 'neuroglancer/util/color';
 import {RefCounted} from 'neuroglancer/util/disposable';
-import {vec4} from 'neuroglancer/util/geom';
+import {measureElementClone} from 'neuroglancer/util/dom';
+import {kOneVec, vec3, vec4} from 'neuroglancer/util/geom';
 import {NullarySignal} from 'neuroglancer/util/signal';
 import {Uint64} from 'neuroglancer/util/uint64';
 import {withSharedVisibility} from 'neuroglancer/visibility_priority/frontend';
@@ -75,8 +77,8 @@ export class SegmentSelectionState extends RefCounted {
     if (value == null) {
       hasSelectedSegment = false;
     } else if (typeof value === 'number') {
-      newLow = newBaseLow = value;
-      newHigh = newBaseHigh = 0;
+      newLow = newBaseLow = (value >>> 0);
+      newHigh = newBaseHigh = value < 0 ? 0xffffffff : 0;
       hasSelectedSegment = true;
     } else if (value instanceof Uint64MapEntry) {
       const valueMapped = value.value || value.key;
@@ -96,8 +98,10 @@ export class SegmentSelectionState extends RefCounted {
       hasSelectedSegment = false;
     }
     if (!hasSelectedSegment) {
-      this.hasSelectedSegment = false;
-      this.changed.dispatch();
+      if (this.hasSelectedSegment) {
+        this.hasSelectedSegment = false;
+        this.changed.dispatch();
+      }
     } else if (
         hasSelectedSegment &&
         (!this.hasSelectedSegment || selectedSegment.low !== newLow ||
@@ -129,22 +133,42 @@ export class SegmentSelectionState extends RefCounted {
 }
 
 export interface SegmentationGroupState extends VisibleSegmentsState {
-  segmentColorHash: SegmentColorHash;
-  segmentStatedColors: Uint64Map;
   /**
    * Maximum length of base-10 representation of id seen.
    */
   maxIdLength: WatchableValueInterface<number>;
-  segmentLabelMap: WatchableValueInterface<SegmentLabelMap|undefined>;
+  segmentPropertyMap: WatchableValueInterface<PreprocessedSegmentPropertyMap|undefined>;
+}
+
+export interface SegmentationColorGroupState {
+  segmentColorHash: SegmentColorHash;
+  segmentStatedColors: Uint64Map;
+  segmentDefaultColor: WatchableValueInterface<vec3|undefined>;
 }
 
 export interface SegmentationDisplayState {
   segmentSelectionState: SegmentSelectionState;
   saturation: TrackableAlphaValue;
+  baseSegmentColoring: WatchableValueInterface<boolean>;
   segmentationGroupState: WatchableValueInterface<SegmentationGroupState>;
+  segmentationColorGroupState: WatchableValueInterface<SegmentationColorGroupState>;
 
   selectSegment: (id: Uint64, pin: boolean|'toggle') => void;
   filterBySegmentLabel: (id: Uint64) => void;
+  moveToSegment: (id: Uint64) => void;
+
+  // Indirect properties
+  hideSegmentZero: WatchableValueInterface<boolean>;
+  segmentColorHash: WatchableValueInterface<number>;
+  segmentStatedColors: WatchableValueInterface<Uint64Map>;
+  segmentDefaultColor: WatchableValueInterface<vec3|undefined>;
+}
+
+export function resetTemporaryVisibleSegmentsState(state: VisibleSegmentsState) {
+  state.useTemporarySegmentEquivalences.value = false;
+  state.useTemporaryVisibleSegments.value = false;
+  state.temporaryVisibleSegments.clear();
+  state.temporarySegmentEquivalences.clear();
 }
 
 /// Converts a segment id to a Uint64MapEntry or Uint64 (if Uint64MapEntry would add no additional
@@ -157,14 +181,14 @@ export function maybeAugmentSegmentId(
   let mapped: Uint64|undefined;
   let label: string|undefined;
   if (typeof value === 'number') {
-    id = new Uint64(value, 0);
+    id = new Uint64((value >>> 0), value < 0 ? 0xffffffff : 0);
   } else if (typeof value === 'string') {
     id = Uint64.parseString(value);
   } else {
     id = mustCopy ? value.clone() : value;
   }
   if (displayState == null) return id;
-  const {segmentEquivalences, segmentLabelMap: {value: segmentLabelMap}} =
+  const {segmentEquivalences, segmentPropertyMap: {value: segmentPropertyMap}} =
       displayState.segmentationGroupState.value;
   if (segmentEquivalences.size !== 0) {
     mappedValue = segmentEquivalences.get(id);
@@ -176,9 +200,7 @@ export function maybeAugmentSegmentId(
   } else {
     mappedValue = id;
   }
-  if (segmentLabelMap !== undefined) {
-    label = segmentLabelMap.get(mappedValue.toString());
-  }
+  label = segmentPropertyMap?.getSegmentLabel(mappedValue);
   if (label === undefined && mapped == undefined) {
     return id;
   }
@@ -214,22 +236,33 @@ export function bindSegmentListWidth(displayState: SegmentationDisplayState, ele
 const segmentWidgetTemplate = (() => {
   const template = document.createElement('div');
   template.classList.add('neuroglancer-segment-list-entry');
+  const stickyContainer = document.createElement('div');
+  stickyContainer.classList.add('neuroglancer-segment-list-entry-sticky');
+  template.appendChild(stickyContainer);
   const copyButton = makeCopyButton({
     title: `Copy segment ID`,
   });
   copyButton.classList.add('neuroglancer-segment-list-entry-copy');
-  const copyIndex = template.childElementCount;
-  template.appendChild(copyButton);
-  const visibleIndex = template.childElementCount;
+  const copyContainer = document.createElement('div');
+  copyContainer.classList.add('neuroglancer-segment-list-entry-copy-container');
+  const copyIndex = copyContainer.childElementCount;
+  copyContainer.appendChild(copyButton);
+  const copyContainerIndex = stickyContainer.childElementCount;
+  stickyContainer.appendChild(copyContainer);
+  const visibleIndex = stickyContainer.childElementCount;
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.title = 'Toggle segment visibility';
   checkbox.classList.add('neuroglancer-segment-list-entry-visible-checkbox');
-  template.appendChild(checkbox);
-  const idElement = document.createElement('span');
+  stickyContainer.appendChild(checkbox);
+  const idContainer = document.createElement('div');
+  idContainer.classList.add('neuroglancer-segment-list-entry-id-container');
+  const idContainerIndex = stickyContainer.childElementCount;
+  stickyContainer.appendChild(idContainer);
+  const idElement = document.createElement('div');
   idElement.classList.add('neuroglancer-segment-list-entry-id');
-  const idIndex = template.childElementCount;
-  template.appendChild(idElement);
+  const idIndex = idContainer.childElementCount;
+  idContainer.appendChild(idElement);
   const nameElement = document.createElement('span');
   nameElement.classList.add('neuroglancer-segment-list-entry-name');
   const labelIndex = template.childElementCount;
@@ -242,8 +275,10 @@ const segmentWidgetTemplate = (() => {
   template.appendChild(filterElement);
   return {
     template,
+    copyContainerIndex,
     copyIndex,
     visibleIndex,
+    idContainerIndex,
     idIndex,
     labelIndex,
     filterIndex,
@@ -255,16 +290,40 @@ const segmentWidgetTemplate = (() => {
 const segmentWidgetTemplateWithUnmapped = (() => {
   const t = segmentWidgetTemplate;
   const template = t.template.cloneNode(/*deep=*/ true) as HTMLDivElement;
-  const unmappedIdIndex = template.childElementCount;
-  const unmappedIdElement = template.children[t.idIndex].cloneNode(/*deep=*/ true) as HTMLElement;
+  const stickyContainer = template.children[0] as HTMLElement;
+  const idContainer = stickyContainer.children[t.idContainerIndex] as HTMLElement;
+  const unmappedIdIndex = idContainer.childElementCount;
+  const unmappedIdElement =
+      idContainer.children[t.idIndex].cloneNode(/*deep=*/ true) as HTMLElement;
   unmappedIdElement.classList.add('neuroglancer-segment-list-entry-unmapped-id');
-  template.appendChild(unmappedIdElement);
-  const unmappedCopyIndex = template.childElementCount;
-  template.appendChild(template.children[t.copyIndex].cloneNode(/*deep=*/ true));
+  idContainer.appendChild(unmappedIdElement);
+  const copyContainer = stickyContainer.children[t.copyContainerIndex] as HTMLElement;
+  const unmappedCopyIndex = copyContainer.childElementCount;
+  copyContainer.appendChild(copyContainer.children[t.copyIndex].cloneNode(/*deep=*/ true));
   return {...t, template, unmappedIdIndex, unmappedCopyIndex};
 })();
 
-type SegmentWidgetTemplate = typeof segmentWidgetTemplate;
+export type SegmentWidgetTemplate = typeof segmentWidgetTemplate;
+
+interface SegmentWidgetWithExtraColumnsTemplate extends SegmentWidgetTemplate {
+  numericalPropertyIndices: number[];
+}
+
+export function segmentWidgetTemplateWithExtraColumns(numExtraColumns: number):
+    SegmentWidgetWithExtraColumnsTemplate {
+  let origTemplate = segmentWidgetTemplate;
+  const templateElement = origTemplate.template.cloneNode(/*deep=*/ true) as HTMLDivElement;
+  const numericalPropertyIndices: number[] = [];
+  for (let i = 0; i < numExtraColumns; ++i) {
+    numericalPropertyIndices.push(templateElement.childElementCount);
+    const child = document.createElement('div');
+    child.classList.add('neuroglancer-segment-list-entry-extra-property');
+    child.style.width =
+        `max(var(--neuroglancer-column-${i}-width), var(--neuroglancer-column-${i}-label-width))`;
+    templateElement.appendChild(child);
+  }
+  return {...origTemplate, template: templateElement, numericalPropertyIndices};
+}
 
 const cachedRegisterSegmentWidgetEventHandlers = new WeakMap<
     SegmentationDisplayState, (element: HTMLElement, template: SegmentWidgetTemplate) => void>();
@@ -293,20 +352,25 @@ function makeRegisterSegmentWidgetEventHandlers(displayState: SegmentationDispla
     displayState.segmentSelectionState.set(null);
   };
 
+  const getEntryElement = (event: Event): HTMLElement => {
+    return (event.currentTarget as HTMLElement).closest('.neuroglancer-segment-list-entry') as
+        HTMLElement;
+  };
+
   const copyHandler = (event: Event) => {
-    const entryElement = (event.currentTarget as HTMLElement).parentElement as HTMLElement;
+    const entryElement = getEntryElement(event);
     setClipboard(entryElement.dataset.id!);
     event.stopPropagation();
   };
 
   const unmappedCopyHandler = (event: Event) => {
-    const entryElement = (event.currentTarget as HTMLElement).parentElement as HTMLElement;
+    const entryElement = getEntryElement(event);
     setClipboard(entryElement.dataset.unmappedId!);
     event.stopPropagation();
   };
 
   const visibleCheckboxHandler = (event: Event) => {
-    const entryElement = (event.currentTarget as HTMLElement).parentElement as HTMLElement;
+    const entryElement = getEntryElement(event);
     const idString = entryElement.dataset.id!;
     const id = tempStatedColor;
     id.tryParseString(idString);
@@ -316,7 +380,7 @@ function makeRegisterSegmentWidgetEventHandlers(displayState: SegmentationDispla
   };
 
   const filterHandler = (event: Event) => {
-    const entryElement = (event.currentTarget as HTMLElement).parentElement as HTMLElement;
+    const entryElement = getEntryElement(event);
     const idString = entryElement.dataset.id!;
     const id = tempStatedColor
     id.tryParseString(idString);
@@ -324,26 +388,40 @@ function makeRegisterSegmentWidgetEventHandlers(displayState: SegmentationDispla
     event.stopPropagation();
   };
 
+  const onMousedown = (event: MouseEvent) => {
+    if (event.button !== 2 || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) {
+      return;
+    }
+    const entryElement = event.currentTarget as HTMLElement;
+    const idString = entryElement.dataset.id!;
+    const id = tempStatedColor
+    id.tryParseString(idString);
+    displayState.moveToSegment(id);
+  };
+
   return (element: HTMLElement, template: SegmentWidgetTemplate) => {
     const {children} = element;
+    const stickyChildren = children[0].children;
+    element.addEventListener('mousedown', onMousedown);
+    const copyContainer = stickyChildren[template.copyContainerIndex] as HTMLElement;
     if (template.unmappedCopyIndex !== -1) {
-      children[template.unmappedCopyIndex].addEventListener('click', unmappedCopyHandler);
+      copyContainer.children[template.unmappedCopyIndex].addEventListener(
+          'click', unmappedCopyHandler);
     }
-    children[template.copyIndex].addEventListener('click', copyHandler);
+    copyContainer.children[template.copyIndex].addEventListener('click', copyHandler);
     element.addEventListener('mouseenter', onMouseEnter);
     element.addEventListener('mouseleave', onMouseLeave);
-    children[template.visibleIndex].addEventListener('click', visibleCheckboxHandler);
+    stickyChildren[template.visibleIndex].addEventListener('click', visibleCheckboxHandler);
     children[template.filterIndex].addEventListener('click', filterHandler);
     element.addEventListener('action:select-position', selectHandler);
   };
 }
 
-export class SegmentWidgetFactory {
-  private template: SegmentWidgetTemplate;
+export class SegmentWidgetFactory<Template extends SegmentWidgetTemplate> {
   private registerEventHandlers: undefined|
       ((element: HTMLElement, template: SegmentWidgetTemplate) => void);
-  constructor(public displayState: SegmentationDisplayState|undefined, includeUnmapped: boolean) {
-    this.template = includeUnmapped ? segmentWidgetTemplateWithUnmapped : segmentWidgetTemplate;
+  constructor(
+      public displayState: SegmentationDisplayState|undefined, protected template: Template) {
     if (displayState !== undefined) {
       let r = cachedRegisterSegmentWidgetEventHandlers.get(displayState);
       if (r === undefined) {
@@ -352,6 +430,11 @@ export class SegmentWidgetFactory {
       }
       this.registerEventHandlers = r;
     }
+  }
+
+  static make(displayState: SegmentationDisplayState|undefined, includeUnmapped: boolean) {
+    return new SegmentWidgetFactory(
+        displayState, includeUnmapped ? segmentWidgetTemplateWithUnmapped : segmentWidgetTemplate);
   }
 
   get(rawId: Uint64|number): HTMLDivElement {
@@ -368,19 +451,29 @@ export class SegmentWidgetFactory {
     const mappedIdString = mapped.toString();
     container.dataset.id = mappedIdString;
     const {children} = container;
-    children[template.idIndex].textContent = mappedIdString;
+    const stickyChildren = children[0].children;
+    const idContainer = stickyChildren[template.idContainerIndex] as HTMLElement;
+    idContainer.children[template.idIndex].textContent = mappedIdString;
     const {unmappedIdIndex} = template;
     if (displayState !== undefined) {
       this.registerEventHandlers!(container, template);
     } else {
-      (children[template.visibleIndex] as HTMLElement).style.display = 'none';
+      (stickyChildren[template.visibleIndex] as HTMLElement).style.display = 'none';
     }
-    if (unmappedIdIndex !== -1 && !Uint64.equal(id, mapped)) {
-      const unmappedIdString = id.toString();
-      container.dataset.unmappedId = unmappedIdString;
-      children[unmappedIdIndex].textContent = unmappedIdString;
-      if (displayState !== undefined) {
-        updateIdStringWidth(displayState.segmentationGroupState.value.maxIdLength, unmappedIdString);
+    if (unmappedIdIndex !== -1) {
+      const unmappedIdElement = idContainer.children[unmappedIdIndex] as HTMLElement;
+      if (!Uint64.equal(id, mapped)) {
+        const unmappedIdString = id.toString();
+        container.dataset.unmappedId = unmappedIdString;
+        unmappedIdElement.textContent = unmappedIdString;
+        if (displayState !== undefined) {
+          updateIdStringWidth(
+              displayState.segmentationGroupState.value.maxIdLength, unmappedIdString);
+        }
+      } else {
+        unmappedIdElement.style.display = 'none';
+        const copyContainer = stickyChildren[template.copyContainerIndex] as HTMLElement;
+        (copyContainer.children[template.unmappedCopyIndex] as HTMLElement).style.display = 'none';
       }
     }
     children[template.labelIndex].textContent = normalizedId.label ?? '';
@@ -401,26 +494,147 @@ export class SegmentWidgetFactory {
 
   private updateWithId(container: HTMLElement, mapped: Uint64) {
     const {children} = container;
+    const stickyChildren = children[0].children;
     const {template} = this;
     const {displayState} = this;
     const {segmentSelectionState} = displayState!;
     const {visibleSegments} = displayState!.segmentationGroupState.value;
-    (children[template.visibleIndex] as HTMLInputElement).checked = visibleSegments.has(mapped);
+    (stickyChildren[template.visibleIndex] as HTMLInputElement).checked =
+        visibleSegments.has(mapped);
     container.dataset.selected = (segmentSelectionState.hasSelectedSegment &&
                                   Uint64.equal(segmentSelectionState.selectedSegment, mapped))
                                      .toString();
-    (children[template.idIndex] as HTMLElement).style.backgroundColor =
-        getCssColor(getBaseObjectColor(this.displayState, mapped));
+    const idContainer = stickyChildren[template.idContainerIndex] as HTMLElement;
+    setSegmentIdElementStyle(
+        (idContainer.children[template.idIndex] as HTMLElement),
+        getBaseObjectColor(this.displayState, mapped) as vec3);
     const {unmappedIdIndex} = template;
     if (unmappedIdIndex !== -1) {
-      (children[unmappedIdIndex] as HTMLElement).style.backgroundColor = 'white';
+      let unmappedIdString: string|undefined;
+      let color: vec3;
+      if (displayState!.baseSegmentColoring.value &&
+          (unmappedIdString = container.dataset.unmappedId) !== undefined) {
+        const unmappedId = tempStatedColor;
+        unmappedId.parseString(unmappedIdString);
+        color = getBaseObjectColor(this.displayState, unmappedId) as vec3;
+      } else {
+        color = kOneVec;
+      }
+      setSegmentIdElementStyle(idContainer.children[unmappedIdIndex] as HTMLElement, color);
     }
+  }
+}
+
+function setSegmentIdElementStyle(element: HTMLElement, color: vec3) {
+  element.style.backgroundColor = getCssColor(color);
+  element.style.color = useWhiteBackground(color) ? 'white' : 'black';
+}
+
+export class SegmentWidgetWithExtraColumnsFactory extends
+    SegmentWidgetFactory<SegmentWidgetWithExtraColumnsTemplate> {
+  segmentPropertyMap: PreprocessedSegmentPropertyMap|undefined;
+  numericalProperties: InlineSegmentNumericalProperty[];
+  numericalPropertyWidths: number[];
+  parentElement: HTMLElement;
+  constructor(
+      displayState: SegmentationDisplayState, parentElement: HTMLElement,
+      includeProperty: (property: InlineSegmentProperty) => boolean) {
+    const segmentPropertyMap = displayState.segmentationGroupState.value.segmentPropertyMap.value;
+    const numericalProperties =
+        (segmentPropertyMap?.numericalProperties ?? []).filter(includeProperty);
+    const template = segmentWidgetTemplateWithExtraColumns(numericalProperties.length);
+    super(displayState, template);
+    this.parentElement = parentElement;
+    this.segmentPropertyMap = segmentPropertyMap;
+    this.numericalProperties = numericalProperties;
+    const numericalPropertyWidths = this.numericalPropertyWidths =
+        new Array(this.numericalProperties.length);
+    numericalPropertyWidths.fill(0);
+  }
+
+  getWithNormalizedId(normalizedId: Uint64MapEntry): HTMLDivElement {
+    const container = super.getWithNormalizedId(normalizedId);
+    const {numericalProperties} = this;
+    const {numericalPropertyIndices} = this.template;
+    if (numericalPropertyIndices.length > 0) {
+      const index =
+          this.segmentPropertyMap?.getSegmentInlineIndex(normalizedId.value ?? normalizedId.key) ??
+          -1;
+      if (index !== -1) {
+        const {numericalPropertyWidths} = this;
+        for (let i = 0, n = numericalPropertyIndices.length; i < n; ++i) {
+          const value = numericalProperties[i].values[index];
+          if (!isNaN(value)) {
+            const s = value.toString();
+            const w = s.length;
+            if (w > numericalPropertyWidths[i]) {
+              numericalPropertyWidths[i] = w;
+              this.parentElement.style.setProperty(`--neuroglancer-column-${i}-width`, `${w}ch`);
+            }
+            container.children[numericalPropertyIndices[i]].textContent = s;
+          }
+        }
+      }
+    }
+    return container;
+  }
+
+  private makeHeaderLabel(id: string, widthProperty: string, parent: HTMLElement) {
+    const label = document.createElement('span');
+    label.textContent = id;
+    label.classList.add('neuroglancer-segment-list-header-label');
+    label.classList.add('neuroglancer-segment-list-header-label');
+    if (id === 'label') {
+      parent.style.textAlign = 'left';
+    }
+    const sortIcon = document.createElement('span');
+    sortIcon.classList.add('neuroglancer-segment-list-header-label-sort');
+    label.appendChild(sortIcon);
+    sortIcon.textContent = '▲';
+    const width = measureElementClone(label).width;
+    this.parentElement.style.setProperty(widthProperty, `${width}px`);
+    parent.appendChild(label);
+    return {id, label, sortIcon};
+  }
+
+  getHeader() {
+    const {template} = this;
+    const container = template.template.cloneNode(/*deep=*/ true) as HTMLDivElement;
+    const {children} = container;
+    const stickyChildren = children[0].children;
+    const copyContainer = stickyChildren[template.copyContainerIndex] as HTMLElement;
+    copyContainer.style.visibility = 'hidden';
+    (stickyChildren[template.visibleIndex] as HTMLElement).style.visibility = 'hidden';
+    (children[template.filterIndex] as HTMLElement).style.visibility = 'hidden';
+    const idContainer = stickyChildren[template.idContainerIndex] as HTMLElement;
+    const propertyLabels = [
+      this.makeHeaderLabel(
+          'id', '--neuroglancer-id-column-label-width',
+          idContainer.children[template.idIndex] as HTMLElement),
+      this.makeHeaderLabel(
+          'label', '--neuroglancer-label-column-label-width',
+          children[template.labelIndex] as HTMLElement),
+    ];
+    const {numericalProperties} = this;
+    const {numericalPropertyIndices} = this.template;
+    for (let i = 0, n = numericalPropertyIndices.length; i < n; ++i) {
+      const property = numericalProperties[i];
+      const headerLabel = this.makeHeaderLabel(
+          property.id, `--neuroglancer-column-${i}-label-width`,
+          container.children[numericalPropertyIndices[i]] as HTMLElement);
+      const {description} = property;
+      if (description) {
+        headerLabel.label.title = description;
+      }
+      propertyLabels.push(headerLabel);
+    }
+    return {container, propertyLabels};
   }
 }
 
 export function makeSegmentWidget(
     displayState: SegmentationDisplayState|undefined|null, normalizedId: Uint64MapEntry) {
-  const factory = new SegmentWidgetFactory(displayState ?? undefined, /*includeUnmapped=*/ true);
+  const factory = SegmentWidgetFactory.make(displayState ?? undefined, /*includeUnmapped=*/ true);
   return factory.getWithNormalizedId(normalizedId);
 }
 
@@ -439,20 +653,26 @@ export interface SegmentationDisplayState3D extends SegmentationDisplayStateWith
 }
 
 export function registerCallbackWhenSegmentationDisplayStateChanged(
-  displayState: SegmentationDisplayState, context: RefCounted, callback: () => void) {
-  const groupState = displayState.segmentationGroupState.value;
-  context.registerDisposer(groupState.segmentColorHash.changed.add(callback));
-  context.registerDisposer(groupState.visibleSegments.changed.add(callback));
+    displayState: SegmentationDisplayState, context: RefCounted, callback: () => void) {
+  context.registerDisposer(registerNestedSync((c, groupState) => {
+    onVisibleSegmentsStateChanged(c, groupState, callback);
+  }, displayState.segmentationGroupState));
+  context.registerDisposer(registerNestedSync((c, colorGroupState) => {
+    c.registerDisposer(colorGroupState.segmentColorHash.changed.add(callback));
+    c.registerDisposer(colorGroupState.segmentDefaultColor.changed.add(callback));
+  }, displayState.segmentationColorGroupState));
   context.registerDisposer(displayState.saturation.changed.add(callback));
-  context.registerDisposer(groupState.segmentEquivalences.changed.add(callback));
   context.registerDisposer(displayState.segmentSelectionState.changed.add(callback));
-  onVisibleSegmentsStateChanged(context, groupState, callback);
+  context.registerDisposer(displayState.baseSegmentColoring.changed.add(callback));
 }
 
 export function registerRedrawWhenSegmentationDisplayStateChanged(
     displayState: SegmentationDisplayState, renderLayer: {redrawNeeded: NullarySignal}&RefCounted) {
   const callback = renderLayer.redrawNeeded.dispatch;
   registerCallbackWhenSegmentationDisplayStateChanged(displayState, renderLayer, callback);
+  renderLayer.registerDisposer(registerNestedSync((c, groupState) => {
+    onTemporaryVisibleSegmentsStateChanged(c, groupState, callback);
+  }, displayState.segmentationGroupState));
 }
 
 export function registerRedrawWhenSegmentationDisplayStateWithAlphaChanged(
@@ -488,17 +708,24 @@ export function getBaseObjectColor(
     color.fill(1);
     return color;
   };
-  const groupState = displayState.segmentationGroupState.value;
-  const {segmentStatedColors} = groupState;
+  const colorGroupState = displayState.segmentationColorGroupState.value;
+  const {segmentStatedColors} = colorGroupState;
   if (segmentStatedColors.size !== 0 &&
-      groupState.segmentStatedColors.get(objectId, tempStatedColor)) {
+      colorGroupState.segmentStatedColors.get(objectId, tempStatedColor)) {
     // If displayState maps the ID to a color, use it
     color[0] = ((tempStatedColor.low & 0x0000ff)) / 255.0;
     color[1] = ((tempStatedColor.low & 0x00ff00) >>> 8) / 255.0;
     color[2] = ((tempStatedColor.low & 0xff0000) >>> 16) / 255.0;
-  } else {
-    groupState.segmentColorHash.compute(color, objectId);
+    return color;
   }
+  const segmentDefaultColor = colorGroupState.segmentDefaultColor.value;
+  if (segmentDefaultColor !== undefined) {
+    color[0] = segmentDefaultColor[0];
+    color[1] = segmentDefaultColor[1];
+    color[2] = segmentDefaultColor[2];
+    return color;
+  }
+  colorGroupState.segmentColorHash.compute(color, objectId);
   return color;
 }
 
@@ -566,9 +793,12 @@ export function forEachVisibleSegmentToDraw(
         objectId: Uint64, color: vec4|undefined, pickIndex: number|undefined,
         rootObjectId: Uint64) => void) {
   const alpha = Math.min(1, displayState.objectAlpha.value);
+  const baseSegmentColoring = displayState.baseSegmentColoring.value;
   forEachVisibleSegment(displayState.segmentationGroupState.value, (objectId, rootObjectId) => {
     let pickIndex = pickIDs?.registerUint64(renderLayer, objectId);
-    let color = emitColor ? getObjectColor(displayState, rootObjectId, alpha) : undefined;
+    let color = emitColor ?
+        getObjectColor(displayState, baseSegmentColoring ? objectId : rootObjectId, alpha) :
+        undefined;
     callback(objectId, color, pickIndex, rootObjectId);
   });
 }

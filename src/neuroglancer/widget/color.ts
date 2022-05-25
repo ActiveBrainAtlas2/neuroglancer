@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import {serializeColor, TrackableRGB, unpackRGB} from 'neuroglancer/util/color';
+import {TrackableRGB} from 'neuroglancer/util/color';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {removeFromParent} from 'neuroglancer/util/dom';
-import { AnnotationColorPropertySpec } from '../annotation';
-import { AnnotationLayerState } from '../annotation/annotation_layer_state';
-import { AnnotationLayerView } from '../ui/annotations';
 
 export class ColorWidget extends RefCounted {
   element = document.createElement('input');
