@@ -78,6 +78,13 @@ import { AnnotationUserLayer } from './annotation/user_layer';
 
 declare var NEUROGLANCER_OVERRIDE_DEFAULT_VIEWER_OPTIONS: any
 
+interface CreditLink {
+  url: string;
+  text: string;
+}
+
+declare var NEUROGLANCER_CREDIT_LINK: CreditLink|CreditLink[]|undefined;
+
 const WIKI_ADDRESS="https://github.com/ActiveBrainAtlas2/neuroglancer/wiki";
 
 export class DataManagementContext extends RefCounted {
@@ -1002,9 +1009,9 @@ export class Viewer extends RefCounted implements ViewerState {
 
   showStatistics(value: boolean|undefined = undefined) {
     if (value === undefined) {
-      value = !this.statisticsDisplayState.visible.value;
+      value = !this.statisticsDisplayState.location.value;
     }
-    this.statisticsDisplayState.visible.value = value;
+    this.statisticsDisplayState.location.visible = value;
   }
 
   get gl() {
