@@ -29,7 +29,7 @@ import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_sourc
 import {AnnotationLayer, PerspectiveViewAnnotationLayer, SliceViewAnnotationLayer} from 'neuroglancer/annotation/renderlayer';
 import {SpatiallyIndexedPerspectiveViewAnnotationLayer, SpatiallyIndexedSliceViewAnnotationLayer} from 'neuroglancer/annotation/renderlayer';
 import {CoordinateSpace} from 'neuroglancer/coordinate_transform';
-import {MouseSelectionState, PersistentViewerSelectionState, UserLayer} from 'neuroglancer/layer';
+import {MouseSelectionState, UserLayer} from 'neuroglancer/layer';
 import {LoadedDataSubsource} from 'neuroglancer/layer_data_source';
 import {ChunkTransformParameters, getChunkPositionFromCombinedGlobalLocalPositions} from 'neuroglancer/render_coordinate_transform';
 import {RenderScaleHistogram, trackableRenderScaleTarget} from 'neuroglancer/render_scale_statistics';

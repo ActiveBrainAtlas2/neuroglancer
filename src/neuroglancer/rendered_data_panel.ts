@@ -17,7 +17,7 @@
 import 'neuroglancer/rendered_data_panel.css';
 import 'neuroglancer/noselect.css';
 
-import {Annotation, AnnotationReference, AnnotationType, Line, Polygon} from 'neuroglancer/annotation';
+import {Annotation, AnnotationType} from 'neuroglancer/annotation';
 import {getAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
 import {DisplayContext, RenderedPanel} from 'neuroglancer/display_context';
 import {NavigationState} from 'neuroglancer/navigation_state';
@@ -34,13 +34,9 @@ import {startRelativeMouseDrag} from 'neuroglancer/util/mouse_drag';
 import {TouchEventBinder, TouchPinchInfo, TouchRotateInfo, TouchTranslateInfo} from 'neuroglancer/util/touch_bindings';
 import {getWheelZoomAmount} from 'neuroglancer/util/wheel_zoom';
 import {ViewerState} from 'neuroglancer/viewer_state';
-import { FULL_OBJECT_PICK_OFFSET, getPointPartIndex, isCornerPicked } from './annotation/line';
-import { arraysEqual } from './util/array';
 import { PersistentViewerSelectionState } from './layer';
 import { PlaceVolumeTool, UserLayerWithAnnotations } from './ui/annotations';
-import { ClonePolygonDialog } from './ui/clone_polygon';
 import { cloneAnnotationSequence, polygonRotateAngle, polygonScalePercentage, polygonSectionOffset, rotatePolygon, scalePolygon } from './annotation/polygon';
-import { SliceView } from './sliceview/frontend';
 import { StatusMessage } from './status';
 
 declare var NEUROGLANCER_SHOW_OBJECT_SELECTION_TOOLTIP: boolean|undefined;

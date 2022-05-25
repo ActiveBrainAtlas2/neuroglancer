@@ -190,7 +190,6 @@ export class SliceViewPanel extends RenderedDataPanel {
       if (chunkTransform.error !== undefined) return;
 
       const handler = getAnnotationTypeRenderHandler(parAnn.type);
-      const childHandler = getAnnotationTypeRenderHandler(selectedAnn.type);
       const pickedOffset = mouseState.pickedOffset;
       const {layerRank} = chunkTransform;
       const repPoint = new Float32Array(layerRank);

@@ -20,7 +20,6 @@
 
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {ActionEvent, dispatchEventWithModifiers, EventActionMap, EventActionMapInterface, registerActionListener} from 'neuroglancer/util/event_action_map';
-import { isFirefox, isMac } from './deviceTypes';
 
 export class MouseEventBinder<EventMap extends EventActionMapInterface> extends RefCounted {
   private dispatch(baseIdentifier: string, event: MouseEvent) {

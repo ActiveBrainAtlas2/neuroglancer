@@ -31,7 +31,7 @@ import {getDefaultDataSourceProvider} from 'neuroglancer/datasource/default_prov
 import {StateShare, stateShareEnabled} from 'neuroglancer/datasource/state_share';
 import {DisplayContext, TrackableWindowedViewport} from 'neuroglancer/display_context';
 import {HelpPanelState, InputEventBindingHelpDialog} from 'neuroglancer/help/input_event_bindings';
-import {addNewLayer, LayerManager, LayerSelectedValues, MouseSelectionState, SelectedLayerState, TopLevelLayerListSpecification, TrackableDataSelectionState, UserLayer} from 'neuroglancer/layer';
+import {addNewLayer, LayerManager, LayerSelectedValues, MouseSelectionState, SelectedLayerState, TopLevelLayerListSpecification, TrackableDataSelectionState} from 'neuroglancer/layer';
 import {RootLayoutContainer} from 'neuroglancer/layer_groups_layout';
 import {DisplayPose, NavigationState, OrientationState, Position, TrackableCrossSectionZoom, TrackableDepthRange, TrackableDisplayDimensions, TrackableProjectionZoom, TrackableRelativeDisplayScales, WatchableDisplayDimensionRenderInfo} from 'neuroglancer/navigation_state';
 import {overlaysOpen} from 'neuroglancer/overlay';
@@ -70,8 +70,7 @@ import {RPC} from 'neuroglancer/worker_rpc';
 import {StateLoader} from 'neuroglancer/services/state_loader';
 import {UserLoader} from 'neuroglancer/services/user_loader';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
-import { AnnotationLayerView, CellToolMode, ComToolMode, MultiStepAnnotationTool, PlaceCellTool, PlaceComTool, PlacePointTool, PlacePolygonTool, PlaceVolumeTool, PolygonToolMode, UserLayerWithAnnotations, UserLayerWithAnnotationsMixin, VolumeToolMode } from './ui/annotations';
-import { getPolygonDrawModeBindings, getPolygonEditModeBindings, polygonDrawModeBindings, polygonEditModeBindings } from './ui/default_input_event_bindings';
+import { CellToolMode, ComToolMode, MultiStepAnnotationTool, PlaceCellTool, PlaceComTool, PlacePolygonTool, PlaceVolumeTool, VolumeToolMode } from './ui/annotations';
 import { PolygonOptionsDialog } from './ui/polygon_options';
 import { AnnotationUserLayer } from './annotation/user_layer';
 
@@ -606,6 +605,17 @@ export class Viewer extends RefCounted implements ViewerState {
       const button = makeIcon({text: '{}', title: 'Edit JSON state'});
       this.registerEventListener(button, 'click', () => {
         this.editJsonState();
+      });
+      this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
+          this.uiControlVisibility.showEditStateButton, button));
+      topRow.appendChild(button);
+    }
+
+    {
+      const button = makeIcon({text: '△', title: 'Edit Polygon Configuration'});
+      button.style.paddingBottom = '0.24em';
+      this.registerEventListener(button, 'click', () => {
+        this.editPolygonOptions();
       });
       this.registerDisposer(new ElementVisibilityFromTrackableBoolean(
           this.uiControlVisibility.showEditStateButton, button));

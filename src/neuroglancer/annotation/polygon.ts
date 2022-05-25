@@ -20,7 +20,7 @@
 
  import { quat, vec3 } from 'gl-matrix';
  import {AnnotationReference, AnnotationType, Line, Polygon} from 'neuroglancer/annotation';
- import {AnnotationRenderContext, AnnotationRenderHelper, getAnnotationTypeRenderHandler, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
+ import {AnnotationRenderContext, AnnotationRenderHelper, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
  import { DisplayPose, NavigationState } from '../navigation_state';
 import { StatusMessage } from '../status';
  import { TrackableValue } from '../trackable_value';
