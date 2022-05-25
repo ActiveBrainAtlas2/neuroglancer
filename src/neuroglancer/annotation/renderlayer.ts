@@ -502,6 +502,7 @@ function AnnotationRenderLayer<TBase extends AnyConstructor<VisibilityTrackedRen
           mouseState.pickedAnnotationLayer = this.base.state;
           mouseState.pickedOffset = partIndex;
           mouseState.pickedAnnotationBuffer = serializedAnnotations.data.buffer;
+          mouseState.pickedAnnotationType = annotationType;
           mouseState.pickedAnnotationBufferOffset = serializedAnnotations.data.byteOffset +
               typeToOffset[annotationType] +
               instanceIndex *
