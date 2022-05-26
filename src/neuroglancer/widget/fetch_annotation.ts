@@ -22,17 +22,40 @@ interface AnnotationJSON {
   id: string,
 }
 
-interface AnnotationLayerInfo {
+interface Resolution {
+  resolution: Array<number>,
+}
+
+interface ComAnnotationInfo {
   prep_id: string,
-  label: string,
-  input_type: string,
-  input_type_id: number
+  annotator: string,
+  annotator_id: string
+  source: string,
+  count: string,
+}
+
+interface CellAnnotationInfo {
+  session_id:string,
+  prep_id: string,
+  annotator: string,
+  source: string,
+  structure: string,
+  cell_type: string,
+}
+
+interface VolumeAnnotationInfo {
+  session_id:string,
+  prep_id: string,
+  annotator: string,
+  source: string,
+  brain_region: string,
 }
 
 export class FetchAnnotationWidget extends RefCounted{
   element: HTMLElement;
   private annotationSelection: HTMLSelectElement;
   private annotationSelectionDefault: HTMLSelectElement;
+  private annotationTypeSelection: HTMLSelectElement;
   private fetchButton: HTMLElement;
 
   constructor(private layerView: AnnotationLayerView) {
@@ -48,70 +71,156 @@ export class FetchAnnotationWidget extends RefCounted{
     defaultOption.selected = true;
     this.annotationSelectionDefault.add(defaultOption);
     this.annotationSelection = this.annotationSelectionDefault;
-
-    this.setUpAnnotationList();
-
     this.fetchButton = makeIcon({
       text: buttonText,
       title: buttonTitle,
       onClick: () => {this.fetchAnnotation()},
     });
     this.fetchButton.classList.add('neuroglancer-fetch-annotation-button');
-
     this.element = document.createElement('div');
     this.element.classList.add('neuroglancer-fetch-annotation-tool');
     this.element.appendChild(this.annotationSelection);
     this.element.appendChild(this.fetchButton);
-
     this.registerDisposer(() => removeFromParent(this.element));
+    this.setUpAnnotationList();
   }
 
-  async setUpAnnotationList() {
-    const url = `${AppSettings.API_ENDPOINT}/annotations`;
-    try {
-      const response:Array<AnnotationLayerInfo> = await fetchOk(url, {
-        method: 'GET',
-      }).then(response => {
-        return response.json();
-      });
-      const annotationSelectionFetched = document.createElement('select');
-      annotationSelectionFetched.classList.add('neuroglancer-fetch-annotation-selection');
-      const defaultOption = document.createElement('option');
-      defaultOption.text = 'Select annotation';
-      defaultOption.value = '';
-      defaultOption.disabled = true;
-      defaultOption.selected = true;
-      annotationSelectionFetched.add(defaultOption);
-
-      response.forEach(AnnotationLayerInfo => {
-        const {prep_id, label, input_type, input_type_id} = AnnotationLayerInfo;
-        const option = document.createElement('option');
-        option.value = `${prep_id}/${encodeURIComponent(label)}/${input_type_id}`;
-        option.text = `${prep_id}/${label}/${input_type}`;
-        annotationSelectionFetched.add(option);
-      });
-
-      const newElement = document.createElement('div');
+async updateElement() {
+  try {
+  const newElement = document.createElement('div');
       newElement.classList.add('neuroglancer-fetch-annotation-tool');
-      newElement.appendChild(annotationSelectionFetched);
+      newElement.appendChild(this.annotationTypeSelection);
+      newElement.appendChild(this.annotationSelection);
       newElement.appendChild(this.fetchButton);
       this.element.parentNode?.replaceChild(newElement, this.element);
-      this.annotationSelection = annotationSelectionFetched;
+      this.element = newElement
     } catch (err) {
       StatusMessage.showTemporaryMessage('Failed to load the list of annotations, please refresh.');
     }
+}
+
+async updateAnnotationList(type:string) {
+  this.annotationSelection = this.annotationSelectionDefault
+  this.updateElement()
+  const annotationSelection = document.createElement('select');
+  annotationSelection.classList.add('neuroglancer-fetch-annotation-selection');
+  switch(type) { 
+    case 'COM': { 
+      const url = `${AppSettings.API_ENDPOINT}/get_com_list`;
+      try {
+        const response:Array<ComAnnotationInfo> = await fetchOk(url, {
+          method: 'GET',
+        }).then(response => {
+          return response.json();
+        });
+        response.forEach(ComAnnotationInfo => {
+          const {prep_id, annotator, annotator_id, source,count} = ComAnnotationInfo;
+          const option = document.createElement('option');
+          option.value = `${prep_id}_${annotator_id}_${source}`;
+          option.text = `${prep_id}/${annotator}/${source}/count=${count}`;
+          annotationSelection.add(option);
+        });
+        this.annotationSelection = annotationSelection
+        this.updateElement()
+      } catch (err) {
+        StatusMessage.showTemporaryMessage('Failed to load the list of annotations, please refresh.');
+      }
+       break; 
+    } 
+    case 'Cell': { 
+      const url = `${AppSettings.API_ENDPOINT}/get_marked_cell_list`;
+      try {
+        const response:Array<CellAnnotationInfo> = await fetchOk(url, {
+          method: 'GET',
+        }).then(response => {
+          return response.json();
+        });
+        response.forEach(CellAnnotationInfo => {
+
+          const {session_id,prep_id, annotator, source,structure,cell_type} = CellAnnotationInfo;
+          const option = document.createElement('option');
+          option.value = `${session_id}`;
+          option.text = `${prep_id}/${annotator}/${source}/${structure}/${cell_type}`;
+          annotationSelection.add(option);
+        });
+        this.annotationSelection = annotationSelection
+        this.updateElement()
+      } catch (err) {
+        StatusMessage.showTemporaryMessage('Failed to load the list of annotations, please refresh.');
+      }
+       break; 
+    } 
+    case 'Volume': { 
+      const url = `${AppSettings.API_ENDPOINT}/get_volume_list`;
+      try {
+        const response:Array<VolumeAnnotationInfo> = await fetchOk(url, {
+          method: 'GET',
+        }).then(response => {
+          return response.json();
+        });
+        response.forEach(VolumeAnnotationInfo => {
+          const {session_id,prep_id, annotator, source,brain_region} = VolumeAnnotationInfo;
+          const option = document.createElement('option');
+          option.value = `${session_id}`;
+          option.text = `${prep_id}/${annotator}/${source}/${brain_region}`;
+          annotationSelection.add(option);
+        });
+        this.annotationSelection = annotationSelection
+        this.updateElement()
+      } catch (err) {
+        StatusMessage.showTemporaryMessage('Failed to load the list of annotations, please refresh.');
+      }
+      break; 
+   } 
+ } 
+  };
+
+  async setUpAnnotationList() {
+      const annotationTypes = document.createElement('select');
+      annotationTypes.classList.add('neuroglancer-annotation-type-selection');
+      let types = ['Volume','Cell','COM'];
+      for (var type of types) {
+        const typeOption = document.createElement('option');
+        typeOption.text = type;
+        typeOption.value = type;
+        typeOption.selected = true;
+        annotationTypes.add(typeOption);
+      }
+      annotationTypes.addEventListener('change', 
+      async()=> {
+      const annotationType = this.annotationTypeSelection.value;
+      this.updateAnnotationList(annotationType);
+    },);
+      this.annotationTypeSelection = annotationTypes
+      this.updateAnnotationList('COM')
   }
 
   async fetchAnnotation() {
     const annotation = this.annotationSelection.value;
+    const type = this.annotationTypeSelection.value;
+    const comParameters = annotation.split('_')
+    var annotationURL:string = ''
     if (!annotation) {
       StatusMessage.showTemporaryMessage('Please select the annotation to fetch.');
       return;
     }
     const msg =  StatusMessage.showMessage('Fetching annotations, this might take a while ...');
-    const annotationURL = `${AppSettings.API_ENDPOINT}/annotation/${annotation}`;
-    const transformURL = `${AppSettings.API_ENDPOINT}/rotation/${annotation}`;
-
+    const resolutionURL = `${AppSettings.API_ENDPOINT}/resolution/${comParameters[0]}`;
+    switch(type) { 
+      case 'COM': { 
+        annotationURL = `${AppSettings.API_ENDPOINT}/get_com/${comParameters[0]}/${comParameters[1]}/${comParameters[2]}`;
+         break; 
+      } 
+      case 'Cell': { 
+        annotationURL = `${AppSettings.API_ENDPOINT}/get_marked_cell/${annotation}`;
+         break; 
+      } 
+      case 'Volume': { 
+        annotationURL = `${AppSettings.API_ENDPOINT}/get_volume/${annotation}`;
+        break; 
+     }  
+   } 
+    
     try {
       const annotationJSON:Array<AnnotationJSON> = await fetchOk(annotationURL, {
         method: 'GET',
@@ -119,12 +228,12 @@ export class FetchAnnotationWidget extends RefCounted{
         
         return response.json();
       });
-      const transformJSONResolution:TransformJSON = await fetchOk(transformURL, {
+      const animalResolution:Resolution = await fetchOk(resolutionURL, {
         method: 'GET',
       }).then(response => {
         return response.json();
       });
-      const {resolution} = transformJSONResolution;
+      const {resolution} = animalResolution;
 
       const state = this.layerView.annotationStates.states[0].source as AnnotationSource;
       let transform : WatchableCoordinateSpaceTransform | undefined = undefined;
