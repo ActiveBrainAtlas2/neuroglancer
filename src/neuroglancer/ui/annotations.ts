@@ -1403,7 +1403,7 @@ export enum PolygonToolMode {
 export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   childTool: PlaceLineTool;
   sourceMouseState: MouseSelectionState;
-  sourcePosition: any;
+  sourcePosition: Float32Array;
   mode: PolygonToolMode;
   bindingsRef: RefCounted|undefined;
   active: boolean;
@@ -1526,7 +1526,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       return false;
     }
 
-    if(this.completeLastLine(<MouseSelectionState>{...this.sourceMouseState, position: this.sourcePosition})) {
+    if(this.completeLastLine()) {
       annotationLayer.source.commit(this.inProgressAnnotation!.reference);
       this.layer.selectAnnotation(annotationLayer, this.inProgressAnnotation!.reference.id, true);
       this.inProgressAnnotation!.disposer();
@@ -1597,7 +1597,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     return true;
   }
   
-  private completeLastLine(mouseState: MouseSelectionState): boolean {
+  private completeLastLine(): boolean {
     const {annotationLayer, mode} = this;
     const {childTool} = this;
     const childState = childTool.inProgressAnnotation;
@@ -1611,7 +1611,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     if(annotation.childAnnotationIds.length < 3) return false; //min 3 sides in polygon
 
     if (childState.reference !== undefined && childState.reference.value !== undefined) {
-      const newAnnotation = this.childTool.getUpdatedAnnotation(<Line>childState.reference.value, mouseState, annotationLayer);
+      const newAnnotation = <Annotation>{...childState.reference.value, pointB: this.sourcePosition};
       annotationLayer.source.update(childState.reference, newAnnotation);
       this.layer.selectAnnotation(annotationLayer, childState.reference.id, true);
       annotationLayer.source.commit(childState.reference);
