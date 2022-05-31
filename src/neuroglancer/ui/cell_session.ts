@@ -22,6 +22,7 @@ import { AnnotationType } from '../annotation';
 import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellToolMode, getCategoryList } from './annotations';
  
  import './cell_session.css';
+import { LegacyTool } from './tool';
  
   export class CellSessionDialog extends Overlay {
     landmarkDropdown : HTMLSelectElement|undefined = undefined;
@@ -150,16 +151,9 @@ import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellT
       button.addEventListener('click', () => {
         const isInstance = this.annotationLayerView.layer.tool.value instanceof PlaceCellTool;
         if (isInstance) {
-          this.annotationLayerView.layer.tool.value!.registerDisposer(() => {
-            this.dispose();
-          });
-          this.annotationLayerView.layer.tool.value!.registerDisposer(() => {
-            const iconDiv = (<PlaceCellTool>this.annotationLayerView.layer.tool.value!).icon.value;
-            if (iconDiv === undefined) return;
-            iconDiv.style.backgroundColor = '';
-          });
-          this.annotationLayerView.layer.tool.value!.dispose();
-        } else {
+          if (this.annotationLayerView.layer.tool.value  instanceof LegacyTool) {
+            this.annotationLayerView.layer.tool.value.layer.tool.value = undefined;
+          }
           this.dispose();
         }
       });

@@ -25,6 +25,7 @@ import { Segmentation } from '../services/state';
 import { StateLoader } from '../services/state_loader';
 import { StatusMessage } from '../status';
 import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnnotations, VolumeSession, VolumeToolMode } from './annotations';
+import { LegacyTool } from './tool';
  
  import './volume_session.css';
  
@@ -193,18 +194,11 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
       button.addEventListener('click', () => {
         const isInstance = this.annotationLayerView.layer.tool.value instanceof PlaceVolumeTool;
         if (isInstance) {
-          this.annotationLayerView.layer.tool.value!.registerDisposer(() => {
-            this.dispose();
-          });
-          this.annotationLayerView.layer.tool.value!.registerDisposer(() => {
-            const iconDiv = (<PlaceVolumeTool>this.annotationLayerView.layer.tool.value!).icon.value;
-            if (iconDiv === undefined) return;
-            iconDiv.style.backgroundColor = '';
-          });
-          this.annotationLayerView.layer.tool.value!.dispose();
-        } else {
-          this.dispose();
+          if (this.annotationLayerView.layer.tool.value  instanceof LegacyTool) {
+            this.annotationLayerView.layer.tool.value.layer.tool.value = undefined;
+          }
         }
+        this.dispose();
       });
       button.classList.add('volume-session-btn');
 
