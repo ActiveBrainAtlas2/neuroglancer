@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc_context.ts:19](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/worker_rpc_context.ts#L19)
+[src/neuroglancer/worker_rpc_context.ts:19](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/worker_rpc_context.ts#L19)

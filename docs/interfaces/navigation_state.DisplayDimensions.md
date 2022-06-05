@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:808](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L808)
+[src/neuroglancer/navigation_state.ts:808](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L808)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:810](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L810)
+[src/neuroglancer/navigation_state.ts:810](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L810)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:809](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L809)
+[src/neuroglancer/navigation_state.ts:809](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L809)

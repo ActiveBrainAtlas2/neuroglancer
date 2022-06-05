@@ -32,4 +32,4 @@
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:68](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/segment_color.ts#L68)
+[src/neuroglancer/segment_color.ts:68](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/segment_color.ts#L68)

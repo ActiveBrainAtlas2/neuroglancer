@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:211](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/layer_data_source.ts#L211)
+[src/neuroglancer/layer_data_source.ts:211](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_data_source.ts#L211)
 
 ## Functions
 
@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/layer_data_source.ts#L39)
+[src/neuroglancer/layer_data_source.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_data_source.ts#L39)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:68](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/layer_data_source.ts#L68)
+[src/neuroglancer/layer_data_source.ts:68](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_data_source.ts#L68)
 
 ___
 
@@ -89,4 +89,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:31](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/layer_data_source.ts#L31)
+[src/neuroglancer/layer_data_source.ts:31](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_data_source.ts#L31)

@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:103](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/renderlayer.ts#L103)
+[src/neuroglancer/renderlayer.ts:103](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/renderlayer.ts#L103)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:104](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/renderlayer.ts#L104)
+[src/neuroglancer/renderlayer.ts:104](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/renderlayer.ts#L104)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/renderlayer.ts#L102)
+[src/neuroglancer/renderlayer.ts:102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/renderlayer.ts#L102)

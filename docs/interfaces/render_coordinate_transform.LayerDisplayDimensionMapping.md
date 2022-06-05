@@ -21,7 +21,7 @@ Maps each display dimension index to the corresponding layer dimension index, or
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:305](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/render_coordinate_transform.ts#L305)
+[src/neuroglancer/render_coordinate_transform.ts:305](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_coordinate_transform.ts#L305)
 
 ___
 
@@ -33,4 +33,4 @@ List of indices of layer dimensions that correspond to display dimensions.
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:300](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/render_coordinate_transform.ts#L300)
+[src/neuroglancer/render_coordinate_transform.ts:300](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_coordinate_transform.ts#L300)

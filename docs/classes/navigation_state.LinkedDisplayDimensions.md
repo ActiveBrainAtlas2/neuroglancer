@@ -52,7 +52,7 @@ SimpleLinkedBase&lt;TrackableDisplayDimensions\&gt;.constructor
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:963](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L963)
+[src/neuroglancer/navigation_state.ts:963](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L963)
 
 ## Properties
 
@@ -86,7 +86,7 @@ SimpleLinkedBase.value
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:958](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L958)
+[src/neuroglancer/navigation_state.ts:958](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L958)
 
 ## Accessors
 
@@ -104,7 +104,7 @@ SimpleLinkedBase.changed
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:324](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L324)
+[src/neuroglancer/navigation_state.ts:324](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L324)
 
 ## Methods
 
@@ -122,7 +122,7 @@ SimpleLinkedBase.copyToPeer
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:349](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L349)
+[src/neuroglancer/navigation_state.ts:349](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L349)
 
 ___
 
@@ -140,7 +140,7 @@ SimpleLinkedBase.getValueJson
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:337](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L337)
+[src/neuroglancer/navigation_state.ts:337](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L337)
 
 ___
 
@@ -158,7 +158,7 @@ SimpleLinkedBase.reset
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:341](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L341)
+[src/neuroglancer/navigation_state.ts:341](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L341)
 
 ___
 
@@ -182,7 +182,7 @@ SimpleLinkedBase.restoreState
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:345](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L345)
+[src/neuroglancer/navigation_state.ts:345](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L345)
 
 ___
 
@@ -200,4 +200,4 @@ SimpleLinkedBase.toJSON
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:329](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/navigation_state.ts#L329)
+[src/neuroglancer/navigation_state.ts:329](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L329)

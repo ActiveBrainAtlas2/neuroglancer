@@ -30,4 +30,4 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/trackable_vec3.ts#L23)
+[src/neuroglancer/trackable_vec3.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/trackable_vec3.ts#L23)

@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:147](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/viewer.ts#L147)
+[src/neuroglancer/viewer.ts:147](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L147)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:143](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/viewer.ts#L143)
+[src/neuroglancer/viewer.ts:143](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L143)
 
 ## Variables
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:120](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/viewer.ts#L120)
+[src/neuroglancer/viewer.ts:120](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L120)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:137](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/viewer.ts#L137)
+[src/neuroglancer/viewer.ts:137](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L137)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:131](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/viewer.ts#L131)
+[src/neuroglancer/viewer.ts:131](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L131)
 
 ## Functions
 
@@ -91,4 +91,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:151](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/viewer.ts#L151)
+[src/neuroglancer/viewer.ts:151](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L151)

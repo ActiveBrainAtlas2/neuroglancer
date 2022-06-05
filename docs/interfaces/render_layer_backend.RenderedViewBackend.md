@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/neuroglancer/render_layer_backend.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/render_layer_backend.ts#L27)
+[src/neuroglancer/render_layer_backend.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_layer_backend.ts#L27)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_layer_backend.ts:26](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/render_layer_backend.ts#L26)
+[src/neuroglancer/render_layer_backend.ts:26](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_layer_backend.ts#L26)

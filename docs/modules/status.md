@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/neuroglancer/status.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/status.ts#L23)
+[src/neuroglancer/status.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/status.ts#L23)
 
 ## Variables
 
@@ -34,4 +34,4 @@
 
 #### Defined in
 
-[src/neuroglancer/status.ts:21](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/status.ts#L21)
+[src/neuroglancer/status.ts:21](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/status.ts#L21)

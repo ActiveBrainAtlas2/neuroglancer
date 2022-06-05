@@ -46,7 +46,7 @@ limitations under the License.
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:73](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/layer_group_viewer.ts#L73)
+[src/neuroglancer/layer_group_viewer.ts:73](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L73)
 
 ## Functions
 
@@ -66,7 +66,7 @@ limitations under the License.
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/layer_group_viewer.ts#L81)
+[src/neuroglancer/layer_group_viewer.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L81)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:90](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/layer_group_viewer.ts#L90)
+[src/neuroglancer/layer_group_viewer.ts:90](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L90)
 
 ___
 
@@ -112,4 +112,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/b9eb98e6/src/neuroglancer/layer_group_viewer.ts#L75)
+[src/neuroglancer/layer_group_viewer.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L75)
