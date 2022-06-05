@@ -42,7 +42,7 @@ import {LegacyTool, registerLegacyTool} from 'neuroglancer/ui/tool';
 import {animationFrameDebounce} from 'neuroglancer/util/animation_frame_debounce';
 import {arraysEqual, ArraySpliceOp} from 'neuroglancer/util/array';
 import {setClipboard} from 'neuroglancer/util/clipboard';
-import {packColor, parseColorSerialization, parseRGBAColorSpecification, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA, useWhiteBackground} from 'neuroglancer/util/color';
+import {packColor, parseRGBAColorSpecification, parseRGBColorSpecification, serializeColor, unpackRGB, unpackRGBA, useWhiteBackground} from 'neuroglancer/util/color';
 import {Borrowed, disposableOnce, RefCounted} from 'neuroglancer/util/disposable';
 import {removeChildren} from 'neuroglancer/util/dom';
 import {Endianness, ENDIANNESS} from 'neuroglancer/util/endian';
@@ -53,7 +53,6 @@ import * as matrix from 'neuroglancer/util/matrix';
 import {MouseEventBinder} from 'neuroglancer/util/mouse_bindings';
 import {formatScaleWithUnitAsString} from 'neuroglancer/util/si_units';
 import {NullarySignal, Signal} from 'neuroglancer/util/signal';
-import {formatIntegerBounds, formatIntegerPoint} from 'neuroglancer/util/spatial_units';
 import {Uint64} from 'neuroglancer/util/uint64';
 import * as vector from 'neuroglancer/util/vector';
 import {makeAddButton} from 'neuroglancer/widget/add_button';
@@ -67,14 +66,9 @@ import {Tab} from 'neuroglancer/widget/tab_view';
 import {VirtualList, VirtualListSource} from 'neuroglancer/widget/virtual_list';
 import {FetchAnnotationWidget} from 'neuroglancer/widget/fetch_annotation';
 import {fetchOk} from 'neuroglancer/util/http_request';
-import { stateAPI } from '../services/state_loader';
 import { StatusMessage } from '../status';
 import { getEndPointBasedOnPartIndex, isCornerPicked } from '../annotation/line';
-import {ActionEvent, dispatchEvent, EventActionMapInterface} from 'neuroglancer/util/event_action_map';
-import {getPolygonEditModeBindings} from 'neuroglancer/ui/default_input_event_bindings';
-import { Viewer } from '../viewer';
-import { checkIfSameZCoordinate, cloneAnnotationSequence, getZCoordinate } from '../annotation/polygon';
-import { update } from 'lodash';
+import { getZCoordinate } from '../annotation/polygon';
 import { VolumeSessionDialog } from './volume_session';
 import { isSectionValid } from '../annotation/volume';
 import { SaveAnnotationWidget } from '../widget/save_annotation';
@@ -237,6 +231,7 @@ export class AnnotationLayerView extends Tab {
           undefined;
   private previousHoverId: string|undefined = undefined;
   private previousHoverAnnotationLayerState: AnnotationLayerState|undefined = undefined;
+  //@ts-ignore
   private annotationColorPicker: AnnotationColorWidget|undefined = undefined;
 
   private virtualListSource: VirtualListSource = {
@@ -1416,8 +1411,10 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
     this.childTool = new PlaceLineTool(layer, {...options, parent: this});
     this.bindingsRef = new RefCounted();
     if (mode === PolygonToolMode.DRAW) {
+      //@ts-ignore
       setPolygonDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     } else {
+      //@ts-ignore
       setPolygonEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     }
   }
@@ -1500,8 +1497,10 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
         }
         this.bindingsRef = new RefCounted();
         if (mode === PolygonToolMode.DRAW && this.bindingsRef) {
+          //@ts-ignore
           setPolygonDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
         } else if (this.bindingsRef && mode === PolygonToolMode.EDIT) {
+          //@ts-ignore
           setPolygonEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
         }
       }
@@ -1859,7 +1858,7 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
   createNewVolumeAnn(description: string|undefined, color: string|undefined) : AnnotationReference | undefined {
     const {annotationLayer} = this;
     if (annotationLayer === undefined) return undefined;
-
+    //@ts-ignore
     const collection = <Collection>this.getInitialAnnotation(window['viewer'].mouseState, annotationLayer);
     collection.childrenVisible = true;
     if (description) collection.description = description;
@@ -1974,6 +1973,7 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
                                                   annotation: reference,
                                                   chunkTransform: annotationLayer.chunkTransform
                                                 }))),
+                                                //@ts-ignore
                 ({annotation, chunkTransform}, parent, context) => {
                   if (annotation == null) {
                     const statusMessage = document.createElement('div');
@@ -2124,8 +2124,10 @@ export class PlaceCellTool extends PlaceAnnotationTool {
     this.active = true;
     this.bindingsRef = new RefCounted();
     if (mode === CellToolMode.DRAW) {
+      //@ts-ignore
       setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     } else if (mode === CellToolMode.EDIT) {
+      //@ts-ignore
       setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     }
     this.icon.changed.add(this.setIconColor.bind(this));
@@ -2207,8 +2209,10 @@ export class PlaceCellTool extends PlaceAnnotationTool {
         }
         this.bindingsRef = new RefCounted();
         if (mode === CellToolMode.DRAW && this.bindingsRef) {
+          //@ts-ignore
           setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
         } else if (this.bindingsRef && mode === CellToolMode.EDIT) {
+          //@ts-ignore
           setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
         }
       }
@@ -2252,6 +2256,7 @@ export class PlaceCellTool extends PlaceAnnotationTool {
                     new AggregateWatchableValue(() => ({
                                                   session: session,
                                                 }))),
+                                                //@ts-ignore
                 ({session}, parent, context) => {
 
                   if (session === null || session === undefined) {
@@ -2367,8 +2372,10 @@ export class PlaceComTool extends PlaceAnnotationTool {
     this.active = true;
     this.bindingsRef = new RefCounted();
     if (mode === ComToolMode.DRAW) {
+      //@ts-ignore
       setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     } else if (mode === ComToolMode.EDIT) {
+      //@ts-ignore
       setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     }
     this.icon.changed.add(this.setIconColor.bind(this));
@@ -2449,8 +2456,10 @@ export class PlaceComTool extends PlaceAnnotationTool {
         }
         this.bindingsRef = new RefCounted();
         if (mode === ComToolMode.DRAW && this.bindingsRef) {
+          //@ts-ignore
           setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
         } else if (this.bindingsRef && mode === ComToolMode.EDIT) {
+          //@ts-ignore
           setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
         }
       }
@@ -2494,6 +2503,7 @@ export class PlaceComTool extends PlaceAnnotationTool {
                     new AggregateWatchableValue(() => ({
                                                   session: session,
                                                 }))),
+                                                //@ts-ignore
                 ({session}, parent, context) => {
 
                   if (session === null || session === undefined) {
@@ -2715,15 +2725,19 @@ registerLegacyTool(
     (layer, options) => new PlaceEllipsoidTool(<UserLayerWithAnnotations>layer, options));
 registerLegacyTool(
     ANNOTATE_POLYGON_TOOL_ID,
+    //@ts-ignore
     (layer, options) => undefined);
 registerLegacyTool(
     ANNOTATE_VOLUME_TOOL_ID,
+    //@ts-ignore
     (layer, options) => undefined);
 registerLegacyTool(
     ANNOTATE_CELL_TOOL_ID,
+    //@ts-ignore
     (layer, options) => undefined);
 registerLegacyTool(
     ANNOTATE_COM_TOOL_ID,
+    //@ts-ignore
     (layer, options) => undefined);
 
 const newRelatedSegmentKeyMap = EventActionMap.fromObject({
@@ -3000,6 +3014,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
     }
 
     async addText(parent: HTMLElement, select:HTMLSelectElement,annotationLayer:AnnotationLayerState,
+      //@ts-ignore
       reference:AnnotationReference,annotation:Annotation) {
       var idx = select.selectedIndex; 
       var text = select.options[idx].value
@@ -3464,6 +3479,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
 
 export type UserLayerWithAnnotations =
     InstanceType<ReturnType<typeof UserLayerWithAnnotationsMixin>>;
+//@ts-ignore
 function formatNumericProperty(property: Readonly<import("neuroglancer/annotation").AnnotationNumericPropertySpec> | Readonly<import("neuroglancer/annotation").AnnotationNumericPropertySpec>, value: any): string | null {
   throw new Error('Function not implemented.');
 }

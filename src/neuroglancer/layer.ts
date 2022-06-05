@@ -639,6 +639,7 @@ export class LayerManager extends RefCounted {
   }
 
   private setCoordinateSpaceToImageLayer() {
+    //@ts-ignore
     const coordinateSpace = <TrackableCoordinateSpace>(window['viewer'].coordinateSpace);
     for (const layer of this.layerSet) {
       if (layer.layer && layer.layer.type === 'image') {

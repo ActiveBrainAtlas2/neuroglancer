@@ -1,4 +1,4 @@
-import { Annotation, AnnotationType, Line } from ".";
+import { AnnotationType, Line } from ".";
 import { arraysEqual } from "../util/array";
 import { getEndPointBasedOnPartIndex, getPointPartIndex, isCornerPicked } from "./line";
 

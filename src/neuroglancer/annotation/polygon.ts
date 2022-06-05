@@ -26,9 +26,7 @@ import { StatusMessage } from '../status';
  import { TrackableValue } from '../trackable_value';
 import { UserLayerWithAnnotations } from '../ui/annotations';
  import { verifyInt, verifyNonNegativeFloat } from '../util/json';
- import { Viewer } from '../viewer';
  import { AnnotationLayerState } from './annotation_layer_state';
- import { AnnotationLayer } from './renderlayer';
 import { isSectionValid } from './volume';
  
  export const DEFAULT_POLYGON_SCALE_PERCENTAGE = 1;
@@ -73,6 +71,12 @@ import { isSectionValid } from './volume';
   return vec3;
 }
 
+/**
+ * 
+ * @param vec1 
+ * @param vec2 
+ * @returns number dot product of vec1 and vec2
+ */
 export function findDotProduct(vec1: number[], vec2: vec3): number {
   let prod = 0;
   const rank = vec1.length;
@@ -196,6 +200,7 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
     return cloneId;
   };
 
+  //@ts-ignore
   childAnnotationRefs.forEach((childAnnotationRef) => {
     const pointAnn = <Line>childAnnotationRef.value;
     const pointA = getTransformedPoint(pose, pointAnn.pointA, normalVector, depth);
@@ -250,11 +255,11 @@ function getTransformedPoint(pose: DisplayPose, source: Float32Array, normalVec:
   return transformedPoint;
 }
 
+//@ts-ignore
 export function scalePolygon(navigationState: NavigationState, annotationLayer: AnnotationLayerState,
   reference: AnnotationReference, scale: number) {
   const childAnnotationRefs : AnnotationReference[] = [];
   const ann = <Polygon>reference.value;
-  const {pose} = navigationState;
 
   ann.childAnnotationIds.forEach((childAnnotationId) => {
     childAnnotationRefs.push(annotationLayer.source.getReference(childAnnotationId));

@@ -32,6 +32,7 @@ export class SaveAnnotationWidget extends RefCounted {
 
   private saveAnnotation() {
     const layerName = this.layerView.layer.managedLayer.name;
+    //@ts-ignore
     const stateLoader = <StateLoader>(window['viewer'].stateLoader);
     stateLoader.saveAnnotations(layerName);
   }

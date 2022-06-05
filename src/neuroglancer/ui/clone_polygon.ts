@@ -57,6 +57,7 @@ export class ClonePolygonDialog extends Overlay {
         msg.setErrorMessage("Polygon count must be positive");
         return;
       }
+      //@ts-ignore
       cloneAnnotationSequence(this.navigationState, this.annotationLayer, this.annotationId, startOffset, polygonCnt, stepSize);
       this.dispose();
     });

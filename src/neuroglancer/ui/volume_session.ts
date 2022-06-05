@@ -280,7 +280,7 @@ import { LegacyTool } from './tool';
           if (ref) ref.dispose();
           return;
         }
-
+        //@ts-ignore
         const stateLoader = <StateLoader>(window['viewer'].stateLoader);
         const successCallback = (res: Segmentation) => {
           const manager = selectedUserLayer!.manager;
