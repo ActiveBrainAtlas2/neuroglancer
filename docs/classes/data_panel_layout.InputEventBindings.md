@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/data_panel_layout.ts#L53)
+[src/neuroglancer/data_panel_layout.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L53)
 
 ___
 
@@ -45,4 +45,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:54](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/data_panel_layout.ts#L54)
+[src/neuroglancer/data_panel_layout.ts:54](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L54)

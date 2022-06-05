@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L40)
+[src/neuroglancer/object_picking.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L40)
 
 ## Properties
 
@@ -42,7 +42,7 @@
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L38)
+[src/neuroglancer/object_picking.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L38)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:29](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L29)
+[src/neuroglancer/object_picking.ts:29](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L29)
 
 ___
 
@@ -64,7 +64,7 @@ This specifies the render layer corresponding to each registered entry.
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L27)
+[src/neuroglancer/object_picking.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L27)
 
 ___
 
@@ -78,7 +78,7 @@ high specify two additional numbers associated with the entry.
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L36)
+[src/neuroglancer/object_picking.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L36)
 
 ## Methods
 
@@ -92,7 +92,7 @@ high specify two additional numbers associated with the entry.
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L42)
+[src/neuroglancer/object_picking.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L42)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L53)
+[src/neuroglancer/object_picking.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L53)
 
 ___
 
@@ -139,7 +139,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L49)
+[src/neuroglancer/object_picking.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L49)
 
 ___
 
@@ -162,4 +162,4 @@ Set the object state according to the specified pick ID.
 
 #### Defined in
 
-[src/neuroglancer/object_picking.ts:70](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/object_picking.ts#L70)
+[src/neuroglancer/object_picking.ts:70](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/object_picking.ts#L70)

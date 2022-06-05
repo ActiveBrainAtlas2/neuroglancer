@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:304](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/trackable_value.ts#L304)
+[src/neuroglancer/trackable_value.ts:304](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_value.ts#L304)
 
 ## Methods
 
@@ -53,7 +53,7 @@ Disposable.dispose
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L17)
+[src/neuroglancer/util/disposable.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L17)
 
 ___
 
@@ -67,4 +67,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:303](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/trackable_value.ts#L303)
+[src/neuroglancer/trackable_value.ts:303](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_value.ts#L303)

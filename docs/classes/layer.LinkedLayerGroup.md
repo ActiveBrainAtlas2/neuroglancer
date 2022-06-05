@@ -78,7 +78,7 @@ RefCounted.constructor
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1632](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1632)
+[src/neuroglancer/layer.ts:1632](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1632)
 
 ## Properties
 
@@ -92,7 +92,7 @@ Trackable.changed
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1620](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1620)
+[src/neuroglancer/layer.ts:1620](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1620)
 
 ___
 
@@ -106,7 +106,7 @@ RefCounted.disposedStacks
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L52)
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L52)
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1621](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1621)
+[src/neuroglancer/layer.ts:1621](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1621)
 
 ___
 
@@ -158,7 +158,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1618](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1618)
+[src/neuroglancer/layer.ts:1618](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1618)
 
 ___
 
@@ -192,7 +192,7 @@ RefCounted.refCount
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L45)
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L45)
 
 ___
 
@@ -202,7 +202,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1622](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1622)
+[src/neuroglancer/layer.ts:1622](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1622)
 
 ___
 
@@ -212,7 +212,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1619](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1619)
+[src/neuroglancer/layer.ts:1619](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1619)
 
 ___
 
@@ -226,7 +226,7 @@ RefCounted.wasDisposed
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L46)
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L46)
 
 ## Accessors
 
@@ -240,7 +240,7 @@ RefCounted.wasDisposed
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1624](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1624)
+[src/neuroglancer/layer.ts:1624](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1624)
 
 ___
 
@@ -254,7 +254,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1628](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1628)
+[src/neuroglancer/layer.ts:1628](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1628)
 
 ## Methods
 
@@ -272,7 +272,7 @@ RefCounted.addRef
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L48)
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L48)
 
 ___
 
@@ -290,7 +290,7 @@ RefCounted.dispose
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L53)
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L53)
 
 ___
 
@@ -308,7 +308,7 @@ RefCounted.disposed
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1716](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1716)
+[src/neuroglancer/layer.ts:1716](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1716)
 
 ___
 
@@ -328,7 +328,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1663](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1663)
+[src/neuroglancer/layer.ts:1663](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1663)
 
 ___
 
@@ -348,7 +348,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1687](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1687)
+[src/neuroglancer/layer.ts:1687](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1687)
 
 ___
 
@@ -368,7 +368,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1700](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1700)
+[src/neuroglancer/layer.ts:1700](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1700)
 
 ___
 
@@ -386,7 +386,7 @@ RefCounted.refCountReachedZero
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L66)
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L66)
 
 ___
 
@@ -416,7 +416,7 @@ RefCounted.registerCancellable
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L100)
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L100)
 
 ___
 
@@ -446,7 +446,7 @@ RefCounted.registerDisposer
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L76)
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L76)
 
 ___
 
@@ -473,7 +473,7 @@ RefCounted.registerEventListener
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L95)
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L95)
 
 ___
 
@@ -491,7 +491,7 @@ Trackable.reset
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1647](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1647)
+[src/neuroglancer/layer.ts:1647](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1647)
 
 ___
 
@@ -515,7 +515,7 @@ Trackable.restoreState
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1651](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1651)
+[src/neuroglancer/layer.ts:1651](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1651)
 
 ___
 
@@ -533,7 +533,7 @@ Trackable.toJSON
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1657](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer.ts#L1657)
+[src/neuroglancer/layer.ts:1657](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer.ts#L1657)
 
 ___
 
@@ -563,4 +563,4 @@ RefCounted.unregisterDisposer
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L85)
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L85)

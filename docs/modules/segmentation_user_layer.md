@@ -23,7 +23,7 @@
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:819](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/segmentation_user_layer.ts#L819)
+[src/neuroglancer/segmentation_user_layer.ts:819](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/segmentation_user_layer.ts#L819)
 
 ___
 
@@ -33,4 +33,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:88](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/segmentation_user_layer.ts#L88)
+[src/neuroglancer/segmentation_user_layer.ts:88](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/segmentation_user_layer.ts#L88)

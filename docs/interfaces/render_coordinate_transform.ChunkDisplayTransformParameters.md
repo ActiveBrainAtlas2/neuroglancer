@@ -23,7 +23,7 @@
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:403](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_coordinate_transform.ts#L403)
+[src/neuroglancer/render_coordinate_transform.ts:403](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L403)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:400](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_coordinate_transform.ts#L400)
+[src/neuroglancer/render_coordinate_transform.ts:400](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L400)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:402](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_coordinate_transform.ts#L402)
+[src/neuroglancer/render_coordinate_transform.ts:402](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L402)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:401](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_coordinate_transform.ts#L401)
+[src/neuroglancer/render_coordinate_transform.ts:401](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L401)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:399](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_coordinate_transform.ts#L399)
+[src/neuroglancer/render_coordinate_transform.ts:399](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L399)
 
 ___
 
@@ -73,4 +73,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:404](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_coordinate_transform.ts#L404)
+[src/neuroglancer/render_coordinate_transform.ts:404](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L404)

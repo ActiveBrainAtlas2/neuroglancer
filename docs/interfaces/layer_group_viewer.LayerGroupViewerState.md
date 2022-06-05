@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:63](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L63)
+[src/neuroglancer/layer_group_viewer.ts:63](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L63)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L49)
+[src/neuroglancer/layer_group_viewer.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L49)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:59](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L59)
+[src/neuroglancer/layer_group_viewer.ts:59](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L59)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:58](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L58)
+[src/neuroglancer/layer_group_viewer.ts:58](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L58)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L52)
+[src/neuroglancer/layer_group_viewer.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L52)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L50)
+[src/neuroglancer/layer_group_viewer.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L50)
 
 ___
 
@@ -93,7 +93,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:51](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L51)
+[src/neuroglancer/layer_group_viewer.ts:51](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L51)
 
 ___
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:64](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L64)
+[src/neuroglancer/layer_group_viewer.ts:64](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L64)
 
 ___
 
@@ -113,7 +113,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:56](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L56)
+[src/neuroglancer/layer_group_viewer.ts:56](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L56)
 
 ___
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L61)
+[src/neuroglancer/layer_group_viewer.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L61)
 
 ___
 
@@ -133,7 +133,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L53)
+[src/neuroglancer/layer_group_viewer.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L53)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L57)
+[src/neuroglancer/layer_group_viewer.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L57)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:55](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L55)
+[src/neuroglancer/layer_group_viewer.ts:55](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L55)
 
 ___
 
@@ -163,7 +163,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:60](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L60)
+[src/neuroglancer/layer_group_viewer.ts:60](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L60)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:62](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L62)
+[src/neuroglancer/layer_group_viewer.ts:62](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L62)
 
 ___
 
@@ -183,4 +183,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:54](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/layer_group_viewer.ts#L54)
+[src/neuroglancer/layer_group_viewer.ts:54](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_group_viewer.ts#L54)

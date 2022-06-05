@@ -47,7 +47,7 @@ Error.constructor
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/worker_rpc.ts#L42)
+[src/neuroglancer/worker_rpc.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L42)
 
 ## Properties
 

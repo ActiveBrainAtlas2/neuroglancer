@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:307](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/coordinate_transform.ts#L307)
+[src/neuroglancer/coordinate_transform.ts:307](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L307)
 
 ___
 
@@ -31,4 +31,4 @@ Transform from "box" coordinate space to target coordinate space.
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:312](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/coordinate_transform.ts#L312)
+[src/neuroglancer/coordinate_transform.ts:312](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L312)

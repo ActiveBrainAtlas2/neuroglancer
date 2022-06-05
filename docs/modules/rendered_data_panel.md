@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:69](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/rendered_data_panel.ts#L69)
+[src/neuroglancer/rendered_data_panel.ts:69](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/rendered_data_panel.ts#L69)
 
 ___
 
@@ -45,7 +45,7 @@ distance from center.
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/rendered_data_panel.ts#L75)
+[src/neuroglancer/rendered_data_panel.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/rendered_data_panel.ts#L75)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:68](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/rendered_data_panel.ts#L68)
+[src/neuroglancer/rendered_data_panel.ts:68](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/rendered_data_panel.ts#L68)
 
 ## Functions
 
@@ -83,4 +83,4 @@ Sets array elements to 0 that would be outside the viewport.
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:110](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/rendered_data_panel.ts#L110)
+[src/neuroglancer/rendered_data_panel.ts:110](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/rendered_data_panel.ts#L110)

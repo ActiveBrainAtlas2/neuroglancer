@@ -46,7 +46,7 @@
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:174](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L174)
+[src/neuroglancer/viewer.ts:174](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/viewer.ts#L174)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:167](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L167)
+[src/neuroglancer/viewer.ts:167](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/viewer.ts#L167)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:169](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L169)
+[src/neuroglancer/viewer.ts:169](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/viewer.ts#L169)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:168](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L168)
+[src/neuroglancer/viewer.ts:168](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/viewer.ts#L168)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:172](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L172)
+[src/neuroglancer/viewer.ts:172](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/viewer.ts#L172)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:173](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L173)
+[src/neuroglancer/viewer.ts:173](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/viewer.ts#L173)
 
 ___
 
@@ -136,7 +136,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:171](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L171)
+[src/neuroglancer/viewer.ts:171](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/viewer.ts#L171)
 
 ___
 
@@ -236,7 +236,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:170](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/viewer.ts#L170)
+[src/neuroglancer/viewer.ts:170](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/viewer.ts#L170)
 
 ___
 
@@ -250,4 +250,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/visibility_priority/frontend.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/visibility_priority/frontend.ts#L50)
+[src/neuroglancer/visibility_priority/frontend.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/visibility_priority/frontend.ts#L50)

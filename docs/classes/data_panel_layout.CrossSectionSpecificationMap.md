@@ -69,7 +69,7 @@ WatchableMap&lt;string, CrossSectionSpecification\&gt;.constructor
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:524](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/data_panel_layout.ts#L524)
+[src/neuroglancer/data_panel_layout.ts:524](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L524)
 
 ## Properties
 
@@ -83,7 +83,7 @@ WatchableMap.changed
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:21](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L21)
+[src/neuroglancer/util/watchable_map.ts:21](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L21)
 
 ___
 
@@ -97,7 +97,7 @@ WatchableMap.disposedStacks
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L52)
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L52)
 
 ___
 
@@ -111,7 +111,7 @@ WatchableMap.map
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:22](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L22)
+[src/neuroglancer/util/watchable_map.ts:22](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L22)
 
 ___
 
@@ -125,7 +125,7 @@ WatchableMap.refCount
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L45)
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L45)
 
 ___
 
@@ -139,7 +139,7 @@ WatchableMap.wasDisposed
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L46)
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L46)
 
 ## Accessors
 
@@ -157,7 +157,7 @@ WatchableMap.size
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L75)
+[src/neuroglancer/util/watchable_map.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L75)
 
 ___
 
@@ -175,7 +175,7 @@ WatchableMap.value
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L40)
+[src/neuroglancer/util/watchable_map.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L40)
 
 ## Methods
 
@@ -193,7 +193,7 @@ WatchableMap.\_\_@iterator@87
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:78](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L78)
+[src/neuroglancer/util/watchable_map.ts:78](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L78)
 
 ___
 
@@ -211,7 +211,7 @@ WatchableMap.addRef
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L48)
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L48)
 
 ___
 
@@ -229,7 +229,7 @@ WatchableMap.clear
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L81)
+[src/neuroglancer/util/watchable_map.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L81)
 
 ___
 
@@ -253,7 +253,7 @@ WatchableMap.delete
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L57)
+[src/neuroglancer/util/watchable_map.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L57)
 
 ___
 
@@ -271,7 +271,7 @@ WatchableMap.dispose
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L53)
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L53)
 
 ___
 
@@ -289,7 +289,7 @@ WatchableMap.disposed
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:98](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L98)
+[src/neuroglancer/util/watchable_map.ts:98](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L98)
 
 ___
 
@@ -313,7 +313,7 @@ WatchableMap.get
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:69](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L69)
+[src/neuroglancer/util/watchable_map.ts:69](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L69)
 
 ___
 
@@ -337,7 +337,7 @@ WatchableMap.has
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:72](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L72)
+[src/neuroglancer/util/watchable_map.ts:72](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L72)
 
 ___
 
@@ -355,7 +355,7 @@ WatchableMap.keys
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L95)
+[src/neuroglancer/util/watchable_map.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L95)
 
 ___
 
@@ -373,7 +373,7 @@ WatchableMap.refCountReachedZero
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L66)
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L66)
 
 ___
 
@@ -403,7 +403,7 @@ WatchableMap.registerCancellable
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L100)
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L100)
 
 ___
 
@@ -433,7 +433,7 @@ WatchableMap.registerDisposer
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L76)
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L76)
 
 ___
 
@@ -460,7 +460,7 @@ WatchableMap.registerEventListener
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L95)
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L95)
 
 ___
 
@@ -474,7 +474,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:545](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/data_panel_layout.ts#L545)
+[src/neuroglancer/data_panel_layout.ts:545](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L545)
 
 ___
 
@@ -494,7 +494,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:532](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/data_panel_layout.ts#L532)
+[src/neuroglancer/data_panel_layout.ts:532](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L532)
 
 ___
 
@@ -519,7 +519,7 @@ WatchableMap.set
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:44](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L44)
+[src/neuroglancer/util/watchable_map.ts:44](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L44)
 
 ___
 
@@ -533,7 +533,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:549](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/data_panel_layout.ts#L549)
+[src/neuroglancer/data_panel_layout.ts:549](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L549)
 
 ___
 
@@ -563,7 +563,7 @@ WatchableMap.unregisterDisposer
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/disposable.ts#L85)
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/disposable.ts#L85)
 
 ___
 
@@ -581,4 +581,4 @@ WatchableMap.values
 
 #### Defined in
 
-[src/neuroglancer/util/watchable_map.ts:92](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/watchable_map.ts#L92)
+[src/neuroglancer/util/watchable_map.ts:92](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/watchable_map.ts#L92)

@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:22](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_scale_statistics.ts#L22)
+[src/neuroglancer/render_scale_statistics.ts:22](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L22)
 
 ___
 
@@ -38,7 +38,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_scale_statistics.ts#L23)
+[src/neuroglancer/render_scale_statistics.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L23)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_scale_statistics.ts#L24)
+[src/neuroglancer/render_scale_statistics.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L24)
 
 ## Functions
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:30](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_scale_statistics.ts#L30)
+[src/neuroglancer/render_scale_statistics.ts:30](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L30)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:26](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_scale_statistics.ts#L26)
+[src/neuroglancer/render_scale_statistics.ts:26](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L26)
 
 ___
 
@@ -108,4 +108,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:34](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/render_scale_statistics.ts#L34)
+[src/neuroglancer/render_scale_statistics.ts:34](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L34)

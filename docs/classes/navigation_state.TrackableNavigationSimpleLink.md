@@ -49,7 +49,7 @@ TrackableEnum&lt;NavigationSimpleLinkType\&gt;.constructor
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/navigation_state.ts#L46)
+[src/neuroglancer/navigation_state.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L46)
 
 ## Properties
 
@@ -63,7 +63,7 @@ TrackableEnum.changed
 
 #### Defined in
 
-[src/neuroglancer/util/trackable_enum.ts:22](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/trackable_enum.ts#L22)
+[src/neuroglancer/util/trackable_enum.ts:22](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/trackable_enum.ts#L22)
 
 ___
 
@@ -95,7 +95,7 @@ TrackableEnum.value
 
 #### Defined in
 
-[src/neuroglancer/util/trackable_enum.ts:37](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/trackable_enum.ts#L37)
+[src/neuroglancer/util/trackable_enum.ts:37](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/trackable_enum.ts#L37)
 
 • `set` **value**(`value`): `void`
 
@@ -115,7 +115,7 @@ TrackableEnum.value
 
 #### Defined in
 
-[src/neuroglancer/util/trackable_enum.ts:30](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/trackable_enum.ts#L30)
+[src/neuroglancer/util/trackable_enum.ts:30](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/trackable_enum.ts#L30)
 
 ## Methods
 
@@ -133,7 +133,7 @@ TrackableEnum.reset
 
 #### Defined in
 
-[src/neuroglancer/util/trackable_enum.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/trackable_enum.ts#L41)
+[src/neuroglancer/util/trackable_enum.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/trackable_enum.ts#L41)
 
 ___
 
@@ -157,7 +157,7 @@ TrackableEnum.restoreState
 
 #### Defined in
 
-[src/neuroglancer/util/trackable_enum.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/trackable_enum.ts#L45)
+[src/neuroglancer/util/trackable_enum.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/trackable_enum.ts#L45)
 
 ___
 
@@ -175,4 +175,4 @@ TrackableEnum.toJSON
 
 #### Defined in
 
-[src/neuroglancer/util/trackable_enum.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/util/trackable_enum.ts#L49)
+[src/neuroglancer/util/trackable_enum.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/util/trackable_enum.ts#L49)

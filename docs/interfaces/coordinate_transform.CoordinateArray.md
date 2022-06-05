@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/coordinate_transform.ts#L40)
+[src/neuroglancer/coordinate_transform.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L40)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/coordinate_transform.ts#L38)
+[src/neuroglancer/coordinate_transform.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L38)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/285e65d7/src/neuroglancer/coordinate_transform.ts#L42)
+[src/neuroglancer/coordinate_transform.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L42)
