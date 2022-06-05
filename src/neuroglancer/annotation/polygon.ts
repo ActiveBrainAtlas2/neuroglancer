@@ -64,7 +64,7 @@ import { isSectionValid } from './volume';
  });
 
 
- function findCrossProduct(vec1: Float32Array, vec2: Float32Array) : Array<number> {
+ export function findCrossProduct(vec1: Float32Array, vec2: Float32Array) : Array<number> {
   const vec3 = new Array<number>(vec1.length);
   vec3[0] = vec1[1]*vec2[2] - vec1[2]*vec2[1];
   vec3[1] = vec1[2]*vec2[0] - vec1[0]*vec2[2];
@@ -73,7 +73,7 @@ import { isSectionValid } from './volume';
   return vec3;
 }
 
-function findDotProduct(vec1: number[], vec2: vec3): number {
+export function findDotProduct(vec1: number[], vec2: vec3): number {
   let prod = 0;
   const rank = vec1.length;
   for (let i = 0; i < rank; i++) {
