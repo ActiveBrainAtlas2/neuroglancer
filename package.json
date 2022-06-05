@@ -36,7 +36,7 @@
     "build-min-prod": "./set_service.sh production && node ./config/esbuild-cli.js --config=min",
     "build-prod": "./set_service.sh production && node ./config/esbuild-cli.js --config=min",
     "webdev-server": "./set_service.sh webdev && node ./config/esbuild-cli.js --config=dev --serve --watch",
-    "build-docs": "typedoc --tsconfig tsconfig.json --exclude 'src/**/*.spec.ts' src/**/*.ts"
+    "build-docs": "typedoc --exclude 'src/**/*.spec.ts' src/**/*.ts"
   },
   "devDependencies": {
     "@types/jasmine": "^3.10.6",
