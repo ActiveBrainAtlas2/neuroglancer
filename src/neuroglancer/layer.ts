@@ -637,7 +637,11 @@ export class LayerManager extends RefCounted {
     this.layersChanged.add(this.scheduleRemoveLayersWithSingleRef);
     this.layersChanged.add(this.setCoordinateSpaceToImageLayer.bind(this));
   }
-
+  
+  /**
+   * This function is a utility to reset the resolution of neuroglancer whenever
+   * there is an addition of new image layer to the neuroglancer session.
+   */
   private setCoordinateSpaceToImageLayer() {
     //@ts-ignore
     const coordinateSpace = <TrackableCoordinateSpace>(window['viewer'].coordinateSpace);

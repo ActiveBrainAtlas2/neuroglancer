@@ -262,16 +262,34 @@ registerAnnotationTypeRenderHandler<Line>(AnnotationType.LINE, {
   }
 });
 
+/**
+ * 
+ * @param partIndex the part of the annotation that is picked with mouse
+ * @returns returns true if the part index indicates a corner is picked.
+ */
 export function isCornerPicked(partIndex: number) : boolean {
   return partIndex === FULL_OBJECT_PICK_OFFSET + 1 || partIndex === FULL_OBJECT_PICK_OFFSET + 2
 }
 
+/**
+ * Finds which part index is picked based on the annotation and the point.
+ * @param annotation The line annotation for which part index needs to be found based on point.
+ * @param point Input point of the line.
+ * @returns part index corresponding to the point.
+ */
 export function getPointPartIndex(annotation: Line, point: Float32Array) : number {
   if (arraysEqual(annotation.pointA, point)) return FULL_OBJECT_PICK_OFFSET + 1;
   if (arraysEqual(annotation.pointB, point)) return FULL_OBJECT_PICK_OFFSET + 2;
   return -1;
 }
 
+/**
+ * Finds the point corresponding to the part index picked.
+ * @param annotation Annotation for which the point needs to be found.
+ * @param partIndex input part index
+ * @returns undefined if the part index is valid otherwise 
+ * returns the point corresponding to the part index.
+ */
 export function getEndPointBasedOnPartIndex(annotation: Line, partIndex: number) : Float32Array|undefined {
   if (partIndex === FULL_OBJECT_PICK_OFFSET + 1) {
     return annotation.pointA;

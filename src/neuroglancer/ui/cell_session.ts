@@ -23,9 +23,13 @@ import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellT
  
  import './cell_session.css';
 import { LegacyTool } from './tool';
- 
+  /**
+   * Cell session for annotation cells.
+   */
   export class CellSessionDialog extends Overlay {
+    /** Landmark for cell */
     landmarkDropdown : HTMLSelectElement|undefined = undefined;
+    /** Category of cell, eg: positive/negative */
     categoryDropdown : HTMLSelectElement|undefined = undefined;
     colorInput: HTMLInputElement|undefined = undefined;
     constructor(public annotationLayerView: AnnotationLayerView) {
@@ -50,7 +54,10 @@ import { LegacyTool } from './tool';
 
       this.content.appendChild(configTable);
     }
-
+    /**
+     * 
+     * @returns A table row element containing option to start a new cell session.
+     */
     getNewCellRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -76,7 +83,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns A table row element containing landmark and category dropdown elements.
+     */
     getCellInfoRows() : HTMLTableRowElement[] {
       const labelRow = document.createElement('tr');
       const labelDesc = document.createElement('td');
@@ -115,7 +125,10 @@ import { LegacyTool } from './tool';
 
       return [labelRow, categoryRow, colorRow];
     }
-
+    /**
+     * 
+     * @returns A table row element containing functionality to start a cell edit session.
+     */
     getEditCellRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -138,7 +151,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns A table row element with functionality to close current active session.
+     */
     closeSessionRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -163,7 +179,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns Returns a select tag element with information about landmark of cells.
+     */
     getLandMarkDropDown() : HTMLSelectElement {
       const landmarkDropdown = document.createElement('select');
       landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');
@@ -185,7 +204,10 @@ import { LegacyTool } from './tool';
       });
       return landmarkDropdown;
     }
-
+    /**
+     * 
+     * @returns Returns a select HTML element containing cell category information (eg: positive, negative etc)
+     */
     getCategoryDropDown() : HTMLSelectElement {
       const landmarkDropdown = document.createElement('select');
       landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');

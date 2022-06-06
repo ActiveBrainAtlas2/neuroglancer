@@ -1088,6 +1088,11 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     return existing;
   }
 
+  /**
+   * Takes an annotation id as input and returns the parent if the annotation type is line and parent is polygon.
+   * @param id annotation id
+   * @returns Returns parent annotation id if annotation type is line otherwise returns the current id.
+   */
   getNonDummyAnnotationReference(id: AnnotationId): AnnotationReference {
     const reference = this.getReference(id);
     if (!reference.value) return reference;
@@ -1106,6 +1111,11 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     return reference;
   }
 
+  /**
+   * Takes an annotation id as input and finds the top most ancestor of it.
+   * @param id annotation id input
+   * @returns Reference to the top most ancestor of it.
+   */
   getTopMostAnnotationReference(id: AnnotationId): AnnotationReference {
     const reference = this.getReference(id);
     if (!reference.value) return reference;
@@ -1120,6 +1130,11 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     return reference;
   }
 
+  /**
+   * Update the source vertex if child's source vertex gets updated.
+   * @param ann Annotation which needs to be updated.
+   * @returns a new annotation with updated source vertex.
+   */
   getUpdatedSourceVertex(ann: Collection) : Collection {
     if (ann.childAnnotationIds.length === 0) return ann;
     const reference = this.getReference(ann.childAnnotationIds[0]);
@@ -1144,6 +1159,12 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     }
   }
 
+  /**
+   * Takes a annotation reference and update the color of that annotation.
+   * @param reference 
+   * @param color 
+   * @returns void
+   */
   updateColor(reference: AnnotationReference, color: number) {
     if (!reference.value) return;
     const newAnn = {...reference.value};
@@ -1161,13 +1182,23 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
       }
     }
   }
-
+  /**
+   * Takes the annotation reference and updates its description with new string.
+   * @param reference 
+   * @param description 
+   * @returns 
+   */
   updateDescription(reference: AnnotationReference, description: string|undefined) {
     if (!reference.value) return;
     const newAnn = {...reference.value, description};
     this.update(reference, newAnn);
   }
 
+  /**
+   * Takes an annotation and returns all descendants under that annotation
+   * @param annotationId 
+   * @returns an array of descendants of this annotation.
+   */
   private getAllAnnsUnderRoot(annotationId: AnnotationId) : Annotation[] {
     const reference = this.getReference(annotationId);
     let annotationList : Annotation[] = [];
@@ -1187,7 +1218,13 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     reference.dispose();
     return annotationList;
   }
-
+  /**
+   * Makes sure that all descendants under this annotation which need to be visible
+   * added to the annotations tab.
+   * @param annotationId annotation id of the input annotation
+   * @param visible if the current annotation is visible or not, default is false.
+   * @returns void
+   */
   private getAllAnnsUnderRootToDisplay(annotationId: AnnotationId, visible: boolean = false) : void {
     const reference = this.getReference(annotationId);
     if (!reference.value) {
@@ -1208,7 +1245,12 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     reference.dispose();
     return;
   }
-
+  /**
+   * Make all ancestors of the current annotation to be visible 
+   * in the annotations tab.
+   * @param annotationId 
+   * @returns void
+   */
   makeAllParentsVisible(annotationId: AnnotationId) : void {
     const reference = this.getReference(annotationId);
     if (!reference.value) {

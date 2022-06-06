@@ -61,7 +61,12 @@ import { isSectionValid } from './volume';
    }
  });
 
-
+/**
+ * Takes two vectors as input and returns their cross product.
+ * @param vec1 input vector
+ * @param vec2 input vector
+ * @returns number cross product of vec1 and vec2
+ */
  export function findCrossProduct(vec1: Float32Array, vec2: Float32Array) : Array<number> {
   const vec3 = new Array<number>(vec1.length);
   vec3[0] = vec1[1]*vec2[2] - vec1[2]*vec2[1];
@@ -72,9 +77,9 @@ import { isSectionValid } from './volume';
 }
 
 /**
- * 
- * @param vec1 
- * @param vec2 
+ * Takes two vectors as input and returns their dot product.
+ * @param vec1 input vector
+ * @param vec2 input vector
  * @returns number dot product of vec1 and vec2
  */
 export function findDotProduct(vec1: number[], vec2: vec3): number {
@@ -87,6 +92,12 @@ export function findDotProduct(vec1: number[], vec2: vec3): number {
   return prod;
 }
 
+/**
+ * Takes a list of childrefs and plane orientation and finds the normal vector to the polygon into the plane.
+ * @param childRefs List of childrefs (child lines of polygon)
+ * @param orientation Current plane orientation
+ * @returns A normal vector of polygon whose direction is into the plane.
+ */
 function findNormalVectorToPolygon(childRefs: AnnotationReference[], orientation: quat) : number[] {
   let crossProductVec = new Array<number>(3);
   if (childRefs.length < 2) { // atleast two lines to find normal
@@ -130,6 +141,20 @@ function findNormalVectorToPolygon(childRefs: AnnotationReference[], orientation
   return crossProductVec;
 }
 
+/**
+ * Given a polygon reference and start offset, creates a polygon sequence of size polygonCnt
+ * For example, let the source polygon be at location 's', polygonCnt be 3 and start offset be 10.
+ * step size to be 3.
+ * creates a sequence of polygons at locations: s+10, s+10+3, s+10+3+3
+ * @param layer 
+ * @param navigationState 
+ * @param annotationLayer 
+ * @param annotationId 
+ * @param startOffset 
+ * @param polygonCnt 
+ * @param stepSize 
+ * @returns void
+ */
 export function cloneAnnotationSequence(layer: UserLayerWithAnnotations, navigationState: NavigationState, annotationLayer: AnnotationLayerState, 
   annotationId: string, startOffset: number, polygonCnt: number, stepSize: number): void {
   const reference = annotationLayer.source.getNonDummyAnnotationReference(annotationId);
@@ -159,6 +184,16 @@ export function cloneAnnotationSequence(layer: UserLayerWithAnnotations, navigat
   reference.dispose();
 }
 
+/**
+ * Takes an input polygon reference and creates a clone of the polygon at certain depth along a normal vector.
+ * @param pose 
+ * @param annotationLayer annotation layer corresponding to the polygon
+ * @param reference polygon reference
+ * @param childAnnotationRefs 
+ * @param depth distance at which the new polygon needs to be cloned.
+ * @param normalVector normal vector along which the new polygon needs to be cloned.
+ * @returns returns the annotation id of the cloned polygon
+ */
 function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerState, reference: AnnotationReference, 
   childAnnotationRefs: AnnotationReference[], depth: number, normalVector: number[]): string | undefined {
   
@@ -225,6 +260,15 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
   return success();
 }
 
+/**
+ * Takes a point and finds a new point with certain depth along the normal vector
+ * @param pose 
+ * @param source source point to find the new point.
+ * @param normalVec normal vector along which the depth needs to be computed.
+ * @param depth depth value
+ * @param round rounds the transformed point if value is true.
+ * @returns The transformed point with depth along the normal vector.
+ */
 function getTransformedPoint(pose: DisplayPose, source: Float32Array, normalVec: number[],
   depth: number, round: boolean = false): Float32Array | undefined {
   if (!pose.valid) {
@@ -255,6 +299,13 @@ function getTransformedPoint(pose: DisplayPose, source: Float32Array, normalVec:
   return transformedPoint;
 }
 
+/**
+ * Takes a polygon annotation reference and scales the polygon wrt to its centroid.
+ * @param navigationState 
+ * @param annotationLayer Layer in which the polygon annotation is present.
+ * @param reference reference corresponding to the polygon.
+ * @param scale scale factor of the polygon (1.2 indicates 20% scale in polygon)
+ */
 //@ts-ignore
 export function scalePolygon(navigationState: NavigationState, annotationLayer: AnnotationLayerState,
   reference: AnnotationReference, scale: number) {
@@ -291,6 +342,14 @@ export function scalePolygon(navigationState: NavigationState, annotationLayer: 
   annotationLayer.source.update(reference, newAnn);
 }
 
+/**
+ * Takes a polygon annotation reference and rotates the polygon wrt to its centroid.
+ * @param navigationState 
+ * @param annotationLayer Layer in which the polygon annotation is present.
+ * @param reference reference corresponding to the polygon.
+ * @param angle Angle of rotation in degrees.
+ * @returns 
+ */
 export function rotatePolygon(navigationState: NavigationState, annotationLayer: AnnotationLayerState, reference: AnnotationReference, angle: number) {
   if(reference.value?.type !== AnnotationType.POLYGON) return;
   const childAnnotationRefs : AnnotationReference[] = [];
@@ -333,6 +392,12 @@ export function rotatePolygon(navigationState: NavigationState, annotationLayer:
   annotationLayer.source.update(reference, newAnn);
 }
 
+/**
+ * Uses the rotation matrix and rotates the point with respect to the quat (first argument).
+ * @param rotateQuat 
+ * @param point 
+ * @returns rotated point in float array.
+ */
 function getTransformedPointOnRotation(rotateQuat: quat, point: number[]) : Float32Array {
   const rank = point.length;
   const transformedPoint = new Float32Array(rank);
@@ -344,6 +409,11 @@ function getTransformedPointOnRotation(rotateQuat: quat, point: number[]) : Floa
   return transformedPoint;
 }
 
+/**
+ * Takez a list of child refs (child lines of polygon) and finds its centroid.
+ * @param childAnnotationRefs 
+ * @returns centroid in a float array format.
+ */
 function getCentroidPolygon(childAnnotationRefs: AnnotationReference[]) : Float32Array {
   const rank = 3;
   const centroid = new Float32Array(rank);
@@ -359,11 +429,22 @@ function getCentroidPolygon(childAnnotationRefs: AnnotationReference[]) : Float3
   return centroid;
 }
 
+/**
+ * Takes a point as input and returns the z-coordinate of the point.
+ * @param point 
+ * @returns z-coordinate of the point.
+ */
 export function getZCoordinate(point: Float32Array): number|undefined {
   if (point.length < 3) return undefined;
   return point[2];
 }
 
+/**
+ * Checks if both points have same z-coordinate
+ * @param point1 
+ * @param point2 
+ * @returns true if both points have same z-coordinate otherwise false.
+ */
 export function checkIfSameZCoordinate(point1: Float32Array, point2: Float32Array): boolean {
   const z1 = getZCoordinate(point1);
   const z2 = getZCoordinate(point2);
@@ -371,6 +452,12 @@ export function checkIfSameZCoordinate(point1: Float32Array, point2: Float32Arra
   return z1 === z2;
 }
 
+/**
+ * Takes two points and copies the first point's z coordinate into the second point.
+ * @param point1 
+ * @param point2 
+ * @returns void
+ */
 export function copyZCoordinate(point1: Float32Array|undefined, point2: Float32Array|undefined): void {
   if (point1 === undefined || point2 === undefined) return;
   if (point1.length < 3 || point2.length < 3) return;

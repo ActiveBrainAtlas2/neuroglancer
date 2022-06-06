@@ -528,6 +528,11 @@ export class MultiscaleAnnotationSource extends SharedObject implements
     return existing;
   }
 
+  /**
+   * Takes an annotation id as input and returns the parent if the annotation type is line and parent is polygon.
+   * @param id annotation id
+   * @returns Returns parent annotation id if annotation type is line otherwise returns the current id.
+   */
   getNonDummyAnnotationReference(id: AnnotationId): AnnotationReference {
     const reference = this.getReference(id);
     if (!reference.value) return reference;
@@ -551,6 +556,11 @@ export class MultiscaleAnnotationSource extends SharedObject implements
     return; // TODO: to implement this
   }
 
+  /**
+   * Takes an annotation id as input and finds the top most ancestor of it.
+   * @param id annotation id input
+   * @returns Reference to the top most ancestor of it.
+   */
   getTopMostAnnotationReference(id: AnnotationId): AnnotationReference {
     const reference = this.getReference(id);
     if (!reference.value) return reference;
@@ -564,7 +574,12 @@ export class MultiscaleAnnotationSource extends SharedObject implements
     
     return reference;
   }
-
+  /**
+   * Takes a annotation reference and update the color of that annotation.
+   * @param reference 
+   * @param color 
+   * @returns void
+   */
   updateColor(reference: AnnotationReference, color: number) {
     if (!reference.value) return;
     const newAnn = {...reference.value};
@@ -582,7 +597,12 @@ export class MultiscaleAnnotationSource extends SharedObject implements
       }
     }
   }
-
+  /**
+   * Takes the annotation reference and updates its description with new string.
+   * @param reference 
+   * @param description 
+   * @returns 
+   */
   updateDescription(reference: AnnotationReference, description: string|undefined) {
     if (!reference.value) return;
     const newAnn = {...reference.value, description};
