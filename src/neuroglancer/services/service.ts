@@ -1,5 +1,5 @@
 export const AppSettings = {
-        API_ENDPOINT: 'http://localhost:8000',
+        API_ENDPOINT: 'http://localhost:4001',
         GOOGLE_LOGIN: 'https://webdev.dk.ucsd.edu/activebrainatlas/accounts/google/login/?next=',
         LOCAL_LOGIN: 'https://webdev.dk.ucsd.edu/activebrainatlas/admin/login/?next=/devlogin',
         DISPLAY_FETCH: true,
