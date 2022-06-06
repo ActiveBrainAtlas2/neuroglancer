@@ -18,17 +18,25 @@ import {StatusMessage} from 'neuroglancer/status';
 import {bindDefaultCopyHandler, bindDefaultPasteHandler} from 'neuroglancer/ui/default_clipboard_handling';
 import {setDefaultInputEventBindings} from 'neuroglancer/ui/default_input_event_bindings';
 import {makeDefaultViewer} from 'neuroglancer/ui/default_viewer';
+import {bindTitle} from 'neuroglancer/ui/title';
 import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
+
+declare var NEUROGLANCER_DEFAULT_STATE_FRAGMENT: string|undefined;
 
 /**
  * Sets up the default neuroglancer viewer.
+ new UrlHashBinding(viewer.state, viewer.dataSourceProvider.credentialsManager));
  */
 export function setupDefaultViewer() {
   let viewer = (<any>window)['viewer'] = makeDefaultViewer();
   setDefaultInputEventBindings(viewer.inputEventBindings);
 
   const hashBinding = viewer.registerDisposer(
-      new UrlHashBinding(viewer.state, viewer.dataSourceProvider.credentialsManager));
+      new UrlHashBinding(viewer.state, viewer.dataSourceProvider.credentialsManager, {
+        defaultFragment: typeof NEUROGLANCER_DEFAULT_STATE_FRAGMENT !== 'undefined' ?
+            NEUROGLANCER_DEFAULT_STATE_FRAGMENT :
+            undefined
+      }));
   viewer.registerDisposer(hashBinding.parseError.changed.add(() => {
     const {value} = hashBinding.parseError;
     if (value !== undefined) {
@@ -38,10 +46,11 @@ export function setupDefaultViewer() {
     }
     hashBinding.parseError;
   }));
+  hashBinding.updateFromUrlHash();
+  viewer.registerDisposer(bindTitle(viewer.title));
 
   bindDefaultCopyHandler(viewer);
   bindDefaultPasteHandler(viewer);
 
-  viewer.urlHashBinding = hashBinding;
   return viewer;
 }

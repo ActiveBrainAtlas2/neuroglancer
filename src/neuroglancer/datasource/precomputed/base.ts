@@ -21,7 +21,9 @@ import {mat4} from 'neuroglancer/util/geom';
 export enum VolumeChunkEncoding {
   RAW,
   JPEG,
-  COMPRESSED_SEGMENTATION
+  COMPRESSED_SEGMENTATION,
+  COMPRESSO,
+  PNG
 }
 
 export class VolumeChunkSourceParameters {

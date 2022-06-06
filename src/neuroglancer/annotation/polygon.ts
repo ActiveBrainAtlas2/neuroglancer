@@ -20,7 +20,7 @@
 
  import { quat, vec3 } from 'gl-matrix';
  import {AnnotationReference, AnnotationType, Line, Polygon} from 'neuroglancer/annotation';
- import {AnnotationRenderContext, AnnotationRenderHelper, getAnnotationTypeRenderHandler, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
+ import {AnnotationRenderContext, AnnotationRenderHelper, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
  import { DisplayPose, NavigationState } from '../navigation_state';
 import { StatusMessage } from '../status';
  import { TrackableValue } from '../trackable_value';
@@ -64,8 +64,8 @@ import { isSectionValid } from './volume';
  });
 
 
- function findCrossProduct(vec1: Float32Array, vec2: Float32Array) : Float32Array {
-  const vec3 = new Float32Array(vec1.length);
+ function findCrossProduct(vec1: Float32Array, vec2: Float32Array) : Array<number> {
+  const vec3 = new Array<number>(vec1.length);
   vec3[0] = vec1[1]*vec2[2] - vec1[2]*vec2[1];
   vec3[1] = vec1[2]*vec2[0] - vec1[0]*vec2[2];
   vec3[2] = vec1[0]*vec2[1] - vec1[1]*vec2[0];
@@ -73,7 +73,7 @@ import { isSectionValid } from './volume';
   return vec3;
 }
 
-function findDotProduct(vec1: Float32Array, vec2: vec3): number {
+function findDotProduct(vec1: number[], vec2: vec3): number {
   let prod = 0;
   const rank = vec1.length;
   for (let i = 0; i < rank; i++) {
@@ -83,8 +83,8 @@ function findDotProduct(vec1: Float32Array, vec2: vec3): number {
   return prod;
 }
 
-function findNormalVectorToPolygon(childRefs: AnnotationReference[], orientation: quat) : Float32Array {
-  let crossProductVec = new Float32Array(3);
+function findNormalVectorToPolygon(childRefs: AnnotationReference[], orientation: quat) : number[] {
+  let crossProductVec = new Array<number>(3);
   if (childRefs.length < 2) { // atleast two lines to find normal
     return crossProductVec;
   }
@@ -156,7 +156,7 @@ export function cloneAnnotationSequence(layer: UserLayerWithAnnotations, navigat
 }
 
 function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerState, reference: AnnotationReference, 
-  childAnnotationRefs: AnnotationReference[], depth: number, normalVector: Float32Array): string | undefined {
+  childAnnotationRefs: AnnotationReference[], depth: number, normalVector: number[]): string | undefined {
   
   const ann = <Polygon>reference.value;
   const cloneSource = getTransformedPoint(pose, ann.source, normalVector, depth);
@@ -220,7 +220,7 @@ function cloneAnnotation(pose: DisplayPose, annotationLayer: AnnotationLayerStat
   return success();
 }
 
-function getTransformedPoint(pose: DisplayPose, source: Float32Array, normalVec: Float32Array,
+function getTransformedPoint(pose: DisplayPose, source: Float32Array, normalVec: number[],
   depth: number, round: boolean = false): Float32Array | undefined {
   if (!pose.valid) {
     return undefined;
@@ -302,8 +302,8 @@ export function rotatePolygon(navigationState: NavigationState, annotationLayer:
 
   childAnnotationRefs.forEach((childAnnotationRef) => {
     const line = <Line>childAnnotationRef.value;
-    const vecA = new Float32Array(centroid.length);
-    const vecB = new Float32Array(centroid.length);
+    const vecA = new Array<number>(centroid.length);
+    const vecB = new Array<number>(centroid.length);
     for (let i = 0; i < centroid.length; i++) {
       vecA[i] = line.pointA[i] - centroid[i];
       vecB[i] = line.pointB[i] - centroid[i];
@@ -319,7 +319,7 @@ export function rotatePolygon(navigationState: NavigationState, annotationLayer:
     const newLine = <Line>{...line, pointA: newPointA, pointB: newPointB};
     annotationLayer.source.update(childAnnotationRef, newLine);
   });
-  const vec = new Float32Array(centroid.length);
+  const vec = new Array<number>(centroid.length);
   for (let i = 0; i < centroid.length; i++) vec[i] = ann.source[i] - centroid[i];
   const newVec = getTransformedPointOnRotation(rotateQuat, vec);
   const newSource = new Float32Array(centroid.length);
@@ -328,7 +328,7 @@ export function rotatePolygon(navigationState: NavigationState, annotationLayer:
   annotationLayer.source.update(reference, newAnn);
 }
 
-function getTransformedPointOnRotation(rotateQuat: quat, point: Float32Array) : Float32Array {
+function getTransformedPointOnRotation(rotateQuat: quat, point: number[]) : Float32Array {
   const rank = point.length;
   const transformedPoint = new Float32Array(rank);
   const transformedVec3 = vec3.transformQuat(vec3.create(), point, rotateQuat);

@@ -29,7 +29,9 @@ import {SkeletonChunk, SkeletonSource} from 'neuroglancer/skeleton/backend';
 import {decodeSkeletonChunk} from 'neuroglancer/skeleton/decode_precomputed_skeleton';
 import {ChunkDecoder} from 'neuroglancer/sliceview/backend_chunk_decoders';
 import {decodeCompressedSegmentationChunk} from 'neuroglancer/sliceview/backend_chunk_decoders/compressed_segmentation';
+import {decodeCompressoChunk} from 'neuroglancer/sliceview/backend_chunk_decoders/compresso';
 import {decodeJpegChunk} from 'neuroglancer/sliceview/backend_chunk_decoders/jpeg';
+import {decodePngChunk} from 'neuroglancer/sliceview/backend_chunk_decoders/png';
 import {decodeRawChunk} from 'neuroglancer/sliceview/backend_chunk_decoders/raw';
 import {VolumeChunk, VolumeChunkSource} from 'neuroglancer/sliceview/volume/backend';
 import {fetchSpecialHttpByteRange} from 'neuroglancer/util/byte_range_http_requests';
@@ -43,7 +45,7 @@ import {stableStringify} from 'neuroglancer/util/json';
 import {getObjectId} from 'neuroglancer/util/object_id';
 import {cancellableFetchSpecialOk, SpecialProtocolCredentials, SpecialProtocolCredentialsProvider} from 'neuroglancer/util/special_protocol_request';
 import {Uint64} from 'neuroglancer/util/uint64';
-import {encodeZIndexCompressed, zorder3LessThan} from 'neuroglancer/util/zorder';
+import {encodeZIndexCompressed, encodeZIndexCompressed3d, zorder3LessThan} from 'neuroglancer/util/zorder';
 import {registerSharedObject} from 'neuroglancer/worker_rpc';
 
 // Set to true to validate the multiscale index.
@@ -253,6 +255,8 @@ const chunkDecoders = new Map<VolumeChunkEncoding, ChunkDecoder>();
 chunkDecoders.set(VolumeChunkEncoding.RAW, decodeRawChunk);
 chunkDecoders.set(VolumeChunkEncoding.JPEG, decodeJpegChunk);
 chunkDecoders.set(VolumeChunkEncoding.COMPRESSED_SEGMENTATION, decodeCompressedSegmentationChunk);
+chunkDecoders.set(VolumeChunkEncoding.COMPRESSO, decodeCompressoChunk);
+chunkDecoders.set(VolumeChunkEncoding.PNG, decodePngChunk);
 
 @registerSharedObject() export class PrecomputedVolumeChunkSource extends
 (WithParameters(WithSharedCredentialsProviderCounterpart<SpecialProtocolCredentials>()(VolumeChunkSource), VolumeChunkSourceParameters)) {
@@ -293,7 +297,7 @@ chunkDecoders.set(VolumeChunkEncoding.COMPRESSED_SEGMENTATION, decodeCompressedS
       const {chunkGridPosition} = chunk;
       const xBits = Math.ceil(Math.log2(gridShape[0])), yBits = Math.ceil(Math.log2(gridShape[1])),
             zBits = Math.ceil(Math.log2(gridShape[2]));
-      const chunkIndex = encodeZIndexCompressed(
+      const chunkIndex = encodeZIndexCompressed3d(
           new Uint64(), xBits, yBits, zBits, chunkGridPosition[0], chunkGridPosition[1],
           chunkGridPosition[2]);
       response = (getOrNotFoundError(await getShardedData(
@@ -385,9 +389,9 @@ function decodeMultiscaleManifestChunk(
   }
   const fragmentInfo = new Uint32Array(response, offset);
   convertEndian32(fragmentInfo, Endianness.LITTLE);
-  const clipUpperBound =
-      vec3.fromValues(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
   const clipLowerBound =
+      vec3.fromValues(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+  const clipUpperBound =
       vec3.fromValues(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
   let numLods = Math.max(1, storedLodScales.length);
   // Compute `clipLowerBound` and `clipUpperBound` and `numLods`.  Note that `numLods` is >=
@@ -726,12 +730,7 @@ export class PrecomputedAnnotationSpatialIndexSourceBackend extends (WithParamet
     } else {
       const {upperChunkBound} = this.spec;
       const {chunkGridPosition} = chunk;
-      const xBits = Math.ceil(Math.log2(upperChunkBound[0])),
-            yBits = Math.ceil(Math.log2(upperChunkBound[1])),
-            zBits = Math.ceil(Math.log2(upperChunkBound[2]));
-      const chunkIndex = encodeZIndexCompressed(
-          new Uint64(), xBits, yBits, zBits, chunkGridPosition[0], chunkGridPosition[1],
-          chunkGridPosition[2]);
+      const chunkIndex = encodeZIndexCompressed(new Uint64(), chunkGridPosition, upperChunkBound);
       const result =
           await getShardedData(minishardIndexSource, chunk, chunkIndex, cancellationToken);
       if (result !== undefined) response = result.data;

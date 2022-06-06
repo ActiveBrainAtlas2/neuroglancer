@@ -18,11 +18,10 @@
  * @file Support for rendering volume annotations.
  */
 
- import {AnnotationType, Line, Polygon, Volume} from 'neuroglancer/annotation';
+ import {AnnotationType, Polygon, Volume} from 'neuroglancer/annotation';
  import {AnnotationRenderContext, AnnotationRenderHelper, registerAnnotationTypeRenderHandler} from 'neuroglancer/annotation/type_handler';
-import { AnnotationLayerView } from '../ui/annotations';
 import { AnnotationLayerState } from './annotation_layer_state';
-import { checkIfSameZCoordinate, getZCoordinate } from './polygon';
+import { getZCoordinate } from './polygon';
 
  class RenderHelper extends AnnotationRenderHelper {
 

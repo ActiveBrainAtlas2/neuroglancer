@@ -101,6 +101,7 @@ export class UserLoader {
         this.localLoginButton.style.removeProperty('display');
         this.userList.style.display = 'none';
         this.logoutButton.style.display = 'none';
+        //TODO fixme migrate web 8 -> 9 userDataRef.off("child_changed");
         off(userDataRef, "child_changed");
     }
 

@@ -22,6 +22,7 @@ import { AnnotationType } from '../annotation';
 import { AnnotationLayerView, getLandmarkList, PlaceComTool, COMSession, ComToolMode } from './annotations';
  
  import './com_session.css';
+import { LegacyTool } from './tool';
  
   export class ComSessionDialog extends Overlay {
     landmarkDropdown : HTMLSelectElement|undefined = undefined;
@@ -138,18 +139,11 @@ import { AnnotationLayerView, getLandmarkList, PlaceComTool, COMSession, ComTool
       button.addEventListener('click', () => {
         const isInstance = this.annotationLayerView.layer.tool.value instanceof PlaceComTool;
         if (isInstance) {
-          this.annotationLayerView.layer.tool.value!.registerDisposer(() => {
-            this.dispose();
-          });
-          this.annotationLayerView.layer.tool.value!.registerDisposer(() => {
-            const iconDiv = (<PlaceComTool>this.annotationLayerView.layer.tool.value!).icon.value;
-            if (iconDiv === undefined) return;
-            iconDiv.style.backgroundColor = '';
-          });
-          this.annotationLayerView.layer.tool.value!.dispose();
-        } else {
-          this.dispose();
+          if (this.annotationLayerView.layer.tool.value  instanceof LegacyTool) {
+            this.annotationLayerView.layer.tool.value.layer.tool.value = undefined;
+          }
         }
+        this.dispose();
       });
       button.classList.add('com-session-btn');
 

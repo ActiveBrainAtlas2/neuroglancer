@@ -17,7 +17,7 @@
 import debounce from 'lodash/debounce';
 import {LayerChunkProgressInfo} from 'neuroglancer/chunk_manager/base';
 import {RenderViewport, renderViewportsEqual} from 'neuroglancer/display_context';
-import {LayerView, MouseSelectionState, UserLayer, VisibleLayerInfo} from 'neuroglancer/layer';
+import {LayerView, MouseSelectionState, PickState, UserLayer, VisibleLayerInfo} from 'neuroglancer/layer';
 import {DisplayDimensionRenderInfo, NavigationState} from 'neuroglancer/navigation_state';
 import {PickIDManager} from 'neuroglancer/object_picking';
 import {ProjectionParameters, projectionParametersEqual} from 'neuroglancer/projection_parameters';
@@ -63,8 +63,8 @@ export class RenderLayer extends RefCounted {
    * Transform the stored pickedValue and offset associated with the retrieved pick ID into the
    * actual value.
    */
-  transformPickedValue(pickedValue: Uint64, _pickedOffset: number): any {
-    return pickedValue;
+  transformPickedValue(pickState: PickState): any {
+    return pickState.pickedValue;
   }
 
   /**
@@ -191,6 +191,7 @@ export class DerivedProjectionParameters<Parameters extends ProjectionParameters
 @registerSharedObjectOwner(PROJECTION_PARAMETERS_RPC_ID)
 export class SharedProjectionParameters<T extends ProjectionParameters =
                                                       ProjectionParameters> extends SharedObject {
+  private prevDisplayDimensionRenderInfo: undefined|DisplayDimensionRenderInfo = undefined;
   constructor(
       rpc: RPC, public base: WatchableValueChangeInterface<T>, public updateInterval: number = 10) {
     super();
@@ -202,10 +203,13 @@ export class SharedProjectionParameters<T extends ProjectionParameters =
     this.update.flush();
   }
 
-  private update = this.registerCancellable(debounce((oldValue: T, newValue: T) => {
+  private update = this.registerCancellable(debounce((_oldValue: T, newValue: T) => {
+    // Note: Because we are using debouce, we cannot rely on `_oldValue`, since
+    // `DerivedProjectionParameters` reuses the objects.
     let valueUpdate: any;
-    if (newValue.displayDimensionRenderInfo !== oldValue.displayDimensionRenderInfo) {
+    if (newValue.displayDimensionRenderInfo !== this.prevDisplayDimensionRenderInfo) {
       valueUpdate = newValue;
+      this.prevDisplayDimensionRenderInfo = newValue.displayDimensionRenderInfo;
     } else {
       const {displayDimensionRenderInfo, ...remainder} = newValue;
       valueUpdate = remainder;

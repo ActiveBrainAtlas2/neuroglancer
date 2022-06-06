@@ -48,6 +48,12 @@ members:
     uint8 values), `rgba` (represented as 4 uint8 values), `uint8`, `int8`, `uint16`, `int16`,
     `uint32`, `int32`, or `float32`.
   - `"description"`: Optional.  String value specifying textual description of property shown in UI.
+  - `"enum_values"`: Optional.  If `"type"` is a numeric type (not `"rgb"` or `"rgba"`), this
+    property may specify an array of values (compatible with the specified data type).  These values
+    correspond to the labels specified by `"enum_labels"`, which are shown in the UI.
+  - `"enum_labels"`: Must be specified if, and only if, `"enum_values"` is specified.  Must be an
+    array of strings of the same length as `"enum_values"` specifying the corresponding labels for
+    each value.
 - `"relationships"`: Array of JSON objects, each with the following members:
   - `"id"`: String value specifying unique identifier for the relationship (displayed in the UI).
   - `"key"`: String value specifying the sub-directory containing the corresponding [related object id index](#related-object-id-index).
@@ -182,7 +188,7 @@ The spatial index levels should be computed as follows:
     - This spatial index level maps `cell` to the list of annotations in `emitted(level, cell)`.
       The annotations are encoded in the [multiple annotation
       encoding](#multiple-annotation-encoding) also used by the related object id index; the list
-      should be ordered by bit-reserved Morton code.
+      should be ordered randomly (or perhaps pseudo-randomly based on the annotation id).
     - For each `child_cell` in level `level+1` contained within `cell`: Compute the set
       `remaining_annotations(level+1, child_cell)` of annotations within
       `remaining_annotations(level, cell) - emitted(level, cell)` that intersect `child_cell`.

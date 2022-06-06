@@ -23,6 +23,7 @@ import {WatchableValueInterface} from 'neuroglancer/trackable_value';
 import {RefCounted} from 'neuroglancer/util/disposable';
 import {mat4} from 'neuroglancer/util/geom';
 import {Buffer} from 'neuroglancer/webgl/buffer';
+import {glsl_COLORMAPS} from 'neuroglancer/webgl/colormaps';
 import {GL} from 'neuroglancer/webgl/context';
 import {ParameterizedContextDependentShaderGetter, parameterizedEmitterDependentShaderGetter, shaderCodeWithLineDirective, WatchableShaderError} from 'neuroglancer/webgl/dynamic_shader';
 import {ShaderBuilder, ShaderModule, ShaderProgram} from 'neuroglancer/webgl/shader';
@@ -162,14 +163,20 @@ export abstract class AnnotationRenderHelper extends RefCounted {
       shaderError: this.shaderError,
       defineShader: (builder: ShaderBuilder, parameters: ShaderControlsBuilderState) => {
         const {rank, properties} = this;
-        for (const property of properties) {
+        const referencedProperties: number[] = [];
+        const processedCode = parameters.parseResult.code;
+        for (let i = 0, numProperties = properties.length; i < numProperties; ++i) {
+          const property = properties[i];
+          const functionName = `prop_${property.identifier}`;
+          if (!processedCode.match(new RegExp(`\\b${functionName}\\b`))) continue;
+          referencedProperties.push(i);
           const handler = annotationPropertyTypeRenderHandlers[property.type];
           handler.defineShader(builder, property.identifier, rank);
         }
         const {propertyOffsets} = this;
         builder.addInitializer(shader => {
-          const binders = this.properties.map(
-              property => shader.vertexShaderInputBinders[`prop_${property.identifier}`]);
+          const binders = referencedProperties.map(
+              i => shader.vertexShaderInputBinders[`prop_${properties[i].identifier}`]);
           const numProperties = binders.length;
           shader.vertexShaderInputBinders['properties'] = {
             enable(divisor: number) {
@@ -179,7 +186,7 @@ export abstract class AnnotationRenderHelper extends RefCounted {
             },
             bind(stride: number, offset: number) {
               for (let i = 0; i < numProperties; ++i) {
-                binders[i].bind(stride, offset + propertyOffsets[i]);
+                binders[i].bind(stride, offset + propertyOffsets[referencedProperties[i]]);
               }
             },
             disable() {
@@ -202,6 +209,9 @@ export abstract class AnnotationRenderHelper extends RefCounted {
         builder.addUniform('highp float', 'uModelClipBounds', rank * 2);
         builder.addUniform('highp uint', 'uPickID');
         builder.addVarying('highp uint', 'vPickID', 'flat');
+
+        builder.addVertexCode(glsl_COLORMAPS);
+
         builder.addVertexCode(`
 vec3 defaultColor() { return uColor; }
 highp uint getPickBaseOffset() { return uint(gl_InstanceID) * ${this.pickIdsPerInstance}u; }

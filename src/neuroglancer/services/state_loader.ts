@@ -173,7 +173,6 @@ export class StateAPI {
             user_date: state['user_date'],
             url: state['url'],
         };
-        console.log(body);
         return fetchOk(url, {
             method: 'POST',
             credentials: 'omit', // Required to pass CSRF Failed error
