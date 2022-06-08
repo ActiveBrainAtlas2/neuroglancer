@@ -25,6 +25,7 @@
 import { StatusMessage } from '../status';
  import { TrackableValue } from '../trackable_value';
 import { UserLayerWithAnnotations } from '../ui/annotations';
+import { arraysEqual } from '../util/array';
  import { verifyInt, verifyNonNegativeFloat } from '../util/json';
  import { AnnotationLayerState } from './annotation_layer_state';
 import { isSectionValid } from './volume';
@@ -463,4 +464,31 @@ export function copyZCoordinate(point1: Float32Array|undefined, point2: Float32A
   if (point1.length < 3 || point2.length < 3) return;
   point2[2] = point1[2];
   return;
+}
+
+export function getNeighbouringAnnIds(childAnns: string[], id: string) : string[] | undefined {
+  const curIdx = childAnns.findIndex((value) => value === id);
+  if (curIdx == -1) {
+    return undefined;
+  }
+  const leftIdx = (curIdx - 1 + childAnns.length) % childAnns.length;
+  const rightIdx = (curIdx + 1) % childAnns.length;
+  return [childAnns[leftIdx], childAnns[rightIdx]];
+}
+
+export function isPointUniqueInPolygon(annotationLayer: AnnotationLayerState, ann: Polygon, point: Float32Array): boolean {
+  for(let i = 0; i < ann.childAnnotationIds.length; i++) {
+    const childAnnRef = annotationLayer.source.getReference(ann.childAnnotationIds[i]);
+    if (childAnnRef.value) {
+      const lineAnn = <Line>(childAnnRef.value);
+      if (i === ann.childAnnotationIds.length-1 && arraysEqual(lineAnn.pointA, point)) {
+        return false;
+      } else if (i !== ann.childAnnotationIds.length-1  
+        && (arraysEqual(lineAnn.pointA, point) || arraysEqual(lineAnn.pointB, point))) {
+        return false;
+      }
+    }
+    childAnnRef.dispose();
+  }
+  return true;
 }

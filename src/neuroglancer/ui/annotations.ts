@@ -68,7 +68,7 @@ import {FetchAnnotationWidget} from 'neuroglancer/widget/fetch_annotation';
 import {fetchOk} from 'neuroglancer/util/http_request';
 import { StatusMessage } from '../status';
 import { getEndPointBasedOnPartIndex, isCornerPicked } from '../annotation/line';
-import { getZCoordinate } from '../annotation/polygon';
+import { getZCoordinate, isPointUniqueInPolygon } from '../annotation/polygon';
 import { VolumeSessionDialog } from './volume_session';
 import { isSectionValid } from '../annotation/volume';
 import { SaveAnnotationWidget } from '../widget/save_annotation';
@@ -1506,10 +1506,17 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
           disposer,
         };
       } else {
+        const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+        if (point === undefined) return;
+        if(!isPointUniqueInPolygon(annotationLayer, <Polygon>(this.inProgressAnnotation.reference.value!), point)) {
+          StatusMessage.showTemporaryMessage("All vertices of polygon must be unique");
+          return;
+        }
+
         if (parentRef) {
           const {zCoordinate} = this;
-          const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
-          if (point === undefined) return;
+          // const point = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
+          // if (point === undefined) return;
           const newZCoordinate = getZCoordinate(point);
           if (zCoordinate === undefined || newZCoordinate === undefined) return;
           if (zCoordinate !== newZCoordinate) {

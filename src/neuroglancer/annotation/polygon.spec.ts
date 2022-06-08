@@ -1,5 +1,6 @@
 import { vec3 } from "gl-matrix";
-import { checkIfSameZCoordinate, copyZCoordinate, findCrossProduct, findDotProduct, getZCoordinate } from "./polygon";
+import { arraysEqual } from "../util/array";
+import { checkIfSameZCoordinate, copyZCoordinate, findCrossProduct, findDotProduct, getNeighbouringAnnIds, getZCoordinate } from "./polygon";
 
 describe('Polygon tool test cases', () => {
 
@@ -41,6 +42,15 @@ describe('Polygon tool test cases', () => {
     expect(findDotProduct([1, 0, 0], v1)).toEqual(0);
     expect(findDotProduct([0, 0, 1], v2)).toEqual(1);
     expect(findDotProduct([5, 0, 0], v3)).toEqual(5);
+  });
+
+  it('getNeighbouringAnnIds', () => {
+    const arr = ["id1", "id2", "id3"];
+    //@ts-ignore
+    expect(arraysEqual(getNeighbouringAnnIds(arr, "id1"), ["id3", "id2"])).toEqual(true);
+    //@ts-ignore
+    expect(arraysEqual(getNeighbouringAnnIds(arr, "id2"), ["id1", "id3"])).toEqual(true);
+    expect(getNeighbouringAnnIds(arr, "id")).toEqual(undefined);
   });
 
 });
