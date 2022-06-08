@@ -26,8 +26,11 @@ import {ShaderBuilder, ShaderProgram} from 'neuroglancer/webgl/shader';
 import {addControlsToBuilder, getFallbackBuilderState, parseShaderUiControls, setControlsInShader, ShaderControlsBuilderState, ShaderControlState} from 'neuroglancer/webgl/shader_ui_controls';
 
 const DEFAULT_FRAGMENT_MAIN = `#uicontrol invlerp normalized
+#uicontrol float brightness slider(min=-1, max=1, default=0)
+#uicontrol float contrast slider(min=-3, max=3, step=0.01, default=0)
+#uicontrol float gamma slider(min=0.05, max=2.5, default=1.0, step=0.05)
 void main() {
-  emitGrayscale(normalized());
+  emitGrayscale((pow(normalized(),gamma)+brightness)*exp(contrast));
 }
 `;
 
