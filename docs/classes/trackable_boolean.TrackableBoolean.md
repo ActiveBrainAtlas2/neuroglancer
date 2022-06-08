@@ -45,7 +45,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_boolean.ts:37](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_boolean.ts#L37)
+[src/neuroglancer/trackable_boolean.ts:37](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_boolean.ts#L37)
 
 ## Properties
 
@@ -59,7 +59,7 @@ Trackable.changed
 
 #### Defined in
 
-[src/neuroglancer/trackable_boolean.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_boolean.ts#L36)
+[src/neuroglancer/trackable_boolean.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_boolean.ts#L36)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_boolean.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_boolean.ts#L24)
+[src/neuroglancer/trackable_boolean.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_boolean.ts#L24)
 
 • `set` **value**(`newValue`): `void`
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_boolean.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_boolean.ts#L27)
+[src/neuroglancer/trackable_boolean.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_boolean.ts#L27)
 
 ## Methods
 
@@ -113,7 +113,7 @@ Trackable.reset
 
 #### Defined in
 
-[src/neuroglancer/trackable_boolean.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_boolean.ts#L52)
+[src/neuroglancer/trackable_boolean.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_boolean.ts#L52)
 
 ___
 
@@ -137,7 +137,7 @@ Trackable.restoreState
 
 #### Defined in
 
-[src/neuroglancer/trackable_boolean.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_boolean.ts#L45)
+[src/neuroglancer/trackable_boolean.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_boolean.ts#L45)
 
 ___
 
@@ -155,7 +155,7 @@ Trackable.toJSON
 
 #### Defined in
 
-[src/neuroglancer/trackable_boolean.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_boolean.ts#L38)
+[src/neuroglancer/trackable_boolean.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_boolean.ts#L38)
 
 ___
 
@@ -169,4 +169,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_boolean.ts:33](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_boolean.ts#L33)
+[src/neuroglancer/trackable_boolean.ts:33](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_boolean.ts#L33)

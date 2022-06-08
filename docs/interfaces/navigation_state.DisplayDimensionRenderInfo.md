@@ -30,7 +30,7 @@ canonicalVoxelPhysicalSize, where d = dimensionIndices[i], or `1` for `i >= rank
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:704](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L704)
+[src/neuroglancer/navigation_state.ts:704](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L704)
 
 ___
 
@@ -43,7 +43,7 @@ Physical scale corresponding to the canonical voxel.  Equal to minimum of
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:697](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L697)
+[src/neuroglancer/navigation_state.ts:697](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L697)
 
 ___
 
@@ -56,7 +56,7 @@ dimensions that are displayed.  The remaining elements are `-1`.
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:670](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L670)
+[src/neuroglancer/navigation_state.ts:670](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L670)
 
 ___
 
@@ -70,7 +70,7 @@ or `1` if `displayDimensionIndices[i] == -1`.
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:691](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L691)
+[src/neuroglancer/navigation_state.ts:691](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L691)
 
 ___
 
@@ -84,7 +84,7 @@ is equal to `coordinateSpace.units[displayDimensionIndices[i]]`, or `''` if
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:684](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L684)
+[src/neuroglancer/navigation_state.ts:684](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L684)
 
 ___
 
@@ -96,7 +96,7 @@ Number of displayed dimensions.  Must be <= 3.
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:664](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L664)
+[src/neuroglancer/navigation_state.ts:664](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L664)
 
 ___
 
@@ -108,7 +108,7 @@ Array of length `globalRank` specifying global dimension names.
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:659](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L659)
+[src/neuroglancer/navigation_state.ts:659](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L659)
 
 ___
 
@@ -120,7 +120,7 @@ Number of global dimensions.
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:654](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L654)
+[src/neuroglancer/navigation_state.ts:654](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L654)
 
 ___
 
@@ -134,4 +134,4 @@ where `d = displayDimensionIndices[i]`, or `1` for `i >= rank`.
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:677](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L677)
+[src/neuroglancer/navigation_state.ts:677](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L677)

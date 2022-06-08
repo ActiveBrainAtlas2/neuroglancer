@@ -25,4 +25,4 @@
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:265](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L265)
+[src/neuroglancer/worker_rpc.ts:265](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L265)

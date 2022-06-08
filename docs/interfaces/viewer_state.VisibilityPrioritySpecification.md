@@ -28,4 +28,4 @@
 
 #### Defined in
 
-[src/neuroglancer/visibility_priority/frontend.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/visibility_priority/frontend.ts#L50)
+[src/neuroglancer/visibility_priority/frontend.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/visibility_priority/frontend.ts#L50)

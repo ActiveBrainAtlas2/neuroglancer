@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_vec3.ts#L38)
+[src/neuroglancer/trackable_vec3.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L38)
 
 ## Properties
 
@@ -58,7 +58,7 @@ Trackable.changed
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:37](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_vec3.ts#L37)
+[src/neuroglancer/trackable_vec3.ts:37](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L37)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:28](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_vec3.ts#L28)
+[src/neuroglancer/trackable_vec3.ts:28](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L28)
 
 • `set` **value**(`newValue`): `void`
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:31](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_vec3.ts#L31)
+[src/neuroglancer/trackable_vec3.ts:31](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L31)
 
 ## Methods
 
@@ -112,7 +112,7 @@ Trackable.reset
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_vec3.ts#L53)
+[src/neuroglancer/trackable_vec3.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L53)
 
 ___
 
@@ -136,7 +136,7 @@ Trackable.restoreState
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_vec3.ts#L46)
+[src/neuroglancer/trackable_vec3.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L46)
 
 ___
 
@@ -154,4 +154,4 @@ Trackable.toJSON
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_vec3.ts#L39)
+[src/neuroglancer/trackable_vec3.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L39)

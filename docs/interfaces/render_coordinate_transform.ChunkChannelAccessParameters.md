@@ -27,7 +27,7 @@
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:309](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L309)
+[src/neuroglancer/render_coordinate_transform.ts:309](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L309)
 
 ___
 
@@ -40,7 +40,7 @@ coordinates within the chunk channel dimensions corresponding to each flat chann
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:325](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L325)
+[src/neuroglancer/render_coordinate_transform.ts:325](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L325)
 
 ___
 
@@ -52,7 +52,7 @@ Equal to the values in `channelToChunkDimensionIndices` not equal to `-1`.
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:314](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L314)
+[src/neuroglancer/render_coordinate_transform.ts:314](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L314)
 
 ___
 
@@ -64,4 +64,4 @@ Product of `modelTransform.channelSpaceShape`.
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:319](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L319)
+[src/neuroglancer/render_coordinate_transform.ts:319](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L319)

@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:420](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L420)
+[src/neuroglancer/data_panel_layout.ts:420](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L420)
 
 ## Functions
 
@@ -77,7 +77,7 @@
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:124](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L124)
+[src/neuroglancer/data_panel_layout.ts:124](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L124)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:455](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L455)
+[src/neuroglancer/data_panel_layout.ts:455](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L455)
 
 ___
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:112](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L112)
+[src/neuroglancer/data_panel_layout.ts:112](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L112)
 
 ___
 
@@ -142,7 +142,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:116](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L116)
+[src/neuroglancer/data_panel_layout.ts:116](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L116)
 
 ___
 
@@ -163,7 +163,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:94](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L94)
+[src/neuroglancer/data_panel_layout.ts:94](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L94)
 
 ___
 
@@ -183,4 +183,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:463](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/data_panel_layout.ts#L463)
+[src/neuroglancer/data_panel_layout.ts:463](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L463)

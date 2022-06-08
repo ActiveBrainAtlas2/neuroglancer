@@ -41,7 +41,7 @@ Adds the shader code to get a segment's color if it is present in the map.
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:138](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/segment_color.ts#L138)
+[src/neuroglancer/segment_color.ts:138](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L138)
 
 ## Properties
 
@@ -51,7 +51,7 @@ Adds the shader code to get a segment's color if it is present in the map.
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:136](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/segment_color.ts#L136)
+[src/neuroglancer/segment_color.ts:136](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L136)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:158](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/segment_color.ts#L158)
+[src/neuroglancer/segment_color.ts:158](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L158)
 
 ## Methods
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:140](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/segment_color.ts#L140)
+[src/neuroglancer/segment_color.ts:140](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L140)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:167](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/segment_color.ts#L167)
+[src/neuroglancer/segment_color.ts:167](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L167)
 
 ___
 
@@ -140,4 +140,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:162](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/segment_color.ts#L162)
+[src/neuroglancer/segment_color.ts:162](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L162)

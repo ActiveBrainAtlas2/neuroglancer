@@ -31,4 +31,4 @@
 
 #### Defined in
 
-[src/neuroglancer/axes_lines.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/axes_lines.ts#L27)
+[src/neuroglancer/axes_lines.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/axes_lines.ts#L27)

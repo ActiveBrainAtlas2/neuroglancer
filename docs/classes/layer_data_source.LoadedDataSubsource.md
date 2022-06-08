@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:98](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L98)
+[src/neuroglancer/layer_data_source.ts:98](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L98)
 
 ## Properties
 
@@ -59,7 +59,7 @@
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:94](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L94)
+[src/neuroglancer/layer_data_source.ts:94](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L94)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:93](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L93)
+[src/neuroglancer/layer_data_source.ts:93](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L93)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L95)
+[src/neuroglancer/layer_data_source.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L95)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:97](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L97)
+[src/neuroglancer/layer_data_source.ts:97](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L97)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:96](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L96)
+[src/neuroglancer/layer_data_source.ts:96](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L96)
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:92](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L92)
+[src/neuroglancer/layer_data_source.ts:92](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L92)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:91](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L91)
+[src/neuroglancer/layer_data_source.ts:91](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L91)
 
 ## Methods
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:125](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L125)
+[src/neuroglancer/layer_data_source.ts:125](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L125)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:147](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L147)
+[src/neuroglancer/layer_data_source.ts:147](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L147)
 
 ___
 
@@ -204,7 +204,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:137](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L137)
+[src/neuroglancer/layer_data_source.ts:137](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L137)
 
 ___
 
@@ -224,4 +224,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:153](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/layer_data_source.ts#L153)
+[src/neuroglancer/layer_data_source.ts:153](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L153)

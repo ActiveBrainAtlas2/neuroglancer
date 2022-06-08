@@ -38,7 +38,7 @@
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L40)
+[src/neuroglancer/render_scale_statistics.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_scale_statistics.ts#L40)
 
 ___
 
@@ -50,7 +50,7 @@ Frame number corresponding to the current histogram.
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L45)
+[src/neuroglancer/render_scale_statistics.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_scale_statistics.ts#L45)
 
 ___
 
@@ -62,7 +62,7 @@ Current number of rows allocated for the histogram.
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:56](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L56)
+[src/neuroglancer/render_scale_statistics.ts:56](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_scale_statistics.ts#L56)
 
 ___
 
@@ -75,7 +75,7 @@ Maps from spatial scale (nanometers) to histogram row index in the range
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:51](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L51)
+[src/neuroglancer/render_scale_statistics.ts:51](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_scale_statistics.ts#L51)
 
 ___
 
@@ -87,7 +87,7 @@ Initially allocate one row.
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L61)
+[src/neuroglancer/render_scale_statistics.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_scale_statistics.ts#L61)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L39)
+[src/neuroglancer/render_scale_statistics.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_scale_statistics.ts#L39)
 
 ## Methods
 
@@ -122,7 +122,7 @@ Adds a count to the histogram.
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:80](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L80)
+[src/neuroglancer/render_scale_statistics.ts:80](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_scale_statistics.ts#L80)
 
 ___
 
@@ -142,4 +142,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_scale_statistics.ts:63](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_scale_statistics.ts#L63)
+[src/neuroglancer/render_scale_statistics.ts:63](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_scale_statistics.ts#L63)

@@ -27,7 +27,7 @@
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:79](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L79)
+[src/neuroglancer/coordinate_transform.ts:79](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L79)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:78](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L78)
+[src/neuroglancer/coordinate_transform.ts:78](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L78)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L81)
+[src/neuroglancer/coordinate_transform.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L81)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:59](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L59)
+[src/neuroglancer/coordinate_transform.ts:59](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L59)
 
 ___
 
@@ -69,7 +69,7 @@ Specifies the name of each dimension.
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L57)
+[src/neuroglancer/coordinate_transform.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L57)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L52)
+[src/neuroglancer/coordinate_transform.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L52)
 
 ___
 
@@ -91,7 +91,7 @@ Specifies a scale for this dimension.
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L76)
+[src/neuroglancer/coordinate_transform.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L76)
 
 ___
 
@@ -104,7 +104,7 @@ Timestamp of last user action that changed the name, scale, or unit of each dime
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:65](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L65)
+[src/neuroglancer/coordinate_transform.ts:65](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L65)
 
 ___
 
@@ -117,7 +117,7 @@ unitless.
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:71](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L71)
+[src/neuroglancer/coordinate_transform.ts:71](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L71)
 
 ___
 
@@ -130,4 +130,4 @@ may be partially initialized.
 
 #### Defined in
 
-[src/neuroglancer/coordinate_transform.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/coordinate_transform.ts#L50)
+[src/neuroglancer/coordinate_transform.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/coordinate_transform.ts#L50)

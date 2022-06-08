@@ -36,7 +36,7 @@
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:55](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/display_context.ts#L55)
+[src/neuroglancer/display_context.ts:55](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L55)
 
 ___
 
@@ -57,4 +57,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:73](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/display_context.ts#L73)
+[src/neuroglancer/display_context.ts:73](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L73)

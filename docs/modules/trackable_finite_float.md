@@ -34,7 +34,7 @@ limitations under the License.
 
 #### Defined in
 
-[src/neuroglancer/trackable_finite_float.ts:25](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_finite_float.ts#L25)
+[src/neuroglancer/trackable_finite_float.ts:25](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_finite_float.ts#L25)
 
 ## Functions
 
@@ -54,4 +54,4 @@ limitations under the License.
 
 #### Defined in
 
-[src/neuroglancer/trackable_finite_float.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_finite_float.ts#L27)
+[src/neuroglancer/trackable_finite_float.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_finite_float.ts#L27)

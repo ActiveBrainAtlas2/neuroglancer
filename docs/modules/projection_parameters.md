@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:58](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/projection_parameters.ts#L58)
+[src/neuroglancer/projection_parameters.ts:58](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L58)
 
 ___
 
@@ -52,4 +52,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:65](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/projection_parameters.ts#L65)
+[src/neuroglancer/projection_parameters.ts:65](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L65)

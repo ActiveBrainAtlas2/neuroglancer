@@ -53,7 +53,7 @@
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:1183](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L1183)
+[src/neuroglancer/navigation_state.ts:1183](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L1183)
 
 ## Functions
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:751](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L751)
+[src/neuroglancer/navigation_state.ts:751](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L751)
 
 ___
 
@@ -107,4 +107,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:1212](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/navigation_state.ts#L1212)
+[src/neuroglancer/navigation_state.ts:1212](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L1212)

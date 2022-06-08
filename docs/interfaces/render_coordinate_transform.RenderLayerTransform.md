@@ -29,7 +29,7 @@ Specifies coordinate transform information for a RenderLayer.
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L66)
+[src/neuroglancer/render_coordinate_transform.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L66)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:64](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L64)
+[src/neuroglancer/render_coordinate_transform.ts:64](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L64)
 
 ___
 
@@ -52,7 +52,7 @@ Specifies for each channel dimension the corresponding "render layer" dimension.
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:62](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L62)
+[src/neuroglancer/render_coordinate_transform.ts:62](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L62)
 
 ___
 
@@ -65,7 +65,7 @@ Specifies for each global dimension the corresponding "render layer" dimension. 
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:56](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L56)
+[src/neuroglancer/render_coordinate_transform.ts:56](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L56)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:74](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L74)
+[src/neuroglancer/render_coordinate_transform.ts:74](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L74)
 
 ___
 
@@ -91,7 +91,7 @@ coordinate space.
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L50)
+[src/neuroglancer/render_coordinate_transform.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L50)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:73](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L73)
+[src/neuroglancer/render_coordinate_transform.ts:73](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L73)
 
 ___
 
@@ -113,7 +113,7 @@ Homogeneous transform from "model" coordinate space to "render layer" coordinate
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:71](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L71)
+[src/neuroglancer/render_coordinate_transform.ts:71](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L71)
 
 ___
 
@@ -126,7 +126,7 @@ padding dimensions.
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L36)
+[src/neuroglancer/render_coordinate_transform.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L36)
 
 ___
 
@@ -138,4 +138,4 @@ Rank of chunk/model/layer space, excluding any padding dimensions.
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/render_coordinate_transform.ts#L41)
+[src/neuroglancer/render_coordinate_transform.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L41)

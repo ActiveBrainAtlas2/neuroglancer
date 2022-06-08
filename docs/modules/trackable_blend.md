@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_blend.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_blend.ts#L39)
+[src/neuroglancer/trackable_blend.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_blend.ts#L39)
 
 ## Variables
 
@@ -38,7 +38,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_blend.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_blend.ts#L24)
+[src/neuroglancer/trackable_blend.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_blend.ts#L24)
 
 ## Functions
 
@@ -58,4 +58,4 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_blend.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/trackable_blend.ts#L41)
+[src/neuroglancer/trackable_blend.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_blend.ts#L41)

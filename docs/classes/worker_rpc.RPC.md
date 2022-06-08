@@ -45,7 +45,7 @@
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:103](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L103)
+[src/neuroglancer/worker_rpc.ts:103](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L103)
 
 ## Properties
 
@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L102)
+[src/neuroglancer/worker_rpc.ts:102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L102)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:101](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L101)
+[src/neuroglancer/worker_rpc.ts:101](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L101)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:113](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L113)
+[src/neuroglancer/worker_rpc.ts:113](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L113)
 
 ## Methods
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:121](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L121)
+[src/neuroglancer/worker_rpc.ts:121](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L121)
 
 ___
 
@@ -125,7 +125,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:124](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L124)
+[src/neuroglancer/worker_rpc.ts:124](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L124)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:135](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L135)
+[src/neuroglancer/worker_rpc.ts:135](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L135)
 
 ___
 
@@ -181,7 +181,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:127](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L127)
+[src/neuroglancer/worker_rpc.ts:127](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L127)
 
 ___
 
@@ -203,7 +203,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:144](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L144)
+[src/neuroglancer/worker_rpc.ts:144](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L144)
 
 ___
 
@@ -217,7 +217,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:163](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L163)
+[src/neuroglancer/worker_rpc.ts:163](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L163)
 
 ___
 
@@ -246,7 +246,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:152](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L152)
+[src/neuroglancer/worker_rpc.ts:152](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L152)
 
 ___
 
@@ -267,4 +267,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:117](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/958d23e0/src/neuroglancer/worker_rpc.ts#L117)
+[src/neuroglancer/worker_rpc.ts:117](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L117)
