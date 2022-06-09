@@ -1442,7 +1442,7 @@ export enum PolygonToolMode {
 export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
   childTool: PlaceLineTool;
   sourceMouseState: MouseSelectionState;
-  sourcePosition: Float32Array;
+  sourcePosition: Float32Array|undefined;
   mode: PolygonToolMode;
   bindingsRef: RefCounted|undefined;
   active: boolean;
@@ -1488,7 +1488,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
           }
         }
         this.sourceMouseState = <MouseSelectionState>{...mouseState};
-        this.sourcePosition = this.sourceMouseState.position.slice();
+        this.sourcePosition = getMousePositionInAnnotationCoordinates(mouseState, annotationLayer);
         const annotation = this.getInitialAnnotation(mouseState, annotationLayer);
         if (parentRef) {
           //annotation.description = parentRef.value!.description;
@@ -1596,6 +1596,7 @@ export class PlacePolygonTool extends PlaceCollectionAnnotationTool {
       this.layer.selectAnnotation(annotationLayer, this.inProgressAnnotation!.reference.id, true);
       this.inProgressAnnotation!.disposer();
       this.inProgressAnnotation = undefined;
+      this.sourcePosition = undefined;
       return true;
     }
 
