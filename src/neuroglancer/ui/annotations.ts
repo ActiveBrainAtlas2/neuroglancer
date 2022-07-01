@@ -103,7 +103,7 @@ export async function getLandmarkList(type: AnnotationType) {
  * @returns A list of categories for cell annotations. eg: Positive, negative.
  */
 export async function getCategoryList() {
-  const landmarkURL = `https://webdev.dk.ucsd.edu/django_test/cell_types`;
+  const landmarkURL = `${AppSettings.API_ENDPOINT}/cell_types`;
   const categoryJSON:CategoryListJSON = await fetchOk(landmarkURL, {
     method: 'GET',
   }).then(response => {
