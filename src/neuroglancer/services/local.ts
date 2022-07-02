@@ -1,7 +1,7 @@
 export const AppSettings = {
-        API_ENDPOINT: 'http://localhost:8001',
-        GOOGLE_LOGIN: 'https://webdev.dk.ucsd.edu/activebrainatlas/accounts/google/login/?next=',
-        LOCAL_LOGIN: 'https://webdev.dk.ucsd.edu/activebrainatlas/admin/login/?next=/devlogin',
+        API_ENDPOINT: 'http://localhost:8000',
+        GOOGLE_LOGIN: 'http://localhost:8000/accounts/google/login/?next=',
+        LOCAL_LOGIN: 'http://localhost:8000/activebrainatlas/admin/login/?next=',
         DISPLAY_FETCH: true,
         DISPLAY_GOOGLE: false
 };
