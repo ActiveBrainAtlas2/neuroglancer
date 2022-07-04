@@ -249,7 +249,8 @@ import { LegacyTool } from './tool';
       return landmarkDropdown;
     }
     /**
-     * 
+     * This is currently disabled as it needs to run as a background process and it 
+     * also needs to allow the apache user write access to the NFS filesystem.
      * @returns A html row element containing information about segmentation feature of volume session.
      */
     getSegmentationRow() : HTMLTableRowElement {
@@ -260,6 +261,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
+      button.setAttribute('disabled', '');
       button.textContent = 'Segment selected volume';
       button.addEventListener('click', () => {
         const selectionState : PersistentViewerSelectionState|undefined = 
