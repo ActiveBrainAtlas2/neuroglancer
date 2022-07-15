@@ -430,7 +430,7 @@ export class StateLoader extends RefCounted {
         this.stateAPI.saveState(this.stateID, state).then(() => {
             //@ts-ignore
             this.stateAPI.saveAnnotations(this.stateID, layerName).then((res) => {
-                StatusMessage.showTemporaryMessage(`Annotations saved completed successfully.`);
+                StatusMessage.showTemporaryMessage(`Annotations were sent to the database.`);
             }).catch(err => {
                 StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
                 console.log(err);
