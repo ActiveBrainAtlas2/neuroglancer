@@ -28,9 +28,13 @@ import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnn
 import { LegacyTool } from './tool';
  
  import './volume_session.css';
- 
+  /**
+   * A Class to create HTML Element for annotation volumes.
+   */
   export class VolumeSessionDialog extends Overlay {
+    /** Landmark dropdown containing landmarks of volumes */
     landmarkDropdown : HTMLSelectElement|undefined = undefined;
+    /** Color element for selecting color for annotations */
     colorInput: HTMLInputElement|undefined = undefined;
     constructor(public annotationLayerView: AnnotationLayerView) {
       super();
@@ -56,7 +60,10 @@ import { LegacyTool } from './tool';
 
       this.content.appendChild(configTable);
     }
-
+    /**
+     * 
+     * @returns A HTML table row containing information to start a new volume session.
+     */
     getNewVolumeRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -88,7 +95,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns A html row element containing information about landmark and color for the volumes.
+     */
     getVolumeInfoRows() : HTMLTableRowElement[] {
       const labelRow = document.createElement('tr');
       const labelDesc = document.createElement('td');
@@ -117,7 +127,10 @@ import { LegacyTool } from './tool';
 
       return [labelRow, colorRow];
     }
-
+    /**
+     * 
+     * @returns A html row element containing information about starting a edit session for volume.
+     */
     getEditVolumeRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -181,7 +194,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns A html row element containing information about closing the current active volume session.
+     */
     closeSessionRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -206,7 +222,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns A html select element containing all the landmarks for the volume session.
+     */
     getLandMarkDropDown() : HTMLSelectElement {
       const landmarkDropdown = document.createElement('select');
       landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');
@@ -229,7 +248,11 @@ import { LegacyTool } from './tool';
 
       return landmarkDropdown;
     }
-
+    /**
+     * This is currently disabled as it needs to run as a background process and it 
+     * also needs to allow the apache user write access to the NFS filesystem.
+     * @returns A html row element containing information about segmentation feature of volume session.
+     */
     getSegmentationRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -238,6 +261,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
+      button.setAttribute('disabled', '');
       button.textContent = 'Segment selected volume';
       button.addEventListener('click', () => {
         const selectionState : PersistentViewerSelectionState|undefined = 
@@ -280,7 +304,7 @@ import { LegacyTool } from './tool';
           if (ref) ref.dispose();
           return;
         }
-
+        //@ts-ignore
         const stateLoader = <StateLoader>(window['viewer'].stateLoader);
         const successCallback = (res: Segmentation) => {
           const manager = selectedUserLayer!.manager;

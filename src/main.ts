@@ -20,5 +20,6 @@
 import {setupDefaultViewer} from 'neuroglancer/ui/default_viewer_setup';
 
 window.addEventListener('DOMContentLoaded', () => {
+  //@ts-ignore
   window['viewer'] = setupDefaultViewer();
 });

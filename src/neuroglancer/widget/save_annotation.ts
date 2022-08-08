@@ -8,6 +8,10 @@ import { StateLoader } from '../services/state_loader';
 const buttonText = 'Save annotations';
 const buttonTitle = 'Save annotations';
 
+/**
+ * This class is used to create a HTML widget on annotation tab which allows
+ * to save annotations in a tab to the backend database.
+ */
 export class SaveAnnotationWidget extends RefCounted {
   element: HTMLElement;
   private saveButton: HTMLElement;
@@ -29,9 +33,12 @@ export class SaveAnnotationWidget extends RefCounted {
 
     this.registerDisposer(() => removeFromParent(this.element));
   }
-
+  /**
+   * Saves the annotation by calling the stateLoader with the layername.
+   */
   private saveAnnotation() {
     const layerName = this.layerView.layer.managedLayer.name;
+    //@ts-ignore
     const stateLoader = <StateLoader>(window['viewer'].stateLoader);
     stateLoader.saveAnnotations(layerName);
   }

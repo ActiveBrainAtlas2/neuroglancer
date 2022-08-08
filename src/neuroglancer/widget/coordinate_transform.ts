@@ -145,6 +145,14 @@ function updateCoordinateSpaceScales(
   return true;
 }
 
+/**
+ * Takes new scales and units and modifies the coordinate space resolution.
+ * @param scalesAndUnits New scales and units (new resolution).
+ * @param modified  An array with each index true or false indicating whether new
+ *  resolution needs to be added to the corresponding dimension.
+ * @param watchable A watchable value which contains the coordinate space of neuroglancer.
+ * @returns returns a boolean indicating whether the coordinate space has been updated or not.
+ */
 export function updateCoordinateSpaceScaleValues(
   scalesAndUnits: ({scale: number; unit: string;} | undefined)[], modified: boolean[],
   watchable: WatchableValueInterface<CoordinateSpace>): boolean {

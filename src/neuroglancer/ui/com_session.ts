@@ -24,7 +24,11 @@ import { AnnotationLayerView, getLandmarkList, PlaceComTool, COMSession, ComTool
  import './com_session.css';
 import { LegacyTool } from './tool';
  
+/**
+ * Centre of mass session element for drawing annotation
+ */
   export class ComSessionDialog extends Overlay {
+    /** Landmark drop down to indicate the landmark for centre of mass */
     landmarkDropdown : HTMLSelectElement|undefined = undefined;
     colorInput: HTMLInputElement|undefined = undefined;
     constructor(public annotationLayerView: AnnotationLayerView) {
@@ -49,7 +53,10 @@ import { LegacyTool } from './tool';
 
       this.content.appendChild(configTable);
     }
-
+    /**
+     * 
+     * @returns A new row element of table containing the option to add new centre of mass.
+     */
     getNewComRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -74,7 +81,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns Returns a table row containing the landmark and color of centre of mass.
+     */
     getComInfoRows() : HTMLTableRowElement[] {
       const labelRow = document.createElement('tr');
       const labelDesc = document.createElement('td');
@@ -103,7 +113,10 @@ import { LegacyTool } from './tool';
 
       return [labelRow, colorRow];
     }
-
+    /**
+     * 
+     * @returns Returns a row element of table containing the button to edit current centre of mass.
+     */
     getEditComRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -126,7 +139,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns Returns a table row HTML element with options to close current centre of mass session.
+     */
     closeSessionRow() : HTMLTableRowElement {
       const row = document.createElement('tr');
       const col = document.createElement('td');
@@ -151,7 +167,10 @@ import { LegacyTool } from './tool';
       row.appendChild(col);
       return row;
     }
-
+    /**
+     * 
+     * @returns Returns a select HTML element containing different landmarks of centre of mass.
+     */
     getLandMarkDropDown() : HTMLSelectElement {
       const landmarkDropdown = document.createElement('select');
       landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');

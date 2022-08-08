@@ -526,6 +526,7 @@ export class AnnotationUserLayer extends Base {
         tab.registerDisposer(new LinkedSegmentationLayersWidget(this.linkedSegmentationLayers))
             .element);
   }
+  //@ts-ignore
   private map = new Map<string, LinkedSegmentationLayer>();
 
   toJSON() {

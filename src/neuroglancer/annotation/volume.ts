@@ -48,6 +48,14 @@ import { getZCoordinate } from './polygon';
    }
  });
 
+ /**
+  * This function takes a volume id as input and finds if there is a polygon already present at the input
+  * zCoordiante, if the polygon is present returns false
+  * @param annotationLayer 
+  * @param id volume id
+  * @param zCoordinate z coordinate input.
+  * @returns True, if polygon is not present otherwise false.
+  */
  export function isSectionValid(annotationLayer: AnnotationLayerState, id: string, zCoordinate: number) : boolean {
   const reference = annotationLayer.source.getReference(id);
   if (!reference.value || reference.value.type !== AnnotationType.VOLUME) return false;

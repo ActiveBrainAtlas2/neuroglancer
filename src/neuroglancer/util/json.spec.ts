@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {normalizeStringLiteral, pythonLiteralParse, pythonLiteralToJSON, urlSafeParse, urlSafeStringify, urlSafeStringifyString, urlSafeToJSON} from 'neuroglancer/util/json';
+import {normalizeStringLiteral, pythonLiteralParse, pythonLiteralToJSON, urlSafeParse, urlSafeStringify, urlSafeStringifyString, urlSafeToJSON, verifyNonNegativeFloat, verifyNonNegativeInt} from 'neuroglancer/util/json';
 
 describe('url safe json', () => {
   it('urlSafeStringifyString', () => {
@@ -70,5 +70,26 @@ describe('url safe json', () => {
   it('pythonLiteralParse', () => {
     expect(pythonLiteralParse(`{'a':'b', 'c':True, 'd':(1,2,3,), }`))
         .toEqual({'a': 'b', 'c': true, 'd': [1, 2, 3]});
+  });
+});
+
+describe('verify functions', () => {
+
+  it('verifyNonNegativeInt', () => {
+    expect(verifyNonNegativeInt(1)).toEqual(1);
+    expect(() => {
+      verifyNonNegativeInt(-1);
+    }).toThrow();
+    expect(verifyNonNegativeInt(2)).toEqual(2);
+    expect(verifyNonNegativeInt(0)).toEqual(0);
+  });
+
+  it('verifyNonNegativeFloat', () => {
+    expect(verifyNonNegativeFloat(1)).toEqual(1);
+    expect(() => {
+      verifyNonNegativeFloat(-1);
+    }).toThrow();
+    expect(verifyNonNegativeFloat(2)).toEqual(2);
+    expect(verifyNonNegativeFloat(0)).toEqual(0);
   });
 });

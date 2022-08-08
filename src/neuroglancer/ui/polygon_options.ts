@@ -22,6 +22,10 @@
  import { StatusMessage } from '../status';
  import './polygon_options.css';
 
+ /**
+  * Interface to show the each of polygon's features: function, feature 
+  * and in which mode the feature/function is available.
+  */
   interface PolygonControlSheetEntry {
     function: string,
     control: string,
@@ -106,10 +110,17 @@
       mode: "edit"
     }
   ];
- 
+  
+  /**
+   * This class is used to create HTML element for displaying polygon configuration
+   * and polygon controls.
+   */
   export class PolygonOptionsDialog extends Overlay {
+    /** sectionOffsetTextEle contains clone offset related info */
     sectionOffsetTextEle: HTMLInputElement
+    /** Contains scale percentage in each scale opeartion */
     scalePolygonTextEle: HTMLInputElement
+    /** Contains rotation amount in each rotate opeartion */
     rotatePolygonTextEle: HTMLInputElement
     constructor() {
       super();
@@ -164,7 +175,10 @@
       contentDiv.appendChild(cheatSheetTable);
       this.content.appendChild(contentDiv);
     }
-
+    /**
+     * 
+     * @returns Returns the elements of this table in a column format.
+     */
     getColGroupRow() : HTMLTableColElement {
       const element = document.createElement('colgroup');
       const widthVals = [180];
@@ -176,7 +190,11 @@
       }
       return element;
     }
-
+    /**
+     * 
+     * @returns Returns a table row element containing information about
+     * the clone offset.
+     */
     getCloneConfigRow() : HTMLTableRowElement {
       const element = document.createElement('tr');
 
@@ -206,7 +224,10 @@
 
       return element;
     }
-
+    /**
+     * 
+     * @returns Returns a row containing information about polygon scaling information.
+     */
     getScaleConfigRow() : HTMLTableRowElement {
       const element = document.createElement('tr');
 
@@ -247,7 +268,10 @@
 
       return element;
     }
-
+    /**
+     * 
+     * @returns Returns a row element containing information about rotation of polygon.
+     */
     getRotateConfigRow() : HTMLTableRowElement {
       const element = document.createElement('tr');
 
@@ -288,7 +312,11 @@
 
       return element;
     }
-
+    /**
+     * 
+     * @returns Returns a cheat sheet table HTML element containing the 
+     * list of polygon controls
+     */
     getCheatSheetTable() : HTMLTableElement {
       const table = document.createElement('table');
       table.classList.add('neuroglancer-polygon-control-sheet');

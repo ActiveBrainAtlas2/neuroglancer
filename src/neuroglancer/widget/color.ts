@@ -65,6 +65,10 @@ export class ColorWidget<Color extends vec3|undefined = vec3> extends RefCounted
   }
 }
 
+/**
+ * AnnotationColorWidget creates an color HTML element for 
+ * selecting the color while annotating.
+ */
 export class AnnotationColorWidget extends RefCounted {
   element = document.createElement('input');
 
@@ -74,15 +78,23 @@ export class AnnotationColorWidget extends RefCounted {
     element.classList.add('neuroglancer-color-widget');
     element.type = 'color';
   }
-
+  /**
+   * Sets the color of the widget element
+   * @param color input color to be set
+   */
   setColor(color: string) {
     this.element.value = color;
   }
-
+  /**
+   * 
+   * @returns returns the element color
+   */
   getColor() {
     return this.element.value;
   }
-
+  /**
+   * Delets the element from the HTML element it was embedded in.
+   */
   disposed() {
     removeFromParent(this.element);
     super.disposed();
