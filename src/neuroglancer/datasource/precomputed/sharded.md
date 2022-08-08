@@ -9,7 +9,7 @@ large number of chunks, the resulting large number of small files can be highly 
 storage systems that have a high per-file overhead, as is common in many distributed storage
 systems.  The "sharded" format avoids that problem by combining all "chunks" into a fixed number of
 larger "shard" files.  There are several downsides to the sharded format, however:
-- It requires greater complexity in the generation pipeline.
+- It requires greater complexity in the generation 
 - It is not possible to re-write the data for individual chunks; the entire shard must be
   re-written.
 - There is somewhat higher read latency due to the need to retrieve additional index information

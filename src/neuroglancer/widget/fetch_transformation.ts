@@ -118,6 +118,8 @@ export class FetchTransformationWidget extends RefCounted{
       response.forEach(info => {
         const {prep_id, annotator, annotator_id, source, count} = info;
         const option = document.createElement('option');
+        console.log(annotator_id)
+        console.log(source)
         option.value = `${prep_id}/${annotator_id}/${source}`;
         option.text = `${prep_id} ${annotator} ${source}`;
         option.text += count? (count > 1)? ` - ${count} structures`: ` - ${count} structure`: ``;
