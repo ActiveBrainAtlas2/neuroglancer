@@ -4,6 +4,7 @@ export interface State {
     comments: string;
     user_date: string;
     url: Record<string, unknown>;
+    readonly: boolean;
 }
 
 export interface Segmentation {

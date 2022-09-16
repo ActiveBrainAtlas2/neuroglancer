@@ -126,6 +126,7 @@ export class StateAPI {
 
     public getUser(): Promise<User> {
         const url = this.userUrl;
+        console.log(url);
 
         return fetchOk(url, {
             method: 'GET',
@@ -151,6 +152,7 @@ export class StateAPI {
                 comments: json['comments'],
                 user_date: json['user_date'],
                 url: json['url'],
+                readonly: json['readonly']
             };
         }).catch(err => {
             StatusMessage.showTemporaryMessage('The URL is deleted from database. Please check again.');
@@ -160,6 +162,7 @@ export class StateAPI {
                 comments: err,
                 user_date: "0",
                 url: {},
+                readonly: false
             };
         });
     }
@@ -172,6 +175,7 @@ export class StateAPI {
             comments: state['comments'],
             user_date: state['user_date'],
             url: state['url'],
+            readonly: state['readonly']
         };
         return fetchOk(url, {
             method: 'POST',
@@ -193,6 +197,7 @@ export class StateAPI {
                 comments: json['comments'],
                 user_date: json['user_date'],
                 url: json['url'],
+                readonly: json['readonly']
             };
         });
     }
@@ -205,6 +210,7 @@ export class StateAPI {
             comments: state['comments'],
             user_date: state['user_date'],
             url: state['url'],
+            readonly: state['readonly']
         };
 
         return fetchOk(url, {
@@ -223,6 +229,7 @@ export class StateAPI {
                 comments: json['comments'],
                 user_date: json['user_date'],
                 url: json['url'],
+                readonly: json['readonly']
             };
         });
     }
@@ -329,6 +336,11 @@ export class StateLoader extends RefCounted {
     private getState() {
         this.stateAPI.getState(this.stateID).then(state => {
             this.validateState(state);
+            if (state.readonly) {
+                this.saveButton.style.removeProperty('display');
+                this.saveButton.style.display = 'none';
+            }
+
         }).catch(err => {
             StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
             console.log(err);
@@ -347,6 +359,7 @@ export class StateLoader extends RefCounted {
             comments: comments,
             user_date: String(Date.now()),
             url: getCachedJson(this.viewer.state).value,
+            readonly: false,
         };
 
         this.stateAPI.saveState(this.stateID, state).then(() => {
@@ -371,6 +384,7 @@ export class StateLoader extends RefCounted {
             comments: comments,
             user_date: String(Date.now()),
             url: getCachedJson(this.viewer.state).value,
+            readonly: false,
         };
 
         this.stateAPI.newState(state).then((newState) => {
@@ -394,6 +408,7 @@ export class StateLoader extends RefCounted {
             comments: comments,
             user_date: String(Date.now()),
             url: getCachedJson(this.viewer.state).value,
+            readonly: false
         };
 
         this.stateAPI.saveState(this.stateID, state).then(() => {
@@ -425,6 +440,7 @@ export class StateLoader extends RefCounted {
             comments: comments,
             user_date: String(Date.now()),
             url: getCachedJson(this.viewer.state).value,
+            readonly: false
         };
 
         this.stateAPI.saveState(this.stateID, state).then(() => {
