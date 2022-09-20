@@ -18,7 +18,6 @@
     "build-pons": "./set_service.sh pons && node ./config/esbuild-cli.js --config=min",
     "build": "./set_service.sh production && node ./config/esbuild-cli.js --config=min",
     "build:watch": "node ./config/esbuild-cli.js --config=dev --serve --watch",
-    "local": "./set_service.sh development && node ./config/esbuild-cli.js --config=dev --serve --watch",
     "dev-server": "./set_service.sh webdev && node ./config/esbuild-cli.js --config=dev --serve --watch",
     "local-server": "./set_service.sh local && node ./config/esbuild-cli.js --config=dev --serve --watch",
     "dev-server-python": "node ./config/esbuild-cli.js --config=python-dev --serve --watch",

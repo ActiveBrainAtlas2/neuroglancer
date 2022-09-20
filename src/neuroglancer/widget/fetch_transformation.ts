@@ -18,13 +18,21 @@ export interface TransformJSON {
   resolution: Array<number>; // in microns
 }
 
+/** actual record from rest call 
+"prep_id": "DK54",
+"annotator": "beth",
+"annotator_id": "2",
+"source": "MANUAL",
+"count": "41"
+*/
 interface TransformInfo {
   prep_id: string;
-  input_type: string;
-  owner_id: number;
-  username: string;
+  annotator: string;
+  annotator_id: number;
+  source: string;
   count?: number;
 }
+
 
 export class FetchTransformationWidget extends RefCounted{
   element: HTMLElement;
@@ -115,11 +123,15 @@ export class FetchTransformationWidget extends RefCounted{
       defaultOption.selected = true;
       transformSelectionFetched.add(defaultOption);
 
+      /**
+       * URL in Django rest 
+       * path('rotation/<str:prep_id>/<int:annotator_id>/<str:source>/'
+       */
       response.forEach(info => {
-        const {prep_id, input_type, owner_id, username, count} = info;
+        const {prep_id, annotator, annotator_id, source, count} = info;
         const option = document.createElement('option');
-        option.value = `${prep_id}/${input_type}/${owner_id}`;
-        option.text = `${prep_id} ${input_type} ${username}`;
+        option.value = `${prep_id}/${annotator_id}/${source}`;
+        option.text = `${prep_id} ${source} ${annotator}`;
         option.text += count? (count > 1)? ` - ${count} structures`: ` - ${count} structure`: ``;
         transformSelectionFetched.add(option);
       });
