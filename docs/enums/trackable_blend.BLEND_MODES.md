@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_blend.ts:21](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_blend.ts#L21)
+[src/neuroglancer/trackable_blend.ts:21](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_blend.ts#L21)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_blend.ts:20](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_blend.ts#L20)
+[src/neuroglancer/trackable_blend.ts:20](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_blend.ts#L20)

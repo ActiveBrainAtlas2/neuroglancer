@@ -23,11 +23,11 @@
 
 ### chunkManager
 
-• **chunkManager**: `ChunkManager`
+• **chunkManager**: [`ChunkManager`](../classes/data_panel_layout._internal_.ChunkManager.md)
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L46)
+[src/neuroglancer/data_panel_layout.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L46)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L48)
+[src/neuroglancer/data_panel_layout.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L48)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:47](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L47)
+[src/neuroglancer/data_panel_layout.ts:47](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L47)
 
 ___
 
@@ -57,4 +57,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L49)
+[src/neuroglancer/data_panel_layout.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L49)

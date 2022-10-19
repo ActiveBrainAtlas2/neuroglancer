@@ -19,7 +19,7 @@
 
 ## Implements
 
-- `Disposable`
+- [`Disposable`](../interfaces/axes_lines._internal_.Disposable.md)
 - [`WatchableValueInterface`](../interfaces/trackable_value.WatchableValueInterface.md)<`T`\>
 
 ## Table of contents
@@ -65,13 +65,13 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:418](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L418)
+[src/neuroglancer/trackable_value.ts:418](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L418)
 
 ## Properties
 
 ### changed
 
-• **changed**: `NullarySignal`
+• **changed**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Implementation of
 
@@ -79,7 +79,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:407](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L407)
+[src/neuroglancer/trackable_value.ts:407](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L407)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:408](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L408)
+[src/neuroglancer/trackable_value.ts:408](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L408)
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:406](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L406)
+[src/neuroglancer/trackable_value.ts:406](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L406)
 
 ## Accessors
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:428](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L428)
+[src/neuroglancer/trackable_value.ts:428](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L428)
 
 • `set` **value**(`value`): `void`
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:431](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L431)
+[src/neuroglancer/trackable_value.ts:431](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L431)
 
 ## Methods
 
@@ -151,11 +151,11 @@ ___
 
 #### Implementation of
 
-Disposable.dispose
+[Disposable](../interfaces/axes_lines._internal_.Disposable.md).[dispose](../interfaces/axes_lines._internal_.Disposable.md#dispose)
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:423](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L423)
+[src/neuroglancer/trackable_value.ts:423](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L423)
 
 ___
 
@@ -169,4 +169,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:409](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L409)
+[src/neuroglancer/trackable_value.ts:409](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L409)

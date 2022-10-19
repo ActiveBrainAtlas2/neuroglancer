@@ -21,4 +21,4 @@ Array of length `coordinateSpace.rank` specifying scale factors on top of (will 
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:507](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L507)
+[src/neuroglancer/navigation_state.ts:507](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L507)

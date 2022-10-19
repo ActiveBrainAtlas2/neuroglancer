@@ -4,6 +4,12 @@
 
 [layer](../modules/layer.md).LayerActionContext
 
+## Hierarchy
+
+- **`LayerActionContext`**
+
+  ↳ [`SegmentationActionContext`](../interfaces/segmentation_user_layer._internal_.SegmentationActionContext.md)
+
 ## Table of contents
 
 ### Constructors
@@ -32,7 +38,7 @@
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:80](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L80)
+[src/neuroglancer/layer.ts:80](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L80)
 
 ## Methods
 
@@ -52,4 +58,4 @@
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L81)
+[src/neuroglancer/layer.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L81)

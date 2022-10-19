@@ -45,13 +45,13 @@
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:276](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L276)
+[src/neuroglancer/display_context.ts:276](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L276)
 
 ## Properties
 
 ### changed
 
-• **changed**: `NullarySignal`
+• **changed**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Inherited from
 
@@ -59,7 +59,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L42)
+[src/neuroglancer/trackable_value.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L42)
 
 ___
 
@@ -121,7 +121,7 @@ TrackableValue.value
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:33](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L33)
+[src/neuroglancer/trackable_value.ts:33](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L33)
 
 • `set` **value**(`newValue`): `void`
 
@@ -141,7 +141,7 @@ TrackableValue.value
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L36)
+[src/neuroglancer/trackable_value.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L36)
 
 ## Methods
 
@@ -159,7 +159,7 @@ TrackableValue.value
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L57)
+[src/neuroglancer/trackable_value.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L57)
 
 ___
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:60](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L60)
+[src/neuroglancer/trackable_value.ts:60](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L60)
 
 ___
 
@@ -201,4 +201,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:281](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L281)
+[src/neuroglancer/display_context.ts:281](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L281)

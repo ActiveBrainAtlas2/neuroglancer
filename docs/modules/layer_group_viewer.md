@@ -18,6 +18,10 @@ limitations under the License.
 
 ## Table of contents
 
+### Modules
+
+- [&lt;internal\&gt;](layer_group_viewer._internal_.md)
+
 ### Classes
 
 - [LayerGroupViewer](../classes/layer_group_viewer.LayerGroupViewer.md)
@@ -46,7 +50,7 @@ limitations under the License.
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:73](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L73)
+[src/neuroglancer/layer_group_viewer.ts:73](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L73)
 
 ## Functions
 
@@ -66,7 +70,7 @@ limitations under the License.
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L81)
+[src/neuroglancer/layer_group_viewer.ts:81](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L81)
 
 ___
 
@@ -78,7 +82,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `event` | `DragEvent` |
+| `event` | [`DragEvent`](axes_lines._internal_.md#dragevent) |
 | `manager` | [`LayerListSpecification`](../classes/layer.LayerListSpecification.md) |
 
 #### Returns
@@ -92,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:90](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L90)
+[src/neuroglancer/layer_group_viewer.ts:90](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L90)
 
 ___
 
@@ -104,7 +108,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `event` | `DragEvent` |
+| `event` | [`DragEvent`](axes_lines._internal_.md#dragevent) |
 
 #### Returns
 
@@ -112,4 +116,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L75)
+[src/neuroglancer/layer_group_viewer.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L75)

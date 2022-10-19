@@ -41,17 +41,17 @@ Adds the shader code to get a segment's color if it is present in the map.
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:138](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L138)
+[src/neuroglancer/segment_color.ts:138](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L138)
 
 ## Properties
 
 ### hashMapShaderManager
 
-• `Private` **hashMapShaderManager**: `HashMapShaderManager`
+• `Private` **hashMapShaderManager**: [`HashMapShaderManager`](segment_color._internal_.HashMapShaderManager.md)
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:136](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L136)
+[src/neuroglancer/segment_color.ts:136](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L136)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:158](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L158)
+[src/neuroglancer/segment_color.ts:158](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L158)
 
 ## Methods
 
@@ -83,7 +83,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `builder` | `ShaderBuilder` |
+| `builder` | [`ShaderBuilder`](image_user_layer._internal_.ShaderBuilder.md) |
 
 #### Returns
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:140](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L140)
+[src/neuroglancer/segment_color.ts:140](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L140)
 
 ___
 
@@ -103,8 +103,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `gl` | `GL` |
-| `shader` | `ShaderProgram` |
+| `gl` | [`GL`](../interfaces/axes_lines._internal_.GL.md) |
+| `shader` | [`ShaderProgram`](axes_lines._internal_.ShaderProgram.md) |
 
 #### Returns
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:167](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L167)
+[src/neuroglancer/segment_color.ts:167](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L167)
 
 ___
 
@@ -124,15 +124,15 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `HashTable` | extends `HashTableBase`<`HashTable`\> |
+| `HashTable` | extends [`HashTableBase`](segment_color._internal_.HashTableBase.md)<`HashTable`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `gl` | `GL` |
-| `shader` | `ShaderProgram` |
-| `hashTable` | `GPUHashTable`<`HashTable`\> |
+| `gl` | [`GL`](../interfaces/axes_lines._internal_.GL.md) |
+| `shader` | [`ShaderProgram`](axes_lines._internal_.ShaderProgram.md) |
+| `hashTable` | [`GPUHashTable`](segment_color._internal_.GPUHashTable.md)<`HashTable`\> |
 
 #### Returns
 
@@ -140,4 +140,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:162](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L162)
+[src/neuroglancer/segment_color.ts:162](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L162)

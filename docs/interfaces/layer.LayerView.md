@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1267](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1267)
+[src/neuroglancer/layer.ts:1267](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1267)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1269](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1269)
+[src/neuroglancer/layer.ts:1269](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1269)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1270](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1270)
+[src/neuroglancer/layer.ts:1270](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1270)
 
 ## Methods
 
@@ -58,4 +58,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1268](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1268)
+[src/neuroglancer/layer.ts:1268](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1268)

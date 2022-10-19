@@ -6,7 +6,7 @@
 
 ## Hierarchy
 
-- `Error`
+- [`Error`](../modules/axes_lines._internal_.md#error)
 
   ↳ **`RPCError`**
 
@@ -47,7 +47,7 @@ Error.constructor
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L42)
+[src/neuroglancer/worker_rpc.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L42)
 
 ## Properties
 
@@ -138,8 +138,8 @@ Optional override for formatting stack traces
 
 | Name | Type |
 | :------ | :------ |
-| `err` | `Error` |
-| `stackTraces` | `CallSite`[] |
+| `err` | [`Error`](../modules/axes_lines._internal_.md#error) |
+| `stackTraces` | [`CallSite`](../interfaces/image_user_layer._internal_.CallSite.md)[] |
 
 #### Returns
 

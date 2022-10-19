@@ -26,11 +26,11 @@
 
 ### changed
 
-• `Readonly` **changed**: `Signal`<(`oldValue`: `T`, `newValue`: `T`) => `void`\>
+• `Readonly` **changed**: [`Signal`](../classes/coordinate_transform._internal_.Signal.md)<(`oldValue`: `T`, `newValue`: `T`) => `void`\>
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:29](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L29)
+[src/neuroglancer/trackable_value.ts:29](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L29)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:28](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L28)
+[src/neuroglancer/trackable_value.ts:28](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L28)

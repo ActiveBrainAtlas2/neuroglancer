@@ -67,14 +67,14 @@
 | Name | Type |
 | :------ | :------ |
 | `display` | [`DisplayContext`](display_context.DisplayContext.md) |
-| `dataSourceProviderRegistry` | `DataSourceProviderRegistry` |
+| `dataSourceProviderRegistry` | [`DataSourceProviderRegistry`](layer._internal_.DataSourceProviderRegistry.md) |
 | `layerManager` | [`LayerManager`](layer.LayerManager.md) |
-| `chunkManager` | `ChunkManager` |
+| `chunkManager` | [`ChunkManager`](data_panel_layout._internal_.ChunkManager.md) |
 | `selectionState` | [`TrackableDataSelectionState`](layer.TrackableDataSelectionState.md) |
 | `selectedLayer` | [`SelectedLayerState`](layer.SelectedLayerState.md) |
 | `coordinateSpace` | [`WatchableValueInterface`](../interfaces/trackable_value.WatchableValueInterface.md)<[`CoordinateSpace`](../interfaces/coordinate_transform.CoordinateSpace.md)\> |
 | `globalPosition` | [`Position`](navigation_state.Position.md) |
-| `toolBinder` | `ToolBinder` |
+| `toolBinder` | [`ToolBinder`](image_user_layer._internal_.ToolBinder.md) |
 
 #### Overrides
 
@@ -82,13 +82,13 @@
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1810](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1810)
+[src/neuroglancer/layer.ts:1810](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1810)
 
 ## Properties
 
 ### changed
 
-• **changed**: `NullarySignal`
+• **changed**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Inherited from
 
@@ -96,13 +96,13 @@
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1780](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1780)
+[src/neuroglancer/layer.ts:1780](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1780)
 
 ___
 
 ### chunkManager
 
-• **chunkManager**: `ChunkManager`
+• **chunkManager**: [`ChunkManager`](data_panel_layout._internal_.ChunkManager.md)
 
 #### Inherited from
 
@@ -122,13 +122,13 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1805](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1805)
+[src/neuroglancer/layer.ts:1805](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1805)
 
 ___
 
 ### dataSourceProviderRegistry
 
-• **dataSourceProviderRegistry**: `DataSourceProviderRegistry`
+• **dataSourceProviderRegistry**: [`DataSourceProviderRegistry`](layer._internal_.DataSourceProviderRegistry.md)
 
 #### Inherited from
 
@@ -152,7 +152,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L52)
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L52)
 
 ___
 
@@ -182,7 +182,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1808](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1808)
+[src/neuroglancer/layer.ts:1808](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1808)
 
 ___
 
@@ -196,7 +196,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L45)
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L45)
 
 ___
 
@@ -218,13 +218,13 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1806](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1806)
+[src/neuroglancer/layer.ts:1806](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1806)
 
 ___
 
 ### toolBinder
 
-• **toolBinder**: `ToolBinder`
+• **toolBinder**: [`ToolBinder`](image_user_layer._internal_.ToolBinder.md)
 
 ___
 
@@ -238,7 +238,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L46)
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L46)
 
 ## Accessors
 
@@ -256,7 +256,7 @@ LayerListSpecification.root
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1801](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1801)
+[src/neuroglancer/layer.ts:1801](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1801)
 
 ___
 
@@ -274,7 +274,7 @@ LayerListSpecification.rootLayers
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1897](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1897)
+[src/neuroglancer/layer.ts:1897](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1897)
 
 ___
 
@@ -292,7 +292,7 @@ LayerListSpecification.rpc
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1797](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1797)
+[src/neuroglancer/layer.ts:1797](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1797)
 
 ## Methods
 
@@ -317,7 +317,7 @@ LayerListSpecification.rpc
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1872](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1872)
+[src/neuroglancer/layer.ts:1872](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1872)
 
 ___
 
@@ -335,7 +335,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L48)
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L48)
 
 ___
 
@@ -353,7 +353,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L53)
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L53)
 
 ___
 
@@ -371,7 +371,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L75)
+[src/neuroglancer/util/disposable.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L75)
 
 ___
 
@@ -389,7 +389,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L66)
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L66)
 
 ___
 
@@ -419,7 +419,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L100)
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L100)
 
 ___
 
@@ -431,7 +431,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -449,7 +449,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L76)
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L76)
 
 ___
 
@@ -461,10 +461,10 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `target` | `EventTarget` |
+| `target` | [`EventTarget`](../modules/axes_lines._internal_.md#eventtarget) |
 | `type` | `string` |
-| `listener` | `EventListenerOrEventListenerObject` |
-| `options?` | `boolean` \| `AddEventListenerOptions` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/axes_lines._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/axes_lines._internal_.AddEventListenerOptions.md) |
 
 #### Returns
 
@@ -476,7 +476,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L95)
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L95)
 
 ___
 
@@ -490,7 +490,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1822](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1822)
+[src/neuroglancer/layer.ts:1822](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1822)
 
 ___
 
@@ -510,7 +510,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1826](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1826)
+[src/neuroglancer/layer.ts:1826](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1826)
 
 ___
 
@@ -524,7 +524,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1879](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1879)
+[src/neuroglancer/layer.ts:1879](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1879)
 
 ___
 
@@ -536,7 +536,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -554,4 +554,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L85)
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L85)

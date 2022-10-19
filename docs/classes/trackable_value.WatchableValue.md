@@ -18,6 +18,14 @@
 
   ↳ [`TrackableValue`](trackable_value.TrackableValue.md)
 
+  ↳ [`TrackableRGB`](data_panel_layout._internal_.TrackableRGB.md)
+
+  ↳ [`WatchableVisibilityPriority`](data_panel_layout._internal_.WatchableVisibilityPriority.md)
+
+  ↳ [`AnnotationHoverState`](image_user_layer._internal_.AnnotationHoverState.md)
+
+  ↳ [`TrackableOptionalRGB`](segmentation_user_layer._internal_.TrackableOptionalRGB.md)
+
 ## Implements
 
 - [`WatchableValueInterface`](../interfaces/trackable_value.WatchableValueInterface.md)<`T`\>
@@ -57,13 +65,13 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:43](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L43)
+[src/neuroglancer/trackable_value.ts:43](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L43)
 
 ## Properties
 
 ### changed
 
-• **changed**: `NullarySignal`
+• **changed**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Implementation of
 
@@ -71,7 +79,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L42)
+[src/neuroglancer/trackable_value.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L42)
 
 ___
 
@@ -95,7 +103,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:33](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L33)
+[src/neuroglancer/trackable_value.ts:33](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L33)
 
 • `set` **value**(`newValue`): `void`
 
@@ -115,4 +123,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L36)
+[src/neuroglancer/trackable_value.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L36)

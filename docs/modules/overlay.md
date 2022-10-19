@@ -18,11 +18,11 @@
 
 ### defaultEventMap
 
-• `Const` **defaultEventMap**: `EventActionMap`
+• `Const` **defaultEventMap**: [`EventActionMap`](../classes/data_panel_layout._internal_.EventActionMap.md)
 
 #### Defined in
 
-[src/neuroglancer/overlay.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/overlay.ts#L27)
+[src/neuroglancer/overlay.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/overlay.ts#L27)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/overlay.ts:21](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/overlay.ts#L21)
+[src/neuroglancer/overlay.ts:21](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/overlay.ts#L21)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/overlay.ts:25](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/overlay.ts#L25)
+[src/neuroglancer/overlay.ts:25](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/overlay.ts#L25)

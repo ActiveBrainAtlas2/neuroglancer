@@ -4,6 +4,10 @@
 
 ## Table of contents
 
+### Modules
+
+- [&lt;internal\&gt;](axes_lines._internal_.md)
+
 ### Classes
 
 - [AxesLineHelper](../classes/axes_lines.AxesLineHelper.md)
@@ -16,7 +20,7 @@
 
 ### computeAxisLineMatrix
 
-▸ **computeAxisLineMatrix**(`projectionParameters`, `axisLength`): `mat4`
+▸ **computeAxisLineMatrix**(`projectionParameters`, `axisLength`): [`mat4`](../classes/axes_lines._internal_.mat4.md)
 
 #### Parameters
 
@@ -27,8 +31,8 @@
 
 #### Returns
 
-`mat4`
+[`mat4`](../classes/axes_lines._internal_.mat4.md)
 
 #### Defined in
 
-[src/neuroglancer/axes_lines.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/axes_lines.ts#L27)
+[src/neuroglancer/axes_lines.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/axes_lines.ts#L27)

@@ -24,4 +24,4 @@
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:92](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/renderlayer.ts#L92)
+[src/neuroglancer/renderlayer.ts:92](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/renderlayer.ts#L92)

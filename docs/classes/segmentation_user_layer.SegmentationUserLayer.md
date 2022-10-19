@@ -6,7 +6,7 @@
 
 ## Hierarchy
 
-- `Base`
+- [`Base`](../modules/segmentation_user_layer._internal_.md#base)
 
   ↳ **`SegmentationUserLayer`**
 
@@ -134,23 +134,23 @@ Base.constructor
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:372](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L372)
+[src/neuroglancer/segmentation_user_layer.ts:372](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L372)
 
 ## Properties
 
 ### anchorSegment
 
-• **anchorSegment**: [`TrackableValue`](trackable_value.TrackableValue.md)<`undefined` \| `Uint64`\>
+• **anchorSegment**: [`TrackableValue`](trackable_value.TrackableValue.md)<`undefined` \| [`Uint64`](data_panel_layout._internal_.Uint64.md)\>
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:369](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L369)
+[src/neuroglancer/segmentation_user_layer.ts:369](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L369)
 
 ___
 
 ### annotationColorPicker
 
-• **annotationColorPicker**: `undefined` \| `AnnotationColorWidget` = `undefined`
+• **annotationColorPicker**: `undefined` \| [`AnnotationColorWidget`](image_user_layer._internal_.AnnotationColorWidget.md) = `undefined`
 
 #### Inherited from
 
@@ -158,7 +158,7 @@ Base.annotationColorPicker
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3105](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3105)
+[src/neuroglancer/ui/annotations.ts:3106](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3106)
 
 ___
 
@@ -172,7 +172,7 @@ Base.annotationCrossSectionRenderScaleHistogram
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3101](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3101)
+[src/neuroglancer/ui/annotations.ts:3102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3102)
 
 ___
 
@@ -186,13 +186,13 @@ Base.annotationCrossSectionRenderScaleTarget
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3102)
+[src/neuroglancer/ui/annotations.ts:3103](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3103)
 
 ___
 
 ### annotationDisplayState
 
-• **annotationDisplayState**: `AnnotationDisplayState`
+• **annotationDisplayState**: [`AnnotationDisplayState`](image_user_layer._internal_.AnnotationDisplayState.md)
 
 #### Inherited from
 
@@ -200,7 +200,7 @@ Base.annotationDisplayState
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3100)
+[src/neuroglancer/ui/annotations.ts:3101](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3101)
 
 ___
 
@@ -214,7 +214,7 @@ Base.annotationProjectionRenderScaleHistogram
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3103](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3103)
+[src/neuroglancer/ui/annotations.ts:3104](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3104)
 
 ___
 
@@ -228,13 +228,13 @@ Base.annotationProjectionRenderScaleTarget
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3104](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3104)
+[src/neuroglancer/ui/annotations.ts:3105](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3105)
 
 ___
 
 ### annotationStates
 
-• **annotationStates**: `MergedAnnotationStates`
+• **annotationStates**: [`MergedAnnotationStates`](image_user_layer._internal_.MergedAnnotationStates.md)
 
 #### Inherited from
 
@@ -242,7 +242,7 @@ Base.annotationStates
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3099](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3099)
+[src/neuroglancer/ui/annotations.ts:3100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3100)
 
 ___
 
@@ -256,13 +256,13 @@ Base.dataSources
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:238](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L238)
+[src/neuroglancer/layer.ts:238](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L238)
 
 ___
 
 ### dataSourcesChanged
 
-• **dataSourcesChanged**: `NullarySignal`
+• **dataSourcesChanged**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Inherited from
 
@@ -270,17 +270,17 @@ Base.dataSourcesChanged
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:237](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L237)
+[src/neuroglancer/layer.ts:237](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L237)
 
 ___
 
 ### displayState
 
-• **displayState**: `SegmentationUserLayerDisplayState`
+• **displayState**: [`SegmentationUserLayerDisplayState`](segmentation_user_layer._internal_.SegmentationUserLayerDisplayState.md)
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:367](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L367)
+[src/neuroglancer/segmentation_user_layer.ts:367](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L367)
 
 ___
 
@@ -294,53 +294,53 @@ Base.disposedStacks
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L52)
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L52)
 
 ___
 
 ### graphConnection
 
-• **graphConnection**: `undefined` \| `SegmentationGraphSourceConnection`<`SegmentationGraphSource`\>
+• **graphConnection**: `undefined` \| [`SegmentationGraphSourceConnection`](layer._internal_.SegmentationGraphSourceConnection.md)<[`SegmentationGraphSource`](layer._internal_.SegmentationGraphSource.md)\>
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:338](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L338)
+[src/neuroglancer/segmentation_user_layer.ts:338](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L338)
 
 ___
 
 ### has2dLayer
 
-• `Readonly` **has2dLayer**: `CachedLazyDerivedWatchableValue`<`boolean`\>
+• `Readonly` **has2dLayer**: [`CachedLazyDerivedWatchableValue`](image_user_layer._internal_.CachedLazyDerivedWatchableValue.md)<`boolean`\>
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:409](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L409)
+[src/neuroglancer/segmentation_user_layer.ts:409](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L409)
 
 ___
 
 ### has3dLayer
 
-• `Readonly` **has3dLayer**: `CachedLazyDerivedWatchableValue`<`boolean`\>
+• `Readonly` **has3dLayer**: [`CachedLazyDerivedWatchableValue`](image_user_layer._internal_.CachedLazyDerivedWatchableValue.md)<`boolean`\>
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:413](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L413)
+[src/neuroglancer/segmentation_user_layer.ts:413](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L413)
 
 ___
 
 ### hasSkeletonsLayer
 
-• `Readonly` **hasSkeletonsLayer**: `CachedLazyDerivedWatchableValue`<`boolean`\>
+• `Readonly` **hasSkeletonsLayer**: [`CachedLazyDerivedWatchableValue`](image_user_layer._internal_.CachedLazyDerivedWatchableValue.md)<`boolean`\>
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:421](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L421)
+[src/neuroglancer/segmentation_user_layer.ts:421](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L421)
 
 ___
 
 ### layersChanged
 
-• **layersChanged**: `NullarySignal`
+• **layersChanged**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Inherited from
 
@@ -348,7 +348,7 @@ Base.layersChanged
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:223](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L223)
+[src/neuroglancer/layer.ts:223](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L223)
 
 ___
 
@@ -364,7 +364,7 @@ ___
 
 ### panels
 
-• **panels**: `UserLayerSidePanelsState`
+• **panels**: [`UserLayerSidePanelsState`](image_user_layer._internal_.UserLayerSidePanelsState.md)
 
 #### Inherited from
 
@@ -372,7 +372,7 @@ Base.panels
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:233](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L233)
+[src/neuroglancer/layer.ts:233](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L233)
 
 ___
 
@@ -386,13 +386,13 @@ Base.pick
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:108](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L108)
+[src/neuroglancer/layer.ts:108](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L108)
 
 ___
 
 ### readyStateChanged
 
-• **readyStateChanged**: `NullarySignal`
+• **readyStateChanged**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Inherited from
 
@@ -400,7 +400,7 @@ Base.readyStateChanged
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:224](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L224)
+[src/neuroglancer/layer.ts:224](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L224)
 
 ___
 
@@ -414,7 +414,7 @@ Base.refCount
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L45)
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L45)
 
 ___
 
@@ -428,7 +428,7 @@ Base.renderLayers
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:226](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L226)
+[src/neuroglancer/layer.ts:226](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L226)
 
 ___
 
@@ -438,7 +438,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:344](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L344)
+[src/neuroglancer/segmentation_user_layer.ts:344](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L344)
 
 ___
 
@@ -452,7 +452,7 @@ Base.selectionState
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:110](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L110)
+[src/neuroglancer/layer.ts:110](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L110)
 
 ___
 
@@ -462,7 +462,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:335](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L335)
+[src/neuroglancer/segmentation_user_layer.ts:335](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L335)
 
 ___
 
@@ -472,13 +472,13 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:336](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L336)
+[src/neuroglancer/segmentation_user_layer.ts:336](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L336)
 
 ___
 
 ### specificationChanged
 
-• **specificationChanged**: `NullarySignal`
+• **specificationChanged**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Inherited from
 
@@ -486,13 +486,13 @@ Base.specificationChanged
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:225](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L225)
+[src/neuroglancer/layer.ts:225](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L225)
 
 ___
 
 ### tabs
 
-• **tabs**: `TabSpecification`
+• **tabs**: [`TabSpecification`](image_user_layer._internal_.TabSpecification.md)
 
 #### Inherited from
 
@@ -500,13 +500,13 @@ Base.tabs
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:232](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L232)
+[src/neuroglancer/layer.ts:232](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L232)
 
 ___
 
 ### tool
 
-• **tool**: `SelectedLegacyTool`
+• **tool**: [`SelectedLegacyTool`](image_user_layer._internal_.SelectedLegacyTool.md)
 
 #### Inherited from
 
@@ -514,13 +514,13 @@ Base.tool
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:234](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L234)
+[src/neuroglancer/layer.ts:234](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L234)
 
 ___
 
 ### toolBinder
 
-• **toolBinder**: `LayerToolBinder`
+• **toolBinder**: [`LayerToolBinder`](image_user_layer._internal_.LayerToolBinder.md)
 
 #### Inherited from
 
@@ -528,7 +528,7 @@ Base.toolBinder
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:235](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L235)
+[src/neuroglancer/layer.ts:235](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L235)
 
 ___
 
@@ -542,7 +542,7 @@ Base.wasDisposed
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L46)
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L46)
 
 ___
 
@@ -556,7 +556,7 @@ Base.supportsPickOption
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:786](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L786)
+[src/neuroglancer/segmentation_user_layer.ts:786](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L786)
 
 ___
 
@@ -570,7 +570,7 @@ Base.type
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:784](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L784)
+[src/neuroglancer/segmentation_user_layer.ts:784](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L784)
 
 ___
 
@@ -584,7 +584,7 @@ Base.typeAbbreviation
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:785](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L785)
+[src/neuroglancer/segmentation_user_layer.ts:785](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L785)
 
 ## Accessors
 
@@ -602,7 +602,7 @@ Base.isReady
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:228](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L228)
+[src/neuroglancer/layer.ts:228](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L228)
 
 ___
 
@@ -620,7 +620,7 @@ Base.localCoordinateSpace
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L95)
+[src/neuroglancer/layer.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L95)
 
 ___
 
@@ -638,7 +638,7 @@ Base.localCoordinateSpaceCombiner
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:91](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L91)
+[src/neuroglancer/layer.ts:91](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L91)
 
 ___
 
@@ -656,7 +656,7 @@ Base.localPosition
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:87](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L87)
+[src/neuroglancer/layer.ts:87](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L87)
 
 ___
 
@@ -674,7 +674,7 @@ Base.manager
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:240](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L240)
+[src/neuroglancer/layer.ts:240](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L240)
 
 ___
 
@@ -692,7 +692,7 @@ Base.type
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L102)
+[src/neuroglancer/layer.ts:102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L102)
 
 ___
 
@@ -706,11 +706,11 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `volumeType` | `VolumeType` |
+| `volumeType` | [`VolumeType`](../enums/layer._internal_.VolumeType.md) |
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:405](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L405)
+[src/neuroglancer/segmentation_user_layer.ts:405](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L405)
 
 ## Methods
 
@@ -722,7 +722,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `subsources` | `Iterable`<[`LoadedDataSubsource`](layer_data_source.LoadedDataSubsource.md)\> |
+| `subsources` | [`Iterable`](../interfaces/axes_lines._internal_.Iterable.md)<[`LoadedDataSubsource`](layer_data_source.LoadedDataSubsource.md)\> |
 
 #### Returns
 
@@ -734,7 +734,7 @@ Base.activateDataSubsources
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:425](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L425)
+[src/neuroglancer/segmentation_user_layer.ts:425](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L425)
 
 ___
 
@@ -746,7 +746,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `state` | `AnnotationLayerState` |
+| `state` | [`AnnotationLayerState`](image_user_layer._internal_.AnnotationLayerState.md) |
 | `loadedSubsource` | [`LoadedDataSubsource`](layer_data_source.LoadedDataSubsource.md) |
 
 #### Returns
@@ -759,7 +759,7 @@ Base.addAnnotationLayerState
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3609](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3609)
+[src/neuroglancer/ui/annotations.ts:3610](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3610)
 
 ___
 
@@ -773,11 +773,11 @@ Adds the category text to the annotation on selecting a new category.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `parent` | `HTMLElement` | parent HTML Element |
+| `parent` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) | parent HTML Element |
 | `select` | `HTMLSelectElement` | select dropdown |
-| `annotationLayer` | `AnnotationLayerState` | annotation layer in which annotation is present |
-| `reference` | `AnnotationReference` | annotation reference |
-| `annotation` | `Annotation` | annotation value |
+| `annotationLayer` | [`AnnotationLayerState`](image_user_layer._internal_.AnnotationLayerState.md) | annotation layer in which annotation is present |
+| `reference` | [`AnnotationReference`](image_user_layer._internal_.AnnotationReference.md) | annotation reference |
+| `annotation` | [`Annotation`](../modules/image_user_layer._internal_.md#annotation) | annotation value |
 
 #### Returns
 
@@ -791,7 +791,7 @@ Base.addCategoryText
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3232](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3232)
+[src/neuroglancer/ui/annotations.ts:3233](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3233)
 
 ___
 
@@ -821,7 +821,7 @@ Base.addCoordinateSpace
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:322](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L322)
+[src/neuroglancer/layer.ts:322](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L322)
 
 ___
 
@@ -833,7 +833,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `spec` | `undefined` \| `DataSourceSpecification` |
+| `spec` | `undefined` \| [`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md) |
 
 #### Returns
 
@@ -845,7 +845,7 @@ Base.addDataSource
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:267](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L267)
+[src/neuroglancer/layer.ts:267](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L267)
 
 ___
 
@@ -858,7 +858,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `loadedSubsource` | [`LoadedDataSubsource`](layer_data_source.LoadedDataSubsource.md) |
-| `source` | `AnnotationSource` |
+| `source` | [`AnnotationSource`](image_user_layer._internal_.AnnotationSource.md) |
 | `role` | [`RenderLayerRole`](../enums/renderlayer.RenderLayerRole.md) |
 
 #### Returns
@@ -871,7 +871,7 @@ Base.addLocalAnnotations
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3582](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3582)
+[src/neuroglancer/ui/annotations.ts:3583](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3583)
 
 ___
 
@@ -889,7 +889,7 @@ Base.addRef
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L48)
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L48)
 
 ___
 
@@ -919,7 +919,7 @@ Base.addRenderLayer
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:384](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L384)
+[src/neuroglancer/layer.ts:384](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L384)
 
 ___
 
@@ -943,7 +943,7 @@ Base.addStaticAnnotations
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3598](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3598)
+[src/neuroglancer/ui/annotations.ts:3599](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3599)
 
 ___
 
@@ -955,11 +955,11 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `parent` | `HTMLElement` |
+| `parent` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) |
 | `select` | `HTMLSelectElement` |
-| `annotationLayer` | `AnnotationLayerState` |
-| `reference` | `AnnotationReference` |
-| `annotation` | `Annotation` |
+| `annotationLayer` | [`AnnotationLayerState`](image_user_layer._internal_.AnnotationLayerState.md) |
+| `reference` | [`AnnotationReference`](image_user_layer._internal_.AnnotationReference.md) |
+| `annotation` | [`Annotation`](../modules/image_user_layer._internal_.md#annotation) |
 
 #### Returns
 
@@ -971,7 +971,7 @@ Base.addText
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3198](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3198)
+[src/neuroglancer/ui/annotations.ts:3199](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3199)
 
 ___
 
@@ -983,7 +983,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `element` | `HTMLElement` |
+| `element` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) |
 
 #### Returns
 
@@ -997,7 +997,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:340](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L340)
+[src/neuroglancer/segmentation_user_layer.ts:340](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L340)
 
 ___
 
@@ -1015,7 +1015,7 @@ Base.canAddDataSource
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:263](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L263)
+[src/neuroglancer/layer.ts:263](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L263)
 
 ___
 
@@ -1040,7 +1040,7 @@ Base.captureSelectionState
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3181](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3181)
+[src/neuroglancer/ui/annotations.ts:3182](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3182)
 
 ___
 
@@ -1065,7 +1065,7 @@ Base.copySelectionState
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:203](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L203)
+[src/neuroglancer/layer.ts:203](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L203)
 
 ___
 
@@ -1078,8 +1078,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `state` | [`UserLayerSelectionState`](../interfaces/layer.UserLayerSelectionState.md) |
-| `parent` | `HTMLElement` |
-| `context` | `RefCounted` |
+| `parent` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) |
+| `context` | [`RefCounted`](axes_lines._internal_.RefCounted.md) |
 
 #### Returns
 
@@ -1091,7 +1091,7 @@ Base.displayAnnotationState
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3258](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3258)
+[src/neuroglancer/ui/annotations.ts:3259](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3259)
 
 ___
 
@@ -1104,8 +1104,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `state` | [`UserLayerSelectionState`](../interfaces/layer.UserLayerSelectionState.md) |
-| `parent` | `HTMLElement` |
-| `context` | `DependentViewContext` |
+| `parent` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) |
+| `context` | [`DependentViewContext`](image_user_layer._internal_.DependentViewContext.md) |
 
 #### Returns
 
@@ -1113,7 +1113,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:697](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L697)
+[src/neuroglancer/segmentation_user_layer.ts:697](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L697)
 
 ___
 
@@ -1126,8 +1126,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `state` | [`UserLayerSelectionState`](../interfaces/layer.UserLayerSelectionState.md) |
-| `parent` | `HTMLElement` |
-| `context` | `DependentViewContext` |
+| `parent` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) |
+| `context` | [`DependentViewContext`](image_user_layer._internal_.DependentViewContext.md) |
 
 #### Returns
 
@@ -1139,7 +1139,7 @@ Base.displaySelectionState
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:765](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L765)
+[src/neuroglancer/segmentation_user_layer.ts:765](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L765)
 
 ___
 
@@ -1157,7 +1157,7 @@ Base.dispose
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L53)
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L53)
 
 ___
 
@@ -1175,7 +1175,7 @@ Base.disposed
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:406](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L406)
+[src/neuroglancer/layer.ts:406](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L406)
 
 ___
 
@@ -1187,7 +1187,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `id` | `Uint64` |
+| `id` | [`Uint64`](data_panel_layout._internal_.Uint64.md) |
 
 #### Returns
 
@@ -1195,7 +1195,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:353](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L353)
+[src/neuroglancer/segmentation_user_layer.ts:353](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L353)
 
 ___
 
@@ -1215,13 +1215,13 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:360](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L360)
+[src/neuroglancer/segmentation_user_layer.ts:360](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L360)
 
 ___
 
 ### getDataSourceSpecifications
 
-▸ **getDataSourceSpecifications**(`layerSpec`): `DataSourceSpecification`[]
+▸ **getDataSourceSpecifications**(`layerSpec`): [`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md)[]
 
 #### Parameters
 
@@ -1231,7 +1231,7 @@ ___
 
 #### Returns
 
-`DataSourceSpecification`[]
+[`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md)[]
 
 #### Inherited from
 
@@ -1239,13 +1239,13 @@ Base.getDataSourceSpecifications
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:347](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L347)
+[src/neuroglancer/layer.ts:347](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L347)
 
 ___
 
 ### getLegacyDataSourceSpecifications
 
-▸ **getLegacyDataSourceSpecifications**(`sourceSpec`, `layerSpec`, `legacyTransform`, `explicitSpecs`): `DataSourceSpecification`[]
+▸ **getLegacyDataSourceSpecifications**(`sourceSpec`, `layerSpec`, `legacyTransform`, `explicitSpecs`): [`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md)[]
 
 #### Parameters
 
@@ -1254,11 +1254,11 @@ ___
 | `sourceSpec` | `any` |
 | `layerSpec` | `any` |
 | `legacyTransform` | `undefined` \| [`CoordinateTransformSpecification`](../interfaces/coordinate_transform.CoordinateTransformSpecification.md) |
-| `explicitSpecs` | `DataSourceSpecification`[] |
+| `explicitSpecs` | [`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md)[] |
 
 #### Returns
 
-`DataSourceSpecification`[]
+[`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md)[]
 
 #### Overrides
 
@@ -1266,7 +1266,7 @@ Base.getLegacyDataSourceSpecifications
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:517](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L517)
+[src/neuroglancer/segmentation_user_layer.ts:517](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L517)
 
 ___
 
@@ -1291,7 +1291,7 @@ Base.getValueAt
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:417](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L417)
+[src/neuroglancer/layer.ts:417](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L417)
 
 ___
 
@@ -1304,7 +1304,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `action` | `string` |
-| `context` | `SegmentationActionContext` |
+| `context` | [`SegmentationActionContext`](../interfaces/segmentation_user_layer._internal_.SegmentationActionContext.md) |
 
 #### Returns
 
@@ -1316,7 +1316,7 @@ Base.handleAction
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:636](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L636)
+[src/neuroglancer/segmentation_user_layer.ts:636](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L636)
 
 ___
 
@@ -1334,7 +1334,7 @@ Base.initializationDone
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:331](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L331)
+[src/neuroglancer/layer.ts:331](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L331)
 
 ___
 
@@ -1346,7 +1346,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `tab` | `AnnotationLayerView` |
+| `tab` | [`AnnotationLayerView`](image_user_layer._internal_.AnnotationLayerView.md) |
 
 #### Returns
 
@@ -1358,7 +1358,7 @@ Base.initializeAnnotationLayerViewTab
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3172](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3172)
+[src/neuroglancer/ui/annotations.ts:3173](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3173)
 
 ___
 
@@ -1382,7 +1382,7 @@ Base.initializeSelectionState
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:112](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L112)
+[src/neuroglancer/layer.ts:112](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L112)
 
 ___
 
@@ -1406,7 +1406,7 @@ Base.markLoading
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:308](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L308)
+[src/neuroglancer/layer.ts:308](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L308)
 
 ___
 
@@ -1418,7 +1418,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `id` | `Uint64` |
+| `id` | [`Uint64`](data_panel_layout._internal_.Uint64.md) |
 
 #### Returns
 
@@ -1426,7 +1426,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:772](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L772)
+[src/neuroglancer/segmentation_user_layer.ts:772](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L772)
 
 ___
 
@@ -1444,7 +1444,7 @@ Base.refCountReachedZero
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L66)
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L66)
 
 ___
 
@@ -1474,7 +1474,7 @@ Base.registerCancellable
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L100)
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L100)
 
 ___
 
@@ -1486,7 +1486,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -1504,7 +1504,7 @@ Base.registerDisposer
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L76)
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L76)
 
 ___
 
@@ -1516,10 +1516,10 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `target` | `EventTarget` |
+| `target` | [`EventTarget`](../modules/axes_lines._internal_.md#eventtarget) |
 | `type` | `string` |
-| `listener` | `EventListenerOrEventListenerObject` |
-| `options?` | `boolean` \| `AddEventListenerOptions` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/axes_lines._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/axes_lines._internal_.AddEventListenerOptions.md) |
 
 #### Returns
 
@@ -1531,7 +1531,7 @@ Base.registerEventListener
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L95)
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L95)
 
 ___
 
@@ -1555,7 +1555,7 @@ Base.removeRenderLayer
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:393](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L393)
+[src/neuroglancer/layer.ts:393](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L393)
 
 ___
 
@@ -1579,7 +1579,7 @@ Base.resetSelectionState
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:126](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L126)
+[src/neuroglancer/layer.ts:126](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L126)
 
 ___
 
@@ -1603,7 +1603,7 @@ Base.restoreState
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:561](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L561)
+[src/neuroglancer/segmentation_user_layer.ts:561](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L561)
 
 ___
 
@@ -1615,7 +1615,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `annotationLayer` | `AnnotationLayerState` |
+| `annotationLayer` | [`AnnotationLayerState`](image_user_layer._internal_.AnnotationLayerState.md) |
 | `id` | `string` |
 | `pin` | `boolean` \| ``"toggle"`` |
 
@@ -1629,7 +1629,7 @@ Base.selectAnnotation
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3651](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3651)
+[src/neuroglancer/ui/annotations.ts:3652](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3652)
 
 ___
 
@@ -1641,7 +1641,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `id` | `Uint64` |
+| `id` | [`Uint64`](data_panel_layout._internal_.Uint64.md) |
 | `pin` | `boolean` \| ``"toggle"`` |
 
 #### Returns
@@ -1650,7 +1650,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:346](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L346)
+[src/neuroglancer/segmentation_user_layer.ts:346](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L346)
 
 ___
 
@@ -1674,7 +1674,7 @@ Base.selectedValueFromJson
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:459](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L459)
+[src/neuroglancer/layer.ts:459](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L459)
 
 ___
 
@@ -1698,7 +1698,7 @@ Base.selectedValueToJson
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:455](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L455)
+[src/neuroglancer/layer.ts:455](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L455)
 
 ___
 
@@ -1723,7 +1723,7 @@ Base.selectionStateFromJson
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:667](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L667)
+[src/neuroglancer/segmentation_user_layer.ts:667](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L667)
 
 ___
 
@@ -1748,7 +1748,7 @@ Base.selectionStateToJson
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:678](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L678)
+[src/neuroglancer/segmentation_user_layer.ts:678](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L678)
 
 ___
 
@@ -1768,7 +1768,7 @@ Base.setAnnotationColorPicker
 
 #### Defined in
 
-[src/neuroglancer/ui/annotations.ts:3158](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/ui/annotations.ts#L3158)
+[src/neuroglancer/ui/annotations.ts:3159](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/ui/annotations.ts#L3159)
 
 ___
 
@@ -1793,7 +1793,7 @@ Base.setLayerPosition
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:463](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L463)
+[src/neuroglancer/layer.ts:463](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L463)
 
 ___
 
@@ -1811,7 +1811,7 @@ Base.toJSON
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:599](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L599)
+[src/neuroglancer/segmentation_user_layer.ts:599](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L599)
 
 ___
 
@@ -1835,7 +1835,7 @@ Base.transformPickedValue
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:628](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L628)
+[src/neuroglancer/segmentation_user_layer.ts:628](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L628)
 
 ___
 
@@ -1847,7 +1847,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -1865,7 +1865,7 @@ Base.unregisterDisposer
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L85)
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L85)
 
 ___
 
@@ -1883,4 +1883,4 @@ Base.updateDataSubsourceActivations
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:279](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L279)
+[src/neuroglancer/layer.ts:279](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L279)

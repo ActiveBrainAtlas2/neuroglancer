@@ -20,17 +20,17 @@
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:103](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/renderlayer.ts#L103)
+[src/neuroglancer/renderlayer.ts:103](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/renderlayer.ts#L103)
 
 ___
 
 ### modelTransform
 
-• **modelTransform**: `undefined` \| `mat4`
+• **modelTransform**: `undefined` \| [`mat4`](../classes/axes_lines._internal_.mat4.md)
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:104](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/renderlayer.ts#L104)
+[src/neuroglancer/renderlayer.ts:104](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/renderlayer.ts#L104)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/renderlayer.ts#L102)
+[src/neuroglancer/renderlayer.ts:102](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/renderlayer.ts#L102)

@@ -6,7 +6,7 @@
 
 ## Hierarchy
 
-- `RefCounted`
+- [`RefCounted`](axes_lines._internal_.RefCounted.md)
 
   ↳ **`LayerGroupViewer`**
 
@@ -80,17 +80,17 @@
 
 | Name | Type |
 | :------ | :------ |
-| `element` | `HTMLElement` |
+| `element` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) |
 | `viewerState` | [`LayerGroupViewerState`](../interfaces/layer_group_viewer.LayerGroupViewerState.md) |
-| `options` | `Partial`<[`LayerGroupViewerOptions`](../interfaces/layer_group_viewer.LayerGroupViewerOptions.md)\> |
+| `options` | [`Partial`](../modules/layer_group_viewer._internal_.md#partial)<[`LayerGroupViewerOptions`](../interfaces/layer_group_viewer.LayerGroupViewerOptions.md)\> |
 
 #### Overrides
 
-RefCounted.constructor
+[RefCounted](axes_lines._internal_.RefCounted.md).[constructor](axes_lines._internal_.RefCounted.md#constructor)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:295](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L295)
+[src/neuroglancer/layer_group_viewer.ts:295](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L295)
 
 ## Properties
 
@@ -100,27 +100,27 @@ RefCounted.constructor
 
 #### Inherited from
 
-RefCounted.disposedStacks
+[RefCounted](axes_lines._internal_.RefCounted.md).[disposedStacks](axes_lines._internal_.RefCounted.md#disposedstacks)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L52)
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L52)
 
 ___
 
 ### element
 
-• **element**: `HTMLElement`
+• **element**: [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement)
 
 ___
 
 ### layerPanel
 
-• **layerPanel**: `undefined` \| `LayerBar`
+• **layerPanel**: `undefined` \| [`LayerBar`](layer_group_viewer._internal_.LayerBar.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:284](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L284)
+[src/neuroglancer/layer_group_viewer.ts:284](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L284)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:224](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L224)
+[src/neuroglancer/layer_group_viewer.ts:224](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L224)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:285](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L285)
+[src/neuroglancer/layer_group_viewer.ts:285](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L285)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:287](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L287)
+[src/neuroglancer/layer_group_viewer.ts:287](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L287)
 
 ___
 
@@ -160,21 +160,21 @@ ___
 
 #### Inherited from
 
-RefCounted.refCount
+[RefCounted](axes_lines._internal_.RefCounted.md).[refCount](axes_lines._internal_.RefCounted.md#refcount)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L45)
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L45)
 
 ___
 
 ### state
 
-• **state**: `CompoundTrackable`
+• **state**: [`CompoundTrackable`](layer_group_viewer._internal_.CompoundTrackable.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:289](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L289)
+[src/neuroglancer/layer_group_viewer.ts:289](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L289)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:225](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L225)
+[src/neuroglancer/layer_group_viewer.ts:225](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L225)
 
 ___
 
@@ -200,53 +200,53 @@ ___
 
 #### Inherited from
 
-RefCounted.wasDisposed
+[RefCounted](axes_lines._internal_.RefCounted.md).[wasDisposed](axes_lines._internal_.RefCounted.md#wasdisposed)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L46)
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L46)
 
 ## Accessors
 
 ### changed
 
-• `get` **changed**(): `NullarySignal`
+• `get` **changed**(): [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Returns
 
-`NullarySignal`
+[`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:291](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L291)
+[src/neuroglancer/layer_group_viewer.ts:291](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L291)
 
 ___
 
 ### chunkManager
 
-• `get` **chunkManager**(): `ChunkManager`
+• `get` **chunkManager**(): [`ChunkManager`](data_panel_layout._internal_.ChunkManager.md)
 
 #### Returns
 
-`ChunkManager`
+[`ChunkManager`](data_panel_layout._internal_.ChunkManager.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:248](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L248)
+[src/neuroglancer/layer_group_viewer.ts:248](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L248)
 
 ___
 
 ### crossSectionBackgroundColor
 
-• `get` **crossSectionBackgroundColor**(): `TrackableRGB`
+• `get` **crossSectionBackgroundColor**(): [`TrackableRGB`](data_panel_layout._internal_.TrackableRGB.md)
 
 #### Returns
 
-`TrackableRGB`
+[`TrackableRGB`](data_panel_layout._internal_.TrackableRGB.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:275](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L275)
+[src/neuroglancer/layer_group_viewer.ts:275](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L275)
 
 ___
 
@@ -260,7 +260,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:238](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L238)
+[src/neuroglancer/layer_group_viewer.ts:238](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L238)
 
 ___
 
@@ -274,7 +274,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:266](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L266)
+[src/neuroglancer/layer_group_viewer.ts:266](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L266)
 
 ___
 
@@ -288,7 +288,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:244](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L244)
+[src/neuroglancer/layer_group_viewer.ts:244](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L244)
 
 ___
 
@@ -302,7 +302,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:251](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L251)
+[src/neuroglancer/layer_group_viewer.ts:251](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L251)
 
 ___
 
@@ -316,7 +316,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:229](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L229)
+[src/neuroglancer/layer_group_viewer.ts:229](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L229)
 
 ___
 
@@ -330,35 +330,35 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:226](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L226)
+[src/neuroglancer/layer_group_viewer.ts:226](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L226)
 
 ___
 
 ### perspectiveViewBackgroundColor
 
-• `get` **perspectiveViewBackgroundColor**(): `TrackableRGB`
+• `get` **perspectiveViewBackgroundColor**(): [`TrackableRGB`](data_panel_layout._internal_.TrackableRGB.md)
 
 #### Returns
 
-`TrackableRGB`
+[`TrackableRGB`](data_panel_layout._internal_.TrackableRGB.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:278](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L278)
+[src/neuroglancer/layer_group_viewer.ts:278](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L278)
 
 ___
 
 ### scaleBarOptions
 
-• `get` **scaleBarOptions**(): `TrackableScaleBarOptions`
+• `get` **scaleBarOptions**(): [`TrackableScaleBarOptions`](layer_group_viewer._internal_.TrackableScaleBarOptions.md)
 
 #### Returns
 
-`TrackableScaleBarOptions`
+[`TrackableScaleBarOptions`](layer_group_viewer._internal_.TrackableScaleBarOptions.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:281](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L281)
+[src/neuroglancer/layer_group_viewer.ts:281](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L281)
 
 ___
 
@@ -372,7 +372,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:241](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L241)
+[src/neuroglancer/layer_group_viewer.ts:241](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L241)
 
 ___
 
@@ -386,7 +386,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:233](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L233)
+[src/neuroglancer/layer_group_viewer.ts:233](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L233)
 
 ___
 
@@ -400,7 +400,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:254](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L254)
+[src/neuroglancer/layer_group_viewer.ts:254](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L254)
 
 ___
 
@@ -414,7 +414,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:263](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L263)
+[src/neuroglancer/layer_group_viewer.ts:263](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L263)
 
 ___
 
@@ -428,21 +428,21 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:260](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L260)
+[src/neuroglancer/layer_group_viewer.ts:260](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L260)
 
 ___
 
 ### visibility
 
-• `get` **visibility**(): `WatchableVisibilityPriority`
+• `get` **visibility**(): [`WatchableVisibilityPriority`](data_panel_layout._internal_.WatchableVisibilityPriority.md)
 
 #### Returns
 
-`WatchableVisibilityPriority`
+[`WatchableVisibilityPriority`](data_panel_layout._internal_.WatchableVisibilityPriority.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:269](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L269)
+[src/neuroglancer/layer_group_viewer.ts:269](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L269)
 
 ___
 
@@ -456,7 +456,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:272](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L272)
+[src/neuroglancer/layer_group_viewer.ts:272](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L272)
 
 ___
 
@@ -470,7 +470,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:257](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L257)
+[src/neuroglancer/layer_group_viewer.ts:257](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L257)
 
 ## Methods
 
@@ -484,11 +484,11 @@ ___
 
 #### Inherited from
 
-RefCounted.addRef
+[RefCounted](axes_lines._internal_.RefCounted.md).[addRef](axes_lines._internal_.RefCounted.md#addref)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L48)
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L48)
 
 ___
 
@@ -509,7 +509,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:336](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L336)
+[src/neuroglancer/layer_group_viewer.ts:336](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L336)
 
 ___
 
@@ -523,11 +523,11 @@ ___
 
 #### Inherited from
 
-RefCounted.dispose
+[RefCounted](axes_lines._internal_.RefCounted.md).[dispose](axes_lines._internal_.RefCounted.md#dispose)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L53)
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L53)
 
 ___
 
@@ -541,11 +541,11 @@ ___
 
 #### Overrides
 
-RefCounted.disposed
+[RefCounted](axes_lines._internal_.RefCounted.md).[disposed](axes_lines._internal_.RefCounted.md#disposed)
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:472](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L472)
+[src/neuroglancer/layer_group_viewer.ts:472](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L472)
 
 ___
 
@@ -559,7 +559,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:375](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L375)
+[src/neuroglancer/layer_group_viewer.ts:375](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L375)
 
 ___
 
@@ -573,11 +573,11 @@ ___
 
 #### Inherited from
 
-RefCounted.refCountReachedZero
+[RefCounted](axes_lines._internal_.RefCounted.md).[refCountReachedZero](axes_lines._internal_.RefCounted.md#refcountreachedzero)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L66)
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L66)
 
 ___
 
@@ -591,7 +591,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:340](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L340)
+[src/neuroglancer/layer_group_viewer.ts:340](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L340)
 
 ___
 
@@ -617,11 +617,11 @@ ___
 
 #### Inherited from
 
-RefCounted.registerCancellable
+[RefCounted](axes_lines._internal_.RefCounted.md).[registerCancellable](axes_lines._internal_.RefCounted.md#registercancellable)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L100)
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L100)
 
 ___
 
@@ -633,7 +633,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -647,11 +647,11 @@ ___
 
 #### Inherited from
 
-RefCounted.registerDisposer
+[RefCounted](axes_lines._internal_.RefCounted.md).[registerDisposer](axes_lines._internal_.RefCounted.md#registerdisposer)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L76)
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L76)
 
 ___
 
@@ -663,10 +663,10 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `target` | `EventTarget` |
+| `target` | [`EventTarget`](../modules/axes_lines._internal_.md#eventtarget) |
 | `type` | `string` |
-| `listener` | `EventListenerOrEventListenerObject` |
-| `options?` | `boolean` \| `AddEventListenerOptions` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/axes_lines._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/axes_lines._internal_.AddEventListenerOptions.md) |
 
 #### Returns
 
@@ -674,11 +674,11 @@ ___
 
 #### Inherited from
 
-RefCounted.registerEventListener
+[RefCounted](axes_lines._internal_.RefCounted.md).[registerEventListener](axes_lines._internal_.RefCounted.md#registereventlistener)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L95)
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L95)
 
 ___
 
@@ -692,7 +692,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:358](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L358)
+[src/neuroglancer/layer_group_viewer.ts:358](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L358)
 
 ___
 
@@ -712,7 +712,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:362](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L362)
+[src/neuroglancer/layer_group_viewer.ts:362](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L362)
 
 ___
 
@@ -726,7 +726,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:354](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L354)
+[src/neuroglancer/layer_group_viewer.ts:354](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L354)
 
 ___
 
@@ -738,7 +738,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -752,11 +752,11 @@ ___
 
 #### Inherited from
 
-RefCounted.unregisterDisposer
+[RefCounted](axes_lines._internal_.RefCounted.md).[unregisterDisposer](axes_lines._internal_.RefCounted.md#unregisterdisposer)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L85)
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L85)
 
 ___
 
@@ -770,4 +770,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_group_viewer.ts:383](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_group_viewer.ts#L383)
+[src/neuroglancer/layer_group_viewer.ts:383](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_group_viewer.ts#L383)

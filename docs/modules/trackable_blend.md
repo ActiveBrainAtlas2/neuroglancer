@@ -24,27 +24,27 @@
 
 ### TrackableBlendModeValue
 
-Ƭ **TrackableBlendModeValue**: `TrackableEnum`<[`BLEND_MODES`](../enums/trackable_blend.BLEND_MODES.md)\>
+Ƭ **TrackableBlendModeValue**: [`TrackableEnum`](../classes/image_user_layer._internal_.TrackableEnum.md)<[`BLEND_MODES`](../enums/trackable_blend.BLEND_MODES.md)\>
 
 #### Defined in
 
-[src/neuroglancer/trackable_blend.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_blend.ts#L39)
+[src/neuroglancer/trackable_blend.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_blend.ts#L39)
 
 ## Variables
 
 ### BLEND\_FUNCTIONS
 
-• `Const` **BLEND\_FUNCTIONS**: `Map`<[`BLEND_MODES`](../enums/trackable_blend.BLEND_MODES.md), (`gl`: `WebGL2RenderingContext`) => `void`\>
+• `Const` **BLEND\_FUNCTIONS**: `Map`<[`BLEND_MODES`](../enums/trackable_blend.BLEND_MODES.md), (`gl`: [`WebGL2RenderingContext`](axes_lines._internal_.md#webgl2renderingcontext)) => `void`\>
 
 #### Defined in
 
-[src/neuroglancer/trackable_blend.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_blend.ts#L24)
+[src/neuroglancer/trackable_blend.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_blend.ts#L24)
 
 ## Functions
 
 ### trackableBlendModeValue
 
-▸ **trackableBlendModeValue**(`initialValue?`): `TrackableEnum`<[`BLEND_MODES`](../enums/trackable_blend.BLEND_MODES.md)\>
+▸ **trackableBlendModeValue**(`initialValue?`): [`TrackableEnum`](../classes/image_user_layer._internal_.TrackableEnum.md)<[`BLEND_MODES`](../enums/trackable_blend.BLEND_MODES.md)\>
 
 #### Parameters
 
@@ -54,8 +54,8 @@
 
 #### Returns
 
-`TrackableEnum`<[`BLEND_MODES`](../enums/trackable_blend.BLEND_MODES.md)\>
+[`TrackableEnum`](../classes/image_user_layer._internal_.TrackableEnum.md)<[`BLEND_MODES`](../enums/trackable_blend.BLEND_MODES.md)\>
 
 #### Defined in
 
-[src/neuroglancer/trackable_blend.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_blend.ts#L41)
+[src/neuroglancer/trackable_blend.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_blend.ts#L41)

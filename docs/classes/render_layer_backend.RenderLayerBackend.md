@@ -13,7 +13,7 @@
 
 ## Hierarchy
 
-- `ChunkRenderLayerBackend`
+- [`ChunkRenderLayerBackend`](render_layer_backend._internal_.ChunkRenderLayerBackend.md)
 
   ↳ **`RenderLayerBackend`**
 
@@ -80,11 +80,11 @@
 
 #### Inherited from
 
-ChunkRenderLayerBackend.constructor
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[constructor](render_layer_backend._internal_.ChunkRenderLayerBackend.md#constructor)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:258](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L258)
+[src/neuroglancer/worker_rpc.ts:258](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L258)
 
 ## Properties
 
@@ -97,11 +97,11 @@ final derived owner classes.  It is not used on counterpart (non-owner) classes.
 
 #### Inherited from
 
-ChunkRenderLayerBackend.RPC\_TYPE\_ID
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[RPC_TYPE_ID](render_layer_backend._internal_.ChunkRenderLayerBackend.md#rpc_type_id)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:245](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L245)
+[src/neuroglancer/worker_rpc.ts:245](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L245)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_layer_backend.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_layer_backend.ts#L42)
+[src/neuroglancer/render_layer_backend.ts:42](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_layer_backend.ts#L42)
 
 ___
 
@@ -121,11 +121,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.chunkManagerGeneration
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[chunkManagerGeneration](render_layer_backend._internal_.ChunkRenderLayerBackend.md#chunkmanagergeneration)
 
 #### Defined in
 
-[src/neuroglancer/chunk_manager/backend.ts:958](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/chunk_manager/backend.ts#L958)
+[src/neuroglancer/chunk_manager/backend.ts:958](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/chunk_manager/backend.ts#L958)
 
 ___
 
@@ -135,11 +135,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.disposedStacks
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[disposedStacks](render_layer_backend._internal_.ChunkRenderLayerBackend.md#disposedstacks)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L52)
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L52)
 
 ___
 
@@ -149,11 +149,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.isOwner
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[isOwner](render_layer_backend._internal_.ChunkRenderLayerBackend.md#isowner)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:171](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L171)
+[src/neuroglancer/worker_rpc.ts:171](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L171)
 
 ___
 
@@ -163,11 +163,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.numPrefetchChunksAvailable
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[numPrefetchChunksAvailable](render_layer_backend._internal_.ChunkRenderLayerBackend.md#numprefetchchunksavailable)
 
 #### Defined in
 
-[src/neuroglancer/chunk_manager/backend.ts:963](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/chunk_manager/backend.ts#L963)
+[src/neuroglancer/chunk_manager/backend.ts:963](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/chunk_manager/backend.ts#L963)
 
 ___
 
@@ -177,11 +177,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.numPrefetchChunksNeeded
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[numPrefetchChunksNeeded](render_layer_backend._internal_.ChunkRenderLayerBackend.md#numprefetchchunksneeded)
 
 #### Defined in
 
-[src/neuroglancer/chunk_manager/backend.ts:962](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/chunk_manager/backend.ts#L962)
+[src/neuroglancer/chunk_manager/backend.ts:962](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/chunk_manager/backend.ts#L962)
 
 ___
 
@@ -191,11 +191,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.numVisibleChunksAvailable
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[numVisibleChunksAvailable](render_layer_backend._internal_.ChunkRenderLayerBackend.md#numvisiblechunksavailable)
 
 #### Defined in
 
-[src/neuroglancer/chunk_manager/backend.ts:961](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/chunk_manager/backend.ts#L961)
+[src/neuroglancer/chunk_manager/backend.ts:961](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/chunk_manager/backend.ts#L961)
 
 ___
 
@@ -205,11 +205,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.numVisibleChunksNeeded
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[numVisibleChunksNeeded](render_layer_backend._internal_.ChunkRenderLayerBackend.md#numvisiblechunksneeded)
 
 #### Defined in
 
-[src/neuroglancer/chunk_manager/backend.ts:960](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/chunk_manager/backend.ts#L960)
+[src/neuroglancer/chunk_manager/backend.ts:960](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/chunk_manager/backend.ts#L960)
 
 ___
 
@@ -219,11 +219,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.refCount
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[refCount](render_layer_backend._internal_.ChunkRenderLayerBackend.md#refcount)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L45)
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L45)
 
 ___
 
@@ -233,11 +233,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.referencedGeneration
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[referencedGeneration](render_layer_backend._internal_.ChunkRenderLayerBackend.md#referencedgeneration)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:173](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L173)
+[src/neuroglancer/worker_rpc.ts:173](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L173)
 
 ___
 
@@ -247,11 +247,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.rpc
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[rpc](render_layer_backend._internal_.ChunkRenderLayerBackend.md#rpc)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:169](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L169)
+[src/neuroglancer/worker_rpc.ts:169](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L169)
 
 ___
 
@@ -261,11 +261,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.rpcId
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[rpcId](render_layer_backend._internal_.ChunkRenderLayerBackend.md#rpcid)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:170](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L170)
+[src/neuroglancer/worker_rpc.ts:170](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L170)
 
 ___
 
@@ -275,11 +275,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.unreferencedGeneration
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[unreferencedGeneration](render_layer_backend._internal_.ChunkRenderLayerBackend.md#unreferencedgeneration)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:172](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L172)
+[src/neuroglancer/worker_rpc.ts:172](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L172)
 
 ___
 
@@ -289,11 +289,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.wasDisposed
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[wasDisposed](render_layer_backend._internal_.ChunkRenderLayerBackend.md#wasdisposed)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L46)
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L46)
 
 ## Methods
 
@@ -314,11 +314,11 @@ Precondition: this.isOwner === true.
 
 #### Inherited from
 
-ChunkRenderLayerBackend.addCounterpartRef
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[addCounterpartRef](render_layer_backend._internal_.ChunkRenderLayerBackend.md#addcounterpartref)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:199](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L199)
+[src/neuroglancer/worker_rpc.ts:199](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L199)
 
 ___
 
@@ -332,11 +332,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.addRef
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[addRef](render_layer_backend._internal_.ChunkRenderLayerBackend.md#addref)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L48)
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L48)
 
 ___
 
@@ -356,7 +356,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_layer_backend.ts:43](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_layer_backend.ts#L43)
+[src/neuroglancer/render_layer_backend.ts:43](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_layer_backend.ts#L43)
 
 ___
 
@@ -380,11 +380,11 @@ This should be called when the counterpart's refCount is decremented and reaches
 
 #### Inherited from
 
-ChunkRenderLayerBackend.counterpartRefCountReachedZero
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[counterpartRefCountReachedZero](render_layer_backend._internal_.ChunkRenderLayerBackend.md#counterpartrefcountreachedzero)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:234](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L234)
+[src/neuroglancer/worker_rpc.ts:234](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L234)
 
 ___
 
@@ -398,11 +398,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.dispose
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[dispose](render_layer_backend._internal_.ChunkRenderLayerBackend.md#dispose)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:192](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L192)
+[src/neuroglancer/worker_rpc.ts:192](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L192)
 
 ___
 
@@ -416,11 +416,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.disposed
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[disposed](render_layer_backend._internal_.ChunkRenderLayerBackend.md#disposed)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L75)
+[src/neuroglancer/util/disposable.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L75)
 
 ___
 
@@ -441,11 +441,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.initializeCounterpart
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[initializeCounterpart](render_layer_backend._internal_.ChunkRenderLayerBackend.md#initializecounterpart)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:182](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L182)
+[src/neuroglancer/worker_rpc.ts:182](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L182)
 
 ___
 
@@ -466,11 +466,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.initializeSharedObject
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[initializeSharedObject](render_layer_backend._internal_.ChunkRenderLayerBackend.md#initializesharedobject)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:175](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L175)
+[src/neuroglancer/worker_rpc.ts:175](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L175)
 
 ___
 
@@ -486,11 +486,11 @@ Precondition: this.isOwner === true.
 
 #### Inherited from
 
-ChunkRenderLayerBackend.ownerDispose
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[ownerDispose](render_layer_backend._internal_.ChunkRenderLayerBackend.md#ownerdispose)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:219](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L219)
+[src/neuroglancer/worker_rpc.ts:219](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L219)
 
 ___
 
@@ -504,11 +504,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.refCountReachedZero
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[refCountReachedZero](render_layer_backend._internal_.ChunkRenderLayerBackend.md#refcountreachedzero)
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:203](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L203)
+[src/neuroglancer/worker_rpc.ts:203](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L203)
 
 ___
 
@@ -534,11 +534,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.registerCancellable
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[registerCancellable](render_layer_backend._internal_.ChunkRenderLayerBackend.md#registercancellable)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L100)
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L100)
 
 ___
 
@@ -550,7 +550,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -564,11 +564,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.registerDisposer
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[registerDisposer](render_layer_backend._internal_.ChunkRenderLayerBackend.md#registerdisposer)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L76)
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L76)
 
 ___
 
@@ -580,10 +580,10 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `target` | `EventTarget` |
+| `target` | [`EventTarget`](../modules/axes_lines._internal_.md#eventtarget) |
 | `type` | `string` |
-| `listener` | `EventListenerOrEventListenerObject` |
-| `options?` | `boolean` \| `AddEventListenerOptions` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/axes_lines._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/axes_lines._internal_.AddEventListenerOptions.md) |
 
 #### Returns
 
@@ -591,11 +591,11 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.registerEventListener
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[registerEventListener](render_layer_backend._internal_.ChunkRenderLayerBackend.md#registereventlistener)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L95)
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L95)
 
 ___
 
@@ -607,7 +607,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -621,8 +621,8 @@ ___
 
 #### Inherited from
 
-ChunkRenderLayerBackend.unregisterDisposer
+[ChunkRenderLayerBackend](render_layer_backend._internal_.ChunkRenderLayerBackend.md).[unregisterDisposer](render_layer_backend._internal_.ChunkRenderLayerBackend.md#unregisterdisposer)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L85)
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L85)

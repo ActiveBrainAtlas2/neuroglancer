@@ -4,6 +4,10 @@
 
 ## Table of contents
 
+### Modules
+
+- [&lt;internal\&gt;](worker_rpc._internal_.md)
+
 ### Classes
 
 - [RPC](../classes/worker_rpc.RPC.md)
@@ -56,7 +60,7 @@
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:20](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L20)
+[src/neuroglancer/worker_rpc.ts:20](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L20)
 
 ___
 
@@ -72,7 +76,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L39)
+[src/neuroglancer/worker_rpc.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L39)
 
 ___
 
@@ -82,7 +86,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:22](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L22)
+[src/neuroglancer/worker_rpc.ts:22](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L22)
 
 ## Variables
 
@@ -92,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:286](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L286)
+[src/neuroglancer/worker_rpc.ts:286](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L286)
 
 ## Functions
 
@@ -114,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:248](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L248)
+[src/neuroglancer/worker_rpc.ts:248](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L248)
 
 ___
 
@@ -133,7 +137,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `key` | `string` |
-| `handler` | (`this`: [`RPC`](../classes/worker_rpc.RPC.md), `x`: `any`, `cancellationToken`: `CancellationToken`) => [`RPCPromise`](worker_rpc.md#rpcpromise)<`T`\> |
+| `handler` | (`this`: [`RPC`](../classes/worker_rpc.RPC.md), `x`: `any`, `cancellationToken`: [`CancellationToken`](../interfaces/layer._internal_.CancellationToken.md)) => [`RPCPromise`](worker_rpc.md#rpcpromise)<`T`\> |
 
 #### Returns
 
@@ -141,7 +145,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:47](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L47)
+[src/neuroglancer/worker_rpc.ts:47](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L47)
 
 ___
 
@@ -162,7 +166,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:35](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L35)
+[src/neuroglancer/worker_rpc.ts:35](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L35)
 
 ___
 
@@ -201,7 +205,7 @@ SharedObject owner.
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:321](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L321)
+[src/neuroglancer/worker_rpc.ts:321](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L321)
 
 ___
 
@@ -239,4 +243,4 @@ This is intended to be used as a decorator.
 
 #### Defined in
 
-[src/neuroglancer/worker_rpc.ts:307](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/worker_rpc.ts#L307)
+[src/neuroglancer/worker_rpc.ts:307](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/worker_rpc.ts#L307)

@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:34](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L34)
+[src/neuroglancer/segment_color.ts:34](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L34)
 
 ## Properties
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:32](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L32)
+[src/neuroglancer/segment_color.ts:32](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L32)
 
 ## Methods
 
@@ -62,7 +62,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `builder` | `ShaderBuilder` |
+| `builder` | [`ShaderBuilder`](image_user_layer._internal_.ShaderBuilder.md) |
 
 #### Returns
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L36)
+[src/neuroglancer/segment_color.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L36)
 
 ___
 
@@ -82,8 +82,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `gl` | `GL` |
-| `shader` | `ShaderProgram` |
+| `gl` | [`GL`](../interfaces/axes_lines._internal_.GL.md) |
+| `shader` | [`ShaderProgram`](axes_lines._internal_.ShaderProgram.md) |
 | `segmentColorHash` | `number` |
 
 #### Returns
@@ -92,4 +92,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segment_color.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segment_color.ts#L61)
+[src/neuroglancer/segment_color.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segment_color.ts#L61)

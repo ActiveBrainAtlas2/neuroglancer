@@ -14,12 +14,13 @@
 
 - [`WatchableValueInterface`](trackable_value.WatchableValueInterface.md)<`T`\>
 
-- `Trackable`
+- [`Trackable`](coordinate_transform._internal_.Trackable.md)
 
   ↳ **`TrackableValueInterface`**
 
 ## Implemented by
 
+- [`SelectedLegacyTool`](../classes/image_user_layer._internal_.SelectedLegacyTool.md)
 - [`TrackableDataSelectionState`](../classes/layer.TrackableDataSelectionState.md)
 - [`TrackableRefCounted`](../classes/trackable_value.TrackableRefCounted.md)
 
@@ -40,15 +41,15 @@
 
 ### changed
 
-• **changed**: `NullaryReadonlySignal`
+• **changed**: [`NullaryReadonlySignal`](../modules/coordinate_transform._internal_.md#nullaryreadonlysignal)
 
 #### Inherited from
 
-[WatchableValueInterface](trackable_value.WatchableValueInterface.md).[changed](trackable_value.WatchableValueInterface.md#changed)
+[Trackable](coordinate_transform._internal_.Trackable.md).[changed](coordinate_transform._internal_.Trackable.md#changed)
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L24)
+[src/neuroglancer/trackable_value.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L24)
 
 ___
 
@@ -62,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L23)
+[src/neuroglancer/trackable_value.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L23)
 
 ## Methods
 
@@ -76,11 +77,11 @@ ___
 
 #### Inherited from
 
-Trackable.reset
+[Trackable](coordinate_transform._internal_.Trackable.md).[reset](coordinate_transform._internal_.Trackable.md#reset)
 
 #### Defined in
 
-[src/neuroglancer/util/trackable.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/trackable.ts#L36)
+[src/neuroglancer/util/trackable.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/trackable.ts#L36)
 
 ___
 
@@ -100,11 +101,11 @@ ___
 
 #### Inherited from
 
-Trackable.restoreState
+[Trackable](coordinate_transform._internal_.Trackable.md).[restoreState](coordinate_transform._internal_.Trackable.md#restorestate)
 
 #### Defined in
 
-[src/neuroglancer/util/trackable.ts:35](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/trackable.ts#L35)
+[src/neuroglancer/util/trackable.ts:35](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/trackable.ts#L35)
 
 ___
 
@@ -118,8 +119,8 @@ ___
 
 #### Inherited from
 
-Trackable.toJSON
+[Trackable](coordinate_transform._internal_.Trackable.md).[toJSON](coordinate_transform._internal_.Trackable.md#tojson)
 
 #### Defined in
 
-[src/neuroglancer/util/trackable.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/trackable.ts#L38)
+[src/neuroglancer/util/trackable.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/trackable.ts#L38)

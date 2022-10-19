@@ -49,21 +49,21 @@
 
 | Name | Type |
 | :------ | :------ |
-| `values?` | `Iterable`<`T`\> |
+| `values?` | [`Iterable`](../interfaces/axes_lines._internal_.Iterable.md)<`T`\> |
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:261](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L261)
+[src/neuroglancer/trackable_value.ts:261](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L261)
 
 ## Properties
 
 ### changed
 
-• **changed**: `NullarySignal`
+• **changed**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:259](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L259)
+[src/neuroglancer/trackable_value.ts:259](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L259)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:260](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L260)
+[src/neuroglancer/trackable_value.ts:260](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L260)
 
 ## Accessors
 
@@ -87,21 +87,21 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:287](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L287)
+[src/neuroglancer/trackable_value.ts:287](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L287)
 
 ## Methods
 
 ### [iterator]
 
-▸ **[iterator]**(): `IterableIterator`<`T`\>
+▸ **[iterator]**(): [`IterableIterator`](../interfaces/axes_lines._internal_.IterableIterator.md)<`T`\>
 
 #### Returns
 
-`IterableIterator`<`T`\>
+[`IterableIterator`](../interfaces/axes_lines._internal_.IterableIterator.md)<`T`\>
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:290](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L290)
+[src/neuroglancer/trackable_value.ts:290](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L290)
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:268](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L268)
+[src/neuroglancer/trackable_value.ts:268](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L268)
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:293](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L293)
+[src/neuroglancer/trackable_value.ts:293](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L293)
 
 ___
 
@@ -155,7 +155,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:276](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L276)
+[src/neuroglancer/trackable_value.ts:276](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L276)
 
 ___
 
@@ -175,4 +175,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:284](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L284)
+[src/neuroglancer/trackable_value.ts:284](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L284)

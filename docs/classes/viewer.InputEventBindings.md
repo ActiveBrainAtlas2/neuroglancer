@@ -36,17 +36,17 @@
 
 ### global
 
-• **global**: `EventActionMap`
+• **global**: [`EventActionMap`](data_panel_layout._internal_.EventActionMap.md)
 
 #### Defined in
 
-[src/neuroglancer/viewer.ts:117](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/viewer.ts#L117)
+[src/neuroglancer/viewer.ts:117](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/viewer.ts#L117)
 
 ___
 
 ### perspectiveView
 
-• **perspectiveView**: `EventActionMap`
+• **perspectiveView**: [`EventActionMap`](data_panel_layout._internal_.EventActionMap.md)
 
 #### Inherited from
 
@@ -54,13 +54,13 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L53)
+[src/neuroglancer/data_panel_layout.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L53)
 
 ___
 
 ### sliceView
 
-• **sliceView**: `EventActionMap`
+• **sliceView**: [`EventActionMap`](data_panel_layout._internal_.EventActionMap.md)
 
 #### Inherited from
 
@@ -68,4 +68,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:54](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L54)
+[src/neuroglancer/data_panel_layout.ts:54](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L54)

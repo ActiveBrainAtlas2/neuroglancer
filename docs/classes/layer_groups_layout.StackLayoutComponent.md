@@ -6,13 +6,13 @@
 
 ## Hierarchy
 
-- `RefCounted`
+- [`RefCounted`](axes_lines._internal_.RefCounted.md)
 
   ↳ **`StackLayoutComponent`**
 
 ## Implements
 
-- `LayoutComponent`
+- [`LayoutComponent`](../interfaces/layer_groups_layout._internal_.LayoutComponent.md)
 
 ## Table of contents
 
@@ -62,32 +62,32 @@
 
 | Name | Type |
 | :------ | :------ |
-| `element` | `HTMLElement` |
+| `element` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) |
 | `direction` | ``"row"`` \| ``"column"`` |
 | `children` | `any`[] |
 | `container` | [`LayoutComponentContainer`](layer_groups_layout.LayoutComponentContainer.md) |
 
 #### Overrides
 
-RefCounted.constructor
+[RefCounted](axes_lines._internal_.RefCounted.md).[constructor](axes_lines._internal_.RefCounted.md#constructor)
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:451](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L451)
+[src/neuroglancer/layer_groups_layout.ts:451](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L451)
 
 ## Properties
 
 ### changed
 
-• **changed**: `NullarySignal`
+• **changed**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Implementation of
 
-LayoutComponent.changed
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[changed](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#changed)
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:423](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L423)
+[src/neuroglancer/layer_groups_layout.ts:423](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L423)
 
 ___
 
@@ -109,25 +109,25 @@ ___
 
 #### Implementation of
 
-LayoutComponent.disposedStacks
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[disposedStacks](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#disposedstacks)
 
 #### Inherited from
 
-RefCounted.disposedStacks
+[RefCounted](axes_lines._internal_.RefCounted.md).[disposedStacks](axes_lines._internal_.RefCounted.md#disposedstacks)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L52)
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L52)
 
 ___
 
 ### element
 
-• **element**: `HTMLElement`
+• **element**: [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement)
 
 #### Implementation of
 
-LayoutComponent.element
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[element](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#element)
 
 ___
 
@@ -137,15 +137,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.refCount
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[refCount](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#refcount)
 
 #### Inherited from
 
-RefCounted.refCount
+[RefCounted](axes_lines._internal_.RefCounted.md).[refCount](axes_lines._internal_.RefCounted.md#refcount)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L45)
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L45)
 
 ___
 
@@ -155,15 +155,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.wasDisposed
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[wasDisposed](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#wasdisposed)
 
 #### Inherited from
 
-RefCounted.wasDisposed
+[RefCounted](axes_lines._internal_.RefCounted.md).[wasDisposed](axes_lines._internal_.RefCounted.md#wasdisposed)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L46)
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L46)
 
 ## Accessors
 
@@ -177,7 +177,7 @@ RefCounted.wasDisposed
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:425](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L425)
+[src/neuroglancer/layer_groups_layout.ts:425](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L425)
 
 ___
 
@@ -191,21 +191,21 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:447](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L447)
+[src/neuroglancer/layer_groups_layout.ts:447](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L447)
 
 ## Methods
 
 ### [iterator]
 
-▸ **[iterator]**(): `Generator`<[`LayoutComponentContainer`](layer_groups_layout.LayoutComponentContainer.md), `void`, `unknown`\>
+▸ **[iterator]**(): [`Generator`](../interfaces/layer._internal_.Generator.md)<[`LayoutComponentContainer`](layer_groups_layout.LayoutComponentContainer.md), `void`, `unknown`\>
 
 #### Returns
 
-`Generator`<[`LayoutComponentContainer`](layer_groups_layout.LayoutComponentContainer.md), `void`, `unknown`\>
+[`Generator`](../interfaces/layer._internal_.Generator.md)<[`LayoutComponentContainer`](layer_groups_layout.LayoutComponentContainer.md), `void`, `unknown`\>
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:496](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L496)
+[src/neuroglancer/layer_groups_layout.ts:496](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L496)
 
 ___
 
@@ -219,15 +219,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.addRef
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[addRef](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#addref)
 
 #### Inherited from
 
-RefCounted.addRef
+[RefCounted](axes_lines._internal_.RefCounted.md).[addRef](axes_lines._internal_.RefCounted.md#addref)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L48)
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L48)
 
 ___
 
@@ -241,7 +241,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:490](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L490)
+[src/neuroglancer/layer_groups_layout.ts:490](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L490)
 
 ___
 
@@ -255,15 +255,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.dispose
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[dispose](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#dispose)
 
 #### Inherited from
 
-RefCounted.dispose
+[RefCounted](axes_lines._internal_.RefCounted.md).[dispose](axes_lines._internal_.RefCounted.md#dispose)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L53)
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L53)
 
 ___
 
@@ -277,15 +277,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.disposed
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[disposed](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#disposed)
 
 #### Overrides
 
-RefCounted.disposed
+[RefCounted](axes_lines._internal_.RefCounted.md).[disposed](axes_lines._internal_.RefCounted.md#disposed)
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:485](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L485)
+[src/neuroglancer/layer_groups_layout.ts:485](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L485)
 
 ___
 
@@ -305,7 +305,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:465](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L465)
+[src/neuroglancer/layer_groups_layout.ts:465](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L465)
 
 ___
 
@@ -326,27 +326,27 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:469](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L469)
+[src/neuroglancer/layer_groups_layout.ts:469](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L469)
 
 ___
 
 ### makeDropPlaceholder
 
-▸ `Private` **makeDropPlaceholder**(`refCounted`): `HTMLDivElement`
+▸ `Private` **makeDropPlaceholder**(`refCounted`): [`HTMLDivElement`](../modules/axes_lines._internal_.md#htmldivelement)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `refCounted` | `RefCounted` |
+| `refCounted` | [`RefCounted`](axes_lines._internal_.RefCounted.md) |
 
 #### Returns
 
-`HTMLDivElement`
+[`HTMLDivElement`](../modules/axes_lines._internal_.md#htmldivelement)
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:429](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L429)
+[src/neuroglancer/layer_groups_layout.ts:429](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L429)
 
 ___
 
@@ -360,15 +360,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.refCountReachedZero
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[refCountReachedZero](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#refcountreachedzero)
 
 #### Inherited from
 
-RefCounted.refCountReachedZero
+[RefCounted](axes_lines._internal_.RefCounted.md).[refCountReachedZero](axes_lines._internal_.RefCounted.md#refcountreachedzero)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L66)
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L66)
 
 ___
 
@@ -394,15 +394,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.registerCancellable
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[registerCancellable](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#registercancellable)
 
 #### Inherited from
 
-RefCounted.registerCancellable
+[RefCounted](axes_lines._internal_.RefCounted.md).[registerCancellable](axes_lines._internal_.RefCounted.md#registercancellable)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L100)
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L100)
 
 ___
 
@@ -414,7 +414,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -428,15 +428,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.registerDisposer
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[registerDisposer](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#registerdisposer)
 
 #### Inherited from
 
-RefCounted.registerDisposer
+[RefCounted](axes_lines._internal_.RefCounted.md).[registerDisposer](axes_lines._internal_.RefCounted.md#registerdisposer)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L76)
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L76)
 
 ___
 
@@ -448,10 +448,10 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `target` | `EventTarget` |
+| `target` | [`EventTarget`](../modules/axes_lines._internal_.md#eventtarget) |
 | `type` | `string` |
-| `listener` | `EventListenerOrEventListenerObject` |
-| `options?` | `boolean` \| `AddEventListenerOptions` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/axes_lines._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/axes_lines._internal_.AddEventListenerOptions.md) |
 
 #### Returns
 
@@ -459,15 +459,15 @@ ___
 
 #### Implementation of
 
-LayoutComponent.registerEventListener
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[registerEventListener](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#registereventlistener)
 
 #### Inherited from
 
-RefCounted.registerEventListener
+[RefCounted](axes_lines._internal_.RefCounted.md).[registerEventListener](axes_lines._internal_.RefCounted.md#registereventlistener)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L95)
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L95)
 
 ___
 
@@ -486,11 +486,11 @@ ___
 
 #### Implementation of
 
-LayoutComponent.toJSON
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[toJSON](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#tojson)
 
 #### Defined in
 
-[src/neuroglancer/layer_groups_layout.ts:503](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_groups_layout.ts#L503)
+[src/neuroglancer/layer_groups_layout.ts:503](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_groups_layout.ts#L503)
 
 ___
 
@@ -502,7 +502,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `Disposer` |
+| `T` | extends [`Disposer`](../modules/axes_lines._internal_.md#disposer) |
 
 #### Parameters
 
@@ -516,12 +516,12 @@ ___
 
 #### Implementation of
 
-LayoutComponent.unregisterDisposer
+[LayoutComponent](../interfaces/layer_groups_layout._internal_.LayoutComponent.md).[unregisterDisposer](../interfaces/layer_groups_layout._internal_.LayoutComponent.md#unregisterdisposer)
 
 #### Inherited from
 
-RefCounted.unregisterDisposer
+[RefCounted](axes_lines._internal_.RefCounted.md).[unregisterDisposer](axes_lines._internal_.RefCounted.md#unregisterdisposer)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L85)
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L85)

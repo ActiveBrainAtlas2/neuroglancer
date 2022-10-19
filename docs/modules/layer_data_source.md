@@ -24,17 +24,17 @@
 
 ### LayerDataSourceLoadState
 
-Ƭ **LayerDataSourceLoadState**: { `error`: `Error`  } \| [`LoadedLayerDataSource`](../classes/layer_data_source.LoadedLayerDataSource.md) \| `undefined`
+Ƭ **LayerDataSourceLoadState**: { `error`: [`Error`](axes_lines._internal_.md#error)  } \| [`LoadedLayerDataSource`](../classes/layer_data_source.LoadedLayerDataSource.md) \| `undefined`
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:211](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L211)
+[src/neuroglancer/layer_data_source.ts:211](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L211)
 
 ## Functions
 
 ### layerDataSourceSpecificationFromJson
 
-▸ **layerDataSourceSpecificationFromJson**(`obj`, `legacyTransform?`): `DataSourceSpecification`
+▸ **layerDataSourceSpecificationFromJson**(`obj`, `legacyTransform?`): [`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md)
 
 #### Parameters
 
@@ -45,11 +45,11 @@
 
 #### Returns
 
-`DataSourceSpecification`
+[`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L39)
+[src/neuroglancer/layer_data_source.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L39)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `spec` | `DataSourceSpecification` |
+| `spec` | [`DataSourceSpecification`](../interfaces/image_user_layer._internal_.DataSourceSpecification.md) |
 
 #### Returns
 
@@ -69,13 +69,13 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:68](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L68)
+[src/neuroglancer/layer_data_source.ts:68](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L68)
 
 ___
 
 ### parseDataSubsourceSpecificationFromJson
 
-▸ **parseDataSubsourceSpecificationFromJson**(`json`): `DataSubsourceSpecification`
+▸ **parseDataSubsourceSpecificationFromJson**(`json`): [`DataSubsourceSpecification`](../interfaces/image_user_layer._internal_.DataSubsourceSpecification.md)
 
 #### Parameters
 
@@ -85,8 +85,8 @@ ___
 
 #### Returns
 
-`DataSubsourceSpecification`
+[`DataSubsourceSpecification`](../interfaces/image_user_layer._internal_.DataSubsourceSpecification.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:31](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L31)
+[src/neuroglancer/layer_data_source.ts:31](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L31)

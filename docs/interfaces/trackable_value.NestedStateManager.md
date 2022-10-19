@@ -12,7 +12,7 @@
 
 ## Hierarchy
 
-- `Disposable`
+- [`Disposable`](axes_lines._internal_.Disposable.md)
 
   ↳ **`NestedStateManager`**
 
@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:304](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L304)
+[src/neuroglancer/trackable_value.ts:304](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L304)
 
 ## Methods
 
@@ -49,11 +49,11 @@
 
 #### Inherited from
 
-Disposable.dispose
+[Disposable](axes_lines._internal_.Disposable.md).[dispose](axes_lines._internal_.Disposable.md#dispose)
 
 #### Defined in
 
-[src/neuroglancer/util/disposable.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/util/disposable.ts#L17)
+[src/neuroglancer/util/disposable.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/util/disposable.ts#L17)
 
 ___
 
@@ -67,4 +67,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:303](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L303)
+[src/neuroglancer/trackable_value.ts:303](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L303)

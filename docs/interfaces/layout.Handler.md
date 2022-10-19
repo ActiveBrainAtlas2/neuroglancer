@@ -28,7 +28,7 @@ limitations under the License.
 
 | Name | Type |
 | :------ | :------ |
-| `element` | `HTMLElement` |
+| `element` | [`HTMLElement`](../modules/axes_lines._internal_.md#htmlelement) |
 
 #### Returns
 
@@ -36,4 +36,4 @@ limitations under the License.
 
 #### Defined in
 
-[src/neuroglancer/layout.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layout.ts#L17)
+[src/neuroglancer/layout.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layout.ts#L17)

@@ -6,7 +6,7 @@
 
 ## Hierarchy
 
-- `LinkedBase`<[`TrackableRelativeDisplayScales`](navigation_state.TrackableRelativeDisplayScales.md)\>
+- [`LinkedBase`](navigation_state._internal_.LinkedBase.md)<[`TrackableRelativeDisplayScales`](navigation_state.TrackableRelativeDisplayScales.md)\>
 
   ↳ **`LinkedRelativeDisplayScales`**
 
@@ -49,11 +49,11 @@
 
 #### Inherited from
 
-LinkedBase<TrackableRelativeDisplayScales\>.constructor
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[constructor](navigation_state._internal_.LinkedBase.md#constructor)
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:327](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L327)
+[src/neuroglancer/navigation_state.ts:327](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L327)
 
 ## Properties
 
@@ -63,7 +63,7 @@ LinkedBase<TrackableRelativeDisplayScales\>.constructor
 
 #### Inherited from
 
-LinkedBase.link
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[link](navigation_state._internal_.LinkedBase.md#link)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Inherited from
 
-LinkedBase.peer
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[peer](navigation_state._internal_.LinkedBase.md#peer)
 
 ___
 
@@ -83,21 +83,21 @@ ___
 
 #### Overrides
 
-LinkedBase.value
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[value](navigation_state._internal_.LinkedBase.md#value)
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:617](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L617)
+[src/neuroglancer/navigation_state.ts:617](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L617)
 
 ## Accessors
 
 ### changed
 
-• `get` **changed**(): `NullaryReadonlySignal`
+• `get` **changed**(): [`NullaryReadonlySignal`](../modules/coordinate_transform._internal_.md#nullaryreadonlysignal)
 
 #### Returns
 
-`NullaryReadonlySignal`
+[`NullaryReadonlySignal`](../modules/coordinate_transform._internal_.md#nullaryreadonlysignal)
 
 #### Inherited from
 
@@ -105,7 +105,7 @@ LinkedBase.changed
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:324](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L324)
+[src/neuroglancer/navigation_state.ts:324](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L324)
 
 ## Methods
 
@@ -119,11 +119,11 @@ LinkedBase.changed
 
 #### Inherited from
 
-LinkedBase.copyToPeer
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[copyToPeer](navigation_state._internal_.LinkedBase.md#copytopeer)
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:349](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L349)
+[src/neuroglancer/navigation_state.ts:349](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L349)
 
 ___
 
@@ -137,11 +137,11 @@ ___
 
 #### Inherited from
 
-LinkedBase.getValueJson
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[getValueJson](navigation_state._internal_.LinkedBase.md#getvaluejson)
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:337](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L337)
+[src/neuroglancer/navigation_state.ts:337](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L337)
 
 ___
 
@@ -155,11 +155,11 @@ ___
 
 #### Inherited from
 
-LinkedBase.reset
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[reset](navigation_state._internal_.LinkedBase.md#reset)
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:341](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L341)
+[src/neuroglancer/navigation_state.ts:341](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L341)
 
 ___
 
@@ -179,11 +179,11 @@ ___
 
 #### Inherited from
 
-LinkedBase.restoreState
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[restoreState](navigation_state._internal_.LinkedBase.md#restorestate)
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:345](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L345)
+[src/neuroglancer/navigation_state.ts:345](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L345)
 
 ___
 
@@ -197,8 +197,8 @@ ___
 
 #### Inherited from
 
-LinkedBase.toJSON
+[LinkedBase](navigation_state._internal_.LinkedBase.md).[toJSON](navigation_state._internal_.LinkedBase.md#tojson)
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:329](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L329)
+[src/neuroglancer/navigation_state.ts:329](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L329)

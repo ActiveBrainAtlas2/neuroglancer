@@ -28,11 +28,11 @@
 
 ### buffer
 
-• **buffer**: ``null`` \| `WebGLBuffer` = `null`
+• **buffer**: ``null`` \| [`WebGLBuffer`](../modules/axes_lines._internal_.md#webglbuffer) = `null`
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:59](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/rendered_data_panel.ts#L59)
+[src/neuroglancer/rendered_data_panel.ts:59](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/rendered_data_panel.ts#L59)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:62](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/rendered_data_panel.ts#L62)
+[src/neuroglancer/rendered_data_panel.ts:62](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/rendered_data_panel.ts#L62)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:60](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/rendered_data_panel.ts#L60)
+[src/neuroglancer/rendered_data_panel.ts:60](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/rendered_data_panel.ts#L60)
 
 ___
 
@@ -62,14 +62,14 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/rendered_data_panel.ts#L61)
+[src/neuroglancer/rendered_data_panel.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/rendered_data_panel.ts#L61)
 
 ___
 
 ### sync
 
-• **sync**: ``null`` \| `WebGLSync`
+• **sync**: ``null`` \| [`WebGLSync`](../modules/axes_lines._internal_.md#webglsync)
 
 #### Defined in
 
-[src/neuroglancer/rendered_data_panel.ts:63](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/rendered_data_panel.ts#L63)
+[src/neuroglancer/rendered_data_panel.ts:63](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/rendered_data_panel.ts#L63)

@@ -38,13 +38,13 @@
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/renderlayer.ts#L41)
+[src/neuroglancer/renderlayer.ts:41](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/renderlayer.ts#L41)
 
 ___
 
 ### update3dRenderLayerAttachment
 
-▸ **update3dRenderLayerAttachment**(`transform`, `displayDimensionRenderInfo`, `attachment`): `mat4` \| `undefined`
+▸ **update3dRenderLayerAttachment**(`transform`, `displayDimensionRenderInfo`, `attachment`): [`mat4`](../classes/axes_lines._internal_.mat4.md) \| `undefined`
 
 #### Parameters
 
@@ -56,8 +56,8 @@ ___
 
 #### Returns
 
-`mat4` \| `undefined`
+[`mat4`](../classes/axes_lines._internal_.mat4.md) \| `undefined`
 
 #### Defined in
 
-[src/neuroglancer/renderlayer.ts:107](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/renderlayer.ts#L107)
+[src/neuroglancer/renderlayer.ts:107](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/renderlayer.ts#L107)

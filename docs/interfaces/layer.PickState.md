@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:902](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L902)
+[src/neuroglancer/layer.ts:902](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L902)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:903](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L903)
+[src/neuroglancer/layer.ts:903](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L903)
 
 ___
 
@@ -49,27 +49,27 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:901](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L901)
+[src/neuroglancer/layer.ts:901](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L901)
 
 ___
 
 ### pickedAnnotationLayer
 
-• **pickedAnnotationLayer**: `undefined` \| `AnnotationLayerState`
+• **pickedAnnotationLayer**: `undefined` \| [`AnnotationLayerState`](../classes/image_user_layer._internal_.AnnotationLayerState.md)
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:900](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L900)
+[src/neuroglancer/layer.ts:900](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L900)
 
 ___
 
 ### pickedAnnotationType
 
-• **pickedAnnotationType**: `undefined` \| `AnnotationType`
+• **pickedAnnotationType**: `undefined` \| [`AnnotationType`](../enums/image_user_layer._internal_.AnnotationType.md)
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:904](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L904)
+[src/neuroglancer/layer.ts:904](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L904)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:899](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L899)
+[src/neuroglancer/layer.ts:899](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L899)
 
 ___
 
@@ -89,14 +89,14 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:897](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L897)
+[src/neuroglancer/layer.ts:897](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L897)
 
 ___
 
 ### pickedValue
 
-• **pickedValue**: `Uint64`
+• **pickedValue**: [`Uint64`](../classes/data_panel_layout._internal_.Uint64.md)
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:898](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L898)
+[src/neuroglancer/layer.ts:898](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L898)

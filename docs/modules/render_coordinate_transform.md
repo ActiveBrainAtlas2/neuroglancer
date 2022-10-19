@@ -42,11 +42,11 @@
 
 ### RenderLayerTransformOrError
 
-Ƭ **RenderLayerTransformOrError**: `ValueOrError`<[`RenderLayerTransform`](../interfaces/render_coordinate_transform.RenderLayerTransform.md)\>
+Ƭ **RenderLayerTransformOrError**: [`ValueOrError`](image_user_layer._internal_.md#valueorerror)<[`RenderLayerTransform`](../interfaces/render_coordinate_transform.RenderLayerTransform.md)\>
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:118](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L118)
+[src/neuroglancer/render_coordinate_transform.ts:118](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L118)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:119](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L119)
+[src/neuroglancer/render_coordinate_transform.ts:119](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L119)
 
 ## Variables
 
@@ -66,30 +66,30 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:88](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L88)
+[src/neuroglancer/render_coordinate_transform.ts:88](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L88)
 
 ## Functions
 
 ### chunkToDisplayCoordinates
 
-▸ **chunkToDisplayCoordinates**(`displayPosition`, `chunkPosition`, `chunkTransform`, `displayDimensionIndices`): `vec3`
+▸ **chunkToDisplayCoordinates**(`displayPosition`, `chunkPosition`, `chunkTransform`, `displayDimensionIndices`): [`vec3`](../classes/axes_lines._internal_.vec3.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `displayPosition` | `vec3` |
+| `displayPosition` | [`vec3`](../classes/axes_lines._internal_.vec3.md) |
 | `chunkPosition` | `Float32Array` |
 | `chunkTransform` | [`ChunkTransformParameters`](../interfaces/render_coordinate_transform.ChunkTransformParameters.md) |
 | `displayDimensionIndices` | `Int32Array` |
 
 #### Returns
 
-`vec3`
+[`vec3`](../classes/axes_lines._internal_.vec3.md)
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:375](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L375)
+[src/neuroglancer/render_coordinate_transform.ts:375](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L375)
 
 ___
 
@@ -102,7 +102,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `layerPosition` | `Float32Array` |
-| `displayPosition` | `vec3` |
+| `displayPosition` | [`vec3`](../classes/axes_lines._internal_.vec3.md) |
 | `modelTransform` | [`RenderLayerTransform`](../interfaces/render_coordinate_transform.RenderLayerTransform.md) |
 | `displayDimensionIndices` | `Int32Array` |
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:360](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L360)
+[src/neuroglancer/render_coordinate_transform.ts:360](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L360)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `out` | `mat4` |
+| `out` | [`mat4`](../classes/axes_lines._internal_.mat4.md) |
 | `displayDimensionRenderInfo` | [`DisplayDimensionRenderInfo`](../interfaces/navigation_state.DisplayDimensionRenderInfo.md) |
 | `transform` | [`RenderLayerTransform`](../interfaces/render_coordinate_transform.RenderLayerTransform.md) |
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:641](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L641)
+[src/neuroglancer/render_coordinate_transform.ts:641](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L641)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L95)
+[src/neuroglancer/render_coordinate_transform.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L95)
 
 ___
 
@@ -175,7 +175,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:548](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L548)
+[src/neuroglancer/render_coordinate_transform.ts:548](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L548)
 
 ___
 
@@ -199,7 +199,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:601](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L601)
+[src/neuroglancer/render_coordinate_transform.ts:601](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L601)
 
 ___
 
@@ -220,7 +220,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:407](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L407)
+[src/neuroglancer/render_coordinate_transform.ts:407](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L407)
 
 ___
 
@@ -241,7 +241,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:522](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L522)
+[src/neuroglancer/render_coordinate_transform.ts:522](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L522)
 
 ___
 
@@ -264,7 +264,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:633](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L633)
+[src/neuroglancer/render_coordinate_transform.ts:633](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L633)
 
 ___
 
@@ -288,7 +288,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:140](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L140)
+[src/neuroglancer/render_coordinate_transform.ts:140](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L140)
 
 ___
 
@@ -312,7 +312,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:270](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L270)
+[src/neuroglancer/render_coordinate_transform.ts:270](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L270)
 
 ___
 
@@ -324,7 +324,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `displayPosition` | `vec3` |
+| `displayPosition` | [`vec3`](../classes/axes_lines._internal_.vec3.md) |
 | `layerPosition` | `Float32Array` |
 | `modelTransform` | [`RenderLayerTransform`](../interfaces/render_coordinate_transform.RenderLayerTransform.md) |
 | `displayDimensionIndices` | `Int32Array` |
@@ -335,7 +335,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:343](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L343)
+[src/neuroglancer/render_coordinate_transform.ts:343](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L343)
 
 ___
 
@@ -356,4 +356,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_coordinate_transform.ts:256](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_coordinate_transform.ts#L256)
+[src/neuroglancer/render_coordinate_transform.ts:256](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_coordinate_transform.ts#L256)

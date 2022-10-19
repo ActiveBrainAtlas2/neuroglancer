@@ -4,6 +4,10 @@
 
 ## Table of contents
 
+### Modules
+
+- [&lt;internal\&gt;](layer._internal_.md)
+
 ### Classes
 
 - [AutoUserLayer](../classes/layer.AutoUserLayer.md)
@@ -63,7 +67,7 @@
 
 ### LayerTypeDetector
 
-Ƭ **LayerTypeDetector**: (`subsource`: `DataSubsource`) => [`LayerTypeGuess`](../interfaces/layer.LayerTypeGuess.md) \| `undefined`
+Ƭ **LayerTypeDetector**: (`subsource`: [`DataSubsource`](../interfaces/layer._internal_.DataSubsource.md)) => [`LayerTypeGuess`](../interfaces/layer.LayerTypeGuess.md) \| `undefined`
 
 #### Type declaration
 
@@ -73,7 +77,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `subsource` | `DataSubsource` |
+| `subsource` | [`DataSubsource`](../interfaces/layer._internal_.DataSubsource.md) |
 
 ##### Returns
 
@@ -81,13 +85,13 @@
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1990](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1990)
+[src/neuroglancer/layer.ts:1990](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1990)
 
 ___
 
 ### UserLayerConstructor
 
-Ƭ **UserLayerConstructor**<`LayerType`\>: typeof [`UserLayer`](../classes/layer.UserLayer.md) & `AnyConstructor`<`LayerType`\>
+Ƭ **UserLayerConstructor**<`LayerType`\>: typeof [`UserLayer`](../classes/layer.UserLayer.md) & [`AnyConstructor`](layer._internal_.md#anyconstructor)<`LayerType`\>
 
 #### Type parameters
 
@@ -97,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1979](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1979)
+[src/neuroglancer/layer.ts:1979](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1979)
 
 ## Variables
 
@@ -107,7 +111,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1982](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1982)
+[src/neuroglancer/layer.ts:1982](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1982)
 
 ## Functions
 
@@ -128,7 +132,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2120](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2120)
+[src/neuroglancer/layer.ts:2120](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2120)
 
 ___
 
@@ -148,7 +152,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1241](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1241)
+[src/neuroglancer/layer.ts:1241](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1241)
 
 ___
 
@@ -169,7 +173,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2026](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2026)
+[src/neuroglancer/layer.ts:2026](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2026)
 
 ___
 
@@ -190,7 +194,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2015](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2015)
+[src/neuroglancer/layer.ts:2015](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2015)
 
 ___
 
@@ -210,7 +214,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2037](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2037)
+[src/neuroglancer/layer.ts:2037](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2037)
 
 ___
 
@@ -230,7 +234,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2066](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2066)
+[src/neuroglancer/layer.ts:2066](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2066)
 
 ___
 
@@ -242,7 +246,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `subsource` | `DataSubsource` |
+| `subsource` | [`DataSubsource`](../interfaces/layer._internal_.DataSubsource.md) |
 
 #### Returns
 
@@ -250,7 +254,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2050](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2050)
+[src/neuroglancer/layer.ts:2050](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2050)
 
 ___
 
@@ -271,7 +275,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1750](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1750)
+[src/neuroglancer/layer.ts:1750](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1750)
 
 ___
 
@@ -292,7 +296,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1761](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1761)
+[src/neuroglancer/layer.ts:1761](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1761)
 
 ___
 
@@ -314,7 +318,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1771](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1771)
+[src/neuroglancer/layer.ts:1771](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1771)
 
 ___
 
@@ -345,7 +349,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:1347](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L1347)
+[src/neuroglancer/layer.ts:1347](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L1347)
 
 ___
 
@@ -366,7 +370,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2001](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2001)
+[src/neuroglancer/layer.ts:2001](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2001)
 
 ___
 
@@ -386,7 +390,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2006](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2006)
+[src/neuroglancer/layer.ts:2006](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2006)
 
 ___
 
@@ -398,7 +402,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `volumeType` | `VolumeType` |
+| `volumeType` | [`VolumeType`](../enums/layer._internal_.VolumeType.md) |
 | `layerConstructor` | [`UserLayerConstructor`](layer.md#userlayerconstructor)<[`UserLayer`](../classes/layer.UserLayer.md)\> |
 
 #### Returns
@@ -407,4 +411,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer.ts:2010](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer.ts#L2010)
+[src/neuroglancer/layer.ts:2010](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer.ts#L2010)

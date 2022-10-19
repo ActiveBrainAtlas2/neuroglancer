@@ -6,7 +6,7 @@
 
 ## Implements
 
-- `Trackable`
+- [`Trackable`](../interfaces/coordinate_transform._internal_.Trackable.md)
 
 ## Table of contents
 
@@ -39,46 +39,46 @@
 
 | Name | Type |
 | :------ | :------ |
-| `value_` | `vec3` |
-| `defaultValue` | `vec3` |
+| `value_` | [`vec3`](axes_lines._internal_.vec3.md) |
+| `defaultValue` | [`vec3`](axes_lines._internal_.vec3.md) |
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L38)
+[src/neuroglancer/trackable_vec3.ts:38](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_vec3.ts#L38)
 
 ## Properties
 
 ### changed
 
-• **changed**: `NullarySignal`
+• **changed**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Implementation of
 
-Trackable.changed
+[Trackable](../interfaces/coordinate_transform._internal_.Trackable.md).[changed](../interfaces/coordinate_transform._internal_.Trackable.md#changed)
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:37](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L37)
+[src/neuroglancer/trackable_vec3.ts:37](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_vec3.ts#L37)
 
 ___
 
 ### defaultValue
 
-• **defaultValue**: `vec3`
+• **defaultValue**: [`vec3`](axes_lines._internal_.vec3.md)
 
 ## Accessors
 
 ### value
 
-• `get` **value**(): `vec3`
+• `get` **value**(): [`vec3`](axes_lines._internal_.vec3.md)
 
 #### Returns
 
-`vec3`
+[`vec3`](axes_lines._internal_.vec3.md)
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:28](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L28)
+[src/neuroglancer/trackable_vec3.ts:28](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_vec3.ts#L28)
 
 • `set` **value**(`newValue`): `void`
 
@@ -86,7 +86,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `newValue` | `vec3` |
+| `newValue` | [`vec3`](axes_lines._internal_.vec3.md) |
 
 #### Returns
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:31](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L31)
+[src/neuroglancer/trackable_vec3.ts:31](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_vec3.ts#L31)
 
 ## Methods
 
@@ -108,11 +108,11 @@ ___
 
 #### Implementation of
 
-Trackable.reset
+[Trackable](../interfaces/coordinate_transform._internal_.Trackable.md).[reset](../interfaces/coordinate_transform._internal_.Trackable.md#reset)
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L53)
+[src/neuroglancer/trackable_vec3.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_vec3.ts#L53)
 
 ___
 
@@ -132,11 +132,11 @@ ___
 
 #### Implementation of
 
-Trackable.restoreState
+[Trackable](../interfaces/coordinate_transform._internal_.Trackable.md).[restoreState](../interfaces/coordinate_transform._internal_.Trackable.md#restorestate)
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L46)
+[src/neuroglancer/trackable_vec3.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_vec3.ts#L46)
 
 ___
 
@@ -150,8 +150,8 @@ ___
 
 #### Implementation of
 
-Trackable.toJSON
+[Trackable](../interfaces/coordinate_transform._internal_.Trackable.md).[toJSON](../interfaces/coordinate_transform._internal_.Trackable.md#tojson)
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L39)
+[src/neuroglancer/trackable_vec3.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_vec3.ts#L39)

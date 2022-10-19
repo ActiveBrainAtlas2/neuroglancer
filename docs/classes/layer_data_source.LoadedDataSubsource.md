@@ -42,24 +42,24 @@
 | Name | Type |
 | :------ | :------ |
 | `loadedDataSource` | [`LoadedLayerDataSource`](layer_data_source.LoadedLayerDataSource.md) |
-| `subsourceEntry` | `DataSubsourceEntry` |
-| `subsourceSpec` | `undefined` \| `DataSubsourceSpecification` |
+| `subsourceEntry` | [`DataSubsourceEntry`](../interfaces/layer._internal_.DataSubsourceEntry.md) |
+| `subsourceSpec` | `undefined` \| [`DataSubsourceSpecification`](../interfaces/image_user_layer._internal_.DataSubsourceSpecification.md) |
 | `subsourceIndex` | `number` |
 | `enableDefaultSubsources` | `boolean` |
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:98](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L98)
+[src/neuroglancer/layer_data_source.ts:98](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L98)
 
 ## Properties
 
 ### activated
 
-• **activated**: `undefined` \| `RefCounted` = `undefined`
+• **activated**: `undefined` \| [`RefCounted`](axes_lines._internal_.RefCounted.md) = `undefined`
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:94](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L94)
+[src/neuroglancer/layer_data_source.ts:94](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L94)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:93](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L93)
+[src/neuroglancer/layer_data_source.ts:93](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L93)
 
 ___
 
@@ -79,17 +79,17 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L95)
+[src/neuroglancer/layer_data_source.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L95)
 
 ___
 
 ### isActiveChanged
 
-• **isActiveChanged**: `NullarySignal`
+• **isActiveChanged**: [`NullarySignal`](coordinate_transform._internal_.NullarySignal.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:97](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L97)
+[src/neuroglancer/layer_data_source.ts:97](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L97)
 
 ___
 
@@ -101,11 +101,11 @@ ___
 
 ### messages
 
-• **messages**: `MessageList`
+• **messages**: [`MessageList`](data_panel_layout._internal_.MessageList.md)
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:96](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L96)
+[src/neuroglancer/layer_data_source.ts:96](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L96)
 
 ___
 
@@ -115,13 +115,13 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:92](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L92)
+[src/neuroglancer/layer_data_source.ts:92](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L92)
 
 ___
 
 ### subsourceEntry
 
-• **subsourceEntry**: `DataSubsourceEntry`
+• **subsourceEntry**: [`DataSubsourceEntry`](../interfaces/layer._internal_.DataSubsourceEntry.md)
 
 ___
 
@@ -133,7 +133,7 @@ ___
 
 ### subsourceSpec
 
-• **subsourceSpec**: `undefined` \| `DataSubsourceSpecification`
+• **subsourceSpec**: `undefined` \| [`DataSubsourceSpecification`](../interfaces/image_user_layer._internal_.DataSubsourceSpecification.md)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:91](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L91)
+[src/neuroglancer/layer_data_source.ts:91](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L91)
 
 ## Methods
 
@@ -155,7 +155,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `callback` | (`refCounted`: `RefCounted`) => `void` |
+| `callback` | (`refCounted`: [`RefCounted`](axes_lines._internal_.RefCounted.md)) => `void` |
 | `...guardValues` | `any`[] |
 
 #### Returns
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:125](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L125)
+[src/neuroglancer/layer_data_source.ts:125](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L125)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:147](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L147)
+[src/neuroglancer/layer_data_source.ts:147](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L147)
 
 ___
 
@@ -204,7 +204,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:137](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L137)
+[src/neuroglancer/layer_data_source.ts:137](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L137)
 
 ___
 
@@ -224,4 +224,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/layer_data_source.ts:153](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/layer_data_source.ts#L153)
+[src/neuroglancer/layer_data_source.ts:153](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/layer_data_source.ts#L153)

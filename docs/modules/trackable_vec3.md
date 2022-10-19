@@ -22,7 +22,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `defaultValue` | `vec3` |
+| `defaultValue` | [`vec3`](../classes/axes_lines._internal_.vec3.md) |
 
 #### Returns
 
@@ -30,4 +30,4 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_vec3.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_vec3.ts#L23)
+[src/neuroglancer/trackable_vec3.ts:23](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_vec3.ts#L23)

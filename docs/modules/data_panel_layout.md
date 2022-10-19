@@ -4,6 +4,10 @@
 
 ## Table of contents
 
+### Modules
+
+- [&lt;internal\&gt;](data_panel_layout._internal_.md)
+
 ### Classes
 
 - [CrossSectionSpecification](../classes/data_panel_layout.CrossSectionSpecification.md)
@@ -39,11 +43,11 @@
 
 ### LAYOUTS
 
-• `Const` **LAYOUTS**: `Map`<`string`, { `factory`: (`container`: [`DataPanelLayoutContainer`](../classes/data_panel_layout.DataPanelLayoutContainer.md), `element`: `HTMLElement`, `viewer`: [`ViewerUIState`](../interfaces/data_panel_layout.ViewerUIState.md), `crossSections`: [`CrossSectionSpecificationMap`](../classes/data_panel_layout.CrossSectionSpecificationMap.md)) => [`DataDisplayLayout`](../interfaces/data_panel_layout.DataDisplayLayout.md)  }\>
+• `Const` **LAYOUTS**: `Map`<`string`, { `factory`: (`container`: [`DataPanelLayoutContainer`](../classes/data_panel_layout.DataPanelLayoutContainer.md), `element`: [`HTMLElement`](axes_lines._internal_.md#htmlelement), `viewer`: [`ViewerUIState`](../interfaces/data_panel_layout.ViewerUIState.md), `crossSections`: [`CrossSectionSpecificationMap`](../classes/data_panel_layout.CrossSectionSpecificationMap.md)) => [`DataDisplayLayout`](../interfaces/data_panel_layout.DataDisplayLayout.md)  }\>
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:420](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L420)
+[src/neuroglancer/data_panel_layout.ts:420](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L420)
 
 ## Functions
 
@@ -63,21 +67,21 @@
 
 | Name | Type |
 | :------ | :------ |
-| `crossSectionBackgroundColor` | `TrackableRGB` |
+| `crossSectionBackgroundColor` | [`TrackableRGB`](../classes/data_panel_layout._internal_.TrackableRGB.md) |
 | `layerManager` | [`LayerManager`](../classes/layer.LayerManager.md) |
 | `mouseState` | [`MouseSelectionState`](../classes/layer.MouseSelectionState.md) |
-| `perspectiveViewBackgroundColor` | `TrackableRGB` |
-| `scaleBarOptions` | [`TrackableValue`](../classes/trackable_value.TrackableValue.md)<`ScaleBarOptions`\> |
+| `perspectiveViewBackgroundColor` | [`TrackableRGB`](../classes/data_panel_layout._internal_.TrackableRGB.md) |
+| `scaleBarOptions` | [`TrackableValue`](../classes/trackable_value.TrackableValue.md)<[`ScaleBarOptions`](../interfaces/data_panel_layout._internal_.ScaleBarOptions.md)\> |
 | `selectedLayer` | [`SelectedLayerState`](../classes/layer.SelectedLayerState.md) |
 | `selectionDetailsState` | [`TrackableDataSelectionState`](../classes/layer.TrackableDataSelectionState.md) |
 | `showAxisLines` | [`TrackableBoolean`](../classes/trackable_boolean.TrackableBoolean.md) |
-| `visibility` | `WatchableVisibilityPriority` |
+| `visibility` | [`WatchableVisibilityPriority`](../classes/data_panel_layout._internal_.WatchableVisibilityPriority.md) |
 | `visibleLayerRoles` | [`WatchableSet`](../classes/trackable_value.WatchableSet.md)<[`RenderLayerRole`](../enums/renderlayer.RenderLayerRole.md)\> |
 | `wireFrame` | [`TrackableBoolean`](../classes/trackable_boolean.TrackableBoolean.md) |
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:124](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L124)
+[src/neuroglancer/data_panel_layout.ts:124](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L124)
 
 ___
 
@@ -97,38 +101,38 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `factory` | (`container`: [`DataPanelLayoutContainer`](../classes/data_panel_layout.DataPanelLayoutContainer.md), `element`: `HTMLElement`, `viewer`: [`ViewerUIState`](../interfaces/data_panel_layout.ViewerUIState.md), `crossSections`: [`CrossSectionSpecificationMap`](../classes/data_panel_layout.CrossSectionSpecificationMap.md)) => [`DataDisplayLayout`](../interfaces/data_panel_layout.DataDisplayLayout.md) |
+| `factory` | (`container`: [`DataPanelLayoutContainer`](../classes/data_panel_layout.DataPanelLayoutContainer.md), `element`: [`HTMLElement`](axes_lines._internal_.md#htmlelement), `viewer`: [`ViewerUIState`](../interfaces/data_panel_layout.ViewerUIState.md), `crossSections`: [`CrossSectionSpecificationMap`](../classes/data_panel_layout.CrossSectionSpecificationMap.md)) => [`DataDisplayLayout`](../interfaces/data_panel_layout.DataDisplayLayout.md) |
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:455](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L455)
+[src/neuroglancer/data_panel_layout.ts:455](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L455)
 
 ___
 
 ### makeNamedSliceView
 
-▸ **makeNamedSliceView**(`viewerState`, `axes`): `SliceView`
+▸ **makeNamedSliceView**(`viewerState`, `axes`): [`SliceView`](../classes/data_panel_layout._internal_.SliceView.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `viewerState` | [`SliceViewViewerState`](../interfaces/data_panel_layout.SliceViewViewerState.md) |
-| `axes` | `NamedAxes` |
+| `axes` | [`NamedAxes`](data_panel_layout._internal_.md#namedaxes) |
 
 #### Returns
 
-`SliceView`
+[`SliceView`](../classes/data_panel_layout._internal_.SliceView.md)
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:112](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L112)
+[src/neuroglancer/data_panel_layout.ts:112](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L112)
 
 ___
 
 ### makeOrthogonalSliceViews
 
-▸ **makeOrthogonalSliceViews**(`viewerState`): `Map`<`NamedAxes`, `SliceView`\>
+▸ **makeOrthogonalSliceViews**(`viewerState`): `Map`<[`NamedAxes`](data_panel_layout._internal_.md#namedaxes), [`SliceView`](../classes/data_panel_layout._internal_.SliceView.md)\>
 
 #### Parameters
 
@@ -138,32 +142,32 @@ ___
 
 #### Returns
 
-`Map`<`NamedAxes`, `SliceView`\>
+`Map`<[`NamedAxes`](data_panel_layout._internal_.md#namedaxes), [`SliceView`](../classes/data_panel_layout._internal_.SliceView.md)\>
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:116](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L116)
+[src/neuroglancer/data_panel_layout.ts:116](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L116)
 
 ___
 
 ### makeSliceView
 
-▸ **makeSliceView**(`viewerState`, `baseToSelf?`): `SliceView`
+▸ **makeSliceView**(`viewerState`, `baseToSelf?`): [`SliceView`](../classes/data_panel_layout._internal_.SliceView.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `viewerState` | [`SliceViewViewerState`](../interfaces/data_panel_layout.SliceViewViewerState.md) |
-| `baseToSelf?` | `quat` |
+| `baseToSelf?` | [`quat`](../classes/axes_lines._internal_.quat.md) |
 
 #### Returns
 
-`SliceView`
+[`SliceView`](../classes/data_panel_layout._internal_.SliceView.md)
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:94](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L94)
+[src/neuroglancer/data_panel_layout.ts:94](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L94)
 
 ___
 
@@ -183,4 +187,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/data_panel_layout.ts:463](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/data_panel_layout.ts#L463)
+[src/neuroglancer/data_panel_layout.ts:463](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/data_panel_layout.ts#L463)

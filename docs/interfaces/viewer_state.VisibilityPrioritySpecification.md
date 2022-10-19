@@ -24,8 +24,8 @@
 
 ### visibility
 
-• **visibility**: `WatchableVisibilityPriority`
+• **visibility**: [`WatchableVisibilityPriority`](../classes/data_panel_layout._internal_.WatchableVisibilityPriority.md)
 
 #### Defined in
 
-[src/neuroglancer/visibility_priority/frontend.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/visibility_priority/frontend.ts#L50)
+[src/neuroglancer/visibility_priority/frontend.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/visibility_priority/frontend.ts#L50)

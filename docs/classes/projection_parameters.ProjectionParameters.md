@@ -10,6 +10,8 @@
 
   ↳ **`ProjectionParameters`**
 
+  ↳↳ [`SliceViewProjectionParameters`](data_panel_layout._internal_.SliceViewProjectionParameters.md)
+
 ## Table of contents
 
 ### Constructors
@@ -52,7 +54,7 @@
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L24)
+[src/neuroglancer/projection_parameters.ts:24](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/projection_parameters.ts#L24)
 
 ___
 
@@ -64,7 +66,7 @@ Global position.
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:29](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L29)
+[src/neuroglancer/projection_parameters.ts:29](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/projection_parameters.ts#L29)
 
 ___
 
@@ -78,31 +80,31 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:32](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L32)
+[src/neuroglancer/display_context.ts:32](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L32)
 
 ___
 
 ### invViewMatrix
 
-• **invViewMatrix**: `mat4`
+• **invViewMatrix**: [`mat4`](axes_lines._internal_.mat4.md)
 
 Inverse of `viewMat`.
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:44](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L44)
+[src/neuroglancer/projection_parameters.ts:44](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/projection_parameters.ts#L44)
 
 ___
 
 ### invViewProjectionMat
 
-• **invViewProjectionMat**: `mat4`
+• **invViewProjectionMat**: [`mat4`](axes_lines._internal_.mat4.md)
 
 Inverse of `viewProjectionMat`.
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:55](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L55)
+[src/neuroglancer/projection_parameters.ts:55](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/projection_parameters.ts#L55)
 
 ___
 
@@ -116,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L40)
+[src/neuroglancer/display_context.ts:40](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L40)
 
 ___
 
@@ -130,44 +132,44 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L36)
+[src/neuroglancer/display_context.ts:36](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L36)
 
 ___
 
 ### projectionMat
 
-• **projectionMat**: `mat4`
+• **projectionMat**: [`mat4`](axes_lines._internal_.mat4.md)
 
 Transform from camera coordinates to OpenGL clip coordinates.
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:34](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L34)
+[src/neuroglancer/projection_parameters.ts:34](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/projection_parameters.ts#L34)
 
 ___
 
 ### viewMatrix
 
-• **viewMatrix**: `mat4`
+• **viewMatrix**: [`mat4`](axes_lines._internal_.mat4.md)
 
 Transform from world coordinates to camera coordinates.
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L39)
+[src/neuroglancer/projection_parameters.ts:39](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/projection_parameters.ts#L39)
 
 ___
 
 ### viewProjectionMat
 
-• **viewProjectionMat**: `mat4`
+• **viewProjectionMat**: [`mat4`](axes_lines._internal_.mat4.md)
 
 Transform from world coordinates to OpenGL clip coordinates.  Equal to:
 `projectionMat * viewMat`.
 
 #### Defined in
 
-[src/neuroglancer/projection_parameters.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/projection_parameters.ts#L50)
+[src/neuroglancer/projection_parameters.ts:50](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/projection_parameters.ts#L50)
 
 ___
 
@@ -181,7 +183,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L52)
+[src/neuroglancer/display_context.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L52)
 
 ___
 
@@ -195,7 +197,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:43](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L43)
+[src/neuroglancer/display_context.ts:43](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L43)
 
 ___
 
@@ -209,7 +211,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L46)
+[src/neuroglancer/display_context.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L46)
 
 ___
 
@@ -223,7 +225,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L49)
+[src/neuroglancer/display_context.ts:49](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L49)
 
 ___
 
@@ -237,4 +239,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/display_context.ts:29](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/display_context.ts#L29)
+[src/neuroglancer/display_context.ts:29](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/display_context.ts#L29)

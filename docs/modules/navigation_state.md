@@ -4,6 +4,10 @@
 
 ## Table of contents
 
+### Modules
+
+- [&lt;internal\&gt;](navigation_state._internal_.md)
+
 ### Enumerations
 
 - [NavigationLinkType](../enums/navigation_state.NavigationLinkType.md)
@@ -53,7 +57,7 @@
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:1183](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L1183)
+[src/neuroglancer/navigation_state.ts:1183](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L1183)
 
 ## Functions
 
@@ -74,7 +78,7 @@
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:751](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L751)
+[src/neuroglancer/navigation_state.ts:751](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L751)
 
 ___
 
@@ -86,13 +90,13 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `LinkableState`<`T`, `T`\> & { `legacyJsonView`: `Trackable`  } |
+| `T` | extends [`LinkableState`](../interfaces/navigation_state._internal_.LinkableState.md)<`T`, `T`\> & { `legacyJsonView`: [`Trackable`](../interfaces/coordinate_transform._internal_.Trackable.md)  } |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `linked` | `LinkedBase`<`T`, [`TrackableNavigationLink`](../classes/navigation_state.TrackableNavigationLink.md)\> |
+| `linked` | [`LinkedBase`](../classes/navigation_state._internal_.LinkedBase.md)<`T`, [`TrackableNavigationLink`](../classes/navigation_state.TrackableNavigationLink.md)\> |
 
 #### Returns
 
@@ -100,11 +104,11 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `changed` | `NullaryReadonlySignal` |
+| `changed` | [`NullaryReadonlySignal`](coordinate_transform._internal_.md#nullaryreadonlysignal) |
 | `reset` | () => `void` |
 | `restoreState` | (`obj`: `unknown`) => `void` |
 | `toJSON` | () => `undefined` \| { `link`: `undefined` \| `string` ; `value`: `any`  } |
 
 #### Defined in
 
-[src/neuroglancer/navigation_state.ts:1212](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/navigation_state.ts#L1212)
+[src/neuroglancer/navigation_state.ts:1212](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/navigation_state.ts#L1212)

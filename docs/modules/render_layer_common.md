@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/neuroglancer/render_layer_common.ts:20](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_layer_common.ts#L20)
+[src/neuroglancer/render_layer_common.ts:20](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_layer_common.ts#L20)
 
 ___
 
@@ -29,7 +29,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_layer_common.ts:19](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_layer_common.ts#L19)
+[src/neuroglancer/render_layer_common.ts:19](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_layer_common.ts#L19)
 
 ___
 
@@ -53,7 +53,7 @@ limitations under the License.
 
 #### Defined in
 
-[src/neuroglancer/render_layer_common.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_layer_common.ts#L17)
+[src/neuroglancer/render_layer_common.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_layer_common.ts#L17)
 
 ___
 
@@ -63,4 +63,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/render_layer_common.ts:18](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/render_layer_common.ts#L18)
+[src/neuroglancer/render_layer_common.ts:18](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/render_layer_common.ts#L18)

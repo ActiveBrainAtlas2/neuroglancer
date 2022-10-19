@@ -4,6 +4,10 @@
 
 ## Table of contents
 
+### Modules
+
+- [&lt;internal\&gt;](segmentation_user_layer._internal_.md)
+
 ### Classes
 
 - [SegmentationUserLayer](../classes/segmentation_user_layer.SegmentationUserLayer.md)
@@ -19,11 +23,11 @@
 
 ### LAYER\_CONTROLS
 
-• `Const` **LAYER\_CONTROLS**: `LayerControlDefinition`<[`SegmentationUserLayer`](../classes/segmentation_user_layer.SegmentationUserLayer.md)\>[]
+• `Const` **LAYER\_CONTROLS**: [`LayerControlDefinition`](../interfaces/segmentation_user_layer._internal_.LayerControlDefinition.md)<[`SegmentationUserLayer`](../classes/segmentation_user_layer.SegmentationUserLayer.md)\>[]
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:819](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L819)
+[src/neuroglancer/segmentation_user_layer.ts:819](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L819)
 
 ___
 
@@ -33,4 +37,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/segmentation_user_layer.ts:88](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/segmentation_user_layer.ts#L88)
+[src/neuroglancer/segmentation_user_layer.ts:88](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/segmentation_user_layer.ts#L88)

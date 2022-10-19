@@ -4,6 +4,10 @@
 
 ## Table of contents
 
+### Modules
+
+- [&lt;internal\&gt;](trackable_value._internal_.md)
+
 ### Classes
 
 - [AggregateWatchableValue](../classes/trackable_value.AggregateWatchableValue.md)
@@ -59,7 +63,7 @@
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:387](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L387)
+[src/neuroglancer/trackable_value.ts:387](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L387)
 
 ___
 
@@ -92,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:397](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L397)
+[src/neuroglancer/trackable_value.ts:397](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L397)
 
 ___
 
@@ -121,13 +125,13 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:143](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L143)
+[src/neuroglancer/trackable_value.ts:143](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L143)
 
 ___
 
 ### makeCachedLazyDerivedWatchableValue
 
-▸ **makeCachedLazyDerivedWatchableValue**<`U`, `T`\>(`f`, ...`ws`): `CachedLazyDerivedWatchableValue`<`U`\>
+▸ **makeCachedLazyDerivedWatchableValue**<`U`, `T`\>(`f`, ...`ws`): [`CachedLazyDerivedWatchableValue`](../classes/image_user_layer._internal_.CachedLazyDerivedWatchableValue.md)<`U`\>
 
 #### Type parameters
 
@@ -145,17 +149,17 @@ ___
 
 #### Returns
 
-`CachedLazyDerivedWatchableValue`<`U`\>
+[`CachedLazyDerivedWatchableValue`](../classes/image_user_layer._internal_.CachedLazyDerivedWatchableValue.md)<`U`\>
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:121](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L121)
+[src/neuroglancer/trackable_value.ts:121](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L121)
 
 ___
 
 ### makeDerivedWatchableValue
 
-▸ **makeDerivedWatchableValue**<`U`, `T`\>(`f`, ...`ws`): `DerivedWatchableValue`<`U`\>
+▸ **makeDerivedWatchableValue**<`U`, `T`\>(`f`, ...`ws`): [`DerivedWatchableValue`](../classes/trackable_value._internal_.DerivedWatchableValue.md)<`U`\>
 
 #### Type parameters
 
@@ -173,11 +177,11 @@ ___
 
 #### Returns
 
-`DerivedWatchableValue`<`U`\>
+[`DerivedWatchableValue`](../classes/trackable_value._internal_.DerivedWatchableValue.md)<`U`\>
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:91](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L91)
+[src/neuroglancer/trackable_value.ts:91](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L91)
 
 ___
 
@@ -210,7 +214,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:391](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L391)
+[src/neuroglancer/trackable_value.ts:391](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L391)
 
 ___
 
@@ -229,7 +233,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `f` | (`context`: `RefCounted`, ...`values`: `T`) => `U` |
+| `f` | (`context`: [`RefCounted`](../classes/axes_lines._internal_.RefCounted.md), ...`values`: `T`) => `U` |
 | `...watchables` | { [K in string \| number \| symbol]: WatchableValueInterface<T[K]\> } |
 
 #### Returns
@@ -238,7 +242,7 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:307](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L307)
+[src/neuroglancer/trackable_value.ts:307](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L307)
 
 ___
 
@@ -257,7 +261,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `f` | (`context`: `RefCounted`, ...`values`: `T`) => `U` |
+| `f` | (`context`: [`RefCounted`](../classes/axes_lines._internal_.RefCounted.md), ...`values`: `T`) => `U` |
 | `...watchables` | { [K in string \| number \| symbol]: WatchableValueInterface<T[K]\> } |
 
 #### Returns
@@ -271,4 +275,4 @@ ___
 
 #### Defined in
 
-[src/neuroglancer/trackable_value.ts:349](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/8fef58ad/src/neuroglancer/trackable_value.ts#L349)
+[src/neuroglancer/trackable_value.ts:349](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/540617bc/src/neuroglancer/trackable_value.ts#L349)
