@@ -1,0 +1,334 @@
+[neuroglancer](../README.md) / [Modules](../modules.md) / [segmentation\_graph/local](../modules/segmentation_graph_local.md) / [<internal\>](../modules/segmentation_graph_local._internal_.md) / LocalSegmentationGraphSourceConnection
+
+# Class: LocalSegmentationGraphSourceConnection
+
+[segmentation_graph/local](../modules/segmentation_graph_local.md).[<internal>](../modules/segmentation_graph_local._internal_.md).LocalSegmentationGraphSourceConnection
+
+## Hierarchy
+
+- [`SegmentationGraphSourceConnection`](segmentation_graph_source.SegmentationGraphSourceConnection.md)<[`LocalSegmentationGraphSource`](segmentation_graph_local.LocalSegmentationGraphSource.md)\>
+
+  ↳ **`LocalSegmentationGraphSourceConnection`**
+
+## Table of contents
+
+### Constructors
+
+- [constructor](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#constructor)
+
+### Properties
+
+- [disposedStacks](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#disposedstacks)
+- [graph](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#graph)
+- [refCount](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#refcount)
+- [segmentsState](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#segmentsstate)
+- [wasDisposed](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#wasdisposed)
+
+### Methods
+
+- [addRef](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#addref)
+- [computeSplit](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#computesplit)
+- [dispose](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#dispose)
+- [disposed](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#disposed)
+- [refCountReachedZero](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#refcountreachedzero)
+- [registerCancellable](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#registercancellable)
+- [registerDisposer](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#registerdisposer)
+- [registerEventListener](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#registereventlistener)
+- [unregisterDisposer](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md#unregisterdisposer)
+
+## Constructors
+
+### constructor
+
+• **new LocalSegmentationGraphSourceConnection**(`graph`, `segmentsState`)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `graph` | [`LocalSegmentationGraphSource`](segmentation_graph_local.LocalSegmentationGraphSource.md) |
+| `segmentsState` | [`VisibleSegmentsState`](../interfaces/segmentation_display_state_base.VisibleSegmentsState.md) |
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[constructor](segmentation_graph_source.SegmentationGraphSourceConnection.md#constructor)
+
+#### Defined in
+
+[src/neuroglancer/segmentation_graph/source.ts:43](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/segmentation_graph/source.ts#L43)
+
+## Properties
+
+### disposedStacks
+
+• **disposedStacks**: `any`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[disposedStacks](segmentation_graph_source.SegmentationGraphSourceConnection.md#disposedstacks)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L52)
+
+___
+
+### graph
+
+• **graph**: [`LocalSegmentationGraphSource`](segmentation_graph_local.LocalSegmentationGraphSource.md)
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[graph](segmentation_graph_source.SegmentationGraphSourceConnection.md#graph)
+
+___
+
+### refCount
+
+• **refCount**: `number` = `1`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[refCount](segmentation_graph_source.SegmentationGraphSourceConnection.md#refcount)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L45)
+
+___
+
+### segmentsState
+
+• **segmentsState**: [`VisibleSegmentsState`](../interfaces/segmentation_display_state_base.VisibleSegmentsState.md)
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[segmentsState](segmentation_graph_source.SegmentationGraphSourceConnection.md#segmentsstate)
+
+___
+
+### wasDisposed
+
+• **wasDisposed**: `undefined` \| `boolean`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[wasDisposed](segmentation_graph_source.SegmentationGraphSourceConnection.md#wasdisposed)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L46)
+
+## Methods
+
+### addRef
+
+▸ **addRef**(): [`LocalSegmentationGraphSourceConnection`](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md)
+
+#### Returns
+
+[`LocalSegmentationGraphSourceConnection`](segmentation_graph_local._internal_.LocalSegmentationGraphSourceConnection.md)
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[addRef](segmentation_graph_source.SegmentationGraphSourceConnection.md#addref)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L48)
+
+___
+
+### computeSplit
+
+▸ **computeSplit**(`include`, `exclude`): `undefined` \| [`ComputedSplit`](../interfaces/segmentation_graph_source.ComputedSplit.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `include` | [`Uint64`](util_uint64.Uint64.md) |
+| `exclude` | [`Uint64`](util_uint64.Uint64.md) |
+
+#### Returns
+
+`undefined` \| [`ComputedSplit`](../interfaces/segmentation_graph_source.ComputedSplit.md)
+
+#### Overrides
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[computeSplit](segmentation_graph_source.SegmentationGraphSourceConnection.md#computesplit)
+
+#### Defined in
+
+[src/neuroglancer/segmentation_graph/local.ts:275](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/segmentation_graph/local.ts#L275)
+
+___
+
+### dispose
+
+▸ **dispose**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[dispose](segmentation_graph_source.SegmentationGraphSourceConnection.md#dispose)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L53)
+
+___
+
+### disposed
+
+▸ **disposed**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[disposed](segmentation_graph_source.SegmentationGraphSourceConnection.md#disposed)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L75)
+
+___
+
+### refCountReachedZero
+
+▸ `Protected` **refCountReachedZero**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[refCountReachedZero](segmentation_graph_source.SegmentationGraphSourceConnection.md#refcountreachedzero)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L66)
+
+___
+
+### registerCancellable
+
+▸ **registerCancellable**<`T`\>(`cancellable`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `Object` |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `cancellable` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[registerCancellable](segmentation_graph_source.SegmentationGraphSourceConnection.md#registercancellable)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L100)
+
+___
+
+### registerDisposer
+
+▸ **registerDisposer**<`T`\>(`f`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Disposer`](../modules/util_disposable.md#disposer) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `f` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[registerDisposer](segmentation_graph_source.SegmentationGraphSourceConnection.md#registerdisposer)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L76)
+
+___
+
+### registerEventListener
+
+▸ **registerEventListener**(`target`, `type`, `listener`, `options?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `target` | [`EventTarget`](../modules/annotation_annotation_layer_state._internal_.md#eventtarget) |
+| `type` | `string` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/annotation_annotation_layer_state._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/annotation_annotation_layer_state._internal_.AddEventListenerOptions.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[registerEventListener](segmentation_graph_source.SegmentationGraphSourceConnection.md#registereventlistener)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L95)
+
+___
+
+### unregisterDisposer
+
+▸ **unregisterDisposer**<`T`\>(`f`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Disposer`](../modules/util_disposable.md#disposer) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `f` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[SegmentationGraphSourceConnection](segmentation_graph_source.SegmentationGraphSourceConnection.md).[unregisterDisposer](segmentation_graph_source.SegmentationGraphSourceConnection.md#unregisterdisposer)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L85)

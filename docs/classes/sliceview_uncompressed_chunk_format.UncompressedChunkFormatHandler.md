@@ -1,0 +1,346 @@
+[neuroglancer](../README.md) / [Modules](../modules.md) / [sliceview/uncompressed\_chunk\_format](../modules/sliceview_uncompressed_chunk_format.md) / UncompressedChunkFormatHandler
+
+# Class: UncompressedChunkFormatHandler
+
+[sliceview/uncompressed_chunk_format](../modules/sliceview_uncompressed_chunk_format.md).UncompressedChunkFormatHandler
+
+## Hierarchy
+
+- [`RefCounted`](util_disposable.RefCounted.md)
+
+  ↳ **`UncompressedChunkFormatHandler`**
+
+## Implements
+
+- [`ChunkFormatHandler`](../interfaces/datasource._internal_.ChunkFormatHandler.md)
+
+## Table of contents
+
+### Constructors
+
+- [constructor](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#constructor)
+
+### Properties
+
+- [chunkFormat](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#chunkformat)
+- [disposedStacks](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#disposedstacks)
+- [refCount](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#refcount)
+- [textureLayout](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#texturelayout)
+- [wasDisposed](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#wasdisposed)
+
+### Methods
+
+- [addRef](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#addref)
+- [dispose](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#dispose)
+- [disposed](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#disposed)
+- [getChunk](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#getchunk)
+- [refCountReachedZero](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#refcountreachedzero)
+- [registerCancellable](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#registercancellable)
+- [registerDisposer](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#registerdisposer)
+- [registerEventListener](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#registereventlistener)
+- [unregisterDisposer](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md#unregisterdisposer)
+
+## Constructors
+
+### constructor
+
+• **new UncompressedChunkFormatHandler**(`gl`, `spec`)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `gl` | [`GL`](../interfaces/webgl_context.GL.md) |
+| `spec` | [`VolumeChunkSpecification`](../interfaces/datasource._internal_.VolumeChunkSpecification.md) |
+
+#### Overrides
+
+[RefCounted](util_disposable.RefCounted.md).[constructor](util_disposable.RefCounted.md#constructor)
+
+#### Defined in
+
+[src/neuroglancer/sliceview/uncompressed_chunk_format.ts:242](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/sliceview/uncompressed_chunk_format.ts#L242)
+
+## Properties
+
+### chunkFormat
+
+• **chunkFormat**: [`ChunkFormat`](sliceview_uncompressed_chunk_format.ChunkFormat.md)
+
+#### Implementation of
+
+[ChunkFormatHandler](../interfaces/datasource._internal_.ChunkFormatHandler.md).[chunkFormat](../interfaces/datasource._internal_.ChunkFormatHandler.md#chunkformat)
+
+#### Defined in
+
+[src/neuroglancer/sliceview/uncompressed_chunk_format.ts:239](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/sliceview/uncompressed_chunk_format.ts#L239)
+
+___
+
+### disposedStacks
+
+• **disposedStacks**: `any`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[disposedStacks](util_disposable.RefCounted.md#disposedstacks)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L52)
+
+___
+
+### refCount
+
+• **refCount**: `number` = `1`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[refCount](util_disposable.RefCounted.md#refcount)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L45)
+
+___
+
+### textureLayout
+
+• **textureLayout**: [`TextureLayout`](sliceview_uncompressed_chunk_format._internal_.TextureLayout.md)
+
+#### Defined in
+
+[src/neuroglancer/sliceview/uncompressed_chunk_format.ts:240](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/sliceview/uncompressed_chunk_format.ts#L240)
+
+___
+
+### wasDisposed
+
+• **wasDisposed**: `undefined` \| `boolean`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[wasDisposed](util_disposable.RefCounted.md#wasdisposed)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L46)
+
+## Methods
+
+### addRef
+
+▸ **addRef**(): [`UncompressedChunkFormatHandler`](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md)
+
+#### Returns
+
+[`UncompressedChunkFormatHandler`](sliceview_uncompressed_chunk_format.UncompressedChunkFormatHandler.md)
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[addRef](util_disposable.RefCounted.md#addref)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L48)
+
+___
+
+### dispose
+
+▸ **dispose**(): `void`
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[ChunkFormatHandler](../interfaces/datasource._internal_.ChunkFormatHandler.md).[dispose](../interfaces/datasource._internal_.ChunkFormatHandler.md#dispose)
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[dispose](util_disposable.RefCounted.md#dispose)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L53)
+
+___
+
+### disposed
+
+▸ **disposed**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[disposed](util_disposable.RefCounted.md#disposed)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L75)
+
+___
+
+### getChunk
+
+▸ **getChunk**(`source`, `x`): [`UncompressedVolumeChunk`](sliceview_uncompressed_chunk_format.UncompressedVolumeChunk.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `source` | [`VolumeChunkSource`](datasource._internal_.VolumeChunkSource.md) |
+| `x` | `any` |
+
+#### Returns
+
+[`UncompressedVolumeChunk`](sliceview_uncompressed_chunk_format.UncompressedVolumeChunk.md)
+
+#### Implementation of
+
+[ChunkFormatHandler](../interfaces/datasource._internal_.ChunkFormatHandler.md).[getChunk](../interfaces/datasource._internal_.ChunkFormatHandler.md#getchunk)
+
+#### Defined in
+
+[src/neuroglancer/sliceview/uncompressed_chunk_format.ts:254](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/sliceview/uncompressed_chunk_format.ts#L254)
+
+___
+
+### refCountReachedZero
+
+▸ `Protected` **refCountReachedZero**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[refCountReachedZero](util_disposable.RefCounted.md#refcountreachedzero)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L66)
+
+___
+
+### registerCancellable
+
+▸ **registerCancellable**<`T`\>(`cancellable`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `Object` |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `cancellable` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[registerCancellable](util_disposable.RefCounted.md#registercancellable)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L100)
+
+___
+
+### registerDisposer
+
+▸ **registerDisposer**<`T`\>(`f`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Disposer`](../modules/util_disposable.md#disposer) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `f` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[registerDisposer](util_disposable.RefCounted.md#registerdisposer)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L76)
+
+___
+
+### registerEventListener
+
+▸ **registerEventListener**(`target`, `type`, `listener`, `options?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `target` | [`EventTarget`](../modules/annotation_annotation_layer_state._internal_.md#eventtarget) |
+| `type` | `string` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/annotation_annotation_layer_state._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/annotation_annotation_layer_state._internal_.AddEventListenerOptions.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[registerEventListener](util_disposable.RefCounted.md#registereventlistener)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L95)
+
+___
+
+### unregisterDisposer
+
+▸ **unregisterDisposer**<`T`\>(`f`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Disposer`](../modules/util_disposable.md#disposer) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `f` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[RefCounted](util_disposable.RefCounted.md).[unregisterDisposer](util_disposable.RefCounted.md#unregisterdisposer)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L85)

@@ -1,0 +1,55 @@
+[neuroglancer](../README.md) / [Modules](../modules.md) / [util/disposable](../modules/util_disposable.md) / Disposable
+
+# Interface: Disposable
+
+[util/disposable](../modules/util_disposable.md).Disposable
+
+**`license`**
+Copyright 2016 Google Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+## Hierarchy
+
+- **`Disposable`**
+
+  ↳ [`SliceViewChunkSource`](sliceview_base.SliceViewChunkSource.md)
+
+  ↳ [`NestedStateManager`](annotation_renderlayer._internal_.NestedStateManager.md)
+
+  ↳ [`ChunkFormatHandler`](datasource._internal_.ChunkFormatHandler.md)
+
+## Implemented by
+
+- [`Buffer`](../classes/webgl_buffer.Buffer.md)
+- [`Chunk`](../classes/chunk_manager_backend.Chunk.md)
+- [`RefCounted`](../classes/util_disposable.RefCounted.md)
+
+## Table of contents
+
+### Methods
+
+- [dispose](util_disposable.Disposable.md#dispose)
+
+## Methods
+
+### dispose
+
+▸ **dispose**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:17](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L17)

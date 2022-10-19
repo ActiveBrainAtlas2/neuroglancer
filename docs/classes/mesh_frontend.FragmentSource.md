@@ -1,0 +1,739 @@
+[neuroglancer](../README.md) / [Modules](../modules.md) / [mesh/frontend](../modules/mesh_frontend.md) / FragmentSource
+
+# Class: FragmentSource
+
+[mesh/frontend](../modules/mesh_frontend.md).FragmentSource
+
+## Hierarchy
+
+- [`ChunkSource`](chunk_manager_frontend.ChunkSource.md)
+
+  ↳ **`FragmentSource`**
+
+## Table of contents
+
+### Constructors
+
+- [constructor](mesh_frontend.FragmentSource.md#constructor)
+
+### Properties
+
+- [OPTIONS](mesh_frontend.FragmentSource.md#options)
+- [RPC\_TYPE\_ID](mesh_frontend.FragmentSource.md#rpc_type_id)
+- [chunkManager](mesh_frontend.FragmentSource.md#chunkmanager)
+- [chunks](mesh_frontend.FragmentSource.md#chunks)
+- [disposedStacks](mesh_frontend.FragmentSource.md#disposedstacks)
+- [immediateChunkUpdates](mesh_frontend.FragmentSource.md#immediatechunkupdates)
+- [isOwner](mesh_frontend.FragmentSource.md#isowner)
+- [meshSource](mesh_frontend.FragmentSource.md#meshsource)
+- [refCount](mesh_frontend.FragmentSource.md#refcount)
+- [referencedGeneration](mesh_frontend.FragmentSource.md#referencedgeneration)
+- [rpc](mesh_frontend.FragmentSource.md#rpc)
+- [rpcId](mesh_frontend.FragmentSource.md#rpcid)
+- [unreferencedGeneration](mesh_frontend.FragmentSource.md#unreferencedgeneration)
+- [wasDisposed](mesh_frontend.FragmentSource.md#wasdisposed)
+
+### Accessors
+
+- [gl](mesh_frontend.FragmentSource.md#gl)
+- [key](mesh_frontend.FragmentSource.md#key)
+
+### Methods
+
+- [addChunk](mesh_frontend.FragmentSource.md#addchunk)
+- [addCounterpartRef](mesh_frontend.FragmentSource.md#addcounterpartref)
+- [addRef](mesh_frontend.FragmentSource.md#addref)
+- [counterpartRefCountReachedZero](mesh_frontend.FragmentSource.md#counterpartrefcountreachedzero)
+- [deleteChunk](mesh_frontend.FragmentSource.md#deletechunk)
+- [dispose](mesh_frontend.FragmentSource.md#dispose)
+- [disposed](mesh_frontend.FragmentSource.md#disposed)
+- [getChunk](mesh_frontend.FragmentSource.md#getchunk)
+- [initializeCounterpart](mesh_frontend.FragmentSource.md#initializecounterpart)
+- [initializeSharedObject](mesh_frontend.FragmentSource.md#initializesharedobject)
+- [invalidateCache](mesh_frontend.FragmentSource.md#invalidatecache)
+- [ownerDispose](mesh_frontend.FragmentSource.md#ownerdispose)
+- [refCountReachedZero](mesh_frontend.FragmentSource.md#refcountreachedzero)
+- [registerCancellable](mesh_frontend.FragmentSource.md#registercancellable)
+- [registerDisposer](mesh_frontend.FragmentSource.md#registerdisposer)
+- [registerEventListener](mesh_frontend.FragmentSource.md#registereventlistener)
+- [unregisterDisposer](mesh_frontend.FragmentSource.md#unregisterdisposer)
+- [encodeOptions](mesh_frontend.FragmentSource.md#encodeoptions)
+
+## Constructors
+
+### constructor
+
+• **new FragmentSource**(`chunkManager`, `meshSource`)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `chunkManager` | [`ChunkManager`](chunk_manager_frontend.ChunkManager.md) |
+| `meshSource` | [`MeshSource`](mesh_frontend.MeshSource.md) |
+
+#### Overrides
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[constructor](chunk_manager_frontend.ChunkSource.md#constructor)
+
+#### Defined in
+
+[src/neuroglancer/mesh/frontend.ts:490](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/mesh/frontend.ts#L490)
+
+## Properties
+
+### OPTIONS
+
+• **OPTIONS**: `Object`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[OPTIONS](chunk_manager_frontend.ChunkSource.md#options)
+
+#### Defined in
+
+[src/neuroglancer/chunk_manager/frontend.ts:353](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/chunk_manager/frontend.ts#L353)
+
+___
+
+### RPC\_TYPE\_ID
+
+• **RPC\_TYPE\_ID**: `string`
+
+Should be set to a constant specifying the SharedObject type identifier on the prototype of
+final derived owner classes.  It is not used on counterpart (non-owner) classes.
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[RPC_TYPE_ID](chunk_manager_frontend.ChunkSource.md#rpc_type_id)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:245](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L245)
+
+___
+
+### chunkManager
+
+• **chunkManager**: [`ChunkManager`](chunk_manager_frontend.ChunkManager.md)
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[chunkManager](chunk_manager_frontend.ChunkSource.md#chunkmanager)
+
+___
+
+### chunks
+
+• **chunks**: `Map`<`string`, [`FragmentChunk`](mesh_frontend.FragmentChunk.md)\>
+
+#### Overrides
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[chunks](chunk_manager_frontend.ChunkSource.md#chunks)
+
+#### Defined in
+
+[src/neuroglancer/mesh/frontend.ts:486](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/mesh/frontend.ts#L486)
+
+___
+
+### disposedStacks
+
+• **disposedStacks**: `any`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[disposedStacks](chunk_manager_frontend.ChunkSource.md#disposedstacks)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L52)
+
+___
+
+### immediateChunkUpdates
+
+• **immediateChunkUpdates**: `boolean` = `false`
+
+If set to true, chunk updates will be applied to this source immediately, rather than queueing
+them.  Sources that dynamically update chunks and need to ensure a consistent order of
+processing relative to other messages between the frontend and worker should set this to true.
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[immediateChunkUpdates](chunk_manager_frontend.ChunkSource.md#immediatechunkupdates)
+
+#### Defined in
+
+[src/neuroglancer/chunk_manager/frontend.ts:361](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/chunk_manager/frontend.ts#L361)
+
+___
+
+### isOwner
+
+• **isOwner**: `undefined` \| `boolean`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[isOwner](chunk_manager_frontend.ChunkSource.md#isowner)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:171](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L171)
+
+___
+
+### meshSource
+
+• **meshSource**: [`MeshSource`](mesh_frontend.MeshSource.md)
+
+___
+
+### refCount
+
+• **refCount**: `number` = `1`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[refCount](chunk_manager_frontend.ChunkSource.md#refcount)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L45)
+
+___
+
+### referencedGeneration
+
+• **referencedGeneration**: `number`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[referencedGeneration](chunk_manager_frontend.ChunkSource.md#referencedgeneration)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:173](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L173)
+
+___
+
+### rpc
+
+• **rpc**: ``null`` \| [`RPC`](annotation_annotation_layer_state._internal_.RPC.md) = `null`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[rpc](chunk_manager_frontend.ChunkSource.md#rpc)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:169](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L169)
+
+___
+
+### rpcId
+
+• **rpcId**: ``null`` \| `number` = `null`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[rpcId](chunk_manager_frontend.ChunkSource.md#rpcid)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:170](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L170)
+
+___
+
+### unreferencedGeneration
+
+• **unreferencedGeneration**: `number`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[unreferencedGeneration](chunk_manager_frontend.ChunkSource.md#unreferencedgeneration)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:172](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L172)
+
+___
+
+### wasDisposed
+
+• **wasDisposed**: `undefined` \| `boolean`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[wasDisposed](chunk_manager_frontend.ChunkSource.md#wasdisposed)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L46)
+
+## Accessors
+
+### gl
+
+• `get` **gl**(): [`GL`](../interfaces/webgl_context.GL.md)
+
+#### Returns
+
+[`GL`](../interfaces/webgl_context.GL.md)
+
+#### Inherited from
+
+ChunkSource.gl
+
+#### Defined in
+
+[src/neuroglancer/chunk_manager/frontend.ts:372](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/chunk_manager/frontend.ts#L372)
+
+___
+
+### key
+
+• `get` **key**(): `any`
+
+#### Returns
+
+`any`
+
+#### Overrides
+
+ChunkSource.key
+
+#### Defined in
+
+[src/neuroglancer/mesh/frontend.ts:487](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/mesh/frontend.ts#L487)
+
+## Methods
+
+### addChunk
+
+▸ **addChunk**(`key`, `chunk`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `key` | `string` |
+| `chunk` | [`Chunk`](chunk_manager_frontend.Chunk.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[addChunk](chunk_manager_frontend.ChunkSource.md#addchunk)
+
+#### Defined in
+
+[src/neuroglancer/chunk_manager/frontend.ts:384](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/chunk_manager/frontend.ts#L384)
+
+___
+
+### addCounterpartRef
+
+▸ **addCounterpartRef**(): `Object`
+
+Precondition: this.isOwner === true.
+
+#### Returns
+
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `gen` | `number` |
+| `id` | ``null`` \| `number` |
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[addCounterpartRef](chunk_manager_frontend.ChunkSource.md#addcounterpartref)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:199](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L199)
+
+___
+
+### addRef
+
+▸ **addRef**(): [`FragmentSource`](mesh_frontend.FragmentSource.md)
+
+#### Returns
+
+[`FragmentSource`](mesh_frontend.FragmentSource.md)
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[addRef](chunk_manager_frontend.ChunkSource.md#addref)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L48)
+
+___
+
+### counterpartRefCountReachedZero
+
+▸ **counterpartRefCountReachedZero**(`generation`): `void`
+
+Precondition: this.isOwner === true.
+
+This should be called when the counterpart's refCount is decremented and reaches zero.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `generation` | `number` |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[counterpartRefCountReachedZero](chunk_manager_frontend.ChunkSource.md#counterpartrefcountreachedzero)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:234](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L234)
+
+___
+
+### deleteChunk
+
+▸ **deleteChunk**(`key`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `key` | `string` |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[deleteChunk](chunk_manager_frontend.ChunkSource.md#deletechunk)
+
+#### Defined in
+
+[src/neuroglancer/chunk_manager/frontend.ts:376](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/chunk_manager/frontend.ts#L376)
+
+___
+
+### dispose
+
+▸ **dispose**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[dispose](chunk_manager_frontend.ChunkSource.md#dispose)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:192](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L192)
+
+___
+
+### disposed
+
+▸ **disposed**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[disposed](chunk_manager_frontend.ChunkSource.md#disposed)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L75)
+
+___
+
+### getChunk
+
+▸ **getChunk**(`x`): [`FragmentChunk`](mesh_frontend.FragmentChunk.md)
+
+Default implementation for use with backendOnly chunk sources.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `x` | `any` |
+
+#### Returns
+
+[`FragmentChunk`](mesh_frontend.FragmentChunk.md)
+
+#### Overrides
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[getChunk](chunk_manager_frontend.ChunkSource.md#getchunk)
+
+#### Defined in
+
+[src/neuroglancer/mesh/frontend.ts:493](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/mesh/frontend.ts#L493)
+
+___
+
+### initializeCounterpart
+
+▸ **initializeCounterpart**(`rpc`, `options`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `rpc` | [`RPC`](annotation_annotation_layer_state._internal_.RPC.md) |
+| `options` | `any` |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[initializeCounterpart](chunk_manager_frontend.ChunkSource.md#initializecounterpart)
+
+#### Defined in
+
+[src/neuroglancer/chunk_manager/frontend.ts:367](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/chunk_manager/frontend.ts#L367)
+
+___
+
+### initializeSharedObject
+
+▸ **initializeSharedObject**(`rpc`, `rpcId?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `rpc` | [`RPC`](annotation_annotation_layer_state._internal_.RPC.md) |
+| `rpcId` | `number` |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[initializeSharedObject](chunk_manager_frontend.ChunkSource.md#initializesharedobject)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:175](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L175)
+
+___
+
+### invalidateCache
+
+▸ **invalidateCache**(): `void`
+
+Invalidates the chunk cache.  Operates asynchronously.
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[invalidateCache](chunk_manager_frontend.ChunkSource.md#invalidatecache)
+
+#### Defined in
+
+[src/neuroglancer/chunk_manager/frontend.ts:398](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/chunk_manager/frontend.ts#L398)
+
+___
+
+### ownerDispose
+
+▸ `Protected` **ownerDispose**(): `void`
+
+Precondition: this.isOwner === true.
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[ownerDispose](chunk_manager_frontend.ChunkSource.md#ownerdispose)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:219](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L219)
+
+___
+
+### refCountReachedZero
+
+▸ `Protected` **refCountReachedZero**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[refCountReachedZero](chunk_manager_frontend.ChunkSource.md#refcountreachedzero)
+
+#### Defined in
+
+[src/neuroglancer/worker_rpc.ts:203](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/worker_rpc.ts#L203)
+
+___
+
+### registerCancellable
+
+▸ **registerCancellable**<`T`\>(`cancellable`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `Object` |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `cancellable` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[registerCancellable](chunk_manager_frontend.ChunkSource.md#registercancellable)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L100)
+
+___
+
+### registerDisposer
+
+▸ **registerDisposer**<`T`\>(`f`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Disposer`](../modules/util_disposable.md#disposer) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `f` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[registerDisposer](chunk_manager_frontend.ChunkSource.md#registerdisposer)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L76)
+
+___
+
+### registerEventListener
+
+▸ **registerEventListener**(`target`, `type`, `listener`, `options?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `target` | [`EventTarget`](../modules/annotation_annotation_layer_state._internal_.md#eventtarget) |
+| `type` | `string` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/annotation_annotation_layer_state._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/annotation_annotation_layer_state._internal_.AddEventListenerOptions.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[registerEventListener](chunk_manager_frontend.ChunkSource.md#registereventlistener)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L95)
+
+___
+
+### unregisterDisposer
+
+▸ **unregisterDisposer**<`T`\>(`f`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Disposer`](../modules/util_disposable.md#disposer) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `f` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[unregisterDisposer](chunk_manager_frontend.ChunkSource.md#unregisterdisposer)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/util/disposable.ts#L85)
+
+___
+
+### encodeOptions
+
+▸ `Static` **encodeOptions**(`_options`): `Object`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `_options` | `Object` |
+
+#### Returns
+
+`Object`
+
+#### Inherited from
+
+[ChunkSource](chunk_manager_frontend.ChunkSource.md).[encodeOptions](chunk_manager_frontend.ChunkSource.md#encodeoptions)
+
+#### Defined in
+
+[src/neuroglancer/chunk_manager/frontend.ts:402](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/1beb5d34/src/neuroglancer/chunk_manager/frontend.ts#L402)
