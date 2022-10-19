@@ -1,0 +1,481 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>&quot;neuroglancer/sliceview/bounding_box_shader_helper&quot; | neuroglancer</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">neuroglancer</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html">&quot;neuroglancer/sliceview/bounding_box_shader_helper&quot;</a>
+				</li>
+			</ul>
+			<h1>External module &quot;neuroglancer/sliceview/bounding_box_shader_helper&quot;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#lambda_epsilon" class="tsd-kind-icon">LAMBDA_<wbr>EPSILON</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#orthogonal_epsilon" class="tsd-kind-icon">ORTHOGONAL_<wbr>EPSILON</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#boundingboxcrosssectionvertexindices" class="tsd-kind-icon">bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Vertex<wbr>Indices</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#tempvec3" class="tsd-kind-icon">temp<wbr>Vec3</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#tempvec3b" class="tsd-kind-icon">temp<wbr>Vec3b</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#vertexbasepositions" class="tsd-kind-icon">vertex<wbr>Base<wbr>Positions</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#computevertexpositiondebug" class="tsd-kind-icon">compute<wbr>Vertex<wbr>Position<wbr>Debug</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#computevertexpositionsdebug" class="tsd-kind-icon">compute<wbr>Vertex<wbr>Positions<wbr>Debug</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#defineboundingboxcrosssectionshader" class="tsd-kind-icon">define<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#findfrontvertexindex" class="tsd-kind-icon">find<wbr>Front<wbr>Vertex<wbr>Index</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#setboundingboxcrosssectionshaderplane" class="tsd-kind-icon">set<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<wbr>Plane</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#setboundingboxcrosssectionshaderviewportplane" class="tsd-kind-icon">set<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<wbr>Viewport<wbr>Plane</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="lambda_epsilon" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> LAMBDA_<wbr>EPSILON</h3>
+					<div class="tsd-signature tsd-kind-icon">LAMBDA_<wbr>EPSILON<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">0.001</span><span class="tsd-signature-symbol"> =&nbsp;0.001</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L42">neuroglancer/sliceview/bounding_box_shader_helper.ts:42</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="orthogonal_epsilon" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> ORTHOGONAL_<wbr>EPSILON</h3>
+					<div class="tsd-signature tsd-kind-icon">ORTHOGONAL_<wbr>EPSILON<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">0.001</span><span class="tsd-signature-symbol"> =&nbsp;0.001</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L49">neuroglancer/sliceview/bounding_box_shader_helper.ts:49</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
+					<a name="boundingboxcrosssectionvertexindices" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Vertex<wbr>Indices</h3>
+					<div class="tsd-signature tsd-kind-icon">bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Vertex<wbr>Indices<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Int32Array</span><span class="tsd-signature-symbol"> =&nbsp;(() &#x3D;&gt; {// This specifies the original, &quot;uncorrected&quot; vertex positions.// var vertexBasePositions &#x3D; [//   0, 0, 0,//   1, 0, 0,//   0, 1, 0,//   0, 0, 1,//   1, 0, 1,//   1, 1, 0,//   0, 1, 1,//   1, 1, 1,// ];// correct_index, vertex_position, uncorrected_index// 0:  0, 0, 0   0// 1:  1, 0, 0   1// 2:  0, 1, 0   2// 4:  0, 0, 1   3// 5:  1, 0, 1   4// 3:  1, 1, 0   5// 6:  0, 1, 1   6// 7:  1, 1, 1   7// This maps uncorrected vertex indices to corrected vertex indices.const vertexUncorrectedToCorrected &#x3D; [0, 1, 2, 4, 5, 3, 6, 7];// This maps corrected vertex indices to uncorrected vertex indices.const vertexCorrectedToUncorrected &#x3D; [0, 1, 2, 5, 3, 4, 6, 7];// Page 666const vertexBaseIndices &#x3D; [0, 1, 1, 4, 4, 7, 4, 7,  //1, 5, 0, 1, 1, 4, 4, 7,  //0, 2, 2, 5, 5, 7, 5, 7,  //2, 6, 0, 2, 2, 5, 5, 7,  //0, 3, 3, 6, 6, 7, 6, 7,  //3, 4, 0, 3, 3, 6, 6, 7,  //];// Determined by looking at the figure and determining the corresponding// vertex order for each possible front vertex.const vertexPermutation &#x3D; [0, 1, 2, 3, 4, 5, 6, 7,  //1, 4, 5, 0, 3, 7, 2, 6,  //2, 6, 0, 5, 7, 3, 1, 4,  //3, 0, 6, 4, 1, 2, 7, 5,  //4, 3, 7, 1, 0, 6, 5, 2,  //5, 2, 1, 7, 6, 0, 4, 3,  //6, 7, 3, 2, 5, 4, 0, 1,  //7, 5, 4, 6, 2, 1, 3, 0,  //];const vertexIndices &#x3D; new Int32Array(8 * 8 * 6);for (let p &#x3D; 0; p &lt; 8; ++p) {for (let i &#x3D; 0; i &lt; vertexBaseIndices.length; ++i) {const vertexPermutationIndex &#x3D; vertexCorrectedToUncorrected[p] * 8 + vertexBaseIndices[i];vertexIndices[p * 8 * 6 + i] &#x3D;vertexUncorrectedToCorrected[vertexPermutation[vertexPermutationIndex]];}}return vertexIndices;})()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L76">neuroglancer/sliceview/bounding_box_shader_helper.ts:76</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="tempvec3" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> temp<wbr>Vec3</h3>
+					<div class="tsd-signature tsd-kind-icon">temp<wbr>Vec3<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">vec3</span><span class="tsd-signature-symbol"> =&nbsp;vec3.create()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L35">neuroglancer/sliceview/bounding_box_shader_helper.ts:35</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="tempvec3b" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> temp<wbr>Vec3b</h3>
+					<div class="tsd-signature tsd-kind-icon">temp<wbr>Vec3b<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">vec3</span><span class="tsd-signature-symbol"> =&nbsp;vec3.create()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L36">neuroglancer/sliceview/bounding_box_shader_helper.ts:36</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
+					<a name="vertexbasepositions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> vertex<wbr>Base<wbr>Positions</h3>
+					<div class="tsd-signature tsd-kind-icon">vertex<wbr>Base<wbr>Positions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Float32Array</span><span class="tsd-signature-symbol"> =&nbsp;new Float32Array([0, 0, 0,  //1, 0, 0,  //0, 1, 0,  //1, 1, 0,  //0, 0, 1,  //1, 0, 1,  //0, 1, 1,  //1, 1, 1,  //])</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L65">neuroglancer/sliceview/bounding_box_shader_helper.ts:65</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="computevertexpositiondebug" class="tsd-anchor"></a>
+					<h3>compute<wbr>Vertex<wbr>Position<wbr>Debug</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">compute<wbr>Vertex<wbr>Position<wbr>Debug<span class="tsd-signature-symbol">(</span>chunkSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, uLowerClipBound<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, uUpperClipBound<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, uPlaneDistance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, uPlaneNormal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, uTranslation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, vertexIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, print<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L183">neuroglancer/sliceview/bounding_box_shader_helper.ts:183</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>chunkSize: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>uLowerClipBound: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>uUpperClipBound: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>uPlaneDistance: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>uPlaneNormal: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>uTranslation: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>vertexIndex: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> print: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">vec3</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="computevertexpositionsdebug" class="tsd-anchor"></a>
+					<h3>compute<wbr>Vertex<wbr>Positions<wbr>Debug</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">compute<wbr>Vertex<wbr>Positions<wbr>Debug<span class="tsd-signature-symbol">(</span>chunkSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, uLowerClipBound<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, uUpperClipBound<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, uPlaneDistance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, uPlaneNormal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, uTranslation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L239">neuroglancer/sliceview/bounding_box_shader_helper.ts:239</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>chunkSize: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>uLowerClipBound: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>uUpperClipBound: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>uPlaneDistance: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>uPlaneNormal: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>uTranslation: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">vec3</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="defineboundingboxcrosssectionshader" class="tsd-anchor"></a>
+					<h3>define<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">define<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<span class="tsd-signature-symbol">(</span>builder<span class="tsd-signature-symbol">: </span><a href="../classes/_neuroglancer_webgl_shader_.shaderbuilder.html" class="tsd-signature-type">ShaderBuilder</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L140">neuroglancer/sliceview/bounding_box_shader_helper.ts:140</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>builder: <a href="../classes/_neuroglancer_webgl_shader_.shaderbuilder.html" class="tsd-signature-type">ShaderBuilder</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="findfrontvertexindex" class="tsd-anchor"></a>
+					<h3>find<wbr>Front<wbr>Vertex<wbr>Index</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Front<wbr>Vertex<wbr>Index<span class="tsd-signature-symbol">(</span>planeNormal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L51">neuroglancer/sliceview/bounding_box_shader_helper.ts:51</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>planeNormal: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="setboundingboxcrosssectionshaderplane" class="tsd-anchor"></a>
+					<h3>set<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<wbr>Plane</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<wbr>Plane<span class="tsd-signature-symbol">(</span>shader<span class="tsd-signature-symbol">: </span><a href="../classes/_neuroglancer_webgl_shader_.shaderprogram.html" class="tsd-signature-type">ShaderProgram</a>, planeNormal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, planeDistanceToOrigin<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L252">neuroglancer/sliceview/bounding_box_shader_helper.ts:252</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>shader: <a href="../classes/_neuroglancer_webgl_shader_.shaderprogram.html" class="tsd-signature-type">ShaderProgram</a></h5>
+								</li>
+								<li>
+									<h5>planeNormal: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>planeDistanceToOrigin: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="setboundingboxcrosssectionshaderviewportplane" class="tsd-anchor"></a>
+					<h3>set<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<wbr>Viewport<wbr>Plane</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<wbr>Viewport<wbr>Plane<span class="tsd-signature-symbol">(</span>shader<span class="tsd-signature-symbol">: </span><a href="../classes/_neuroglancer_webgl_shader_.shaderprogram.html" class="tsd-signature-type">ShaderProgram</a>, viewportNormalInGlobalCoordinates<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, viewportCenterPosition<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">vec3</span>, modelMatrix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">mat4</span>, invModelMatrix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">mat4</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/sliceview/bounding_box_shader_helper.ts#L265">neuroglancer/sliceview/bounding_box_shader_helper.ts:265</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>shader: <a href="../classes/_neuroglancer_webgl_shader_.shaderprogram.html" class="tsd-signature-type">ShaderProgram</a></h5>
+								</li>
+								<li>
+									<h5>viewportNormalInGlobalCoordinates: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>viewportCenterPosition: <span class="tsd-signature-type">vec3</span></h5>
+								</li>
+								<li>
+									<h5>modelMatrix: <span class="tsd-signature-type">mat4</span></h5>
+								</li>
+								<li>
+									<h5>invModelMatrix: <span class="tsd-signature-type">mat4</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html">"neuroglancer/sliceview/bounding_<wbr>box_<wbr>shader_<wbr>helper"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#lambda_epsilon" class="tsd-kind-icon">LAMBDA_<wbr>EPSILON</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#orthogonal_epsilon" class="tsd-kind-icon">ORTHOGONAL_<wbr>EPSILON</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#boundingboxcrosssectionvertexindices" class="tsd-kind-icon">bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Vertex<wbr>Indices</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#tempvec3" class="tsd-kind-icon">temp<wbr>Vec3</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#tempvec3b" class="tsd-kind-icon">temp<wbr>Vec3b</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#vertexbasepositions" class="tsd-kind-icon">vertex<wbr>Base<wbr>Positions</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#computevertexpositiondebug" class="tsd-kind-icon">compute<wbr>Vertex<wbr>Position<wbr>Debug</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#computevertexpositionsdebug" class="tsd-kind-icon">compute<wbr>Vertex<wbr>Positions<wbr>Debug</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#defineboundingboxcrosssectionshader" class="tsd-kind-icon">define<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#findfrontvertexindex" class="tsd-kind-icon">find<wbr>Front<wbr>Vertex<wbr>Index</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#setboundingboxcrosssectionshaderplane" class="tsd-kind-icon">set<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<wbr>Plane</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_neuroglancer_sliceview_bounding_box_shader_helper_.html#setboundingboxcrosssectionshaderviewportplane" class="tsd-kind-icon">set<wbr>Bounding<wbr>Box<wbr>Cross<wbr>Section<wbr>Shader<wbr>Viewport<wbr>Plane</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

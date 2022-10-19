@@ -1,0 +1,1027 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>RefCounted | neuroglancer</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">neuroglancer</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_neuroglancer_util_disposable_.html">&quot;neuroglancer/util/disposable&quot;</a>
+				</li>
+				<li>
+					<a href="_neuroglancer_util_disposable_.refcounted.html">RefCounted</a>
+				</li>
+			</ul>
+			<h1>Class RefCounted</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">RefCounted</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_neuroglancer_util_disposable_.refcountedvalue.html" class="tsd-signature-type">RefCountedValue</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_util_trackable_.compoundtrackable.html" class="tsd-signature-type">CompoundTrackable</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_trackable_value_.derivedwatchablevalue.html" class="tsd-signature-type">DerivedWatchableValue</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_trackable_value_.cachedlazyderivedwatchablevalue.html" class="tsd-signature-type">CachedLazyDerivedWatchableValue</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_trackable_value_.cachedwatchablevalue.html" class="tsd-signature-type">CachedWatchableValue</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_trackable_value_.aggregatewatchablevalue.html" class="tsd-signature-type">AggregateWatchableValue</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_trackable_value_.computedwatchablevalue.html" class="tsd-signature-type">ComputedWatchableValue</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_trackable_value_.watchablerefcounted.html" class="tsd-signature-type">WatchableRefCounted</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_worker_rpc_.sharedobject.html" class="tsd-signature-type">SharedObject</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_trackable_boolean_.trackablebooleancheckbox.html" class="tsd-signature-type">TrackableBooleanCheckbox</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_trackable_boolean_.elementvisibilityfromtrackableboolean.html" class="tsd-signature-type">ElementVisibilityFromTrackableBoolean</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_credentials_provider_index_.credentialsprovider.html" class="tsd-signature-type">CredentialsProvider</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_credentials_provider_index_.cachingcredentialsmanager.html" class="tsd-signature-type">CachingCredentialsManager</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_display_context_.renderedpanel.html" class="tsd-signature-type">RenderedPanel</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_display_context_.displaycontext.html" class="tsd-signature-type">DisplayContext</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_index_.annotationreference.html" class="tsd-signature-type">AnnotationReference</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_index_.annotationsource.html" class="tsd-signature-type">AnnotationSource</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.position.html" class="tsd-signature-type">Position</a>
+							</li>
+							<li>
+								<a href="../interfaces/_neuroglancer_navigation_state_.linkablestate.html" class="tsd-signature-type">LinkableState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.orientationstate.html" class="tsd-signature-type">OrientationState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.trackablerelativedisplayscales.html" class="tsd-signature-type">TrackableRelativeDisplayScales</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.watchabledisplaydimensionrenderinfo.html" class="tsd-signature-type">WatchableDisplayDimensionRenderInfo</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.trackabledisplaydimensions.html" class="tsd-signature-type">TrackableDisplayDimensions</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.displaypose.html" class="tsd-signature-type">DisplayPose</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.trackablezoom.html" class="tsd-signature-type">TrackableZoom</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.trackabledepthrange.html" class="tsd-signature-type">TrackableDepthRange</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_navigation_state_.navigationstate.html" class="tsd-signature-type">NavigationState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_shader_.shaderprogram.html" class="tsd-signature-type">ShaderProgram</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_renderlayer_.renderlayer.html" class="tsd-signature-type">RenderLayer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_renderlayer_.derivedprojectionparameters.html" class="tsd-signature-type">DerivedProjectionParameters</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_offscreen_.sizemanaged.html" class="tsd-signature-type">SizeManaged</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_offscreen_.framebuffer.html" class="tsd-signature-type">Framebuffer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_offscreen_.framebufferconfiguration.html" class="tsd-signature-type">FramebufferConfiguration</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_offscreen_.offscreencopyhelper.html" class="tsd-signature-type">OffscreenCopyHelper</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_empirical_cdf_.histogramspecifications.html" class="tsd-signature-type">HistogramSpecifications</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_empirical_cdf_.texturehistogramgenerator.html" class="tsd-signature-type">TextureHistogramGenerator</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_sliceview_frontend_.sliceviewrenderhelper.html" class="tsd-signature-type">SliceViewRenderHelper</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_axes_lines_.axeslinehelper.html" class="tsd-signature-type">AxesLineHelper</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_util_automatic_focus_.automaticallyfocusedelement.html" class="tsd-signature-type">AutomaticallyFocusedElement</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_util_keyboard_bindings_.keyboardeventbinder.html" class="tsd-signature-type">KeyboardEventBinder</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_util_mouse_bindings_.mouseeventbinder.html" class="tsd-signature-type">MouseEventBinder</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_util_touch_bindings_.toucheventbinder.html" class="tsd-signature-type">TouchEventBinder</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_util_watchable_map_.watchablemap.html" class="tsd-signature-type">WatchableMap</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_scale_bar_.scalebartexture.html" class="tsd-signature-type">ScaleBarTexture</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_scale_bar_.multiplescalebartextures.html" class="tsd-signature-type">MultipleScaleBarTextures</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_gpu_hash_shader_.gpuhashtable.html" class="tsd-signature-type">GPUHashTable</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_segmentation_graph_source_.segmentationgraphsourceconnection.html" class="tsd-signature-type">SegmentationGraphSourceConnection</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_shader_ui_controls_.shadercontrolstate.html" class="tsd-signature-type">ShaderControlState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_vertex_id_.vertexidhelper.html" class="tsd-signature-type">VertexIdHelper</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_skeleton_frontend_.renderhelper.html" class="tsd-signature-type">RenderHelper</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_skeleton_frontend_.skeletonlayer.html" class="tsd-signature-type">SkeletonLayer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_checkbox_icon_.checkboxicon.html" class="tsd-signature-type">CheckboxIcon</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_dependent_view_widget_.dependentviewcontext.html" class="tsd-signature-type">DependentViewContext</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_dependent_view_widget_.dependentviewwidget.html" class="tsd-signature-type">DependentViewWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_tab_view_.tab.html" class="tsd-signature-type">Tab</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_tab_view_.optionspecification.html" class="tsd-signature-type">OptionSpecification</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_tab_view_.stackview.html" class="tsd-signature-type">StackView</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_tab_view_.tabview.html" class="tsd-signature-type">TabView</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_virtual_list_.virtuallist.html" class="tsd-signature-type">VirtualList</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_tool_.toolactivation.html" class="tsd-signature-type">ToolActivation</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_tool_.tool.html" class="tsd-signature-type">Tool</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_tool_.legacytool.html" class="tsd-signature-type">LegacyTool</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_tool_.selectedlegacytool.html" class="tsd-signature-type">SelectedLegacyTool</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_tool_.toolbinder.html" class="tsd-signature-type">ToolBinder</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_tool_.toolbindingwidget.html" class="tsd-signature-type">ToolBindingWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_position_widget_.positionwidget.html" class="tsd-signature-type">PositionWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_position_widget_.mousepositionwidget.html" class="tsd-signature-type">MousePositionWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_color_.colorwidget.html" class="tsd-signature-type">ColorWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_color_.annotationcolorwidget.html" class="tsd-signature-type">AnnotationColorWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_range_.rangewidget.html" class="tsd-signature-type">RangeWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_invlerp_.cdfcontroller.html" class="tsd-signature-type">CdfController</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_segment_list_.segmentlistsource.html" class="tsd-signature-type">SegmentListSource</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_segment_list_.numericalpropertiessummary.html" class="tsd-signature-type">NumericalPropertiesSummary</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_overlay_.overlay.html" class="tsd-signature-type">Overlay</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_linked_layer_.linkedlayergroupwidget.html" class="tsd-signature-type">LinkedLayerGroupWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_shader_code_widget_.shadercodewidget.html" class="tsd-signature-type">ShaderCodeWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_enum_widget_.enumselectwidget.html" class="tsd-signature-type">EnumSelectWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_render_scale_widget_.renderscalewidget.html" class="tsd-signature-type">RenderScaleWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_text_input_.textinputwidget.html" class="tsd-signature-type">TextInputWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_segmentation_user_layer_.segmentationuserlayergroupstate.html" class="tsd-signature-type">SegmentationUserLayerGroupState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_segmentation_user_layer_.segmentationuserlayercolorgroupstate.html" class="tsd-signature-type">SegmentationUserLayerColorGroupState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_segmentation_user_layer_.linkedsegmentationgroupstate.html" class="tsd-signature-type">LinkedSegmentationGroupState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_side_panel_.sidepanel.html" class="tsd-signature-type">SidePanel</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_side_panel_.sidepanelmanager.html" class="tsd-signature-type">SidePanelManager</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_segmentation_display_state_frontend_.segmentselectionstate.html" class="tsd-signature-type">SegmentSelectionState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_index_emulation_.countingbuffer.html" class="tsd-signature-type">CountingBuffer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_datasource_index_.datasourceprovider.html" class="tsd-signature-type">DataSourceProvider</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_datasource_index_.datasourceproviderregistry.html" class="tsd-signature-type">DataSourceProviderRegistry</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_data_source_.loadedlayerdatasource.html" class="tsd-signature-type">LoadedLayerDataSource</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_data_source_.layerdatasource.html" class="tsd-signature-type">LayerDataSource</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_coordinate_transform_.coordinatespacetransformwidget.html" class="tsd-signature-type">CoordinateSpaceTransformWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_fetch_annotation_.fetchannotationwidget.html" class="tsd-signature-type">FetchAnnotationWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_multiline_autocomplete_.autocompletetextinput.html" class="tsd-signature-type">AutocompleteTextInput</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_services_state_loader_.stateloader.html" class="tsd-signature-type">StateLoader</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_save_annotation_.saveannotationwidget.html" class="tsd-signature-type">SaveAnnotationWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_annotations_.mergedannotationstates.html" class="tsd-signature-type">MergedAnnotationStates</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_spheres_.sphererenderhelper.html" class="tsd-signature-type">SphereRenderHelper</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_renderlayer_.annotationlayer.html" class="tsd-signature-type">AnnotationLayer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_type_handler_.annotationrenderhelper.html" class="tsd-signature-type">AnnotationRenderHelper</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_annotation_layer_state_.annotationdisplaystate.html" class="tsd-signature-type">AnnotationDisplayState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_annotation_layer_state_.annotationlayerstate.html" class="tsd-signature-type">AnnotationLayerState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_fetch_transformation_.fetchtransformationwidget.html" class="tsd-signature-type">FetchTransformationWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_data_sources_tab_.messagesview.html" class="tsd-signature-type">MessagesView</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_data_sources_tab_.datasourcesubsourceview.html" class="tsd-signature-type">DataSourceSubsourceView</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_data_sources_tab_.loadeddatasourceview.html" class="tsd-signature-type">LoadedDataSourceView</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_data_sources_tab_.datasourceview.html" class="tsd-signature-type">DataSourceView</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_side_panel_state_.userlayersidepanelstate.html" class="tsd-signature-type">UserLayerSidePanelState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.userlayer.html" class="tsd-signature-type">UserLayer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.manageduserlayer.html" class="tsd-signature-type">ManagedUserLayer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.layermanager.html" class="tsd-signature-type">LayerManager</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.layerselectedvalues.html" class="tsd-signature-type">LayerSelectedValues</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.trackabledataselectionstate.html" class="tsd-signature-type">TrackableDataSelectionState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.visiblelayerinfo.html" class="tsd-signature-type">VisibleLayerInfo</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.visiblerenderlayertracker.html" class="tsd-signature-type">VisibleRenderLayerTracker</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.selectedlayerstate.html" class="tsd-signature-type">SelectedLayerState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.layerreference.html" class="tsd-signature-type">LayerReference</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.linkedlayergroup.html" class="tsd-signature-type">LinkedLayerGroup</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_.layerlistspecification.html" class="tsd-signature-type">LayerListSpecification</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_display_dimensions_widget_.displaydimensionswidget.html" class="tsd-signature-type">DisplayDimensionsWidget</a>
+							</li>
+							<li>
+								<a href="../interfaces/_neuroglancer_data_panel_layout_.datadisplaylayout.html" class="tsd-signature-type">DataDisplayLayout</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_data_panel_layout_.fourpanellayout.html" class="tsd-signature-type">FourPanelLayout</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_data_panel_layout_.sliceviewperspectivetwopanellayout.html" class="tsd-signature-type">SliceViewPerspectiveTwoPanelLayout</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_data_panel_layout_.singlepanellayout.html" class="tsd-signature-type">SinglePanelLayout</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_data_panel_layout_.singleperspectivelayout.html" class="tsd-signature-type">SinglePerspectiveLayout</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_data_panel_layout_.crosssectionspecification.html" class="tsd-signature-type">CrossSectionSpecification</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_data_panel_layout_.datapanellayoutspecification.html" class="tsd-signature-type">DataPanelLayoutSpecification</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_data_panel_layout_.datapanellayoutcontainer.html" class="tsd-signature-type">DataPanelLayoutContainer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_datasource_state_share_.stateshare.html" class="tsd-signature-type">StateShare</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_context_menu_.contextmenu.html" class="tsd-signature-type">ContextMenu</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_bar_.layerwidget.html" class="tsd-signature-type">LayerWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_bar_.layerbar.html" class="tsd-signature-type">LayerBar</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_group_viewer_.linkedviewernavigationstate.html" class="tsd-signature-type">LinkedViewerNavigationState</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_group_viewer_.layergroupviewer.html" class="tsd-signature-type">LayerGroupViewer</a>
+							</li>
+							<li>
+								<a href="../interfaces/_neuroglancer_layer_groups_layout_.layoutcomponent.html" class="tsd-signature-type">LayoutComponent</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_groups_layout_.layoutcomponentcontainer.html" class="tsd-signature-type">LayoutComponentContainer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_groups_layout_.singletonlayergroupviewer.html" class="tsd-signature-type">SingletonLayerGroupViewer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_groups_layout_.stacklayoutcomponent.html" class="tsd-signature-type">StackLayoutComponent</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_layer_groups_layout_.rootlayoutcontainer.html" class="tsd-signature-type">RootLayoutContainer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_side_panel_.layernamewidget.html" class="tsd-signature-type">LayerNameWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_side_panel_.layertypewidget.html" class="tsd-signature-type">LayerTypeWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_side_panel_.layersidepanelmanager.html" class="tsd-signature-type">LayerSidePanelManager</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_list_panel_.layervisibilitywidget.html" class="tsd-signature-type">LayerVisibilityWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_list_panel_.layerlistitem.html" class="tsd-signature-type">LayerListItem</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_layer_list_panel_.layerarchivecountwidget.html" class="tsd-signature-type">LayerArchiveCountWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_number_input_widget_.numberinputwidget.html" class="tsd-signature-type">NumberInputWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_annotation_tool_status_.annotationtoolstatuswidget.html" class="tsd-signature-type">AnnotationToolStatusWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_url_hash_binding_.urlhashbinding.html" class="tsd-signature-type">UrlHashBinding</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_layer_reference_.layerreferencewidget.html" class="tsd-signature-type">LayerReferenceWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_user_layer_.linkedsegmentationlayers.html" class="tsd-signature-type">LinkedSegmentationLayers</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_user_layer_.linkedsegmentationlayerwidget.html" class="tsd-signature-type">LinkedSegmentationLayerWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_annotation_user_layer_.linkedsegmentationlayerswidget.html" class="tsd-signature-type">LinkedSegmentationLayersWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_viewer_.datamanagementcontext.html" class="tsd-signature-type">DataManagementContext</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_viewer_.viewer.html" class="tsd-signature-type">Viewer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_sliceview_single_texture_chunk_format_.singletexturechunkformat.html" class="tsd-signature-type">SingleTextureChunkFormat</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_sliceview_uncompressed_chunk_format_.texturelayout.html" class="tsd-signature-type">TextureLayout</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_sliceview_uncompressed_chunk_format_.uncompressedchunkformathandler.html" class="tsd-signature-type">UncompressedChunkFormatHandler</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_sliceview_compressed_segmentation_chunk_format_.texturelayout.html" class="tsd-signature-type">TextureLayout</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_sliceview_compressed_segmentation_chunk_format_.compressedsegmentationchunkformathandler.html" class="tsd-signature-type">CompressedSegmentationChunkFormatHandler</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_channel_dimensions_widget_.channeldimensionswidget.html" class="tsd-signature-type">ChannelDimensionsWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_python_integration_api_.clientstatesynchronizer.html" class="tsd-signature-type">ClientStateSynchronizer</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_python_integration_api_.clientstatereceiver.html" class="tsd-signature-type">ClientStateReceiver</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_python_integration_prefetch_.prefetchmanager.html" class="tsd-signature-type">PrefetchManager</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_python_integration_remote_actions_.remoteactionhandler.html" class="tsd-signature-type">RemoteActionHandler</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_python_integration_remote_status_messages_.trackablebasedstatusmessages.html" class="tsd-signature-type">TrackableBasedStatusMessages</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_python_integration_screenshots_.screenshothandler.html" class="tsd-signature-type">ScreenshotHandler</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_chunk_manager_backend_.availablecapacity.html" class="tsd-signature-type">AvailableCapacity</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_render_layer_backend_.renderlayerbackendattachment.html" class="tsd-signature-type">RenderLayerBackendAttachment</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_single_mesh_user_layer_.vertexattributewidget.html" class="tsd-signature-type">VertexAttributeWidget</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_webgl_shader_testing_.fragmentshadertester.html" class="tsd-signature-type">FragmentShaderTester</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_ui_drag_resize_.dragresizablepanel.html" class="tsd-signature-type">DragResizablePanel</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_tooltip_.tooltip.html" class="tsd-signature-type">Tooltip</a>
+							</li>
+							<li>
+								<a href="_neuroglancer_widget_vec3_entry_widget_.vec3widget.html" class="tsd-signature-type">Vec3Widget</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/_neuroglancer_util_disposable_.disposable.html" class="tsd-signature-type">Disposable</a></li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_neuroglancer_util_disposable_.refcounted.html#disposedstacks" class="tsd-kind-icon">disposed<wbr>Stacks</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_neuroglancer_util_disposable_.refcounted.html#disposers" class="tsd-kind-icon">disposers</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_neuroglancer_util_disposable_.refcounted.html#refcount" class="tsd-kind-icon">ref<wbr>Count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_neuroglancer_util_disposable_.refcounted.html#wasdisposed" class="tsd-kind-icon">was<wbr>Disposed</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_neuroglancer_util_disposable_.refcounted.html#addref" class="tsd-kind-icon">add<wbr>Ref</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_neuroglancer_util_disposable_.refcounted.html#dispose" class="tsd-kind-icon">dispose</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_neuroglancer_util_disposable_.refcounted.html#disposed" class="tsd-kind-icon">disposed</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="_neuroglancer_util_disposable_.refcounted.html#refcountreachedzero" class="tsd-kind-icon">ref<wbr>Count<wbr>Reached<wbr>Zero</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_neuroglancer_util_disposable_.refcounted.html#registercancellable" class="tsd-kind-icon">register<wbr>Cancellable</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_neuroglancer_util_disposable_.refcounted.html#registerdisposer" class="tsd-kind-icon">register<wbr>Disposer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_neuroglancer_util_disposable_.refcounted.html#registereventlistener" class="tsd-kind-icon">register<wbr>Event<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_neuroglancer_util_disposable_.refcounted.html#unregisterdisposer" class="tsd-kind-icon">unregister<wbr>Disposer</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="disposedstacks" class="tsd-anchor"></a>
+					<h3>disposed<wbr>Stacks</h3>
+					<div class="tsd-signature tsd-kind-icon">disposed<wbr>Stacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L52">neuroglancer/util/disposable.ts:52</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="disposers" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> disposers</h3>
+					<div class="tsd-signature tsd-kind-icon">disposers<span class="tsd-signature-symbol">:</span> <a href="../modules/_neuroglancer_util_disposable_.html#disposer" class="tsd-signature-type">Disposer</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L47">neuroglancer/util/disposable.ts:47</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="refcount" class="tsd-anchor"></a>
+					<h3>ref<wbr>Count</h3>
+					<div class="tsd-signature tsd-kind-icon">ref<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L45">neuroglancer/util/disposable.ts:45</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="wasdisposed" class="tsd-anchor"></a>
+					<h3>was<wbr>Disposed</h3>
+					<div class="tsd-signature tsd-kind-icon">was<wbr>Disposed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L46">neuroglancer/util/disposable.ts:46</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addref" class="tsd-anchor"></a>
+					<h3>add<wbr>Ref</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Ref<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L48">neuroglancer/util/disposable.ts:48</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="dispose" class="tsd-anchor"></a>
+					<h3>dispose</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">dispose<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L53">neuroglancer/util/disposable.ts:53</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="disposed" class="tsd-anchor"></a>
+					<h3>disposed</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">disposed<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L75">neuroglancer/util/disposable.ts:75</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+					<a name="refcountreachedzero" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> ref<wbr>Count<wbr>Reached<wbr>Zero</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">ref<wbr>Count<wbr>Reached<wbr>Zero<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L66">neuroglancer/util/disposable.ts:66</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="registercancellable" class="tsd-anchor"></a>
+					<h3>register<wbr>Cancellable</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Cancellable&lt;T&gt;<span class="tsd-signature-symbol">(</span>cancellable<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L100">neuroglancer/util/disposable.ts:100</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>cancellable: <span class="tsd-signature-type">T</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="registerdisposer" class="tsd-anchor"></a>
+					<h3>register<wbr>Disposer</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Disposer&lt;T&gt;<span class="tsd-signature-symbol">(</span>f<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L76">neuroglancer/util/disposable.ts:76</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T<span class="tsd-signature-symbol">: </span><a href="../modules/_neuroglancer_util_disposable_.html#disposer" class="tsd-signature-type">Disposer</a></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>f: <span class="tsd-signature-type">T</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="registereventlistener" class="tsd-anchor"></a>
+					<h3>register<wbr>Event<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Event<wbr>Listener<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EventTarget</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, listener<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EventListenerOrEventListenerObject</span>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">AddEventListenerOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L95">neuroglancer/util/disposable.ts:95</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>target: <span class="tsd-signature-type">EventTarget</span></h5>
+								</li>
+								<li>
+									<h5>type: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>listener: <span class="tsd-signature-type">EventListenerOrEventListenerObject</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">AddEventListenerOptions</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="unregisterdisposer" class="tsd-anchor"></a>
+					<h3>unregister<wbr>Disposer</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">unregister<wbr>Disposer&lt;T&gt;<span class="tsd-signature-symbol">(</span>f<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/66d38590/src/neuroglancer/util/disposable.ts#L85">neuroglancer/util/disposable.ts:85</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T<span class="tsd-signature-symbol">: </span><a href="../modules/_neuroglancer_util_disposable_.html#disposer" class="tsd-signature-type">Disposer</a></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>f: <span class="tsd-signature-type">T</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_neuroglancer_util_disposable_.html">"neuroglancer/util/disposable"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_neuroglancer_util_disposable_.refcounted.html" class="tsd-kind-icon">Ref<wbr>Counted</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#disposedstacks" class="tsd-kind-icon">disposed<wbr>Stacks</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#disposers" class="tsd-kind-icon">disposers</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#refcount" class="tsd-kind-icon">ref<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#wasdisposed" class="tsd-kind-icon">was<wbr>Disposed</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#addref" class="tsd-kind-icon">add<wbr>Ref</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#dispose" class="tsd-kind-icon">dispose</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#disposed" class="tsd-kind-icon">disposed</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#refcountreachedzero" class="tsd-kind-icon">ref<wbr>Count<wbr>Reached<wbr>Zero</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#registercancellable" class="tsd-kind-icon">register<wbr>Cancellable</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#registerdisposer" class="tsd-kind-icon">register<wbr>Disposer</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#registereventlistener" class="tsd-kind-icon">register<wbr>Event<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_neuroglancer_util_disposable_.refcounted.html#unregisterdisposer" class="tsd-kind-icon">unregister<wbr>Disposer</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_neuroglancer_util_disposable_.refcountedvalue.html" class="tsd-kind-icon">Ref<wbr>Counted<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_neuroglancer_util_disposable_.disposable.html" class="tsd-kind-icon">Disposable</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../modules/_neuroglancer_util_disposable_.html#borrowed" class="tsd-kind-icon">Borrowed</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_neuroglancer_util_disposable_.html#disposer" class="tsd-kind-icon">Disposer</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../modules/_neuroglancer_util_disposable_.html#owned" class="tsd-kind-icon">Owned</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_neuroglancer_util_disposable_.html#debug_ref_counts" class="tsd-kind-icon">DEBUG_<wbr>REF_<wbr>COUNTS</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_neuroglancer_util_disposable_.html#disposableonce" class="tsd-kind-icon">disposable<wbr>Once</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_neuroglancer_util_disposable_.html#invokedisposer" class="tsd-kind-icon">invoke<wbr>Disposer</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_neuroglancer_util_disposable_.html#invokedisposers" class="tsd-kind-icon">invoke<wbr>Disposers</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_neuroglancer_util_disposable_.html#registereventlistener" class="tsd-kind-icon">register<wbr>Event<wbr>Listener</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

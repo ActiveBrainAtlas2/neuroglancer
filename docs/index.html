@@ -1,0 +1,1632 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>neuroglancer</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">neuroglancer</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> neuroglancer</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#neuroglancer-web-based-volumetric-data-visualization" id="neuroglancer-web-based-volumetric-data-visualization" style="color: inherit; text-decoration: none;">
+					<h2>Neuroglancer: Web-based volumetric data visualization</h2>
+				</a>
+				<p><a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+					<a href="https://pypi.org/project/neuroglancer"><img src="https://img.shields.io/pypi/v/neuroglancer" alt="PyPI"></a>
+					<img src="https://github.com/google/neuroglancer/workflows/Build/badge.svg" alt="Build">
+				<a href="https://zenodo.org/badge/latestdoi/59798355"><img src="https://zenodo.org/badge/59798355.svg" alt="DOI"></a></p>
+				<p>Neuroglancer is a WebGL-based viewer for volumetric data.  It is capable of displaying arbitrary (non axis-aligned) cross-sectional views of volumetric data, as well as 3-D meshes and line-segment based models (skeletons).</p>
+				<p>This is not an official Google product.</p>
+				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+					<h1>Examples</h1>
+				</a>
+				<p>A live demo is hosted at <a href="https://neuroglancer-demo.appspot.com">https://neuroglancer-demo.appspot.com</a>.  (The prior link opens the viewer without any preloaded dataset.)  Use the viewer links below to open the viewer preloaded with an example dataset.</p>
+				<p>The four-pane view consists of 3 orthogonal cross-sectional views as well as a 3-D view (with independent orientation) that displays 3-D models (if available) for the selected objects.  All four views maintain the same center position.  The orientation of the 3 cross-sectional views can also be adjusted, although they maintain a fixed orientation relative to each other.  (Try holding the shift key and either dragging with the left mouse button or pressing an arrow key.)</p>
+				<ul>
+					<li><p><a href="https://www.janelia.org/project-team/flyem/hemibrain">FlyEM Hemibrain</a> (8x8x8 cubic nanometer resolution). <a href="https://hemibrain-dot-neuroglancer-demo.appspot.com/#!gs://neuroglancer-janelia-flyem-hemibrain/v1.0/neuroglancer_demo_states/base.json" target="_blank">Open viewer</a></p>
+					</li>
+					<li><p><a href="https://fafb-ffn1.storage.googleapis.com/landing.html">FAFB-FFN1 Full Adult Fly Brain Automated Segmentation</a> (4x4x40 cubic nanometer resolution).  <a href="https://neuroglancer-demo.appspot.com/fafb.html#!gs://fafb-ffn1/main_ng.json" target="_blank">Open viewer</a></p>
+					</li>
+					<li><p>Kasthuri et al., 2014.  Mouse somatosensory cortex (6x6x30 cubic nanometer resolution). <a href="https://neuroglancer-demo.appspot.com/#!{'layers':{'original-image':{'type':'image'_'source':'precomputed://gs://neuroglancer-public-data/kasthuri2011/image'_'visible':false}_'corrected-image':{'type':'image'_'source':'precomputed://gs://neuroglancer-public-data/kasthuri2011/image_color_corrected'}_'ground_truth':{'type':'segmentation'_'source':'precomputed://gs://neuroglancer-public-data/kasthuri2011/ground_truth'_'selectedAlpha':0.63_'notSelectedAlpha':0.14_'segments':['3208'_'4901'_'13'_'4965'_'4651'_'2282'_'3189'_'3758'_'15'_'4027'_'3228'_'444'_'3207'_'3224'_'3710']}}_'navigation':{'pose':{'position':{'voxelSize':[6_6_30]_'voxelCoordinates':[5523.99072265625_8538.9384765625_1198.0423583984375]}}_'zoomFactor':22.573112129999547}_'perspectiveOrientation':[-0.004047565162181854_-0.9566211104393005_-0.2268827110528946_-0.1827099621295929]_'perspectiveZoom':340.35867907175077}" target="_blank">Open viewer.</a></p>
+						<p>This dataset was copied from <a href="https://neurodata.io/data/kasthuri15/">https://neurodata.io/data/kasthuri15/</a> and is made available under the <a href="http://opendatacommons.org/licenses/by/1.0/">Open Data Common Attribution License</a>.  Paper: <a href="http://dx.doi.org/10.1016/j.cell.2015.06.054" target="_blank">Kasthuri, Narayanan, et al.  &quot;Saturated reconstruction of a volume of neocortex.&quot; Cell 162.3 (2015): 648-661.</a></p>
+					</li>
+					<li><p>Janelia FlyEM FIB-25.  7-column Drosophila medulla (8x8x8 cubic nanometer resolution).  <a href="https://neuroglancer-demo.appspot.com/#!{'layers':{'image':{'type':'image'_'source':'precomputed://gs://neuroglancer-public-data/flyem_fib-25/image'}_'ground-truth':{'type':'segmentation'_'source':'precomputed://gs://neuroglancer-public-data/flyem_fib-25/ground_truth'_'segments':['21894'_'22060'_'158571'_'24436'_'2515']}}_'navigation':{'pose':{'position':{'voxelSize':[8_8_8]_'voxelCoordinates':[2914.500732421875_3088.243408203125_4045]}}_'zoomFactor':30.09748283999932}_'perspectiveOrientation':[0.3143535554409027_0.8142156600952148_0.4843369424343109_-0.06040262430906296]_'perspectiveZoom':443.63404517712684_'showSlices':false}" target="_blank">Open viewer.</a></p>
+						<p>This dataset was copied from <a href="https://www.janelia.org/project-team/flyem/data-and-software-release">https://www.janelia.org/project-team/flyem/data-and-software-release</a>, and is made available under the <a href="http://opendatacommons.org/licenses/by/1.0/">Open Data Common Attribution License</a>.  Paper: <a href="http://dx.doi.org/10.1073/pnas.1509820112" target="_blank">Takemura, Shin-ya et al. &quot;Synaptic Circuits and Their Variations within Different Columns in the Visual System of Drosophila.&quot;  Proceedings of the National Academy of Sciences of the United States of America 112.44 (2015): 13711-13716.</a></p>
+					</li>
+				</ul>
+				<a href="#supported-data-sources" id="supported-data-sources" style="color: inherit; text-decoration: none;">
+					<h1>Supported data sources</h1>
+				</a>
+				<p>Neuroglancer itself is purely a client-side program, but it depends on data being accessible via HTTP in a suitable format.  It is designed to easily support many different data sources, and there is existing support for the following data APIs/formats:</p>
+				<ul>
+					<li><a href="src/neuroglancer/datasource/precomputed">Neuroglancer precomputed format</a></li>
+					<li><a href="src/neuroglancer/datasource/n5">N5</a></li>
+					<li><a href="src/neuroglancer/datasource/zarr">Zarr</a></li>
+					<li><a href="python/README.md">Python in-memory volumes</a> (with automatic mesh generation)</li>
+					<li>BOSS <a href="https://bossdb.org/">https://bossdb.org/</a></li>
+					<li>DVID <a href="https://github.com/janelia-flyem/dvid">https://github.com/janelia-flyem/dvid</a></li>
+					<li>Render <a href="https://github.com/saalfeldlab/render">https://github.com/saalfeldlab/render</a></li>
+					<li>Single NIfTI files <a href="https://www.nitrc.org/projects/nifti">https://www.nitrc.org/projects/nifti</a></li>
+				</ul>
+				<a href="#supported-browsers" id="supported-browsers" style="color: inherit; text-decoration: none;">
+					<h1>Supported browsers</h1>
+				</a>
+				<ul>
+					<li>Chrome &gt;= 51</li>
+					<li>Firefox &gt;= 46</li>
+					<li>Safari &gt;= 15.0</li>
+				</ul>
+				<a href="#keyboard-and-mouse-bindings" id="keyboard-and-mouse-bindings" style="color: inherit; text-decoration: none;">
+					<h1>Keyboard and mouse bindings</h1>
+				</a>
+				<p>For the complete set of bindings, see
+					<a href="src/neuroglancer/ui/default_input_event_bindings.ts">src/neuroglancer/ui/default_input_event_bindings.ts</a>,
+				or within Neuroglancer, press <code>h</code> or click on the button labeled <code>?</code> in the upper right corner.</p>
+				<ul>
+					<li><p>Click on a layer name to toggle its visibility.</p>
+					</li>
+					<li><p>Double-click on a layer name to edit its properties.</p>
+					</li>
+					<li><p>Hover over a segmentation layer name to see the current list of objects shown and to access the opacity sliders.</p>
+					</li>
+					<li><p>Hover over an image layer name to access the opacity slider and the text editor for modifying the <a href="src/neuroglancer/sliceview/image_layer_rendering.md">rendering code</a>.</p>
+					</li>
+				</ul>
+				<a href="#troubleshooting" id="troubleshooting" style="color: inherit; text-decoration: none;">
+					<h1>Troubleshooting</h1>
+				</a>
+				<ul>
+					<li><p>Neuroglancer doesn&#39;t appear to load properly.</p>
+						<p>Neuroglancer requires WebGL (2.0) and the <code>EXT_color_buffer_float</code> extension.</p>
+						<p>To troubleshoot, check the developer console, which is accessed by the keyboard shortcut <code>control-shift-i</code> in Firefox and Chrome.  If there is a message regarding failure to initialize WebGL, you can take the following steps:</p>
+						<ul>
+							<li><p>Chrome</p>
+								<p>Check <code>chrome://gpu</code> to see if your GPU is blacklisted.  There may be a flag you can enable to make it work.</p>
+							</li>
+							<li><p>Firefox</p>
+								<p>Check <code>about:support</code>.  There may be webgl-related properties in <code>about:config</code> that you can change to make it work.  Possible settings:</p>
+								<ul>
+									<li><code>webgl.disable-fail-if-major-performance-caveat = true</code></li>
+									<li><code>webgl.force-enabled = true</code></li>
+									<li><code>webgl.msaa-force = true</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><p>Failure to access a data source.</p>
+						<p>As a security measure, browsers will in many prevent a webpage from accessing the true error code associated with a failed HTTP request.  It is therefore often necessary to check the developer tools to see the true cause of any HTTP request error.</p>
+						<p>There are several likely causes:</p>
+						<ul>
+							<li><p><a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross-origin resource sharing (CORS)</a></p>
+								<p>Neuroglancer relies on cross-origin requests to retrieve data from third-party servers.  As a security measure, if an appropriate <code>Access-Control-Allow-Origin</code> response header is not sent by the server, browsers prevent webpages from accessing any information about the response from a cross-origin request.  In order to make the data accessible to Neuroglancer, you may need to change the cross-origin request sharing (CORS) configuration of the HTTP server.</p>
+							</li>
+							<li><p>Accessing an <code>http://</code> resource from a Neuroglancer client hosted at an <code>https://</code> URL</p>
+								<p>As a security measure, recent versions of Chrome and Firefox prohibit webpages hosted at <code>https://</code> URLs from issuing requests to <code>http://</code> URLs.  As a workaround, you can use a Neuroglancer client hosted at a <code>http://</code> URL, e.g. the demo client running at <a href="http://neuroglancer-demo.appspot.com">http://neuroglancer-demo.appspot.com</a>, or one running on localhost.  Alternatively, you can start Chrome with the <code>--disable-web-security</code> flag, but that should be done only with extreme caution.  (Make sure to use a separate profile, and do not access any untrusted webpages when running with that flag enabled.)</p>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<a href="#multi-threaded-architecture" id="multi-threaded-architecture" style="color: inherit; text-decoration: none;">
+					<h1>Multi-threaded architecture</h1>
+				</a>
+				<p>In order to maintain a responsive UI and data display even during rapid navigation, work is split between the main UI thread (referred to as the &quot;frontend&quot;) and a separate WebWorker thread (referred to as the &quot;backend&quot;).  This introduces some complexity due to the fact that current browsers:</p>
+				<ul>
+					<li>do not support any form of <em>shared</em> memory or standard synchronization mechanism (although they do support relatively efficient <em>transfers</em> of typed arrays between threads);</li>
+					<li>require that all manipulation of the DOM and the WebGL context happens on the main UI thread.</li>
+				</ul>
+				<p>The &quot;frontend&quot; UI thread handles user actions and rendering, while the &quot;backend&quot; WebWorker thread handle all queuing, downloading, and preprocessing of data needed for rendering.</p>
+				<a href="#documentation-index" id="documentation-index" style="color: inherit; text-decoration: none;">
+					<h1>Documentation Index</h1>
+				</a>
+				<ul>
+					<li><a href="src/neuroglancer/sliceview/image_layer_rendering.md">Image Layer Rendering</a></li>
+					<li><a href="src/neuroglancer/sliceview/README.md">Cross-sectional view implementation architecture</a></li>
+					<li><a href="src/neuroglancer/sliceview/compressed_segmentation/README.md">Compressed segmentation format</a></li>
+					<li><a href="src/neuroglancer/chunk_manager/">Data chunk management</a></li>
+					<li><a href="src/neuroglancer/gpu_hash/">On-GPU hashing</a></li>
+				</ul>
+				<a href="#building" id="building" style="color: inherit; text-decoration: none;">
+					<h1>Building</h1>
+				</a>
+				<p>node.js is required to build the viewer.</p>
+				<ol>
+					<li><p>First install NVM (node version manager) per the instructions here:</p>
+						<p><a href="https://github.com/creationix/nvm">https://github.com/creationix/nvm</a></p>
+					</li>
+					<li><p>Install a recent version of Node.js if you haven&#39;t already done so:</p>
+						<p> <code>nvm install stable</code></p>
+					</li>
+					<li><p>Install the dependencies required by this project:</p>
+						<p>(From within this directory)</p>
+						<p><code>npm i</code></p>
+						<p>Also re-run this any time the dependencies listed in <a href="package.json">package.json</a> may have
+						changed, such as after checking out a different revision or pulling changes.</p>
+					</li>
+					<li><p>To run a local server for development purposes:</p>
+						<p><code>npm run dev-server</code></p>
+						<p>This will start a server on <a href="http://localhost:8080">http://localhost:8080</a>.</p>
+					</li>
+					<li><p>To run the unit test suite on Chrome:</p>
+						<p><code>npm test</code></p>
+						<p>To run only tests in files matching a given glob pattern:</p>
+						<p><code>npm test -- --pattern=&#39;&lt;pattern&gt;&#39;</code></p>
+						<p>For example,</p>
+						<p><code>npm test -- --pattern=&#39;src/neuroglancer/util/uint64*&#39;</code></p>
+					</li>
+					<li><p>See <a href="package.json">package.json</a> for other commands available.</p>
+					</li>
+				</ol>
+				<a href="#creating-a-dependent-project" id="creating-a-dependent-project" style="color: inherit; text-decoration: none;">
+					<h1>Creating a dependent project</h1>
+				</a>
+				<p>See <a href="examples/dependent-project">examples/dependent-project</a>.</p>
+				<a href="#discussion-group" id="discussion-group" style="color: inherit; text-decoration: none;">
+					<h1>Discussion Group</h1>
+				</a>
+				<p>There is a Google Group/mailing list for discussion related to Neuroglancer:
+				<a href="https://groups.google.com/forum/#!forum/neuroglancer">https://groups.google.com/forum/#!forum/neuroglancer</a>.</p>
+				<a href="#related-projects" id="related-projects" style="color: inherit; text-decoration: none;">
+					<h1>Related Projects</h1>
+				</a>
+				<ul>
+					<li><a href="https://github.com/google/tensorstore">TensorStore</a> - C++ and Python library for efficiently
+					reading and writing multi-dimensional arrays in formats supported by Neuroglancer.</li>
+					<li><a href="https://github.com/4Quant/neuroglancer-docker">4Quant/neuroglancer-docker</a> - Example setup for
+					Docker deployment of the <a href="python/README.md">Neuroglancer Python integration</a>.</li>
+					<li><a href="https://github.com/FZJ-INM1-BDA/neuroglancer-scripts">FZJ-INM1-BDA/neuroglancer-scripts</a> -
+						Scripts for converting the <a href="https://bigbrain.loris.ca">BigBrain</a> dataset to the
+						Neuroglancer <a href="src/neuroglancer/datasource/precomputed">precomputed data format</a>, which may serve
+					as a useful example for converting other datasets.</li>
+					<li><a href="https://github.com/seung-lab/BigArrays.jl">BigArrays.jl</a> - Julia interface of neuroglancer precomputed data format.</li>
+					<li><a href="https://github.com/seung-lab/cloud-volume">cloudvolume</a> - Python interface of neuroglancer precomputed data format.</li>
+					<li><a href="https://github.com/janelia-cosem/multiresolution-mesh-creator">multiresolution-mesh-creator</a> - Python tool for creating <a href="https://github.com/google/neuroglancer/blob/master/src/neuroglancer/datasource/precomputed/meshes.md#multi-resolution-mesh-format">multi-resolution meshes</a> from single resolution - or multiscale - meshes.</li>
+				</ul>
+				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
+					<h1>Contributing</h1>
+				</a>
+				<p>Want to contribute?  Great!  First, read <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
+				<a href="#acknowledgements" id="acknowledgements" style="color: inherit; text-decoration: none;">
+					<h1>Acknowledgements</h1>
+				</a>
+				<p><a href="https://saucelabs.com"><img src="https://neuroglancer-public-data.storage.googleapis.com/website/powered-by-sauce-labs-gray.svg" alt="Powered by Sauce Labs" width=300 align="center"></a>
+				Cross-browser Testing Platform and Open Source &lt;3 Provided by <a href="https://saucelabs.com">Sauce Labs</a></p>
+				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+					<h1>License</h1>
+				</a>
+				<p>Copyright 2016 Google Inc.</p>
+				<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+					you may not use this software except in compliance with the License.
+				You may obtain a copy of the License at <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>.</p>
+				<p>Unless required by applicable law or agreed to in writing, software
+					distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+					WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+					See the License for the specific language governing permissions and
+				limitations under the License.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_.html">"main"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_module_.html">"main_<wbr>module"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_python_.html">"main_<wbr>python"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_annotation_layer_state_.html">"neuroglancer/annotation/annotation_<wbr>layer_<wbr>state"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_backend_.html">"neuroglancer/annotation/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_base_.html">"neuroglancer/annotation/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_bounding_box_.html">"neuroglancer/annotation/bounding_<wbr>box"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_cell_.html">"neuroglancer/annotation/cell"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_com_.html">"neuroglancer/annotation/com"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_ellipsoid_.html">"neuroglancer/annotation/ellipsoid"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_frontend_source_.html">"neuroglancer/annotation/frontend_<wbr>source"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_index_.html">"neuroglancer/annotation/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_line_.html">"neuroglancer/annotation/line"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_point_.html">"neuroglancer/annotation/point"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_polygon_.html">"neuroglancer/annotation/polygon"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_renderlayer_.html">"neuroglancer/annotation/renderlayer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_selection_.html">"neuroglancer/annotation/selection"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_type_handler_.html">"neuroglancer/annotation/type_<wbr>handler"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_user_layer_.html">"neuroglancer/annotation/user_<wbr>layer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_annotation_volume_.html">"neuroglancer/annotation/volume"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_blosc_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>blosc"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_blosc_request_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>blosc_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_compresso_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>compresso"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_compresso_request_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>compresso_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_gzip_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>gzip"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_gzip_request_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>gzip_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_jpeg_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>jpeg"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_jpeg_request_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>jpeg_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_png_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>png"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_decode_png_request_.html">"neuroglancer/async_<wbr>computation/decode_<wbr>png_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_encode_compressed_segmentation_.html">"neuroglancer/async_<wbr>computation/encode_<wbr>compressed_<wbr>segmentation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_encode_compressed_segmentation_request_.html">"neuroglancer/async_<wbr>computation/encode_<wbr>compressed_<wbr>segmentation_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_handler_.html">"neuroglancer/async_<wbr>computation/handler"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_index_.html">"neuroglancer/async_<wbr>computation/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_obj_mesh_.html">"neuroglancer/async_<wbr>computation/obj_<wbr>mesh"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_obj_mesh_request_.html">"neuroglancer/async_<wbr>computation/obj_<wbr>mesh_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_request_.html">"neuroglancer/async_<wbr>computation/request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_vtk_mesh_.html">"neuroglancer/async_<wbr>computation/vtk_<wbr>mesh"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_async_computation_vtk_mesh_request_.html">"neuroglancer/async_<wbr>computation/vtk_<wbr>mesh_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_axes_lines_.html">"neuroglancer/axes_<wbr>lines"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_chunk_manager_backend_.html">"neuroglancer/chunk_<wbr>manager/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_chunk_manager_base_.html">"neuroglancer/chunk_<wbr>manager/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_chunk_manager_frontend_.html">"neuroglancer/chunk_<wbr>manager/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_chunk_manager_generic_file_source_.html">"neuroglancer/chunk_<wbr>manager/generic_<wbr>file_<wbr>source"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_coordinate_transform_.html">"neuroglancer/coordinate_<wbr>transform"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_credentials_provider_chunk_source_frontend_.html">"neuroglancer/credentials_<wbr>provider/chunk_<wbr>source_<wbr>frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_credentials_provider_default_manager_.html">"neuroglancer/credentials_<wbr>provider/default_<wbr>manager"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_credentials_provider_http_request_.html">"neuroglancer/credentials_<wbr>provider/http_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_credentials_provider_index_.html">"neuroglancer/credentials_<wbr>provider/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_credentials_provider_oauth2_.html">"neuroglancer/credentials_<wbr>provider/oauth2"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_credentials_provider_shared_.html">"neuroglancer/credentials_<wbr>provider/shared"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_credentials_provider_shared_common_.html">"neuroglancer/credentials_<wbr>provider/shared_<wbr>common"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_credentials_provider_shared_counterpart_.html">"neuroglancer/credentials_<wbr>provider/shared_<wbr>counterpart"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_data_panel_layout_.html">"neuroglancer/data_<wbr>panel_<wbr>layout"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_boss_api_.html">"neuroglancer/datasource/boss/api"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_boss_backend_.html">"neuroglancer/datasource/boss/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_boss_base_.html">"neuroglancer/datasource/boss/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_boss_credentials_provider_.html">"neuroglancer/datasource/boss/credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_boss_frontend_.html">"neuroglancer/datasource/boss/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_boss_register_credentials_provider_.html">"neuroglancer/datasource/boss/register_<wbr>credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_boss_register_default_.html">"neuroglancer/datasource/boss/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_brainmaps_api_.html">"neuroglancer/datasource/brainmaps/api"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_brainmaps_backend_.html">"neuroglancer/datasource/brainmaps/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_brainmaps_base_.html">"neuroglancer/datasource/brainmaps/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_brainmaps_credentials_provider_.html">"neuroglancer/datasource/brainmaps/credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_brainmaps_frontend_.html">"neuroglancer/datasource/brainmaps/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_brainmaps_register_credentials_provider_.html">"neuroglancer/datasource/brainmaps/register_<wbr>credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_brainmaps_register_default_.html">"neuroglancer/datasource/brainmaps/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_default_provider_.html">"neuroglancer/datasource/default_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_dvid_api_.html">"neuroglancer/datasource/dvid/api"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_dvid_backend_.html">"neuroglancer/datasource/dvid/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_dvid_base_.html">"neuroglancer/datasource/dvid/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_dvid_credentials_provider_.html">"neuroglancer/datasource/dvid/credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_dvid_frontend_.html">"neuroglancer/datasource/dvid/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_dvid_register_credentials_provider_.html">"neuroglancer/datasource/dvid/register_<wbr>credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_dvid_register_default_.html">"neuroglancer/datasource/dvid/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_index_.html">"neuroglancer/datasource/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_middleauth_credentials_provider_.html">"neuroglancer/datasource/middleauth/credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_middleauth_register_credentials_provider_.html">"neuroglancer/datasource/middleauth/register_<wbr>credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_n5_backend_.html">"neuroglancer/datasource/n5/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_n5_base_.html">"neuroglancer/datasource/n5/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_n5_frontend_.html">"neuroglancer/datasource/n5/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_n5_register_default_.html">"neuroglancer/datasource/n5/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_ngauth_credentials_provider_.html">"neuroglancer/datasource/ngauth/credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_ngauth_register_credentials_provider_.html">"neuroglancer/datasource/ngauth/register_<wbr>credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_nggraph_backend_.html">"neuroglancer/datasource/nggraph/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_nggraph_credentials_provider_.html">"neuroglancer/datasource/nggraph/credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_nggraph_frontend_.html">"neuroglancer/datasource/nggraph/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_nggraph_register_default_.html">"neuroglancer/datasource/nggraph/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_nifti_backend_.html">"neuroglancer/datasource/nifti/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_nifti_base_.html">"neuroglancer/datasource/nifti/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_nifti_frontend_.html">"neuroglancer/datasource/nifti/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_nifti_register_default_.html">"neuroglancer/datasource/nifti/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_obj_backend_.html">"neuroglancer/datasource/obj/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_obj_frontend_.html">"neuroglancer/datasource/obj/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_obj_register_default_.html">"neuroglancer/datasource/obj/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_precomputed_backend_.html">"neuroglancer/datasource/precomputed/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_precomputed_base_.html">"neuroglancer/datasource/precomputed/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_precomputed_frontend_.html">"neuroglancer/datasource/precomputed/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_precomputed_register_default_.html">"neuroglancer/datasource/precomputed/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_python_backend_.html">"neuroglancer/datasource/python/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_python_base_.html">"neuroglancer/datasource/python/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_python_frontend_.html">"neuroglancer/datasource/python/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_render_backend_.html">"neuroglancer/datasource/render/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_render_base_.html">"neuroglancer/datasource/render/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_render_frontend_.html">"neuroglancer/datasource/render/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_render_register_default_.html">"neuroglancer/datasource/render/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_state_share_.html">"neuroglancer/datasource/state_<wbr>share"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_vtk_backend_.html">"neuroglancer/datasource/vtk/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_vtk_frontend_.html">"neuroglancer/datasource/vtk/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_vtk_parse_.html">"neuroglancer/datasource/vtk/parse"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_vtk_register_default_.html">"neuroglancer/datasource/vtk/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_zarr_backend_.html">"neuroglancer/datasource/zarr/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_zarr_base_.html">"neuroglancer/datasource/zarr/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_zarr_frontend_.html">"neuroglancer/datasource/zarr/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_datasource_zarr_register_default_.html">"neuroglancer/datasource/zarr/register_<wbr>default"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_display_context_.html">"neuroglancer/display_<wbr>context"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_gpu_hash_hash_function_.html">"neuroglancer/gpu_<wbr>hash/hash_<wbr>function"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_gpu_hash_hash_table_.html">"neuroglancer/gpu_<wbr>hash/hash_<wbr>table"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_gpu_hash_hash_table_benchmark_.html">"neuroglancer/gpu_<wbr>hash/hash_<wbr>table.benchmark"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_gpu_hash_shader_.html">"neuroglancer/gpu_<wbr>hash/shader"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_help_input_event_bindings_.html">"neuroglancer/help/input_<wbr>event_<wbr>bindings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_image_user_layer_.html">"neuroglancer/image_<wbr>user_<wbr>layer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_layer_.html">"neuroglancer/layer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_layer_data_source_.html">"neuroglancer/layer_<wbr>data_<wbr>source"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_layer_group_viewer_.html">"neuroglancer/layer_<wbr>group_<wbr>viewer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_layer_groups_layout_.html">"neuroglancer/layer_<wbr>groups_<wbr>layout"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_layout_.html">"neuroglancer/layout"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_mesh_backend_.html">"neuroglancer/mesh/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_mesh_base_.html">"neuroglancer/mesh/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_mesh_draco_index_.html">"neuroglancer/mesh/draco/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_mesh_frontend_.html">"neuroglancer/mesh/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_mesh_multiscale_.html">"neuroglancer/mesh/multiscale"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_mesh_triangle_strips_.html">"neuroglancer/mesh/triangle_<wbr>strips"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_navigation_state_.html">"neuroglancer/navigation_<wbr>state"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_object_picking_.html">"neuroglancer/object_<wbr>picking"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_overlay_.html">"neuroglancer/overlay"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_perspective_view_backend_.html">"neuroglancer/perspective_<wbr>view/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_perspective_view_base_.html">"neuroglancer/perspective_<wbr>view/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_perspective_view_panel_.html">"neuroglancer/perspective_<wbr>view/panel"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_perspective_view_render_layer_.html">"neuroglancer/perspective_<wbr>view/render_<wbr>layer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_projection_parameters_.html">"neuroglancer/projection_<wbr>parameters"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_python_integration_api_.html">"neuroglancer/python_<wbr>integration/api"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_python_integration_credentials_provider_.html">"neuroglancer/python_<wbr>integration/credentials_<wbr>provider"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_python_integration_event_action_map_.html">"neuroglancer/python_<wbr>integration/event_<wbr>action_<wbr>map"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_python_integration_prefetch_.html">"neuroglancer/python_<wbr>integration/prefetch"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_python_integration_remote_actions_.html">"neuroglancer/python_<wbr>integration/remote_<wbr>actions"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_python_integration_remote_status_messages_.html">"neuroglancer/python_<wbr>integration/remote_<wbr>status_<wbr>messages"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_python_integration_screenshots_.html">"neuroglancer/python_<wbr>integration/screenshots"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_render_coordinate_transform_.html">"neuroglancer/render_<wbr>coordinate_<wbr>transform"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_render_layer_backend_.html">"neuroglancer/render_<wbr>layer_<wbr>backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_render_layer_common_.html">"neuroglancer/render_<wbr>layer_<wbr>common"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_render_scale_statistics_.html">"neuroglancer/render_<wbr>scale_<wbr>statistics"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_rendered_data_panel_.html">"neuroglancer/rendered_<wbr>data_<wbr>panel"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_renderlayer_.html">"neuroglancer/renderlayer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_segment_color_.html">"neuroglancer/segment_<wbr>color"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_segmentation_display_state_backend_.html">"neuroglancer/segmentation_<wbr>display_<wbr>state/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_segmentation_display_state_base_.html">"neuroglancer/segmentation_<wbr>display_<wbr>state/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_segmentation_display_state_frontend_.html">"neuroglancer/segmentation_<wbr>display_<wbr>state/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_segmentation_display_state_property_map_.html">"neuroglancer/segmentation_<wbr>display_<wbr>state/property_<wbr>map"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_segmentation_graph_local_.html">"neuroglancer/segmentation_<wbr>graph/local"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_segmentation_graph_source_.html">"neuroglancer/segmentation_<wbr>graph/source"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_segmentation_user_layer_.html">"neuroglancer/segmentation_<wbr>user_<wbr>layer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_activebrainatlas_.html">"neuroglancer/services/activebrainatlas"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_firebase_.html">"neuroglancer/services/firebase"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_local_.html">"neuroglancer/services/local"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_pons_.html">"neuroglancer/services/pons"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_production_.html">"neuroglancer/services/production"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_service_.html">"neuroglancer/services/service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_state_.html">"neuroglancer/services/state"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_state_loader_.html">"neuroglancer/services/state_<wbr>loader"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_user_.html">"neuroglancer/services/user"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_user_loader_.html">"neuroglancer/services/user_<wbr>loader"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_services_webdev_.html">"neuroglancer/services/webdev"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_shared_disjoint_sets_.html">"neuroglancer/shared_<wbr>disjoint_<wbr>sets"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_shared_watchable_value_.html">"neuroglancer/shared_<wbr>watchable_<wbr>value"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_single_mesh_backend_.html">"neuroglancer/single_<wbr>mesh/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_single_mesh_base_.html">"neuroglancer/single_<wbr>mesh/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_single_mesh_frontend_.html">"neuroglancer/single_<wbr>mesh/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_single_mesh_user_layer_.html">"neuroglancer/single_<wbr>mesh_<wbr>user_<wbr>layer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_skeleton_backend_.html">"neuroglancer/skeleton/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_skeleton_base_.html">"neuroglancer/skeleton/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_skeleton_decode_precomputed_skeleton_.html">"neuroglancer/skeleton/decode_<wbr>precomputed_<wbr>skeleton"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_skeleton_decode_swc_skeleton_.html">"neuroglancer/skeleton/decode_<wbr>swc_<wbr>skeleton"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_skeleton_frontend_.html">"neuroglancer/skeleton/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_.html">"neuroglancer/sliceview/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_bossnpz_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/boss<wbr>Npz"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_compressed_segmentation_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/compressed_<wbr>segmentation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_compresso_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/compresso"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_index_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_jpeg_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/jpeg"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_ndstorenpz_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/ndstore<wbr>Npz"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_png_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/png"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_postprocess_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/postprocess"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_backend_chunk_decoders_raw_.html">"neuroglancer/sliceview/backend_<wbr>chunk_<wbr>decoders/raw"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_base_.html">"neuroglancer/sliceview/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_bounding_box_shader_helper_.html">"neuroglancer/sliceview/bounding_<wbr>box_<wbr>shader_<wbr>helper"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_chunk_format_handlers_.html">"neuroglancer/sliceview/chunk_<wbr>format_<wbr>handlers"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_chunk_format_testing_.html">"neuroglancer/sliceview/chunk_<wbr>format_<wbr>testing"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_chunk_layout_.html">"neuroglancer/sliceview/chunk_<wbr>layout"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_chunk_format_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/chunk_<wbr>format"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_decode_common_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/decode_<wbr>common"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_decode_uint32_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/decode_<wbr>uint32"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_decode_uint64_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/decode_<wbr>uint64"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_encode_benchmark_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/encode.benchmark"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_encode_common_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/encode_<wbr>common"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_encode_uint32_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/encode_<wbr>uint32"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_encode_uint64_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/encode_<wbr>uint64"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compressed_segmentation_test_util_.html">"neuroglancer/sliceview/compressed_<wbr>segmentation/test_<wbr>util"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_compresso_index_.html">"neuroglancer/sliceview/compresso/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_frontend_.html">"neuroglancer/sliceview/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_panel_.html">"neuroglancer/sliceview/panel"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_png_index_.html">"neuroglancer/sliceview/png/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_renderlayer_.html">"neuroglancer/sliceview/renderlayer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_single_texture_chunk_format_.html">"neuroglancer/sliceview/single_<wbr>texture_<wbr>chunk_<wbr>format"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_uncompressed_chunk_format_.html">"neuroglancer/sliceview/uncompressed_<wbr>chunk_<wbr>format"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_volume_backend_.html">"neuroglancer/sliceview/volume/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_volume_base_.html">"neuroglancer/sliceview/volume/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_volume_frontend_.html">"neuroglancer/sliceview/volume/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_volume_image_renderlayer_.html">"neuroglancer/sliceview/volume/image_<wbr>renderlayer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_volume_renderlayer_.html">"neuroglancer/sliceview/volume/renderlayer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_volume_segmentation_renderlayer_.html">"neuroglancer/sliceview/volume/segmentation_<wbr>renderlayer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_sliceview_wire_frame_.html">"neuroglancer/sliceview/wire_<wbr>frame"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_status_.html">"neuroglancer/status"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_trackable_alpha_.html">"neuroglancer/trackable_<wbr>alpha"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_trackable_blend_.html">"neuroglancer/trackable_<wbr>blend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_trackable_boolean_.html">"neuroglancer/trackable_<wbr>boolean"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_trackable_finite_float_.html">"neuroglancer/trackable_<wbr>finite_<wbr>float"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_trackable_value_.html">"neuroglancer/trackable_<wbr>value"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_trackable_vec3_.html">"neuroglancer/trackable_<wbr>vec3"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_annotations_.html">"neuroglancer/ui/annotations"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_cell_session_.html">"neuroglancer/ui/cell_<wbr>session"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_clone_polygon_.html">"neuroglancer/ui/clone_<wbr>polygon"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_com_session_.html">"neuroglancer/ui/com_<wbr>session"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_context_menu_.html">"neuroglancer/ui/context_<wbr>menu"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_default_clipboard_handling_.html">"neuroglancer/ui/default_<wbr>clipboard_<wbr>handling"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_default_input_event_bindings_.html">"neuroglancer/ui/default_<wbr>input_<wbr>event_<wbr>bindings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_default_viewer_.html">"neuroglancer/ui/default_<wbr>viewer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_default_viewer_setup_.html">"neuroglancer/ui/default_<wbr>viewer_<wbr>setup"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_disable_default_actions_.html">"neuroglancer/ui/disable_<wbr>default_<wbr>actions"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_drag_and_drop_.html">"neuroglancer/ui/drag_<wbr>and_<wbr>drop"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_drag_resize_.html">"neuroglancer/ui/drag_<wbr>resize"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_layer_bar_.html">"neuroglancer/ui/layer_<wbr>bar"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_layer_data_sources_tab_.html">"neuroglancer/ui/layer_<wbr>data_<wbr>sources_<wbr>tab"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_layer_drag_and_drop_.html">"neuroglancer/ui/layer_<wbr>drag_<wbr>and_<wbr>drop"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_layer_list_panel_.html">"neuroglancer/ui/layer_<wbr>list_<wbr>panel"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_layer_side_panel_.html">"neuroglancer/ui/layer_<wbr>side_<wbr>panel"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_layer_side_panel_state_.html">"neuroglancer/ui/layer_<wbr>side_<wbr>panel_<wbr>state"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_minimal_viewer_.html">"neuroglancer/ui/minimal_<wbr>viewer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_polygon_options_.html">"neuroglancer/ui/polygon_<wbr>options"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_position_drag_and_drop_.html">"neuroglancer/ui/position_<wbr>drag_<wbr>and_<wbr>drop"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_segment_list_.html">"neuroglancer/ui/segment_<wbr>list"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_segment_select_tools_.html">"neuroglancer/ui/segment_<wbr>select_<wbr>tools"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_segment_split_merge_tools_.html">"neuroglancer/ui/segment_<wbr>split_<wbr>merge_<wbr>tools"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_segmentation_display_options_tab_.html">"neuroglancer/ui/segmentation_<wbr>display_<wbr>options_<wbr>tab"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_selection_details_.html">"neuroglancer/ui/selection_<wbr>details"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_side_panel_.html">"neuroglancer/ui/side_<wbr>panel"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_side_panel_location_.html">"neuroglancer/ui/side_<wbr>panel_<wbr>location"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_state_editor_.html">"neuroglancer/ui/state_<wbr>editor"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_statistics_.html">"neuroglancer/ui/statistics"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_title_.html">"neuroglancer/ui/title"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_tool_.html">"neuroglancer/ui/tool"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_url_hash_binding_.html">"neuroglancer/ui/url_<wbr>hash_<wbr>binding"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_viewer_settings_.html">"neuroglancer/ui/viewer_<wbr>settings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_ui_volume_session_.html">"neuroglancer/ui/volume_<wbr>session"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_uint64_map_.html">"neuroglancer/uint64_<wbr>map"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_uint64_set_.html">"neuroglancer/uint64_<wbr>set"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_animation_frame_debounce_.html">"neuroglancer/util/animation_<wbr>frame_<wbr>debounce"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_array_.html">"neuroglancer/util/array"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_automatic_focus_.html">"neuroglancer/util/automatic_<wbr>focus"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_base64_.html">"neuroglancer/util/base64"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_blosc_.html">"neuroglancer/util/blosc"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_byte_range_http_requests_.html">"neuroglancer/util/byte_<wbr>range_<wbr>http_<wbr>requests"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_cancellation_.html">"neuroglancer/util/cancellation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_clipboard_.html">"neuroglancer/util/clipboard"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_color_.html">"neuroglancer/util/color"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_colorspace_.html">"neuroglancer/util/colorspace"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_compare_.html">"neuroglancer/util/compare"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_completion_.html">"neuroglancer/util/completion"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_data_type_.html">"neuroglancer/util/data_<wbr>type"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_devicetypes_.html">"neuroglancer/util/device<wbr>Types"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_disjoint_sets_.html">"neuroglancer/util/disjoint_<wbr>sets"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_disposable_.html">"neuroglancer/util/disposable"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_dom_.html">"neuroglancer/util/dom"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_drag_and_drop_.html">"neuroglancer/util/drag_<wbr>and_<wbr>drop"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_dropdown_.html">"neuroglancer/util/dropdown"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_endian_.html">"neuroglancer/util/endian"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_erf_.html">"neuroglancer/util/erf"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_error_.html">"neuroglancer/util/error"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_event_action_map_.html">"neuroglancer/util/event_<wbr>action_<wbr>map"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_float_.html">"neuroglancer/util/float"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_float32_to_string_.html">"neuroglancer/util/float32_<wbr>to_<wbr>string"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_float32array_builder_.html">"neuroglancer/util/float32array_<wbr>builder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_float64array_builder_.html">"neuroglancer/util/float64array_<wbr>builder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_gcs_bucket_listing_.html">"neuroglancer/util/gcs_<wbr>bucket_<wbr>listing"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_geom_.html">"neuroglancer/util/geom"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_google_oauth2_.html">"neuroglancer/util/google_<wbr>oauth2"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_gzip_.html">"neuroglancer/util/gzip"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_hash_.html">"neuroglancer/util/hash"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_hex_.html">"neuroglancer/util/hex"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_hierarchical_map_.html">"neuroglancer/util/hierarchical_<wbr>map"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_http_path_completion_.html">"neuroglancer/util/http_<wbr>path_<wbr>completion"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_http_request_.html">"neuroglancer/util/http_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_int16array_builder_.html">"neuroglancer/util/int16array_<wbr>builder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_int32array_builder_.html">"neuroglancer/util/int32array_<wbr>builder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_int8array_builder_.html">"neuroglancer/util/int8array_<wbr>builder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_json_.html">"neuroglancer/util/json"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_keyboard_bindings_.html">"neuroglancer/util/keyboard_<wbr>bindings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_lerp_.html">"neuroglancer/util/lerp"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_linked_list_.html">"neuroglancer/util/linked_<wbr>list"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_linked_list_0_.html">"neuroglancer/util/linked_<wbr>list.0"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_linked_list_1_.html">"neuroglancer/util/linked_<wbr>list.1"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_longest_common_prefix_.html">"neuroglancer/util/longest_<wbr>common_<wbr>prefix"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_matrix_.html">"neuroglancer/util/matrix"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_memoize_.html">"neuroglancer/util/memoize"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_message_list_.html">"neuroglancer/util/message_<wbr>list"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_mixin_.html">"neuroglancer/util/mixin"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_mouse_bindings_.html">"neuroglancer/util/mouse_<wbr>bindings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_mouse_drag_.html">"neuroglancer/util/mouse_<wbr>drag"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_npy_.html">"neuroglancer/util/npy"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_number_to_string_.html">"neuroglancer/util/number_<wbr>to_<wbr>string"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_numpy_dtype_.html">"neuroglancer/util/numpy_<wbr>dtype"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_object_id_.html">"neuroglancer/util/object_<wbr>id"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_pairing_heap_.html">"neuroglancer/util/pairing_<wbr>heap"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_pairing_heap_0_.html">"neuroglancer/util/pairing_<wbr>heap.0"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_pairing_heap_1_.html">"neuroglancer/util/pairing_<wbr>heap.1"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_random_.html">"neuroglancer/util/random"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_s3_.html">"neuroglancer/util/s3"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_s3_bucket_listing_.html">"neuroglancer/util/s3_<wbr>bucket_<wbr>listing"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_scroll_into_view_.html">"neuroglancer/util/scroll_<wbr>into_<wbr>view"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_si_units_.html">"neuroglancer/util/si_<wbr>units"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_signal_.html">"neuroglancer/util/signal"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_signal_binding_updater_.html">"neuroglancer/util/signal_<wbr>binding_<wbr>updater"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_spatial_units_.html">"neuroglancer/util/spatial_<wbr>units"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_special_protocol_request_.html">"neuroglancer/util/special_<wbr>protocol_<wbr>request"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_string_.html">"neuroglancer/util/string"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_touch_bindings_.html">"neuroglancer/util/touch_<wbr>bindings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_trackable_.html">"neuroglancer/util/trackable"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_trackable_enum_.html">"neuroglancer/util/trackable_<wbr>enum"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_uint16array_builder_.html">"neuroglancer/util/uint16array_<wbr>builder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_uint32array_builder_.html">"neuroglancer/util/uint32array_<wbr>builder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_uint64_.html">"neuroglancer/util/uint64"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_uint8array_builder_.html">"neuroglancer/util/uint8array_<wbr>builder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_vector_.html">"neuroglancer/util/vector"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_velocity_estimation_.html">"neuroglancer/util/velocity_<wbr>estimation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_watchable_map_.html">"neuroglancer/util/watchable_<wbr>map"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_wheel_zoom_.html">"neuroglancer/util/wheel_<wbr>zoom"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_util_zorder_.html">"neuroglancer/util/zorder"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_viewer_.html">"neuroglancer/viewer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_viewer_state_.html">"neuroglancer/viewer_<wbr>state"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_visibility_priority_backend_.html">"neuroglancer/visibility_<wbr>priority/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_visibility_priority_frontend_.html">"neuroglancer/visibility_<wbr>priority/frontend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_volume_rendering_backend_.html">"neuroglancer/volume_<wbr>rendering/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_volume_rendering_base_.html">"neuroglancer/volume_<wbr>rendering/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_volume_rendering_volume_render_layer_.html">"neuroglancer/volume_<wbr>rendering/volume_<wbr>render_<wbr>layer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_bounding_box_.html">"neuroglancer/webgl/bounding_<wbr>box"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_buffer_.html">"neuroglancer/webgl/buffer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_circles_.html">"neuroglancer/webgl/circles"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_colormaps_.html">"neuroglancer/webgl/colormaps"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_context_.html">"neuroglancer/webgl/context"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_dynamic_shader_.html">"neuroglancer/webgl/dynamic_<wbr>shader"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_ellipse_.html">"neuroglancer/webgl/ellipse"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_empirical_cdf_.html">"neuroglancer/webgl/empirical_<wbr>cdf"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_index_emulation_.html">"neuroglancer/webgl/index_<wbr>emulation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_lerp_.html">"neuroglancer/webgl/lerp"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_lines_.html">"neuroglancer/webgl/lines"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_offscreen_.html">"neuroglancer/webgl/offscreen"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_quad_.html">"neuroglancer/webgl/quad"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_shader_.html">"neuroglancer/webgl/shader"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_shader_lib_.html">"neuroglancer/webgl/shader_<wbr>lib"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_shader_testing_.html">"neuroglancer/webgl/shader_<wbr>testing"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_shader_ui_controls_.html">"neuroglancer/webgl/shader_<wbr>ui_<wbr>controls"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_spheres_.html">"neuroglancer/webgl/spheres"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_square_corners_buffer_.html">"neuroglancer/webgl/square_<wbr>corners_<wbr>buffer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_testing_.html">"neuroglancer/webgl/testing"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_texture_.html">"neuroglancer/webgl/texture"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_texture_access_.html">"neuroglancer/webgl/texture_<wbr>access"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_trivial_shaders_.html">"neuroglancer/webgl/trivial_<wbr>shaders"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_webgl_vertex_id_.html">"neuroglancer/webgl/vertex_<wbr>id"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_add_button_.html">"neuroglancer/widget/add_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_annotation_tool_status_.html">"neuroglancer/widget/annotation_<wbr>tool_<wbr>status"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_associate_label_.html">"neuroglancer/widget/associate_<wbr>label"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_channel_dimensions_widget_.html">"neuroglancer/widget/channel_<wbr>dimensions_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_checkbox_icon_.html">"neuroglancer/widget/checkbox_<wbr>icon"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_close_button_.html">"neuroglancer/widget/close_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_color_.html">"neuroglancer/widget/color"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_coordinate_transform_.html">"neuroglancer/widget/coordinate_<wbr>transform"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_copy_button_.html">"neuroglancer/widget/copy_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_delete_button_.html">"neuroglancer/widget/delete_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_dependent_view_widget_.html">"neuroglancer/widget/dependent_<wbr>view_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_display_dimensions_widget_.html">"neuroglancer/widget/display_<wbr>dimensions_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_enum_widget_.html">"neuroglancer/widget/enum_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_fetch_annotation_.html">"neuroglancer/widget/fetch_<wbr>annotation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_fetch_transformation_.html">"neuroglancer/widget/fetch_<wbr>transformation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_filter_button_.html">"neuroglancer/widget/filter_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_help_button_.html">"neuroglancer/widget/help_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_hidden_submit_button_.html">"neuroglancer/widget/hidden_<wbr>submit_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_histogram_.html">"neuroglancer/widget/histogram"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_icon_.html">"neuroglancer/widget/icon"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_invlerp_.html">"neuroglancer/widget/invlerp"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_layer_control_.html">"neuroglancer/widget/layer_<wbr>control"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_layer_control_channel_invlerp_.html">"neuroglancer/widget/layer_<wbr>control_<wbr>channel_<wbr>invlerp"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_layer_control_checkbox_.html">"neuroglancer/widget/layer_<wbr>control_<wbr>checkbox"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_layer_control_color_.html">"neuroglancer/widget/layer_<wbr>control_<wbr>color"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_layer_control_enum_.html">"neuroglancer/widget/layer_<wbr>control_<wbr>enum"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_layer_control_range_.html">"neuroglancer/widget/layer_<wbr>control_<wbr>range"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_layer_reference_.html">"neuroglancer/widget/layer_<wbr>reference"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_linked_layer_.html">"neuroglancer/widget/linked_<wbr>layer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_maximize_button_.html">"neuroglancer/widget/maximize_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_move_to_button_.html">"neuroglancer/widget/move_<wbr>to_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_multiline_autocomplete_.html">"neuroglancer/widget/multiline_<wbr>autocomplete"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_number_input_widget_.html">"neuroglancer/widget/number_<wbr>input_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_position_widget_.html">"neuroglancer/widget/position_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_range_.html">"neuroglancer/widget/range"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_render_scale_widget_.html">"neuroglancer/widget/render_<wbr>scale_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_save_annotation_.html">"neuroglancer/widget/save_<wbr>annotation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_scale_bar_.html">"neuroglancer/widget/scale_<wbr>bar"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_segmentation_color_mode_.html">"neuroglancer/widget/segmentation_<wbr>color_<wbr>mode"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_shader_code_widget_.html">"neuroglancer/widget/shader_<wbr>code_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_shader_controls_.html">"neuroglancer/widget/shader_<wbr>controls"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_tab_view_.html">"neuroglancer/widget/tab_<wbr>view"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_text_icon_button_.html">"neuroglancer/widget/text_<wbr>icon_<wbr>button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_text_input_.html">"neuroglancer/widget/text_<wbr>input"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_textbox_.html">"neuroglancer/widget/textbox"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_tooltip_.html">"neuroglancer/widget/tooltip"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_vec3_entry_widget_.html">"neuroglancer/widget/vec3_<wbr>entry_<wbr>widget"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_widget_virtual_list_.html">"neuroglancer/widget/virtual_<wbr>list"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_worker_rpc_.html">"neuroglancer/worker_<wbr>rpc"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_neuroglancer_worker_rpc_context_.html">"neuroglancer/worker_<wbr>rpc_<wbr>context"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
