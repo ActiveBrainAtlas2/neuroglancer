@@ -19,6 +19,7 @@ interface AnnotationJSON {
   point: Array<number>,
   type: string,
   id: string,
+  description: string
 }
 
 interface Resolution {
@@ -138,7 +139,9 @@ async updateAnnotationList(type:string) {
 
           const {session_id,prep_id, annotator, source,structure,cell_type} = CellAnnotationInfo;
           const option = document.createElement('option');
-          option.value = `${session_id}`;
+          // We need to send the prep_it to get the resolutionUrl correct
+          // option.value = `${session_id}`; // NOGOOD
+          option.value = `${prep_id}_${session_id}`;
           option.text = `${prep_id}/${annotator}/${source}/${structure}/${cell_type}`;
           annotationSelection.add(option);
         });
@@ -160,7 +163,9 @@ async updateAnnotationList(type:string) {
         response.forEach(VolumeAnnotationInfo => {
           const {session_id,prep_id, annotator, source,brain_region} = VolumeAnnotationInfo;
           const option = document.createElement('option');
-          option.value = `${session_id}`;
+          // We need to send the prep_it to get the resolutionUrl correct
+          // option.value = `${session_id}`; // NOGOOD
+          option.value = `${prep_id}_${session_id}`;
           option.text = `${prep_id}/${annotator}/${source}/${brain_region}`;
           annotationSelection.add(option);
         });
@@ -204,6 +209,7 @@ async updateAnnotationList(type:string) {
       return;
     }
     const msg =  StatusMessage.showMessage('Fetching annotations, this might take a while ...');
+    // comParameters contains prep_id. It is always the first element
     const resolutionURL = `${AppSettings.API_ENDPOINT}/resolution/${comParameters[0]}`;
     switch(type) { 
       case 'COM': { 
@@ -211,11 +217,11 @@ async updateAnnotationList(type:string) {
          break; 
       } 
       case 'Cell': { 
-        annotationURL = `${AppSettings.API_ENDPOINT}/get_marked_cell/${annotation}`;
+        annotationURL = `${AppSettings.API_ENDPOINT}/get_marked_cell/${comParameters[1]}`;
          break; 
       } 
       case 'Volume': { 
-        annotationURL = `${AppSettings.API_ENDPOINT}/get_volume/${annotation}`;
+        annotationURL = `${AppSettings.API_ENDPOINT}/get_volume/${comParameters[1]}`;
         break; 
      }  
    } 
