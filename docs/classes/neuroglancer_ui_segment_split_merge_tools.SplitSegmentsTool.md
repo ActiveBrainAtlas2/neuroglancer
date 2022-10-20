@@ -1,0 +1,465 @@
+[neuroglancer](../README.md) / [Exports](../modules.md) / [neuroglancer/ui/segment\_split\_merge\_tools](../modules/neuroglancer_ui_segment_split_merge_tools.md) / SplitSegmentsTool
+
+# Class: SplitSegmentsTool
+
+[neuroglancer/ui/segment_split_merge_tools](../modules/neuroglancer_ui_segment_split_merge_tools.md).SplitSegmentsTool
+
+**`License`**
+
+Copyright 2016 Google Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+## Hierarchy
+
+- [`Tool`](neuroglancer_ui_tool.Tool.md)<[`SegmentationUserLayer`](neuroglancer_segmentation_user_layer.SegmentationUserLayer.md)\>
+
+  ↳ **`SplitSegmentsTool`**
+
+## Table of contents
+
+### Constructors
+
+- [constructor](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#constructor)
+
+### Properties
+
+- [changed](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#changed)
+- [disposedStacks](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#disposedstacks)
+- [keyBinding](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#keybinding)
+- [layer](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#layer)
+- [refCount](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#refcount)
+- [toggle](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#toggle)
+- [wasDisposed](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#wasdisposed)
+
+### Accessors
+
+- [description](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#description)
+- [mouseState](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#mousestate)
+
+### Methods
+
+- [activate](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#activate)
+- [addRef](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#addref)
+- [dispose](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#dispose)
+- [disposed](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#disposed)
+- [refCountReachedZero](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#refcountreachedzero)
+- [registerCancellable](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#registercancellable)
+- [registerDisposer](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#registerdisposer)
+- [registerEventListener](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#registereventlistener)
+- [toJSON](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#tojson)
+- [unbind](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#unbind)
+- [unregisterDisposer](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md#unregisterdisposer)
+
+## Constructors
+
+### constructor
+
+• **new SplitSegmentsTool**(`layer`, `toggle?`)
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `layer` | [`SegmentationUserLayer`](neuroglancer_segmentation_user_layer.SegmentationUserLayer.md) | `undefined` |
+| `toggle` | `boolean` | `false` |
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[constructor](neuroglancer_ui_tool.Tool.md#constructor)
+
+#### Defined in
+
+[src/neuroglancer/ui/tool.ts:58](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/tool.ts#L58)
+
+## Properties
+
+### changed
+
+• **changed**: [`Signal`](neuroglancer_util_signal.Signal.md)<() => `void`\>
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[changed](neuroglancer_ui_tool.Tool.md#changed)
+
+#### Defined in
+
+[src/neuroglancer/ui/tool.ts:56](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/tool.ts#L56)
+
+___
+
+### disposedStacks
+
+• **disposedStacks**: `any`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[disposedStacks](neuroglancer_ui_tool.Tool.md#disposedstacks)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:52](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L52)
+
+___
+
+### keyBinding
+
+• **keyBinding**: `undefined` \| `string` = `undefined`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[keyBinding](neuroglancer_ui_tool.Tool.md#keybinding)
+
+#### Defined in
+
+[src/neuroglancer/ui/tool.ts:57](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/tool.ts#L57)
+
+___
+
+### layer
+
+• **layer**: [`SegmentationUserLayer`](neuroglancer_segmentation_user_layer.SegmentationUserLayer.md)
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[layer](neuroglancer_ui_tool.Tool.md#layer)
+
+#### Defined in
+
+[src/neuroglancer/ui/tool.ts:58](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/tool.ts#L58)
+
+___
+
+### refCount
+
+• **refCount**: `number` = `1`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[refCount](neuroglancer_ui_tool.Tool.md#refcount)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:45](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L45)
+
+___
+
+### toggle
+
+• **toggle**: `boolean` = `false`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[toggle](neuroglancer_ui_tool.Tool.md#toggle)
+
+#### Defined in
+
+[src/neuroglancer/ui/tool.ts:58](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/tool.ts#L58)
+
+___
+
+### wasDisposed
+
+• **wasDisposed**: `undefined` \| `boolean`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[wasDisposed](neuroglancer_ui_tool.Tool.md#wasdisposed)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:46](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L46)
+
+## Accessors
+
+### description
+
+• `get` **description**(): `string`
+
+#### Returns
+
+`string`
+
+#### Overrides
+
+Tool.description
+
+#### Defined in
+
+[src/neuroglancer/ui/segment_split_merge_tools.ts:383](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/segment_split_merge_tools.ts#L383)
+
+___
+
+### mouseState
+
+• `get` **mouseState**(): [`MouseSelectionState`](neuroglancer_layer.MouseSelectionState.md)
+
+#### Returns
+
+[`MouseSelectionState`](neuroglancer_layer.MouseSelectionState.md)
+
+#### Inherited from
+
+Tool.mouseState
+
+#### Defined in
+
+[src/neuroglancer/ui/tool.ts:61](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/tool.ts#L61)
+
+## Methods
+
+### activate
+
+▸ **activate**(`activation`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `activation` | [`ToolActivation`](neuroglancer_ui_tool.ToolActivation.md)<[`SplitSegmentsTool`](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md)\> |
+
+#### Returns
+
+`void`
+
+#### Overrides
+
+[Tool](neuroglancer_ui_tool.Tool.md).[activate](neuroglancer_ui_tool.Tool.md#activate)
+
+#### Defined in
+
+[src/neuroglancer/ui/segment_split_merge_tools.ts:218](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/segment_split_merge_tools.ts#L218)
+
+___
+
+### addRef
+
+▸ **addRef**(): [`SplitSegmentsTool`](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md)
+
+#### Returns
+
+[`SplitSegmentsTool`](neuroglancer_ui_segment_split_merge_tools.SplitSegmentsTool.md)
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[addRef](neuroglancer_ui_tool.Tool.md#addref)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:48](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L48)
+
+___
+
+### dispose
+
+▸ **dispose**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[dispose](neuroglancer_ui_tool.Tool.md#dispose)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L53)
+
+___
+
+### disposed
+
+▸ **disposed**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[disposed](neuroglancer_ui_tool.Tool.md#disposed)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:75](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L75)
+
+___
+
+### refCountReachedZero
+
+▸ `Protected` **refCountReachedZero**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[refCountReachedZero](neuroglancer_ui_tool.Tool.md#refcountreachedzero)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:66](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L66)
+
+___
+
+### registerCancellable
+
+▸ **registerCancellable**<`T`\>(`cancellable`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `Object` |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `cancellable` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[registerCancellable](neuroglancer_ui_tool.Tool.md#registercancellable)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:100](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L100)
+
+___
+
+### registerDisposer
+
+▸ **registerDisposer**<`T`\>(`f`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Disposer`](../modules/neuroglancer_util_disposable.md#disposer) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `f` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[registerDisposer](neuroglancer_ui_tool.Tool.md#registerdisposer)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:76](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L76)
+
+___
+
+### registerEventListener
+
+▸ **registerEventListener**(`target`, `type`, `listener`, `options?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `target` | [`EventTarget`](../modules/main_module._internal_.md#eventtarget) |
+| `type` | `string` |
+| `listener` | [`EventListenerOrEventListenerObject`](../modules/main_module._internal_.md#eventlisteneroreventlistenerobject) |
+| `options?` | `boolean` \| [`AddEventListenerOptions`](../interfaces/main_module._internal_.AddEventListenerOptions.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[registerEventListener](neuroglancer_ui_tool.Tool.md#registereventlistener)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:95](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L95)
+
+___
+
+### toJSON
+
+▸ **toJSON**(): `string`
+
+#### Returns
+
+`string`
+
+#### Overrides
+
+[Tool](neuroglancer_ui_tool.Tool.md).[toJSON](neuroglancer_ui_tool.Tool.md#tojson)
+
+#### Defined in
+
+[src/neuroglancer/ui/segment_split_merge_tools.ts:214](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/segment_split_merge_tools.ts#L214)
+
+___
+
+### unbind
+
+▸ **unbind**(): `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[unbind](neuroglancer_ui_tool.Tool.md#unbind)
+
+#### Defined in
+
+[src/neuroglancer/ui/tool.ts:67](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/ui/tool.ts#L67)
+
+___
+
+### unregisterDisposer
+
+▸ **unregisterDisposer**<`T`\>(`f`): `T`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Disposer`](../modules/neuroglancer_util_disposable.md#disposer) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `f` | `T` |
+
+#### Returns
+
+`T`
+
+#### Inherited from
+
+[Tool](neuroglancer_ui_tool.Tool.md).[unregisterDisposer](neuroglancer_ui_tool.Tool.md#unregisterdisposer)
+
+#### Defined in
+
+[src/neuroglancer/util/disposable.ts:85](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/disposable.ts#L85)

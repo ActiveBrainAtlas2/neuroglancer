@@ -1,0 +1,109 @@
+[neuroglancer](../README.md) / [Exports](../modules.md) / neuroglancer/util/cancellation
+
+# Module: neuroglancer/util/cancellation
+
+## Table of contents
+
+### Modules
+
+- [&lt;internal\&gt;](neuroglancer_util_cancellation._internal_.md)
+
+### Classes
+
+- [CancellationTokenSource](../classes/neuroglancer_util_cancellation.CancellationTokenSource.md)
+- [MultipleConsumerCancellationTokenSource](../classes/neuroglancer_util_cancellation.MultipleConsumerCancellationTokenSource.md)
+
+### Interfaces
+
+- [CancellationToken](../interfaces/neuroglancer_util_cancellation.CancellationToken.md)
+
+### Variables
+
+- [CANCELED](neuroglancer_util_cancellation.md#canceled)
+- [uncancelableToken](neuroglancer_util_cancellation.md#uncancelabletoken)
+
+### Functions
+
+- [makeCancelablePromise](neuroglancer_util_cancellation.md#makecancelablepromise)
+- [throwIfCanceled](neuroglancer_util_cancellation.md#throwifcanceled)
+
+## Variables
+
+### CANCELED
+
+• `Const` **CANCELED**: [`CancellationError`](../classes/neuroglancer_util_cancellation._internal_.CancellationError.md)
+
+Singleton instance of CancellationError thrown to indicate cancellation.
+
+#### Defined in
+
+[src/neuroglancer/util/cancellation.ts:67](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/cancellation.ts#L67)
+
+___
+
+### uncancelableToken
+
+• `Const` **uncancelableToken**: [`CancellationToken`](../interfaces/neuroglancer_util_cancellation.CancellationToken.md)
+
+CancellationToken that cannot be canceled.  This can be passed to operations that require a
+CancellationToken but will not need to be canceled.
+
+#### Defined in
+
+[src/neuroglancer/util/cancellation.ts:84](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/cancellation.ts#L84)
+
+## Functions
+
+### makeCancelablePromise
+
+▸ **makeCancelablePromise**<`T`\>(`cancellationToken`, `executor`): `Promise`<`T`\>
+
+Creates a promise and a dependent cancellation token.
+
+The dependent cancellation token will be canceled if the specified `cancellationToken` is
+canceled while the promise is pending.
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `cancellationToken` | [`CancellationToken`](../interfaces/neuroglancer_util_cancellation.CancellationToken.md) | The token that provides notification of cancellation. |
+| `executor` | (`resolve`: (`value`: `T` \| `Promise`<`T`\>) => `void`, `reject`: (`error`: `any`) => `void`, `token`: [`CancellationToken`](../interfaces/neuroglancer_util_cancellation.CancellationToken.md)) => `void` | The executor passed the resolve and reject functions for the promise, as well as the dependent cancellation token.  If cancellation occurs after either resolve or reject is called, then the dependent token is not cancelled. |
+
+#### Returns
+
+`Promise`<`T`\>
+
+A new Promise.
+
+#### Defined in
+
+[src/neuroglancer/util/cancellation.ts:178](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/cancellation.ts#L178)
+
+___
+
+### throwIfCanceled
+
+▸ **throwIfCanceled**(`token`): `void`
+
+Throws CANCELED if token.isCanceled === true.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `token` | [`CancellationToken`](../interfaces/neuroglancer_util_cancellation.CancellationToken.md) |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/neuroglancer/util/cancellation.ts:72](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/cancellation.ts#L72)

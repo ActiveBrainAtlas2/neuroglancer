@@ -1,0 +1,92 @@
+[neuroglancer](../README.md) / [Exports](../modules.md) / neuroglancer/webgl/lines
+
+# Module: neuroglancer/webgl/lines
+
+## Table of contents
+
+### Variables
+
+- [VERTICES\_PER\_LINE](neuroglancer_webgl_lines.md#vertices_per_line)
+
+### Functions
+
+- [defineLineShader](neuroglancer_webgl_lines.md#definelineshader)
+- [drawLines](neuroglancer_webgl_lines.md#drawlines)
+- [initializeLineShader](neuroglancer_webgl_lines.md#initializelineshader)
+
+## Variables
+
+### VERTICES\_PER\_LINE
+
+• `Const` **VERTICES\_PER\_LINE**: ``6``
+
+#### Defined in
+
+[src/neuroglancer/webgl/lines.ts:25](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/webgl/lines.ts#L25)
+
+## Functions
+
+### defineLineShader
+
+▸ **defineLineShader**(`builder`, `rounded?`): `void`
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `builder` | [`ShaderBuilder`](../classes/neuroglancer_webgl_shader.ShaderBuilder.md) | `undefined` |
+| `rounded` | `boolean` | `false` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/neuroglancer/webgl/lines.ts:27](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/webgl/lines.ts#L27)
+
+___
+
+### drawLines
+
+▸ **drawLines**(`gl`, `linesPerInstance`, `numInstances`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `gl` | [`WebGL2RenderingContext`](main_module._internal_.md#webgl2renderingcontext) |
+| `linesPerInstance` | `number` |
+| `numInstances` | `number` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/neuroglancer/webgl/lines.ts:116](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/webgl/lines.ts#L116)
+
+___
+
+### initializeLineShader
+
+▸ **initializeLineShader**(`shader`, `projectionParameters`, `featherWidthInPixels`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `shader` | [`ShaderProgram`](../classes/neuroglancer_webgl_shader.ShaderProgram.md) |
+| `projectionParameters` | `Object` |
+| `projectionParameters.height` | `number` |
+| `projectionParameters.width` | `number` |
+| `featherWidthInPixels` | `number` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/neuroglancer/webgl/lines.ts:121](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/webgl/lines.ts#L121)

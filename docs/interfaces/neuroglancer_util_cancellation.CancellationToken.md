@@ -1,0 +1,110 @@
+[neuroglancer](../README.md) / [Exports](../modules.md) / [neuroglancer/util/cancellation](../modules/neuroglancer_util_cancellation.md) / CancellationToken
+
+# Interface: CancellationToken
+
+[neuroglancer/util/cancellation](../modules/neuroglancer_util_cancellation.md).CancellationToken
+
+Interface used by cancelable operations to monitor whether cancellation has occurred.
+
+Note that this interface does not provide any way to trigger cancellation; for that,
+CancellationTokenSource is used.
+
+## Implemented by
+
+- [`CancellationTokenSource`](../classes/neuroglancer_util_cancellation.CancellationTokenSource.md)
+
+## Table of contents
+
+### Properties
+
+- [isCanceled](neuroglancer_util_cancellation.CancellationToken.md#iscanceled)
+
+### Methods
+
+- [add](neuroglancer_util_cancellation.CancellationToken.md#add)
+- [remove](neuroglancer_util_cancellation.CancellationToken.md#remove)
+
+## Properties
+
+### isCanceled
+
+• `Readonly` **isCanceled**: `boolean`
+
+Indicates whether cancellation has occurred.
+
+#### Defined in
+
+[src/neuroglancer/util/cancellation.ts:32](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/cancellation.ts#L32)
+
+## Methods
+
+### add
+
+▸ **add**(`handler`): () => `void`
+
+Add a cancellation handler function.  The handler will be invoked synchronously if
+this.isCanceled === true.  Otherwise, it will be invoked synchronously upon cancellation,
+unless it is removed prior to cancellation.
+
+The handler function must not throw any exceptions when called.
+
+**`Precondition`**
+
+The handler function must not already be registered.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `handler` | () => `void` | The handler function to add. |
+
+#### Returns
+
+`fn`
+
+A function that unregisters the handler.
+
+▸ (): `void`
+
+Add a cancellation handler function.  The handler will be invoked synchronously if
+this.isCanceled === true.  Otherwise, it will be invoked synchronously upon cancellation,
+unless it is removed prior to cancellation.
+
+The handler function must not throw any exceptions when called.
+
+**`Precondition`**
+
+The handler function must not already be registered.
+
+##### Returns
+
+`void`
+
+A function that unregisters the handler.
+
+#### Defined in
+
+[src/neuroglancer/util/cancellation.ts:47](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/cancellation.ts#L47)
+
+___
+
+### remove
+
+▸ **remove**(`handler`): `void`
+
+Unregister a cancellation handler function.  If this.isCanceled, or the specified handler
+function has not been registered, then this function has no effect.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `handler` | () => `void` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/neuroglancer/util/cancellation.ts:53](https://github.com/ActiveBrainAtlas2/neuroglancer/blob/91617476/src/neuroglancer/util/cancellation.ts#L53)
