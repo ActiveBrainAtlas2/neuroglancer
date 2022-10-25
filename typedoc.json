@@ -6,6 +6,5 @@
   "excludeExternals": false,
   "excludePrivate": false,
   "excludeProtected": false,
-  "ignoreCompilerErrors": true,
   "out": "docs"
 }
