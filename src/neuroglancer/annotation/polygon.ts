@@ -37,6 +37,10 @@ import { isSectionValid } from './volume';
  export const DEFAULT_POLYGON_CLONE_SECTION_OFFSET = 1;
  export const polygonSectionOffset = new TrackableValue<number>(DEFAULT_POLYGON_CLONE_SECTION_OFFSET, verifyInt);
 
+ /**
+  * RenderHelper class is used for rendering the polygon annotation.
+  * Polygons are internally rendered as line annotations. This class is for format purposes only.
+  */
  class RenderHelper extends AnnotationRenderHelper {
 
   draw(context: AnnotationRenderContext) {
@@ -344,12 +348,13 @@ export function scalePolygon(navigationState: NavigationState, annotationLayer: 
 }
 
 /**
- * Takes a polygon annotation reference and rotates the polygon wrt to its centroid.
- * @param navigationState 
+ * Takes a polygon annotation reference and rotates the polygon wrt to its centroid based on the input number of degrees.
+ * After rotation saves the updated polygon in the annotation layer state.
+ * @param navigationState The navigation State object of neuroglancer panel.
  * @param annotationLayer Layer in which the polygon annotation is present.
  * @param reference reference corresponding to the polygon.
- * @param angle Angle of rotation in degrees.
- * @returns 
+ * @param angle Angle of rotation in degrees. Eg: (30 degrees etc)
+ * @returns void
  */
 export function rotatePolygon(navigationState: NavigationState, annotationLayer: AnnotationLayerState, reference: AnnotationReference, angle: number) {
   if(reference.value?.type !== AnnotationType.POLYGON) return;
@@ -396,7 +401,7 @@ export function rotatePolygon(navigationState: NavigationState, annotationLayer:
 /**
  * Uses the rotation matrix and rotates the point with respect to the quat (first argument).
  * @param rotateQuat 
- * @param point 
+ * @param point The given input point which needs to be rotated.
  * @returns rotated point in float array.
  */
 function getTransformedPointOnRotation(rotateQuat: quat, point: number[]) : Float32Array {
@@ -412,7 +417,7 @@ function getTransformedPointOnRotation(rotateQuat: quat, point: number[]) : Floa
 
 /**
  * Takez a list of child refs (child lines of polygon) and finds its centroid.
- * @param childAnnotationRefs 
+ * @param childAnnotationRefs List of child annotation ids of a polygon.
  * @returns centroid in a float array format.
  */
 function getCentroidPolygon(childAnnotationRefs: AnnotationReference[]) : Float32Array {
@@ -432,7 +437,7 @@ function getCentroidPolygon(childAnnotationRefs: AnnotationReference[]) : Float3
 
 /**
  * Takes a point as input and returns the z-coordinate of the point.
- * @param point 
+ * @param point Float32Array of 3D point.
  * @returns z-coordinate of the point.
  */
 export function getZCoordinate(point: Float32Array): number|undefined {
@@ -442,8 +447,8 @@ export function getZCoordinate(point: Float32Array): number|undefined {
 
 /**
  * Checks if both points have same z-coordinate
- * @param point1 
- * @param point2 
+ * @param point1 Float32Array of 3D point.
+ * @param point2 Float32Array of 3D point.
  * @returns true if both points have same z-coordinate otherwise false.
  */
 export function checkIfSameZCoordinate(point1: Float32Array, point2: Float32Array): boolean {
@@ -466,6 +471,12 @@ export function copyZCoordinate(point1: Float32Array|undefined, point2: Float32A
   return;
 }
 
+/**
+ * Takes an id parameter and returns a list of annotation ids which are neighbours of this annotation.
+ * @param childAnns Input list of annotation Ids
+ * @param id Annotation id for which the neighbours are getting computed
+ * @returns A list of annotation ids that are neighbours.
+ */
 export function getNeighbouringAnnIds(childAnns: string[], id: string) : string[] | undefined {
   const curIdx = childAnns.findIndex((value) => value === id);
   if (curIdx == -1) {
@@ -476,6 +487,13 @@ export function getNeighbouringAnnIds(childAnns: string[], id: string) : string[
   return [childAnns[leftIdx], childAnns[rightIdx]];
 }
 
+/**
+ * Takes an annotation layer and checks if there are no duplicate annotations at a particular point.
+ * @param annotationLayer Annotation layer state object.
+ * @param ann Input polygon annotation.
+ * @param point The point for which it needs to be computed if the point is unique or not.
+ * @returns Returns True if the point is unique otherwise it returns False.
+ */
 export function isPointUniqueInPolygon(annotationLayer: AnnotationLayerState, ann: Polygon, point: Float32Array): boolean {
   for(let i = 0; i < ann.childAnnotationIds.length; i++) {
     const childAnnRef = annotationLayer.source.getReference(ann.childAnnotationIds[i]);

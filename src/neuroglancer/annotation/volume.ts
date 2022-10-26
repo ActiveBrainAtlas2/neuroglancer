@@ -23,6 +23,10 @@
 import { AnnotationLayerState } from './annotation_layer_state';
 import { getZCoordinate } from './polygon';
 
+/**
+  * RenderHelper class is used for rendering the polygon annotation.
+  * Polygons are internally rendered as line annotations. This class is for format purposes only.
+  */
  class RenderHelper extends AnnotationRenderHelper {
 
   draw(context: AnnotationRenderContext) {
@@ -51,7 +55,7 @@ import { getZCoordinate } from './polygon';
  /**
   * This function takes a volume id as input and finds if there is a polygon already present at the input
   * zCoordiante, if the polygon is present returns false
-  * @param annotationLayer 
+  * @param annotationLayer The annotation layer state object of the layer in which polygon is drawn.
   * @param id volume id
   * @param zCoordinate z coordinate input.
   * @returns True, if polygon is not present otherwise false.

@@ -286,10 +286,20 @@ export const annotationPropertyTypeHandlers:
       },
     };
 
+/**
+ * Function takes an annotation and returns True if the type of annotation is collection otherwise false
+ * @param annotation Input annotation
+ * @returns boolean indicating whether the annotation is of type collection or not.
+ */
 export function isTypeCollection(annotation: Annotation) : boolean {
   return annotation.type === AnnotationType.POLYGON || annotation.type === AnnotationType.VOLUME;
 }
 
+/**
+ * Returns if the annotation's children are dummy annotation. (Ex: In case of polygon annotation, the line segments are dummy annotation.) 
+ * @param annotation Input annotation element.
+ * @returns boolean indicating if the child annotations are dummy or not.
+ */
 export function isChildDummyAnnotation(annotation: Annotation) : boolean {
   return annotation.type === AnnotationType.POLYGON;
 }
@@ -494,25 +504,42 @@ export interface Ellipsoid extends AnnotationBase {
   type: AnnotationType.ELLIPSOID;
 }
 
+/**
+ * An interface to indicate a collection annotation.
+ * Collection annotation contains child collection of annotations.
+ * Eg: Polygon (group of line segments), Volume (group of polygons)
+ */
 export interface Collection extends AnnotationBase {
   source: Float32Array;
   childAnnotationIds: string[];
   childrenVisible: boolean;
 }
 
+/**
+ * An interface to indicate Polygon annotation. Inherits collection interface.
+ */
 export interface Polygon extends Collection {
   type: AnnotationType.POLYGON;
 }
 
+/**
+ * An interface to indicate Volume annotation. Inherits collection interface.
+ */
 export interface Volume extends Collection {
   type: AnnotationType.VOLUME;
 }
 
+/**
+ * An interface to indicate Centre of Mass annotation.
+ */
 export interface Com extends AnnotationBase {
   point: Float32Array;
   type: AnnotationType.COM;
 }
 
+/**
+ * An interface to indicate Cell annotation.
+ */
 export interface Cell extends AnnotationBase {
   point: Float32Array;
   category?: string|undefined;

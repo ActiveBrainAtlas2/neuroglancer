@@ -848,8 +848,8 @@ export class AnnotationLayerView extends Tab {
   /**
    * Returns the index at which the annotation should be located based on its z-coordinate.
    * @param annotation annotation input id.
-   * @param info 
-   * @param state 
+   * @param info Annotation layer info.
+   * @param state Annotation layer state of current panel.
    * @returns index at which the annotation should be located in its parent list based on its z-coordinate.
    */
   private getSortedIndexBasedOnPolygonSection(annotation: Annotation, info: AnnotationLayerViewAttachedState,
@@ -955,8 +955,8 @@ export class AnnotationLayerView extends Tab {
   }
   /**
    * Returns the level of the annotation id based on heirarchy.
-   * @param annotationId 
-   * @param state 
+   * @param annotationId Annotation id of input.
+   * @param state Annotation layer state of panel.
    * @returns a number indicating the level, 
    * eg: if the annotation doesn't have parent
    * level is 0, if the annotation has a parent and if the parent does not have any parent 
