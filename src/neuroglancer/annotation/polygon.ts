@@ -30,11 +30,29 @@ import { arraysEqual } from '../util/array';
  import { AnnotationLayerState } from './annotation_layer_state';
 import { isSectionValid } from './volume';
  
+/**
+ * Indicates the default value of polygon scale percentage. Default value is 1%.
+ */
  export const DEFAULT_POLYGON_SCALE_PERCENTAGE = 1;
+ /**
+  * Polygon scale percentage value set from the form submitted by user. Default value is same as DEFAULT_POLYGON_SCALE_PERCENTAGE
+  */
  export const polygonScalePercentage = new TrackableValue<number>(DEFAULT_POLYGON_SCALE_PERCENTAGE, verifyNonNegativeFloat);
+ /**
+ * Indicates the default value of polygon rotate angle. Default value is 1 degree.
+ */
  export const DEFAULT_POLYGON_ROTATE_ANGLE = 1;
+ /**
+  * Polygon rotate angle value set from the form submitted by user. Default value is same as DEFAULT_POLYGON_ROTATE_ANGLE
+  */
  export const polygonRotateAngle = new TrackableValue<number>(DEFAULT_POLYGON_ROTATE_ANGLE, verifyNonNegativeFloat);
+ /**
+ * Indicates the default value of polygon clone section offset. Default value is 1. (clones from section 's' to section 's+1')
+ */
  export const DEFAULT_POLYGON_CLONE_SECTION_OFFSET = 1;
+ /**
+  * Polygon clone section offset set from the form submitted by user. Default value is same as DEFAULT_POLYGON_CLONE_SECTION_OFFSET
+  */
  export const polygonSectionOffset = new TrackableValue<number>(DEFAULT_POLYGON_CLONE_SECTION_OFFSET, verifyInt);
 
  /**
