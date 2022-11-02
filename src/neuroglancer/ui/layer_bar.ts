@@ -101,8 +101,11 @@ class LayerWidget extends RefCounted {
     });
     const deleteElement = makeDeleteButton();
     deleteElement.title = 'Delete this layer';
+    const deleteConfirmText = `Are you sure you want to delete the annotation layer ?\nAnnotation layer name: ${this.layer.name}`;
     deleteElement.addEventListener('click', (event: MouseEvent) => {
-      deleteLayer(this.layer);
+      if(confirm(deleteConfirmText)) {
+        deleteLayer(this.layer);
+      }
       event.stopPropagation();
     });
     element.appendChild(layerNumberElement);

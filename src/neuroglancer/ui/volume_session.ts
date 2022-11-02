@@ -58,7 +58,15 @@ import { LegacyTool } from './tool';
       configTable.appendChild(segmentationRow);
       configTable.classList.add('volume-session-table');
 
+      const closeButton = document.createElement('button');
+      closeButton.innerText = 'X';
+      closeButton.classList.add('close-btn');
+      closeButton.addEventListener('click', () => {
+        this.dispose();
+      });
+
       this.content.appendChild(configTable);
+      this.content.appendChild(closeButton);
     }
     /**
      * 

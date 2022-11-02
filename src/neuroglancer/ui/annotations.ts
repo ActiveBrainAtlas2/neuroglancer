@@ -204,6 +204,33 @@ function setLayerPosition(
   layer.setLayerPosition(chunkTransform.modelTransform, layerPosition);
 }
 
+function getConfirmDeleteDisplayText(annotation: Annotation): string {
+  if (annotation.type === AnnotationType.VOLUME) {
+    return `Are you sure you want to delete the annotation ?\nAnnotation type: Volume\nAnnotation label: ${annotation.description}`;
+  } else if (annotation.type === AnnotationType.CELL) {
+    return `Are you sure you want to delete the annotation ?\nAnnotation type: Cell\nAnnotation label: ` + 
+    `${annotation.description}\nAnnotation category: ${annotation.category}\nAnnotation x,y,z: ${stringifyPoint(annotation.point)}`;
+  } else if (annotation.type === AnnotationType.COM) {
+    return `Are you sure you want to delete the annotation ?\nAnnotation type: COM\nAnnotation label: ` +
+     `${annotation.description}\nAnnotation x,y,z: ${stringifyPoint(annotation.point)}`;
+  }
+  return ``;
+}
+
+function stringifyPoint(point: Float32Array): string {
+  let ans: string = '';
+  for(let i = 0; i < point.length; i++) {
+    ans += Math.trunc(point[i]);
+    if (i !== point.length - 1) ans += ",";
+  }
+  return ans;
+}
+
+function shouldConfirmAnnotationDelete(annotation: Annotation): boolean {
+  return annotation.type === AnnotationType.VOLUME || annotation.type === AnnotationType.CELL
+  || annotation.type === AnnotationType.COM;
+}
+
 
 function visitTransformedAnnotationGeometry(
     annotation: Annotation, chunkTransform: ChunkTransformParameters,
@@ -1052,7 +1079,14 @@ export class AnnotationLayerView extends Tab {
           event.preventDefault();
           const ref = state.source.getReference(annotation.id);
           try {
-            state.source.delete(ref);
+            if (shouldConfirmAnnotationDelete(annotation)) {
+              const confirmDeleteDisplayText = getConfirmDeleteDisplayText(annotation);
+              if (confirm(confirmDeleteDisplayText)) {
+                state.source.delete(ref);
+              }
+            } else {
+              state.source.delete(ref);
+            }
           } finally {
             ref.dispose();
           }
