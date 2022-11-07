@@ -512,16 +512,16 @@ export class AnnotationUserLayer extends Base {
           }
         }));
     tab.element.insertBefore(renderScaleControls.element, tab.element.firstChild);
-    {
-      const checkbox = tab.registerDisposer(
-          new TrackableBooleanCheckbox(this.annotationDisplayState.ignoreNullSegmentFilter));
-      const label = document.createElement('label');
-      label.appendChild(document.createTextNode('Ignore null related segment filter'));
-      label.title =
-          'Display all annotations if filtering by related segments is enabled but no segments are selected';
-      label.appendChild(checkbox.element);
-      tab.element.appendChild(label);
-    }
+    // {
+    //   const checkbox = tab.registerDisposer(
+    //       new TrackableBooleanCheckbox(this.annotationDisplayState.ignoreNullSegmentFilter));
+    //   const label = document.createElement('label');
+    //   label.appendChild(document.createTextNode('Ignore null related segment filter'));
+    //   label.title =
+    //       'Display all annotations if filtering by related segments is enabled but no segments are selected';
+    //   label.appendChild(checkbox.element);
+    //   tab.element.appendChild(label);
+    // }
     tab.element.appendChild(
         tab.registerDisposer(new LinkedSegmentationLayersWidget(this.linkedSegmentationLayers))
             .element);
