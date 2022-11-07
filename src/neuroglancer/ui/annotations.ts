@@ -23,7 +23,7 @@ import './volume_session.css';
 import './cell_session.css';
 import './com_session.css';
 import {AppSettings} from 'neuroglancer/services/service';
-import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Collection, Ellipsoid, isChildDummyAnnotation, isTypeCollection, Line, Polygon, Volume} from 'neuroglancer/annotation';
+import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Collection, Ellipsoid, isChildDummyAnnotation, isDummyAnnotation, isTypeCollection, Line, Polygon, Volume} from 'neuroglancer/annotation';
 import {AnnotationDisplayState, AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
 import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
 import {AnnotationLayer, PerspectiveViewAnnotationLayer, SliceViewAnnotationLayer} from 'neuroglancer/annotation/renderlayer';
@@ -1072,6 +1072,7 @@ export class AnnotationLayerView extends Tab {
     const maybeAddDeleteButton = () => {
       if (state.source.readonly) return;
       if (deleteButton !== undefined) return;
+      if (isDummyAnnotation(annotation)) return;
       deleteButton = makeDeleteButton({
         title: 'Delete annotation',
         onClick: event => {

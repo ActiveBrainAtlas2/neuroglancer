@@ -304,6 +304,16 @@ export function isChildDummyAnnotation(annotation: Annotation) : boolean {
   return annotation.type === AnnotationType.POLYGON;
 }
 
+/**
+ * Returns if the annotation is dummy annotation. (Ex: In case of polygon annotation, the line segments are dummy annotation.) 
+ * @param annotation Input annotation element.
+ * @returns boolean indicating if the annotation is dummy or not.
+ */
+export function isDummyAnnotation(annotation: Annotation) : boolean {
+  return annotation.type === AnnotationType.LINE && 
+  (annotation.parentAnnotationId !== null || annotation.parentAnnotationId !== undefined);
+}
+
 export function getPropertyOffsets(
     rank: number, propertySpecs: readonly Readonly<AnnotationPropertySpec>[]) {
   let serializedBytes = 0;
