@@ -18,7 +18,7 @@
 <h1>Variable glsl_clipLineToDepthRange<code class="tsd-tag ts-flagConst">Const</code> </h1></div>
 <div class="tsd-signature">glsl_<wbr/>clip<wbr/>Line<wbr/>To<wbr/>Depth<wbr/>Range<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;\nbool clipLineToDepthRange(inout highp vec4 a, inout highp vec4 b) {\n  highp float tmin = 0.0, tmax = 1.0;\n  highp float k1 = b.w - a.w + a.z - b.z;\n  highp float k2 = a.w - b.w + a.z - b.z;\n  highp float q1 = (a.z - a.w) / k1;\n  highp float q2 = (a.z + a.w) / k2;\n  if (k1 &gt; 0.0) tmin = max(tmin, q1);\n  else if (k1 &lt; 0.0) tmax = min(tmax, q1);\n  if (k2 &gt; 0.0) tmax = min(tmax, q2);\n  else if (k2 &lt; 0.0) tmin = max(tmin, q2);\n  if (tmin &lt;= tmax) {\n    highp vec4 tempA = a;\n    highp vec4 tempB = b;\n    a = mix(tempA, tempB, tmin);\n    b = mix(tempA, tempB, tmax);\n    return true;\n  }\n  return false;\n}\n&quot;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/ce0151b7/src/neuroglancer/webgl/shader_lib.ts#L362">src/neuroglancer/webgl/shader_lib.ts:362</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/ActiveBrainAtlas2/neuroglancer/blob/698a38d0/src/neuroglancer/webgl/shader_lib.ts#L362">src/neuroglancer/webgl/shader_lib.ts:362</a></li></ul></aside></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
