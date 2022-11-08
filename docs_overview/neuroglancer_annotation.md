@@ -1,4 +1,4 @@
-### High level overview of Annotation Module
+#### High level overview of Annotation Module
 - The `index.ts` module in `neuroglancer/annotation` directory supports common operations for annotations across neuroglancer. Currently neuroglancer supports the below annotations:
   - Cell
   - Point
