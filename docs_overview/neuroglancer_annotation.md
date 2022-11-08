@@ -8,5 +8,5 @@
 - The `index.ts` module supports the below common functionality for all annotations.
    - Provides the functionality to convert the annotations to JSON state while exporting to database.
    - Provides the functionality to serialize the annotation coordinates to be rendered by WebGL.
-   - Also has the definitions for datatypes included for all annotations as mentioned above.
+   - Includes definitions for datatypes included for all annotations as mentioned above.
    - Includes utility functions which are used by different annotation modules.
