@@ -1,3 +1,10 @@
+/**
+ * This module loads the JSON state from the Django database portal
+ * via the REST API. The original data was all stored in a very very long
+ * URL which you could see in the location bar of the browser. Now, all this
+ * JSON data is stored in the relational database and the CRUD (create, retrieve, update and delete)
+ * operations are take care of by this module interfacing with the REST API.
+ */
 import './state_loader.css';
 
 import { Completion } from 'neuroglancer/util/completion';
@@ -37,7 +44,12 @@ function fuzzySearch(needle: string, haystack: string) {
     }
     return true;
 }
-
+/**
+ * This function gets the two parameters from the URL
+ * 1. The id which is the primary key in the neuroglancer state table
+ * 2. multi which is a boolean saying if we are in multi user mode or not.
+ * @returns a JSON dictionary of the two variables
+ */
 function getUrlParams() {
     const href = new URL(location.href);
     const id = href.searchParams.get('id');
@@ -69,6 +81,10 @@ function makeCompletionElementWithState(completion: CompletionWithState) {
     return element;
 }
 
+/**
+ * This class takes care of taking the JSON data
+ * and put it into a state that Neuroglancer can use.
+ */
 export class StateAutocomplete extends AutocompleteTextInput {
     public _allCompletions: CompletionWithState[] = [];
     private curCompletions: CompletionWithState[] = [];
@@ -121,31 +137,33 @@ export class StateAutocomplete extends AutocompleteTextInput {
     }
 }
 
+/**
+ * This class works with the REST API and interfaces
+ * with the Neuroglancer state.
+ */
 export class StateAPI {
     constructor(private userUrl: string, private stateUrl: string) { }
 
-    public getUser(): Promise<User> {
+    public async getUser(): Promise<User> {
         const url = this.userUrl;
         console.log(url);
 
-        return fetchOk(url, {
+        const response = await fetchOk(url, {
             method: 'GET',
             credentials: 'include',
-        }).then(response => {
-            return response.json();
-        }).then(json => {
-            return json;
         });
+        const json = await response.json();
+        return json;
     }
 
-    public getState(stateID: number | string): Promise<State> {
+    public async getState(stateID: number | string): Promise<State> {
         const url = `${this.stateUrl}/${stateID}`;
 
-        return fetchOk(url, {
-            method: 'GET',
-        }).then(response => {
-            return response.json();
-        }).then(json => {
+        try {
+            const response = await fetchOk(url, {
+                method: 'GET',
+            });
+            const json = await response.json();
             return {
                 state_id: json['id'],
                 owner: json['owner'],
@@ -154,7 +172,7 @@ export class StateAPI {
                 url: json['url'],
                 readonly: json['readonly']
             };
-        }).catch(err => {
+        } catch (err) {
             StatusMessage.showTemporaryMessage('The URL is deleted from database. Please check again.');
             return {
                 state_id: 0,
@@ -164,10 +182,10 @@ export class StateAPI {
                 url: {},
                 readonly: false
             };
-        });
+        }
     }
 
-    newState(state: State): Promise<State> {
+    async newState(state: State): Promise<State> {
         const url = this.stateUrl;
         const body = {
             id: state['state_id'],
@@ -177,32 +195,30 @@ export class StateAPI {
             url: state['url'],
             readonly: state['readonly']
         };
-        return fetchOk(url, {
+        const response = await fetchOk(url, {
             method: 'POST',
-            credentials: 'omit', // Required to pass CSRF Failed error
+            credentials: 'omit',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(body, null, 0),
-        }).then(response => {
-            return response.json();
-        }).then(json => {
-            const href = new URL(location.href);
-            href.searchParams.set('id', json['id']);
-            window.history.pushState({}, '', href.toString());
-            urlParams.stateID = json['id'];
-            return {
-                state_id: json['id'],
-                owner: json['owner'],
-                comments: json['comments'],
-                user_date: json['user_date'],
-                url: json['url'],
-                readonly: json['readonly']
-            };
         });
+        const json = await response.json();
+        const href = new URL(location.href);
+        href.searchParams.set('id', json['id']);
+        window.history.pushState({}, '', href.toString());
+        urlParams.stateID = json['id'];
+        return {
+            state_id: json['id'],
+            owner: json['owner'],
+            comments: json['comments'],
+            user_date: json['user_date'],
+            url: json['url'],
+            readonly: json['readonly']
+        };
     }
 
-    saveState(stateID: number | string, state: State): Promise<State> {
+    async saveState(stateID: number | string, state: State): Promise<State> {
         const url = `${this.stateUrl}/${stateID}`;
         const body = {
             id: state['state_id'],
@@ -213,49 +229,44 @@ export class StateAPI {
             readonly: state['readonly']
         };
 
-        return fetchOk(url, {
+        const response = await fetchOk(url, {
             method: 'PUT',
-            credentials: 'omit', // Required to pass CSRF Failed error
+            credentials: 'omit',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(body, null, 0),
-        }).then(response => {
-            return response.json();
-        }).then(json => {
-            return {
-                state_id: json['id'],
-                owner: json['owner'],
-                comments: json['comments'],
-                user_date: json['user_date'],
-                url: json['url'],
-                readonly: json['readonly']
-            };
         });
+        const json = await response.json();
+        return {
+            state_id: json['id'],
+            owner: json['owner'],
+            comments: json['comments'],
+            user_date: json['user_date'],
+            url: json['url'],
+            readonly: json['readonly']
+        };
     }
 
-    public segmentVolume(stateID: number | string, volumeId: string): Promise<Segmentation> {
+    public async segmentVolume(stateID: number | string, volumeId: string): Promise<Segmentation> {
         const url = `${this.stateUrl.substring(0, this.stateUrl.lastIndexOf('/'))}/contour_to_segmentation/${stateID}/${volumeId}`;
 
-        return fetchOk(url, {
+        const response = await fetchOk(url, {
             method: 'GET',
-        }).then(response => {
-            return response.json();
-        }).then(json => {
-            return {
-                url: json['url'],
-                name: json['name']
-            };
         });
+        const json = await response.json();
+        return {
+            url: json['url'],
+            name: json['name']
+        };
     }
 
-    public saveAnnotations(stateId: number | string, layerName: string): Promise<any> {
+    public async saveAnnotations(stateId: number | string, layerName: string): Promise<any> {
         const url = `${this.stateUrl.substring(0, this.stateUrl.lastIndexOf('/'))}/save_annotations/${stateId}/${layerName}`;
-        return fetchOk(url, {
+        const response = await fetchOk(url, {
             method: 'GET',
-        }).then(response => {
-            return response.json();
         });
+        return await response.json();
     }
 }
 
@@ -266,6 +277,10 @@ export const stateAPI = new StateAPI(
 
 export const urlParams = getUrlParams();
 
+/**
+ * This class takes care of the buttons and inputs used by the user
+ * to load a specific Neuroglancer state.
+ */
 export class StateLoader extends RefCounted {
     element = document.createElement('div');
 
@@ -324,6 +339,10 @@ export class StateLoader extends RefCounted {
         });
     }
 
+    /**
+     * This method makes sure the Neuroglancer state is valid JSON
+     * @param state the JSON data 
+     */
     private validateState(state: State | null) {
         if (state !== null) {
             this.stateID = state['state_id'];
@@ -333,6 +352,9 @@ export class StateLoader extends RefCounted {
         }
     }
 
+    /**
+     * A method used to fetch the Neuroglancer state. This is the R in the CRUD operations.
+     */
     private getState() {
         this.stateAPI.getState(this.stateID).then(state => {
             this.validateState(state);
@@ -347,6 +369,11 @@ export class StateLoader extends RefCounted {
         });
     }
 
+    /**
+     * This method is used when the user clicks the 'Save' button. 
+     * This is the U in the CRUD operations.
+     * @returns the state object
+     */
     private saveState() {
         const comments = this.input.value;
         if (comments.length === 0) {
@@ -370,6 +397,11 @@ export class StateLoader extends RefCounted {
         });
     }
 
+    /**
+     * This is used when the user clicks the 'New' button. 
+     * This is the C in the CRUD operations.
+     * @returns returns a JSON object of state
+     */
     private newState() {
         const comments = this.input.value;
         if (comments.length === 0) {
@@ -396,6 +428,13 @@ export class StateLoader extends RefCounted {
         });
     }
 
+    /**
+     * This method is used for the segmentation volume. It calls the saveState method
+     * after preparing the segment volume for saving.
+     * @param volumeId ID of the volume
+     * @param successCallback method to determine if the method was successful.
+     * @returns Nothing if there is no comments.
+     */
     public segmentVolume(volumeId: string, successCallback: (_ :Segmentation) => void): void {
         const comments = this.input.value;
         if (comments.length === 0) {
@@ -428,6 +467,11 @@ export class StateLoader extends RefCounted {
         });
     }
 
+    /**
+     * This is used when the user clicks the 'Save Annotations' button.
+     * @param layerName The name of the layer the user is saving.
+     * @returns Nothing if there is an error.
+     */
     public saveAnnotations(layerName: string): void {
         const comments = this.input.value;
         if (comments.length === 0) {
@@ -458,6 +502,9 @@ export class StateLoader extends RefCounted {
         });
     }
 
+    /**
+     * A method to reset the state from what is stored in the database.
+     */
     private resetState() {
         this.viewer.urlHashBinding.resetDatabaseState();
     }
