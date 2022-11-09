@@ -5,16 +5,18 @@ Neuroglancer is a WebGL-based viewer for volumetric data. Below is an overview o
 
 [Polygon Module](modules/neuroglancer_annotation_polygon.html): Supports various operations for rendering Polygons.
 
-[COM Module](modules/neuroglancer_annotation.html): Supports various operations for rendering COMs.
+[COM Module](modules/neuroglancer_annotation_com.html): Supports various operations for rendering COMs.
 
-[Cell Module](modules/neuroglancer_annotation.html): Supports various operations for rendering Cells.
+[Cell Module](modules/neuroglancer_annotation_cell.html): Supports various operations for rendering Cells.
 
-[Volume Module](modules/neuroglancer_annotation.html): Supports various operations for rendering Volumes.
+[Volume Module](modules/neuroglancer_annotation_volume.html): Supports various operations for rendering Volumes.
 
-[Annotation UI Module](modules/neuroglancer_annotation.html): Supports multiple operations for annotations across neuroglancer for drawing UI elements.
+[Annotation UI Module](modules/neuroglancer_ui_annotations.html): Supports multiple operations for annotations across neuroglancer for drawing UI elements.
 
-[Volume session UI Module](modules/neuroglancer_annotation.html): Responsible for creating the Volume session UI element.
+[Volume session UI Module](modules/neuroglancer_ui_volume_session.html): Responsible for creating the Volume session UI element.
 
-[COM session UI Module](modules/neuroglancer_annotation.html): Responsible for creating the COM session UI element.
+[COM session UI Module](modules/neuroglancer_ui_com_session.html): Responsible for creating the COM session UI element.
 
-[Cell session UI Module](modules/neuroglancer_annotation.html): Responsible for creating the Cell session UI element.
+[Cell session UI Module](modules/neuroglancer_ui_cell_session.html): Responsible for creating the Cell session UI element.
+
+[State loader Module](modules/neuroglancer_services_state_loader.html): Responsible for the loading the JSON state from the Django database portal via the REST API.
