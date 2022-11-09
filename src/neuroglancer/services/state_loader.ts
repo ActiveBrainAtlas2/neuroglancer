@@ -24,7 +24,7 @@ import { Segmentation, State } from 'neuroglancer/services/state';
  * @param needle
  * @param haystack
  */
-function fuzzySearch(needle: string, haystack: string) {
+export function fuzzySearch(needle: string, haystack: string) {
     const hlen = haystack.length;
     const nlen = needle.length;
     if (nlen > hlen) {
@@ -50,7 +50,7 @@ function fuzzySearch(needle: string, haystack: string) {
  * 2. multi which is a boolean saying if we are in multi user mode or not.
  * @returns a JSON dictionary of the two variables
  */
-function getUrlParams() {
+export function getUrlParams() {
     const href = new URL(location.href);
     const id = href.searchParams.get('id');
     const locationVariables = {
@@ -63,7 +63,7 @@ function getUrlParams() {
 /**
  * Define the state completion cell
  */
-interface CompletionWithState extends Completion {
+export interface CompletionWithState extends Completion {
     date: string;
     json: string;
 }
@@ -72,7 +72,7 @@ interface CompletionWithState extends Completion {
  * Define how to display a state completion cell
  * @param completion
  */
-function makeCompletionElementWithState(completion: CompletionWithState) {
+export function makeCompletionElementWithState(completion: CompletionWithState) {
     const element = document.createElement('div');
     element.textContent = completion.value || '';
     const dateElement = document.createElement('div');
