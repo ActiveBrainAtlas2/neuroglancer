@@ -21,6 +21,27 @@
 <section class="tsd-panel tsd-typography"></section></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
+<div>
+  <h4 id="high-level-overview-of-annotation-module">High level overview of Annotation Module</h4>
+<ul>
+<li>The <code>index.ts</code> module in <code>neuroglancer/annotation</code> directory supports common operations for annotations across neuroglancer. Currently neuroglancer supports the below annotations:<ul>
+<li>Cell</li>
+<li>Point</li>
+<li>COM (Centre of Mass)</li>
+<li>Polygon</li>
+<li>Volume</li>
+</ul>
+</li>
+<li>The <code>index.ts</code> module supports the below common functionality for all annotations.<ul>
+<li>Provides the functionality to convert the annotations to JSON state while exporting to database.</li>
+<li>Provides the functionality to serialize the annotation coordinates to be rendered by WebGL.</li>
+<li>Includes definitions for datatypes included for all annotations as mentioned above.</li>
+<li>Includes utility functions which are used by different annotation modules.</li>
+</ul>
+</li>
+</ul>
+
+</div>
 <h3 class="tsd-index-heading uppercase">Index</h3>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Enumerations</h3>
