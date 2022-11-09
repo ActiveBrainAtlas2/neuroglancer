@@ -1,5 +1,5 @@
 #### High level overview of UI Annotation Module
-- The `annotations.ts` module in `neuroglancer/annotation` directory supports multiple operations for annotations across neuroglancer for drawing UI elements. Currently neuroglancer supports the below annotations:
+- The `annotations.ts` module in `neuroglancer/ui` directory supports multiple operations for annotations across neuroglancer for drawing UI elements. Currently neuroglancer supports the below annotations:
   - Cell
   - Point
   - COM (Centre of Mass)
