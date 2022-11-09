@@ -9,4 +9,4 @@
    - Provides the functionality to draw annotations using `Tool` class, each annotation has a separate tool class which inherits the base class `Tool`. For eg: `PlacePolygonTool` is the class used to draw polygons.
    - Provides the functionality to fetch the list of landmarks (for Volume) and categories (for Cell) used for labeling various annotations.
    - Provides the functionality to maintain all the annotations in a particular layer by storing them in a map with key as annotation id and value as annotation. Class `AnnotationLayerView` is used to implement this.
-   - Includes utility functions/enums which are used by different annotation tools. For eg: we have an enum `PolygonToolMode` to which takes values: `DRAW`, `EDIT` and `VIEW` indicating different modes in which the tool operates.
+   - Includes utility functions/enums which are used by different annotation tools. For eg: we have an enum `PolygonToolMode` which takes values: `DRAW`, `EDIT` and `VIEW` indicating different modes in which the tool operates.
