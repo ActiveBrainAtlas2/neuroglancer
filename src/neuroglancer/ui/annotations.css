@@ -80,6 +80,7 @@
   margin-left: 1ch;
   align-self: start;
   visibility: hidden;
+  display: flex;
 }
 
 .neuroglancer-annotation-list-entry:hover > .neuroglancer-annotation-list-entry-delete {

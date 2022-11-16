@@ -37,6 +37,7 @@ export function setupDefaultViewer() {
             NEUROGLANCER_DEFAULT_STATE_FRAGMENT :
             undefined
       }));
+  viewer.urlHashBinding = hashBinding;
   viewer.registerDisposer(hashBinding.parseError.changed.add(() => {
     const {value} = hashBinding.parseError;
     if (value !== undefined) {

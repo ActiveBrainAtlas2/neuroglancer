@@ -598,6 +598,48 @@ export class MultiscaleAnnotationSource extends SharedObject implements
     }
   }
   /**
+   * Takes a annotation reference and update the visibility of that annotation.
+   * @param reference 
+   * @param visibility 
+   * @returns void
+   */
+   updateVisibility(reference: AnnotationReference, visibility: number) {
+    if (!reference.value) return;
+    const newAnn = {...reference.value};
+    const visibilityIdx = this.properties.findIndex(x => x.identifier === 'visibility');
+    if (newAnn.properties.length <= visibilityIdx) return;
+    newAnn.properties[visibilityIdx] = visibility;
+    this.update(reference, newAnn);
+
+    if (isTypeCollection(newAnn)) {
+      const collection = <Collection>newAnn;
+      for (let i = 0; i < collection.childAnnotationIds.length; i++) {
+        const childRef = this.getReference(collection.childAnnotationIds[i]);
+        this.updateVisibility(childRef, visibility);
+        childRef.dispose();
+      }
+    }
+  }
+  /**
+   * Takes a annotation id and finds the visibility of that annotation.
+   * @param annotationId 
+   * @returns void
+   */
+   getVisibility(annotationId: string): number {
+    const reference = this.getReference(annotationId);
+    if (!reference.value) {
+      reference.dispose();
+      return 1.0;
+    }
+    const ann = reference.value;
+    const visibilityIdx = this.properties.findIndex(x => x.identifier === 'visibility');
+    if (ann.properties.length <= visibilityIdx) {
+      reference.dispose();
+      return 1.0;
+    }
+    return ann.properties[visibilityIdx];
+  }
+  /**
    * Takes the annotation reference and updates its description with new string.
    * @param reference 
    * @param description 

@@ -35,9 +35,11 @@
          rank);
      builder.addVarying('highp vec4', 'vBorderColor');
      builder.addVarying(`highp float`, 'vComOpacity');
+     builder.addVarying(`highp float`, 'vVisibility');
      builder.addVertexCode(`
  float ng_markerDiameter;
  float ng_markerBorderWidth;
+ float ng_Visibility;
  void setComOpacity(float opacity) {
     vComOpacity = opacity;
   }
@@ -52,6 +54,10 @@
  }
  void setComMarkerBorderColor(vec4 color) {
    vBorderColor = color;
+ }
+ void setComVisibility(float visibility) {
+   vVisibility = visibility;
+   ng_Visibility = visibility;
  }
  `);
      builder.addVertexMain(`
@@ -78,12 +84,16 @@
          defineCircleShader(builder, /*crossSectionFade=*/ this.targetIsSliceView);
          this.defineShaderCommon(builder);
          builder.addVertexMain(`
- emitCircle(uModelViewProjection *
-            vec4(projectModelVectorToSubspace(modelPosition), 1.0), ng_markerDiameter, ng_markerBorderWidth);
+ if (ng_Visibility == 1.0) {
+  emitCircle(uModelViewProjection *
+              vec4(projectModelVectorToSubspace(modelPosition), 1.0), ng_markerDiameter, ng_markerBorderWidth);
+  }
  `);
          builder.setFragmentMain(`
  vec4 color = getCircleColor(vColor, vBorderColor);
- emitAnnotation(vec4(color.rgb, color.a * vComOpacity));
+ if (vVisibility == 1.0) {
+  emitAnnotation(vec4(color.rgb, color.a * vComOpacity));
+ }
  `);
        });
  
@@ -122,11 +132,15 @@
  if (minZ > maxZ) minZ = maxZ = 0.0;
  subspacePositionA[${extraDim}] = minZ;
  subspacePositionB[${extraDim}] = maxZ;
- emitLine(uModelViewProjection, subspacePositionA, subspacePositionB, ng_markerDiameter, ng_markerBorderWidth);
+ if (ng_Visibility == 1.0) {
+  emitLine(uModelViewProjection, subspacePositionA, subspacePositionB, ng_markerDiameter, ng_markerBorderWidth);
+ }
  `);
          builder.setFragmentMain(`
  vec4 color = getRoundedLineColor(vColor, vBorderColor);
- emitAnnotation(vec4(color.rgb, color.a * ${this.getCrossSectionFadeFactor()} * vComOpacity));
+ if (vVisibility == 1.0) {
+  emitAnnotation(vec4(color.rgb, color.a * ${this.getCrossSectionFadeFactor()} * vComOpacity));
+ }
  `);
        });
  
@@ -189,6 +203,7 @@
  void setComMarkerColor(vec4 color) {}
  void setComMarkerBorderColor(vec4 color) {}
  void setComOpacity(float opacity) {}
+ void setComVisibility(float visibility) {}
  `);
    },
    pickIdsPerInstance: 1,

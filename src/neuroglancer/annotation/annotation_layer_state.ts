@@ -94,6 +94,10 @@ const DEFAULT_FRAGMENT_MAIN = `
 #uicontrol float polygon_line_width slider(min=0, max=5, default=1)
 void main() {
   setColor(prop_color());
+  setVisibility(prop_visibility());
+  setEndpointVisibility(prop_visibility());
+  setComVisibility(prop_visibility());
+  setCellVisibility(prop_visibility());
   setCellMarkerSize(cell_vertex_size);
   setCellMarkerBorderWidth(cell_vertex_border_width);
   setCellOpacity(cell_opacity);

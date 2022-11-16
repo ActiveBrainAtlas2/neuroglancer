@@ -39,6 +39,7 @@ void setEndpointMarkerBorderWidth(float startSize, float endSize) {}
 void setEndpointMarkerColor(vec4 startColor, vec4 endColor) {}
 void setEndpointMarkerBorderColor(vec4 startColor, vec4 endColor) {}
 void setEndpointOpacity(float opacity) {}
+void setEndpointVisibility(float visibility) {}
 `);
 }
 
@@ -47,6 +48,7 @@ function defineNoOpLineSetters(builder: ShaderBuilder) {
 void setLineWidth(float width) {}
 void setLineColor(vec4 startColor, vec4 endColor) {}
 void setLineOpacity(float opacity) {}
+void setVisibility(float visibility) {}
 `);
 }
 
@@ -69,8 +71,10 @@ class RenderHelper extends AnnotationRenderHelper {
         defineLineShader(builder);
         builder.addVarying(`highp float[${rank}]`, 'vModelPosition');
         builder.addVarying(`highp float`, 'vLineOpacity');
+        builder.addVarying(`highp float`, 'vVisibility');
         builder.addVertexCode(`
 float ng_LineWidth;
+float ng_Visibility;
 `);
         defineNoOpEndpointMarkerSetters(builder);
         builder.addVertexCode(`
@@ -83,6 +87,10 @@ void setLineOpacity(float opacity) {
 void setLineColor(vec4 startColor, vec4 endColor) {
   vColor = mix(startColor, endColor, getLineEndpointCoefficient());
 }
+void setVisibility(float visibility) {
+  vVisibility = visibility;
+  ng_Visibility = visibility;
+}
 `);
         builder.setVertexMain(`
 float modelPositionA[${rank}] = getVertexPosition0();
@@ -91,19 +99,25 @@ for (int i = 0; i < ${rank}; ++i) {
   vModelPosition[i] = mix(modelPositionA[i], modelPositionB[i], getLineEndpointCoefficient());
 }
 ng_LineWidth = 1.0;
+ng_Visibility = 1.0;
 vLineOpacity = 1.0;
 vColor = vec4(0.0, 0.0, 0.0, 0.0);
+vVisibility = 1.0;
 ${this.invokeUserMain}
-emitLine(uModelViewProjection * vec4(projectModelVectorToSubspace(modelPositionA), 1.0),
-         uModelViewProjection * vec4(projectModelVectorToSubspace(modelPositionB), 1.0),
-         ng_LineWidth);
+if (ng_Visibility == 1.0) {
+  emitLine(uModelViewProjection * vec4(projectModelVectorToSubspace(modelPositionA), 1.0),
+          uModelViewProjection * vec4(projectModelVectorToSubspace(modelPositionB), 1.0),
+          ng_LineWidth);
+}
 ${this.setPartIndex(builder)};
 `);
         builder.setFragmentMain(`
 float clipCoefficient = getSubspaceClipCoefficient(vModelPosition);
-emitAnnotation(vec4(vColor.rgb, vColor.a * getLineAlpha() *
-                                ${this.getCrossSectionFadeFactor()} *
-                                clipCoefficient * vLineOpacity));
+if (vVisibility == 1.0) {
+  emitAnnotation(vec4(vColor.rgb, vColor.a * getLineAlpha() *
+                                  ${this.getCrossSectionFadeFactor()} *
+                                  clipCoefficient * vLineOpacity));
+}
 `);
       });
 
@@ -114,11 +128,13 @@ emitAnnotation(vec4(vColor.rgb, vColor.a * getLineAlpha() *
         defineCircleShader(builder, this.targetIsSliceView);
         builder.addVarying('highp float', 'vClipCoefficient');
         builder.addVarying('highp float', 'vEndpointOpacity');
+        builder.addVarying('highp float', 'vEndpointVisibility');
         builder.addVarying('highp vec4', 'vBorderColor');
         defineNoOpLineSetters(builder);
         builder.addVertexCode(`
 float ng_markerDiameter;
 float ng_markerBorderWidth;
+float ng_endPointVisibility;
 int getEndpointIndex() {
   return gl_VertexID / ${VERTICES_PER_CIRCLE};
 }
@@ -137,6 +153,10 @@ void setEndpointMarkerBorderColor(vec4 startColor, vec4 endColor) {
 void setEndpointOpacity(float opacity) {
   vEndpointOpacity = opacity;
 }
+void setEndpointVisibility(float visibility) {
+  ng_endPointVisibility = visibility;
+  vEndpointVisibility = visibility;
+}
 `);
         builder.setVertexMain(`
 float modelPosition[${rank}] = getVertexPosition0();
@@ -151,14 +171,18 @@ vBorderColor = vec4(0.0, 0.0, 0.0, 1.0);
 ng_markerDiameter = 7.0;
 ng_markerBorderWidth = 3.0;
 ${this.invokeUserMain}
-emitCircle(uModelViewProjection * vec4(projectModelVectorToSubspace(modelPosition), 1.0), ng_markerDiameter, ng_markerBorderWidth);
+if (ng_endPointVisibility == 1.0) {
+  emitCircle(uModelViewProjection * vec4(projectModelVectorToSubspace(modelPosition), 1.0), ng_markerDiameter, ng_markerBorderWidth);
+}
 ${this.setPartIndex(builder, 'uint(getEndpointIndex()) + 1u')};
 `);
         builder.setFragmentMain(`
 vec4 color = getCircleColor(vColor, vBorderColor);
 color.a *= vClipCoefficient;
 color.a *= vEndpointOpacity;
-emitAnnotation(color);
+if (vEndpointVisibility == 1.0) {
+  emitAnnotation(color);
+}
 `);
       });
 

@@ -38,6 +38,11 @@ export const defaultAnnotationPropertiesSchema = [
     id: 'color',
     type: 'rgb',
     default: 'yellow'
+  },
+  {
+    id: 'visibility',
+    type: 'float32',
+    default: 1.0
   }
 ];
 

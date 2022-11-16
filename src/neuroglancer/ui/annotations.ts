@@ -74,6 +74,7 @@ import { isSectionValid } from '../annotation/volume';
 import { SaveAnnotationWidget } from '../widget/save_annotation';
 import { CellSessionDialog } from './cell_session';
 import { ComSessionDialog } from './com_session';
+import { makeVisibilityButton } from '../widget/visibility_button';
 
 export interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -1068,6 +1069,9 @@ export class AnnotationLayerView extends Tab {
     element.appendChild(icon);
 
     let deleteButton: HTMLElement|undefined;
+    let visibilityButton: HTMLElement|undefined;
+    const buttonElement = document.createElement('div');
+    buttonElement.classList.add('neuroglancer-annotation-list-entry-delete');
 
     const maybeAddDeleteButton = () => {
       if (state.source.readonly) return;
@@ -1093,8 +1097,17 @@ export class AnnotationLayerView extends Tab {
           }
         },
       });
-      deleteButton.classList.add('neuroglancer-annotation-list-entry-delete');
-      element.appendChild(deleteButton);
+      // deleteButton.classList.add('neuroglancer-annotation-list-entry-delete');
+      buttonElement.appendChild(deleteButton);
+    };
+
+    const maybeAddVisiblityButton = () => {
+      if (state.source.readonly) return;
+      if (visibilityButton !== undefined) return;
+      if (isDummyAnnotation(annotation)) return;
+      visibilityButton = makeVisibilityButton(annotation.id, state);
+      //visibilityButton.classList.add('neuroglancer-annotation-list-entry-delete');
+      buttonElement.appendChild(visibilityButton);
     };
 
     let numRows = 0;
@@ -1126,7 +1139,9 @@ export class AnnotationLayerView extends Tab {
           this.globalDimensionIndices, chunkTransform.modelTransform.globalToRenderLayerDimensions);
       addDims(
           this.localDimensionIndices, chunkTransform.modelTransform.localToRenderLayerDimensions);
+      maybeAddVisiblityButton();
       maybeAddDeleteButton();
+      if (buttonElement.childElementCount > 0) element.appendChild(buttonElement);
     });
     if (annotation.description) {
       ++numRows;
@@ -2164,6 +2179,9 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
 
                   for (let i = 0, count = properties.length; i < count; ++i) {
                     const property = properties[i];
+                    if (property.identifier === 'visibility') {
+                      continue;
+                    }
                     const label = document.createElement('label');
                     label.classList.add('neuroglancer-annotation-property');
                     const idElement = document.createElement('span');
@@ -3396,6 +3414,12 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                             });
                       }
 
+                      // if (!isDummyAnnotation(annotation)) {
+                      //   const visibilityButton = makeVisibilityButton(annotation.id, annotationLayer);
+                      //   visibilityButton.style.gridColumn = 'move';
+                      //   positionGrid.appendChild(visibilityButton);
+                      // }
+
                       if (!annotationLayer.source.readonly) {
                         const button = makeDeleteButton({
                           title: 'Delete annotation',
@@ -3412,6 +3436,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
 
                       for (let i = 0, count = properties.length; i < count; ++i) {
                         const property = properties[i];
+                        if (property.identifier === 'visibility') continue;
                         const label = document.createElement('label');
                         label.classList.add('neuroglancer-annotation-property');
                         const idElement = document.createElement('span');

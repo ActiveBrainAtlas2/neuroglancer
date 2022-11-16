@@ -348,13 +348,14 @@ export class AnnotationUserLayer extends Base {
     super.restoreState(specification);
     this.linkedSegmentationLayers.restoreState(specification);
     this.localAnnotationsJson = specification[ANNOTATIONS_JSON_KEY];
-    this.localAnnotationProperties = verifyOptionalObjectProperty(
-        specification, ANNOTATION_PROPERTIES_JSON_KEY, parseAnnotationPropertySpecs);
-    if (this.localAnnotationProperties === undefined) {
+    // TODO(Ed, Naga): This may cause issues, later we may want to load the annotation properties from JSON.
+    // this.localAnnotationProperties = verifyOptionalObjectProperty(
+        // specification, ANNOTATION_PROPERTIES_JSON_KEY, parseAnnotationPropertySpecs);
+    // if (this.localAnnotationProperties === undefined) {
       specification[ANNOTATION_PROPERTIES_JSON_KEY] = defaultAnnotationPropertiesSchema;
       this.localAnnotationProperties = verifyOptionalObjectProperty(
         specification, ANNOTATION_PROPERTIES_JSON_KEY, parseAnnotationPropertySpecs);
-    }
+    // }
     this.localAnnotationRelationships = verifyOptionalObjectProperty(
         specification, ANNOTATION_RELATIONSHIPS_JSON_KEY, verifyStringArray, ['segments']);
     this.pointAnnotationsJson = specification[POINTS_JSON_KEY];
