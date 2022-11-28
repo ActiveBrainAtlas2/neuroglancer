@@ -80,7 +80,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Start a new volume';
+      button.textContent = 'Start new volume';
       button.addEventListener('click', () => {
         this.annotationLayerView.layer.tool.value = new PlaceVolumeTool(this.annotationLayerView.layer, {}, 
           undefined, VolumeToolMode.DRAW, this.annotationLayerView.volumeSession, this.annotationLayerView.volumeButton);
@@ -147,7 +147,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Edit selected volume';
+      button.textContent = 'Edit volume';
       button.addEventListener('click', () => {
         const selectionState : PersistentViewerSelectionState|undefined = 
         this.annotationLayerView.layer.manager.root.selectionState.value;
@@ -214,7 +214,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Close current active session';
+      button.textContent = 'Close session';
       button.addEventListener('click', () => {
         const isInstance = this.annotationLayerView.layer.tool.value instanceof PlaceVolumeTool;
         if (isInstance) {
@@ -270,7 +270,7 @@ import { LegacyTool } from './tool';
 
       button.setAttribute('type', 'button');
       button.setAttribute('disabled', '');
-      button.textContent = 'Segment selected volume';
+      button.textContent = 'Segment volume';
       button.addEventListener('click', () => {
         const selectionState : PersistentViewerSelectionState|undefined = 
         this.annotationLayerView.layer.manager.root.selectionState.value;
