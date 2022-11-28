@@ -975,8 +975,10 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     return true;
   }
 
-  add(annotation: Annotation, commit: boolean = true, parentRef?: AnnotationReference, index?: number): AnnotationReference {
+  add(ann: Annotation, commit: boolean = true, parentRef?: AnnotationReference, index?: number): AnnotationReference {
     this.ensureUpdated();
+    // Fixes bug: https://github.com/ActiveBrainAtlas2/activebrainatlasadmin/issues/130
+    const annotation: Annotation = this.roundZCoordinateBasedOnAnnotation(ann);
     if (!annotation.id) {
       annotation.id = makeAnnotationId();
     } else if (this.annotationMap.has(annotation.id)) {
@@ -1015,6 +1017,43 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     return this.getReference(annotation.id);
   }
 
+  roundZCoordinateBasedOnAnnotation(ann: Annotation): Annotation {
+    switch (ann.type) {
+      case AnnotationType.AXIS_ALIGNED_BOUNDING_BOX:
+        return {...ann, pointA: this.roundZCoordinate(ann.pointA), pointB: this.roundZCoordinate(ann.pointB)};
+      case AnnotationType.CELL:
+        return {...ann, point: this.roundZCoordinate(ann.point)};
+      case AnnotationType.COM:
+        return {...ann, point: this.roundZCoordinate(ann.point)};
+      case AnnotationType.ELLIPSOID:
+        return {...ann, center: this.roundZCoordinate(ann.center)};
+      case AnnotationType.LINE:
+        return {...ann, pointA: this.roundZCoordinate(ann.pointA), pointB: this.roundZCoordinate(ann.pointB)};
+      case AnnotationType.POINT:
+        return {...ann, point: this.roundZCoordinate(ann.point)};
+      case AnnotationType.POLYGON:
+        return {...ann, source: this.roundZCoordinate(ann.source)};
+      case AnnotationType.VOLUME:
+        return {...ann, source: this.roundZCoordinate(ann.source)};
+    }
+    return ann;
+  }
+
+  /**
+   * Takes a point (x,y,z) coordinate as input and assigns the z value to integral part of z + 0.5
+   * This is required for fixing the bug: https://github.com/ActiveBrainAtlas2/activebrainatlasadmin/issues/130
+   * @param point Input point to be rounded off
+   * @returns Rounded point
+   */
+  roundZCoordinate(point: Float32Array): Float32Array {
+    if (point.length == 3) {
+      point[2] = Math.floor(point[2]) + 0.5;
+    } else if (point.length == 4) {
+      point[3] = Math.floor(point[3]) + 0.5;
+    }
+    return point;
+  }
+
   commit(reference: AnnotationReference): void {
     this.ensureUpdated();
     const id = reference.id;
@@ -1033,6 +1072,8 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     if (reference.value === null) {
       throw new Error(`Annotation already deleted.`);
     }
+    // Fixes bug: https://github.com/ActiveBrainAtlas2/activebrainatlasadmin/issues/130
+    annotation = this.roundZCoordinateBasedOnAnnotation(annotation);
     reference.value = annotation;
     this.annotationMap.set(annotation.id, annotation);
     if (annotation.parentAnnotationId) {
