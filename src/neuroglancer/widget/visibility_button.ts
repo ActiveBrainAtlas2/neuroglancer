@@ -26,7 +26,7 @@ export function makeVisibilityButton(annotationId: string, annotationLayerState:
   let showIcon: HTMLElement;
   hideIcon = makeIcon({
     svg: svg_eye,
-    title: 'Hide layer',
+    title: 'Hide annotation',
     onClick: () => {
       const ref = annotationLayerState.source.getReference(annotationId);
       annotationLayerState.source.updateVisibility(ref, 0.0);
@@ -37,7 +37,7 @@ export function makeVisibilityButton(annotationId: string, annotationLayerState:
   });
   showIcon = makeIcon({
     svg: svg_eye_crossed,
-    title: 'Show layer',
+    title: 'Show annotation',
     onClick: () => {
       const ref = annotationLayerState.source.getReference(annotationId);
       annotationLayerState.source.updateVisibility(ref, 1.0);

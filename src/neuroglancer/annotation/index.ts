@@ -911,9 +911,19 @@ export function restoreAnnotation(obj: any, schema: AnnotationSchema, allowMissi
   const properties = verifyObjectProperty(obj, 'props', propsObj => {
     const propSpecs = schema.properties;
     if (propsObj === undefined) return propSpecs.map(x => x.default);
-    return parseArray(
-        expectArray(propsObj, schema.properties.length),
+    expectArray(propsObj);
+    if (propsObj.length > schema.properties.length) {
+      throw new Error('Properties of annotation element cannot be more than schema properties');
+    }
+    const parsedProps = parseArray(
+        propsObj,
         (x, i) => annotationPropertyTypeHandlers[propSpecs[i].type].deserializeJson(x));
+    if (propsObj.length !== schema.properties.length) {
+      for(let i = propsObj.length; i < schema.properties.length; i++) {
+        parsedProps.push(propSpecs[i].default);
+      }
+    }
+    return parsedProps;
   });
   const parentAnnotationId = verifyObjectProperty(obj, 'parentAnnotationId', verifyOptionalString);
   const result: Annotation = {
