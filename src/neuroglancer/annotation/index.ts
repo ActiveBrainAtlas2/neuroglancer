@@ -1631,3 +1631,24 @@ export function fixAnnotationAfterStructuredCloning(obj: Annotation|null) {
   }
   return obj;
 }
+
+export function getSortPoint(ann: Annotation): Float32Array {
+  switch (ann.type) {
+    case AnnotationType.AXIS_ALIGNED_BOUNDING_BOX:
+      return ann.pointA;
+    case AnnotationType.CELL:
+      return ann.point;
+    case AnnotationType.COM:
+      return ann.point;
+    case AnnotationType.ELLIPSOID:
+      return ann.center;
+    case AnnotationType.LINE:
+      return ann.pointA;
+    case AnnotationType.POINT:
+      return ann.point;
+    case AnnotationType.POLYGON:
+      return ann.source;
+    case AnnotationType.VOLUME:
+      return ann.source;
+  }
+}

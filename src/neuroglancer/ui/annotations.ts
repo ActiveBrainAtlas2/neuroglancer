@@ -23,7 +23,7 @@ import './volume_session.css';
 import './cell_session.css';
 import './com_session.css';
 import {AppSettings} from 'neuroglancer/services/service';
-import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Collection, Ellipsoid, isChildDummyAnnotation, isDummyAnnotation, isTypeCollection, Line, Polygon, Volume} from 'neuroglancer/annotation';
+import {Annotation, AnnotationId, AnnotationPropertySerializer, AnnotationReference, AnnotationSource, annotationToJson, AnnotationType, annotationTypeHandlers, AxisAlignedBoundingBox, Collection, Ellipsoid, getSortPoint, isChildDummyAnnotation, isDummyAnnotation, isTypeCollection, Line, Polygon, Volume} from 'neuroglancer/annotation';
 import {AnnotationDisplayState, AnnotationLayerState} from 'neuroglancer/annotation/annotation_layer_state';
 import {MultiscaleAnnotationSource} from 'neuroglancer/annotation/frontend_source';
 import {AnnotationLayer, PerspectiveViewAnnotationLayer, SliceViewAnnotationLayer} from 'neuroglancer/annotation/renderlayer';
@@ -83,6 +83,19 @@ export interface LandmarkListJSON {
 export interface CategoryListJSON {
   cell_type: Array<string>,
 }
+
+export const AnnotationSortOrder: Map<AnnotationType, number> = new Map([
+  [AnnotationType.VOLUME, 0],
+  [AnnotationType.CELL, 1],
+  [AnnotationType.COM, 2],
+  // Below types can only exist with parent so priority does not matter
+  [AnnotationType.AXIS_ALIGNED_BOUNDING_BOX, 3],
+  [AnnotationType.ELLIPSOID, 3],
+  [AnnotationType.LINE, 3],
+  [AnnotationType.POINT, 3],
+  [AnnotationType.POLYGON, 3],
+]);
+
 /**
  * Returns a list of landmarks from database based on annotation type.
  * @param type 
@@ -801,6 +814,19 @@ export class AnnotationLayerView extends Tab {
       if (state.chunkTransform.value.error !== undefined) continue;
       const {source} = state;
       const annotations = Array.from(source);
+      annotations.sort((a: Annotation, b: Annotation): number => {
+        if (a.parentAnnotationId == undefined && b.parentAnnotationId !== undefined) return 1;
+        if (a.parentAnnotationId !== undefined && b.parentAnnotationId == undefined) return -1;
+        if (a.parentAnnotationId !== undefined && b.parentAnnotationId !== undefined) return 0;
+        if (a.type !== b.type) {
+          return (AnnotationSortOrder.get(a.type) || 0) - (AnnotationSortOrder.get(b.type) || 0);
+        }
+        const pointA = getSortPoint(a);
+        const pointB = getSortPoint(b);
+        const zA = getZCoordinate(pointA) || 0;
+        const zB = getZCoordinate(pointB) || 0;
+        return zA - zB;
+      });
       info.annotations.length = 0;
       const {idToIndex, idToLevel} = info;
       idToIndex.clear();
