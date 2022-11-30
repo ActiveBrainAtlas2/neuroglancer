@@ -15,6 +15,5 @@ Supports generating HTML UI elements used across neuroglancer for drawing annota
 - [Volume session UI Module](modules/neuroglancer_ui_volume_session.html): Responsible for creating the Volume session UI element.
 - [COM session UI Module](modules/neuroglancer_ui_com_session.html): Responsible for creating the COM session UI element.
 - [Cell session UI Module](modules/neuroglancer_ui_cell_session.html): Responsible for creating the Cell session UI element.
-- [State loader Module](modules/neuroglancer_services_state_loader.html): Responsible for the loading the JSON state from the Django database portal via the REST API.
 
 [Services Module](modules/neuroglancer_services_state_loader.html): Responsible for the loading of the JSON state from the Django database portal via the REST API.
