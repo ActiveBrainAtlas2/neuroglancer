@@ -75,6 +75,7 @@ import { SaveAnnotationWidget } from '../widget/save_annotation';
 import { CellSessionDialog } from './cell_session';
 import { ComSessionDialog } from './com_session';
 import { makeVisibilityButton } from '../widget/visibility_button';
+import { Viewer } from '../viewer';
 
 export interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -3733,6 +3734,13 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
         refCounted.registerDisposer(this.addRenderLayer(renderLayer));
         refCounted.registerDisposer(loadedSubsource.messages.addChild(renderLayer.messages));
       }
+      
+      //@ts-ignore
+      const viewer = <Viewer>window['viewer'];
+      const annotationSavedState = viewer.annotationsSavedState;
+      state.source.registerDisposer(state.source.changed.add(() => {
+        annotationSavedState.value = false;
+      }));
     }
 
     selectAnnotation(

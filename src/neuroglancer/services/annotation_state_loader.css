@@ -1,0 +1,14 @@
+.annotation-state-loader-hidden {
+    display: none;
+}
+
+.annotation-state-loader {
+    display: inline-flex;
+    white-space: nowrap;
+    padding-top: 3px;
+    align-items: center;
+    justify-content: center;
+    font: 12px sans-serif;
+    font-weight: 600;
+    color: red;
+}
