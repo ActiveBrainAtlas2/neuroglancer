@@ -612,6 +612,24 @@ export abstract class RenderedDataPanel extends RenderedPanel {
       }
     }
 
+    for (let axis = 0; axis < 3; ++axis) {
+      let axisName = AXES_NAMES[axis];
+      let amounts = [50, 50, 5];
+      for (let sign of [-1, +1]) {
+        let signStr = (sign < 0) ? '-' : '+';
+        let tempOffset = vec3.create();
+        registerActionListener(element, `pan-${axisName}${signStr}`, () => {
+          let {navigationState} = this;
+          let offset = tempOffset;
+          offset[0] = 0;
+          offset[1] = 0;
+          offset[2] = 0;
+          offset[axis] = sign*amounts[axis];
+          navigationState.pose.translateVoxelsRelative(offset, true);
+        });
+      }
+    }
+
     registerActionListener(element, 'zoom-via-wheel', (event: ActionEvent<WheelEvent>) => {
       const e = event.detail;
       this.onMousemove(e, false);
