@@ -1051,6 +1051,7 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     } else if (point.length == 4) {
       point[3] = Math.floor(point[3]) + 0.5;
     }
+    console.log('Adding point: ', point[2]);
     return point;
   }
 

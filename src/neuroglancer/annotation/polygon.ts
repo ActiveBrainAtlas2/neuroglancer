@@ -460,7 +460,7 @@ function getCentroidPolygon(childAnnotationRefs: AnnotationReference[]) : Float3
  */
 export function getZCoordinate(point: Float32Array): number|undefined {
   if (point.length < 3) return undefined;
-  return point[2];
+  return Math.floor(point[2]);
 }
 
 /**

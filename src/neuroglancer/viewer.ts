@@ -792,6 +792,8 @@ export class Viewer extends RefCounted implements ViewerState {
       });
     }
 
+    // Annotation related actions
+
     this.bindAction('annotate', () => {
       const selectedLayer = this.selectedLayer.layer;
       if (selectedLayer === undefined) {
@@ -804,6 +806,7 @@ export class Viewer extends RefCounted implements ViewerState {
             JSON.stringify(selectedLayer.name)}) does not have an active annotation tool.`);
         return;
       }
+      roundViewerZPosition();
       userLayer.tool.value.trigger(this.mouseState);
     });
 
@@ -923,6 +926,7 @@ export class Viewer extends RefCounted implements ViewerState {
         return;
       }
 
+      roundViewerZPosition();
       userLayer.tool.value.addVertexPolygon(this.mouseState);
     });
 
@@ -963,6 +967,8 @@ export class Viewer extends RefCounted implements ViewerState {
         StatusMessage.showTemporaryMessage(`The selected layer (${JSON.stringify(selectedLayer.name)}) does not have annotation tool with complete step.`);
         return;
       }
+
+      roundViewerZPosition();
       (<MultiStepAnnotationTool>userLayer.tool.value).complete();
     });
 
@@ -1046,4 +1052,29 @@ export class Viewer extends RefCounted implements ViewerState {
       }
     }
   }
+}
+
+/**
+ * Fetches the viewer and rounds the z-coordinate of viewer to integral value of z-coordinate + 0.5
+ * This is required to make sure all annotations are drawn with z-values of integral + 0.5.
+ */
+export function roundViewerZPosition() {
+  //@ts-ignore
+  const viewer = window['viewer'];
+  const newPoint = new Float32Array(viewer.position.value);
+  roundZCoordinate(newPoint);
+  viewer.position.value = newPoint;
+}
+
+/**
+ * Takes a point and rounds the points z-value to integral value of z + 0.5
+ * @param point Input (x,y,z) point to be rounded.
+ */
+export function roundZCoordinate(point: Float32Array) {
+  if (point.length == 3) {
+    point[2] = Math.floor(point[2]) + 0.5;
+  } else if (point.length == 4) {
+    point[3] = Math.floor(point[3]) + 0.5;
+  }
+  return point;
 }
