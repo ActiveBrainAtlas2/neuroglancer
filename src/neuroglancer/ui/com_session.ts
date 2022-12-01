@@ -20,9 +20,10 @@
  import { Overlay } from 'neuroglancer/overlay';
 import { AnnotationType } from '../annotation';
 import { AnnotationLayerView, getLandmarkList, PlaceComTool, COMSession, ComToolMode } from './annotations';
- 
+import { StatusMessage } from '../status';
  import './com_session.css';
 import { LegacyTool } from './tool';
+import { packColor, parseRGBColorSpecification } from '../util/color';
  
 /**
  * Centre of mass session element for drawing annotation
@@ -36,18 +37,20 @@ import { LegacyTool } from './tool';
       
       const configTable = document.createElement('table');
       configTable.caption = configTable.createCaption();
-      configTable.caption.innerHTML = "<h2>com session</h2>";
+      configTable.caption.innerHTML = "<h2>COM session</h2>";
 
       const comInfoRows = this.getComInfoRows();
       const newComRow = this.getNewComRow();
       const editComRow = this.getEditComRow();
       const closeSessionRow = this.closeSessionRow();
+      const updateCOMColorRow = this.updateCOMColorRow();
 
       comInfoRows.forEach(comInfoRow => {
         configTable.appendChild(comInfoRow);
       });
       configTable.appendChild(newComRow);
       configTable.appendChild(editComRow);
+      configTable.appendChild(updateCOMColorRow);
       configTable.appendChild(closeSessionRow);
       configTable.classList.add('com-session-table');
 
@@ -73,7 +76,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Start a new centre of mass';
+      button.textContent = 'Start new COM';
       button.addEventListener('click', () => {
         let color = (this.colorInput)? this.colorInput.value : undefined;
         let description = (this.landmarkDropdown)? this.landmarkDropdown.options[this.landmarkDropdown.selectedIndex].value : undefined;
@@ -133,7 +136,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Edit centre of mass';
+      button.textContent = 'Edit COM';
       button.addEventListener('click', () => {
         this.annotationLayerView.layer.tool.value = new PlaceComTool(this.annotationLayerView.layer, {}, 
           undefined, ComToolMode.EDIT, this.annotationLayerView.comSession, this.annotationLayerView.comButton);
@@ -159,7 +162,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Close current active session';
+      button.textContent = 'Close session';
       button.addEventListener('click', () => {
         const isInstance = this.annotationLayerView.layer.tool.value instanceof PlaceComTool;
         if (isInstance) {
@@ -170,6 +173,52 @@ import { LegacyTool } from './tool';
         this.dispose();
       });
       button.classList.add('com-session-btn');
+
+      col.appendChild(button);
+      row.appendChild(col);
+      return row;
+    }
+    /**
+     * 
+     * @returns A table row element with functionality to update colors of all COMs of a particular label.
+     */
+     updateCOMColorRow() : HTMLTableRowElement {
+      const row = document.createElement('tr');
+      const col = document.createElement('td');
+      col.style.textAlign = 'center';
+      col.colSpan = 2;
+      const button = document.createElement('button');
+
+      button.setAttribute('type', 'button');
+      button.textContent = 'Update color';
+      button.addEventListener('click', () => {
+        const isInstance = this.annotationLayerView.layer.tool.value instanceof PlaceComTool;
+        if (isInstance) {
+          if (this.annotationLayerView.layer.tool.value  instanceof LegacyTool) {
+            this.annotationLayerView.layer.tool.value.layer.tool.value = undefined;
+          }
+        }
+        let color = (this.colorInput)? this.colorInput.value : undefined;
+        let description = (this.landmarkDropdown)? this.landmarkDropdown.options[this.landmarkDropdown.selectedIndex].value : undefined;
+        if (color == undefined) {
+          StatusMessage.showTemporaryMessage("Please select a color");
+          this.dispose();
+          return;
+        }
+        if (description == undefined) {
+          StatusMessage.showTemporaryMessage("Please select a label");
+          this.dispose();
+          return;
+        }
+        const colorInNum = packColor(parseRGBColorSpecification(color));
+        for (const state of this.annotationLayerView.annotationStates.states) {
+          if (state.source.readonly) continue;
+          state.source.updateCOMColors(colorInNum, description);
+        }
+
+        this.dispose();
+      });
+      button.classList.add('cell-session-btn');
 
       col.appendChild(button);
       row.appendChild(col);

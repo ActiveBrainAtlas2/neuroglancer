@@ -20,9 +20,11 @@
  import { Overlay } from 'neuroglancer/overlay';
 import { AnnotationType } from '../annotation';
 import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellToolMode, getCategoryList } from './annotations';
+import { StatusMessage } from '../status';
  
  import './cell_session.css';
 import { LegacyTool } from './tool';
+import { packColor, parseRGBColorSpecification } from '../util/color';
   /**
    * Cell session for annotation cells.
    */
@@ -37,18 +39,20 @@ import { LegacyTool } from './tool';
       
       const configTable = document.createElement('table');
       configTable.caption = configTable.createCaption();
-      configTable.caption.innerHTML = "<h2>cell session</h2>";
+      configTable.caption.innerHTML = "<h2>Cell session</h2>";
 
       const cellInfoRows = this.getCellInfoRows();
       const newCellRow = this.getNewCellRow();
       const editCellRow = this.getEditCellRow();
       const closeSessionRow = this.closeSessionRow();
+      const updateCellColorRow = this.updateCellColorRow();
 
       cellInfoRows.forEach(cellInfoRow => {
         configTable.appendChild(cellInfoRow);
       });
       configTable.appendChild(newCellRow);
       configTable.appendChild(editCellRow);
+      configTable.appendChild(updateCellColorRow);
       configTable.appendChild(closeSessionRow);
       configTable.classList.add('cell-session-table');
 
@@ -74,7 +78,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Start a new cell';
+      button.textContent = 'Start new cell';
       button.addEventListener('click', () => {
         let color = (this.colorInput)? this.colorInput.value : undefined;
         let description = (this.landmarkDropdown)? this.landmarkDropdown.options[this.landmarkDropdown.selectedIndex].value : undefined;
@@ -145,7 +149,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Edit cells';
+      button.textContent = 'Edit cell';
       button.addEventListener('click', () => {
         this.annotationLayerView.layer.tool.value = new PlaceCellTool(this.annotationLayerView.layer, {}, 
           undefined, CellToolMode.EDIT, this.annotationLayerView.cellSession, this.annotationLayerView.cellButton);
@@ -171,7 +175,7 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.textContent = 'Close current active session';
+      button.textContent = 'Close session';
       button.addEventListener('click', () => {
         const isInstance = this.annotationLayerView.layer.tool.value instanceof PlaceCellTool;
         if (isInstance) {
@@ -180,6 +184,58 @@ import { LegacyTool } from './tool';
           }
           this.dispose();
         }
+      });
+      button.classList.add('cell-session-btn');
+
+      col.appendChild(button);
+      row.appendChild(col);
+      return row;
+    }
+    /**
+     * 
+     * @returns A table row element with functionality to update colors of all cells of a particular label and category.
+     */
+     updateCellColorRow() : HTMLTableRowElement {
+      const row = document.createElement('tr');
+      const col = document.createElement('td');
+      col.style.textAlign = 'center';
+      col.colSpan = 2;
+      const button = document.createElement('button');
+
+      button.setAttribute('type', 'button');
+      button.textContent = 'Update color';
+      button.addEventListener('click', () => {
+        const isInstance = this.annotationLayerView.layer.tool.value instanceof PlaceCellTool;
+        if (isInstance) {
+          if (this.annotationLayerView.layer.tool.value  instanceof LegacyTool) {
+            this.annotationLayerView.layer.tool.value.layer.tool.value = undefined;
+          }
+        }
+        let color = (this.colorInput)? this.colorInput.value : undefined;
+        let description = (this.landmarkDropdown)? this.landmarkDropdown.options[this.landmarkDropdown.selectedIndex].value : undefined;
+        let category = (this.categoryDropdown)? this.categoryDropdown.options[this.categoryDropdown.selectedIndex].value : undefined;
+        if (color == undefined) {
+          StatusMessage.showTemporaryMessage("Please select a color");
+          this.dispose();
+          return;
+        }
+        if (description == undefined) {
+          StatusMessage.showTemporaryMessage("Please select a label");
+          this.dispose();
+          return;
+        }
+        if (category == undefined) {
+          StatusMessage.showTemporaryMessage("Please select a category");
+          this.dispose();
+          return;
+        }
+        const colorInNum = packColor(parseRGBColorSpecification(color));
+        for (const state of this.annotationLayerView.annotationStates.states) {
+          if (state.source.readonly) continue;
+          state.source.updateCellColors(colorInNum, description, category);
+        }
+
+        this.dispose();
       });
       button.classList.add('cell-session-btn');
 

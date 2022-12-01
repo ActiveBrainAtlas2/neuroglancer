@@ -1017,6 +1017,43 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     return this.getReference(annotation.id);
   }
 
+  /**
+   * Takes a color, description and category and updates all CELL annotations with the color matching description and category.
+   * @param color New color for Cell annotations
+   * @param description Description of cells that need to be updated
+   * @param category Category of cells that need to be updated
+   * @returns void
+   */
+  updateCellColors(color: number, description: string, category: string): void {
+    for(const [id, ann] of this.annotationMap) {
+      if (ann.type === AnnotationType.CELL && ann.description === description && ann.category === category) {
+        const colorIdx = this.properties.findIndex(x => x.identifier === 'color');
+        const newAnn = {...ann};
+        if (newAnn.properties.length <= colorIdx) return;
+        newAnn.properties[colorIdx] = color;
+        this.update(this.getReference(id), newAnn);
+      }
+    }
+  }
+
+  /**
+   * Takes a color, description and updates all COM annotations with the color matching description.
+   * @param color New color for COM annotations
+   * @param description Description of COMs that need to be updated
+   * @returns void
+   */
+  updateCOMColors(color: number, description: string): void {
+    for(const [id, ann] of this.annotationMap) {
+      if (ann.type === AnnotationType.COM && ann.description === description) {
+        const colorIdx = this.properties.findIndex(x => x.identifier === 'color');
+        const newAnn = {...ann};
+        if (newAnn.properties.length <= colorIdx) return;
+        newAnn.properties[colorIdx] = color;
+        this.update(this.getReference(id), newAnn);
+      }
+    }
+  }
+
   roundZCoordinateBasedOnAnnotation(ann: Annotation): Annotation {
     switch (ann.type) {
       case AnnotationType.AXIS_ALIGNED_BOUNDING_BOX:
@@ -1051,7 +1088,6 @@ export class AnnotationSource extends RefCounted implements AnnotationSourceSign
     } else if (point.length == 4) {
       point[3] = Math.floor(point[3]) + 0.5;
     }
-    console.log('Adding point: ', point[2]);
     return point;
   }
 
