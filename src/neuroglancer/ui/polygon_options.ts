@@ -173,7 +173,16 @@
       contentDiv.appendChild(configTable);
       contentDiv.appendChild(submitButton);
       contentDiv.appendChild(cheatSheetTable);
+
+      const closeButton = document.createElement('button');
+      closeButton.innerText = 'X';
+      closeButton.classList.add('close-btn');
+      closeButton.addEventListener('click', () => {
+        this.dispose();
+      });
+
       this.content.appendChild(contentDiv);
+      this.content.appendChild(closeButton);
     }
     /**
      * 

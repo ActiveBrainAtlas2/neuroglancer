@@ -21,3 +21,12 @@
     text-align: left;
     padding: 8px;
 }
+
+.close-btn {
+    position: absolute;
+    background: red;
+    color: white;
+    top: 0px;
+    right: 0px;
+    border-radius: 3px;
+  }

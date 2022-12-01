@@ -25,6 +25,7 @@ import { Segmentation } from '../services/state';
 import { StateLoader } from '../services/state_loader';
 import { StatusMessage } from '../status';
 import { AnnotationLayerView, getLandmarkList, PlaceVolumeTool, UserLayerWithAnnotations, VolumeSession, VolumeToolMode } from './annotations';
+import { PolygonOptionsDialog } from './polygon_options';
 import { LegacyTool } from './tool';
  
  import './volume_session.css';
@@ -48,6 +49,7 @@ import { LegacyTool } from './tool';
       const editVolumeRow = this.getEditVolumeRow();
       const closeSessionRow = this.closeSessionRow();
       const segmentationRow = this.getSegmentationRow();
+      const polygonConfigRow = this.polygonConfigRow();
 
       volumeInfoRows.forEach(volumeInfoRow => {
         configTable.appendChild(volumeInfoRow);
@@ -55,6 +57,7 @@ import { LegacyTool } from './tool';
       configTable.appendChild(newVolumeRow);
       configTable.appendChild(editVolumeRow);
       configTable.appendChild(closeSessionRow);
+      configTable.appendChild(polygonConfigRow);
       configTable.appendChild(segmentationRow);
       configTable.classList.add('volume-session-table');
 
@@ -223,6 +226,29 @@ import { LegacyTool } from './tool';
           }
         }
         this.dispose();
+      });
+      button.classList.add('volume-session-btn');
+
+      col.appendChild(button);
+      row.appendChild(col);
+      return row;
+    }
+    /**
+     * 
+     * @returns A table row element for polygon configuration.
+     */
+     polygonConfigRow() : HTMLTableRowElement {
+      const row = document.createElement('tr');
+      const col = document.createElement('td');
+      col.style.textAlign = 'center';
+      col.colSpan = 2;
+      const button = document.createElement('button');
+
+      button.setAttribute('type', 'button');
+      button.textContent = 'Polygon configuration';
+      button.addEventListener('click', () => {
+        this.dispose();
+        new PolygonOptionsDialog();
       });
       button.classList.add('volume-session-btn');
 
