@@ -155,6 +155,47 @@ node.js is required to build the viewer.
 
 See [examples/dependent-project](examples/dependent-project).
 
+# Documentation
+Documentation is generated from docstrings within functions, classes, modules using [Typedoc](https://typedoc.org/).
+
+Guidance for adding docstrings is available [here](https://typedoc.org/guides/doccomments/).
+
+## Generating Documentation
+- Typedoc version used for generating documentation is `0.23.18`.
+- Command to generate typedoc documentation:
+
+  `npm run build-docs`
+  
+  The above command will generated a `docs/` folder inside the neuroglancer root folder which contains HTML files for documentation.
+
+## Adding high level overview
+   - This is a manual step which involves adding High level overview of several modules into the HTML pages of generated documentation.
+   - `docs_overview` folder in root directory contains various markdown files containing high level overview of several modules. For each markdown generate HTML code using pandoc/online tool. [example tool](https://markdowntohtml.com/) 
+   - Embed generated HTML code for each module into a div at the top of corresponding HTML documentation page. The mapping is as shown below:
+   
+| Markdown file  | HTML documentation file |
+| ------------- | ------------- |
+| `docs_overview/index.md`  | `docs/modules.html`, `docs/index.html`  |
+| `docs_overview/neuroglancer_annotation_cell.md`  | `docs/modules/neuroglancer_annotation_cell.html` |
+| `docs_overview/neuroglancer_annotation_com.md`  | `docs/modules/neuroglancer_annotation_com.html` |
+| `docs_overview/neuroglancer_annotation_cell.md`  | `docs/modules/neuroglancer_annotation_cell.html` |
+| `docs_overview/neuroglancer_annotation_polygon.md`  | `docs/modules/neuroglancer_annotation_polygon.html` |
+| `docs_overview/neuroglancer_annotation_volume.md`  | `docs/modules/neuroglancer_annotation_volume.html` |
+| `docs_overview/neuroglancer_annotation.md`  | `docs/modules/neuroglancer_annotation.html` |
+| `docs_overview/neuroglancer_services_state_loader.md`  | `docs/modules/neuroglancer_services_state_loader.html` |
+| `docs_overview/neuroglancer_services_state_loader.md`  | `docs/modules/neuroglancer_services_state_loader.html` |
+| `docs_overview/neuroglancer_ui_annotations.md`  | `docs/modules/neuroglancer_ui_annotations.html` |
+| `docs_overview/neuroglancer_ui_volume_session.md`  | `docs/modules/neuroglancer_ui_volume_session.html` |
+| `docs_overview/neuroglancer_ui_com_session.md`  | `docs/modules/neuroglancer_ui_com_session.html` |
+| `docs_overview/neuroglancer_ui_cell_session.md`  | `docs/modules/neuroglancer_ui_cell_session.html` |
+
+## Deployment on webdev
+   - Copy the docs folder to webdev using below command:
+   
+      `scp -r docs <username>@webdev.dk.ucsd.edu:/var/www/html/neuroglanceruidocs`
+   
+   - The documentation will become live at `https://webdev.dk.ucsd.edu/neuroglanceruidocs/docs/`
+
 # Discussion Group
 
 There is a Google Group/mailing list for discussion related to Neuroglancer:
