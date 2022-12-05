@@ -87,14 +87,14 @@ export interface CategoryListJSON {
 
 export const AnnotationSortOrder: Map<AnnotationType, number> = new Map([
   [AnnotationType.VOLUME, 0],
-  [AnnotationType.CELL, 1],
-  [AnnotationType.COM, 2],
+  [AnnotationType.CELL, 3],
+  [AnnotationType.COM, 4],
   // Below types can only exist with parent so priority does not matter
-  [AnnotationType.AXIS_ALIGNED_BOUNDING_BOX, 3],
-  [AnnotationType.ELLIPSOID, 3],
-  [AnnotationType.LINE, 3],
-  [AnnotationType.POINT, 3],
-  [AnnotationType.POLYGON, 3],
+  [AnnotationType.POLYGON, 1],
+  [AnnotationType.LINE, 2],
+  [AnnotationType.POINT, 5],
+  [AnnotationType.AXIS_ALIGNED_BOUNDING_BOX, 6],
+  [AnnotationType.ELLIPSOID, 7],
 ]);
 
 /**
@@ -879,10 +879,12 @@ export class AnnotationLayerView extends Tab {
       if (annotation.parentAnnotationId && annotation.type === AnnotationType.POLYGON) {
         const insertIndex = this.getSortedIndexBasedOnPolygonSection(annotation, info, state);
         index = (insertIndex !== undefined)? insertIndex : info.annotations.length;
-      }
-      else if (annotation.parentAnnotationId) {
+      } else if (annotation.parentAnnotationId) {
         const parentIndex = info.idToIndex.get(annotation.parentAnnotationId);
         index = (parentIndex !== undefined)? parentIndex + 1 : info.annotations.length;
+      } else if (annotation.type === AnnotationType.CELL || annotation.type === AnnotationType.COM) {
+        const insertIndex = this.getSortedIndexBasedForPointType(annotation, info);
+        index = (insertIndex !== undefined)? insertIndex : info.annotations.length;
       } else {
         index = info.annotations.length;
       }
@@ -951,6 +953,34 @@ export class AnnotationLayerView extends Tab {
       }
     }
     parentRef.dispose();
+    return lastIndex;
+  }
+
+  /**
+   * CELLs OCCUR BEFORE COMs
+   * @param annotation 
+   * @param info 
+   * @param state 
+   */
+  private getSortedIndexBasedForPointType(annotation: Annotation, info: AnnotationLayerViewAttachedState): number | undefined {
+    if (annotation.type !== AnnotationType.CELL && annotation.type !== AnnotationType.COM) return undefined;
+    const annPriority = AnnotationSortOrder.get(annotation.type);
+    if (annPriority === undefined) return undefined;
+    const annZ = getZCoordinate(getSortPoint(annotation));
+    if (annZ === undefined) return undefined;
+    const {annotations} = info;
+    let lastIndex = 0;
+
+    for(; lastIndex < annotations.length; lastIndex++) {
+      const curAnnPriority = AnnotationSortOrder.get(annotations[lastIndex].type) || 0;
+      if (curAnnPriority < annPriority) continue;
+      if (curAnnPriority > annPriority) break;
+      if (curAnnPriority === annPriority) {
+        const curAnnZ = getZCoordinate(getSortPoint(annotations[lastIndex]));
+        if (curAnnZ === undefined) continue;
+        if (annZ < curAnnZ) return lastIndex;
+      }
+    }
     return lastIndex;
   }
 
