@@ -160,7 +160,14 @@ Documentation is generated from docstrings within functions, classes, modules us
 
 Guidance for adding docstrings is available [here](https://typedoc.org/guides/doccomments/).
 
-## Generating Documentation
+Updating code documentation involves 3 steps:
+  1. Generating Documentation using Typedoc
+  2. Adding high level overview
+  3. Deployment on webdev
+
+All these steps are described in detail below:
+
+## Generating Documentation using Typedoc
 - Typedoc version used for generating documentation is `0.23.18`.
 - Command to generate typedoc documentation:
 
