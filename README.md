@@ -155,7 +155,7 @@ node.js is required to build the viewer.
 
 See [examples/dependent-project](examples/dependent-project).
 
-# Documentation
+# Code Documentation
 Documentation is generated from docstrings within functions, classes, modules using [Typedoc](https://typedoc.org/).
 
 Guidance for adding docstrings is available [here](https://typedoc.org/guides/doccomments/).
