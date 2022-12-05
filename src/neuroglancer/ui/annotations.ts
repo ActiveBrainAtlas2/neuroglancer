@@ -957,10 +957,10 @@ export class AnnotationLayerView extends Tab {
   }
 
   /**
-   * CELLs OCCUR BEFORE COMs
-   * @param annotation 
-   * @param info 
-   * @param state 
+   * Gives the index of sorted position for annotation type of CELL or COM.
+   * Order of priority: VOLUME, POLYGON, LINE, CELL, COM, POINT, ELLIPSOID, BOUNDING BOX
+   * @param annotation Annotation for which the sorted index needs to be found
+   * @param info Annotation info contains all the list of annotations of current layer
    */
   private getSortedIndexBasedForPointType(annotation: Annotation, info: AnnotationLayerViewAttachedState): number | undefined {
     if (annotation.type !== AnnotationType.CELL && annotation.type !== AnnotationType.COM) return undefined;
