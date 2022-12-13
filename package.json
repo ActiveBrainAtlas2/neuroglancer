@@ -2,7 +2,7 @@
   "name": "neuroglancer",
   "description": "Visualization tool for 3-D volumetric data.",
   "license": "Apache-2.0",
-  "version": "0.0.0-beta.0",
+  "version": "2.2a-Naga",
   "main": "dist/module/main_module.js",
   "repository": {
     "type": "git",
@@ -12,10 +12,12 @@
     "node": ">=12"
   },
   "scripts": {
+    "prebuild": "cpy ./src/neuroglancer/services/webdev.ts ./src/neuroglancer/services/service.ts node",
+    "wsl-server": "node ./config/esbuild-cli.js --config=dev --serve --watch",
+    "wsl-build-webdev": "node ./config/esbuild-cli.js --config=min",
     "generate-code": "node ./config/generate_code.js",
     "build-min": "./set_service.sh production && node ./config/esbuild-cli.js --config=min",
     "build-webdev": "./set_service.sh webdev && node ./config/esbuild-cli.js --config=min",
-    "build-pons": "./set_service.sh pons && node ./config/esbuild-cli.js --config=min",
     "build": "./set_service.sh production && node ./config/esbuild-cli.js --config=min",
     "build:watch": "node ./config/esbuild-cli.js --config=dev --serve --watch",
     "dev-server": "./set_service.sh webdev && node ./config/esbuild-cli.js --config=dev --serve --watch",
