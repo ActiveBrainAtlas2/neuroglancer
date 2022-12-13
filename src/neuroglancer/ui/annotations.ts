@@ -3651,7 +3651,7 @@ export function UserLayerWithAnnotationsMixin<TBase extends {new (...args: any[]
                             const categoryDropdown = document.createElement('select');
                             categoryDropdown.classList.add('neuroglancer-landmarks-dropdown');
                             const defaultOption = document.createElement('option');
-                            defaultOption.text = 'Select category';
+                            defaultOption.text = 'Select cell type';
                             defaultOption.value = '';
                             defaultOption.disabled = true;
                             defaultOption.selected = true;

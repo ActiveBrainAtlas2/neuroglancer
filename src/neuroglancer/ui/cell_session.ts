@@ -31,7 +31,10 @@ import { packColor, parseRGBColorSpecification } from '../util/color';
   export class CellSessionDialog extends Overlay {
     /** Landmark for cell */
     landmarkDropdown : HTMLSelectElement|undefined = undefined;
-    /** Category of cell, eg: positive/negative */
+    /** Category of cell, eg: positive/negative. This does not correlate to what is shown
+     * on the page. The description is positive/negative and the Category/Cell type
+     * is the landmark
+    */
     categoryDropdown : HTMLSelectElement|undefined = undefined;
     colorInput: HTMLInputElement|undefined = undefined;
     constructor(public annotationLayerView: AnnotationLayerView) {
@@ -83,6 +86,11 @@ import { packColor, parseRGBColorSpecification } from '../util/color';
         let color = (this.colorInput)? this.colorInput.value : undefined;
         let description = (this.landmarkDropdown)? this.landmarkDropdown.options[this.landmarkDropdown.selectedIndex].value : undefined;
         let category = (this.categoryDropdown)? this.categoryDropdown.options[this.categoryDropdown.selectedIndex].value : undefined;
+        if (category === '') {
+          StatusMessage.showTemporaryMessage("Please select a cell type");
+          return;
+        }
+
         this.annotationLayerView.layer.tool.value = new PlaceCellTool(this.annotationLayerView.layer, {}, 
           undefined, CellToolMode.DRAW, this.annotationLayerView.cellSession, this.annotationLayerView.cellButton);
         const cellTool = <PlaceCellTool>this.annotationLayerView.layer.tool.value;
@@ -111,7 +119,7 @@ import { packColor, parseRGBColorSpecification } from '../util/color';
 
       const categoryRow = document.createElement('tr');
       const categoryDesc = document.createElement('td');
-      categoryDesc.textContent = "Category: ";
+      categoryDesc.textContent = "Cell type: ";
       const categoryCol = document.createElement('td');
       const categoryDropdown = this.getCategoryDropDown();
       categoryCol.appendChild(categoryDropdown);
@@ -276,7 +284,7 @@ import { packColor, parseRGBColorSpecification } from '../util/color';
       const landmarkDropdown = document.createElement('select');
       landmarkDropdown.classList.add('neuroglancer-landmarks-dropdown');
       const defaultOption = document.createElement('option');
-      defaultOption.text = 'Select category';
+      defaultOption.text = 'Select cell type';
       defaultOption.value = '';
       defaultOption.disabled = true;
       defaultOption.selected = true;
@@ -291,6 +299,7 @@ import { packColor, parseRGBColorSpecification } from '../util/color';
           landmarkDropdown.add(option);
         }
       });
+      landmarkDropdown.required = true;
       return landmarkDropdown;
     }
   }
