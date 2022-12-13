@@ -280,6 +280,7 @@ export const urlParams = getUrlParams();
 /**
  * This class takes care of the buttons and inputs used by the user
  * to load a specific Neuroglancer state.
+ * topnav bar
  */
 export class StateLoader extends RefCounted {
     element = document.createElement('div');
@@ -288,6 +289,7 @@ export class StateLoader extends RefCounted {
     private input: StateAutocomplete;
     private resetButton: HTMLElement;
     private saveButton: HTMLElement;
+    private portalButton: HTMLElement;
     private newButton: HTMLElement;
     private user: User;
     private stateID: number;
@@ -318,6 +320,12 @@ export class StateLoader extends RefCounted {
                     this.saveState();
                 });
                 this.element.appendChild(this.saveButton);
+
+                this.portalButton = makeIcon({ text: 'Portal', title: 'Admin Portal' });
+                this.registerEventListener(this.portalButton, 'click', () => {
+                  this.redirectPortal();
+                });
+                this.element.appendChild(this.portalButton);
 
                 this.newButton = makeIcon({ text: 'New', title: 'Save to a new JSON state' });
                 this.registerEventListener(this.newButton, 'click', () => {
@@ -400,6 +408,9 @@ export class StateLoader extends RefCounted {
         });
     }
 
+    private redirectPortal() {
+        window.location.href = `${AppSettings.ADMIN_PORTAL}`;
+    }
     /**
      * This is used when the user clicks the 'New' button. 
      * This is the C in the CRUD operations.
