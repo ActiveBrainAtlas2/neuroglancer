@@ -13,6 +13,7 @@
   },
   "scripts": {
     "prebuild": "cpy ./src/neuroglancer/services/webdev.ts ./src/neuroglancer/services/service.ts node",
+    "wsl-build-production": "cpy ./src/neuroglancer/services/production.ts ./src/neuroglancer/services/service.ts node && node ./config/esbuild-cli.js --config=min",
     "wsl-server": "node ./config/esbuild-cli.js --config=dev --serve --watch",
     "wsl-build-webdev": "node ./config/esbuild-cli.js --config=min",
     "generate-code": "node ./config/generate_code.js",
