@@ -617,7 +617,6 @@ export class Viewer extends RefCounted implements ViewerState {
 
     {
       const button = makeIcon({text: '△', title: 'Edit Polygon Configuration'});
-      button.style.paddingBottom = '0.24em';
       this.registerEventListener(button, 'click', () => {
         this.editPolygonOptions();
       });
