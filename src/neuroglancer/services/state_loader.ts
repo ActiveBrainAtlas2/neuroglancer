@@ -483,12 +483,13 @@ export class StateLoader extends RefCounted {
 
     /**
      * This is used when the user clicks the 'Save Annotations' button.
-     * This is not being used as it saves the current annotation layer
-     * and it also saves the entire JSON state. This takes too long.
+     * It first saves the entire JSON state as each layer needs to be saved
+     * so the on each annotation layer, the data is ready to be parsed by
+     * the saveannotations method
      * @param layerName The name of the layer the user is saving.
      * @returns Nothing if there is an error.
      */
-    public saveAnnotationsAndState(layerName: string): void {
+    public saveAnnotations(layerName: string): void {
         const comments = this.input.value;
         if (comments.length === 0) {
             StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
@@ -518,11 +519,11 @@ export class StateLoader extends RefCounted {
         });
     }
     /**
-     * This is used when the user clicks the 'Save Annotations' button.
+     * This is only saves the current annotation layer.
      * @param layerName The name of the layer the user is saving.
      * @returns Nothing if there is an error.
      */
-    public saveAnnotations(layerName: string): void {
+    public saveCurrentAnnotationLayer(layerName: string): void {
 
         this.stateAPI.saveAnnotations(this.stateID, layerName).then(() => {
             StatusMessage.showTemporaryMessage(`Annotations were sent to the database.`);
