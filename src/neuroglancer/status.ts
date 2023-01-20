@@ -106,6 +106,7 @@ export class StatusMessage {
     this.element.appendChild(button);
   }
 
+
   static showMessage(message: string): StatusMessage {
     const msg = new StatusMessage();
     msg.element.textContent = message;
@@ -119,4 +120,6 @@ export class StatusMessage {
     window.setTimeout(() => msg.dispose(), closeAfter);
     return msg;
   }
+  
+  
 }

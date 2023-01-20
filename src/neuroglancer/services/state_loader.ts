@@ -19,6 +19,8 @@ import { getCachedJson } from 'neuroglancer/util/trackable';
 import { AppSettings } from 'neuroglancer/services/service';
 import { User } from 'neuroglancer/services/user_loader';
 import { Segmentation, State } from 'neuroglancer/services/state';
+
+
 /**
  * Fuzzy search algorithm from https://github.com/bevacqua/fuzzysearch in Typescript.
  * @param needle
@@ -187,7 +189,7 @@ export class StateAPI {
 
     async newState(state: State): Promise<State> {
         const url = this.stateUrl;
-        const body = {
+        const json_body = {
             id: state['state_id'],
             owner: state['owner'],
             comments: state['comments'],
@@ -201,7 +203,7 @@ export class StateAPI {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(body, null, 0),
+            body: JSON.stringify(json_body, null, 0),
         });
         const json = await response.json();
         const href = new URL(location.href);
@@ -220,7 +222,7 @@ export class StateAPI {
 
     async saveState(stateID: number | string, state: State): Promise<State> {
         const url = `${this.stateUrl}/${stateID}`;
-        const body = {
+        const json_body = {
             id: state['state_id'],
             owner: state['owner'],
             comments: state['comments'],
@@ -229,14 +231,33 @@ export class StateAPI {
             readonly: state['readonly']
         };
 
+        let size = encodeURI(JSON.stringify(json_body)).split(/%..|./).length - 1;
+        let kiloBytes = size / 1024;
+        let megaBytes = kiloBytes / 1024;
+        console.log('Size of JSON state');
+        console.log(megaBytes);
+
+        // let compressed = await compress(json_body);
+        // console.log(compressed);
+
+
+        /*
+        size = encodeURI(JSON.stringify(compressed)).split(/%..|./).length - 1;
+        kiloBytes = size / 1024;
+        megaBytes = kiloBytes / 1024;
+        console.log('Size of compressed JSON state');
+        console.log(megaBytes);
+        */
+
         const response = await fetchOk(url, {
             method: 'PUT',
             credentials: 'omit',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(body, null, 0),
+            body: JSON.stringify(json_body, null, 0),
         });
+
         const json = await response.json();
         return {
             state_id: json['id'],
@@ -490,6 +511,8 @@ export class StateLoader extends RefCounted {
      * @returns Nothing if there is an error.
      */
     public saveAnnotations(layerName: string): void {
+        StatusMessage.showTemporaryMessage(`Annotations are being sent to the database ...`);
+
         const comments = this.input.value;
         if (comments.length === 0) {
             StatusMessage.showTemporaryMessage(`There was an error: the comment cannot be empty.`);
@@ -507,9 +530,11 @@ export class StateLoader extends RefCounted {
         this.stateAPI.saveState(this.stateID, state).then(() => {
             //@ts-ignore
             this.stateAPI.saveAnnotations(this.stateID, layerName).then((res) => {
-                StatusMessage.showTemporaryMessage(`Annotations were sent to the database.`);
+                // StatusMessage.showTemporaryMessage(`Annotations were sent to the database.`);
+                console.log('Annotations sent');
             }).catch(err => {
-                StatusMessage.showTemporaryMessage(`Internal error: please see debug message.`);
+                const msg = new StatusMessage();
+                msg.setErrorMessage('Internal error sending annotations: ' + err);
                 console.log(err);
             });
 

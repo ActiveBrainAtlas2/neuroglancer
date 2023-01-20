@@ -42,32 +42,32 @@
     "build-docs": "typedoc --options ./typedoc.json && cp docs/modules.html docs/index.html"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.10.6",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
+    "@types/jasmine": "^3.7.7",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
     "benchmark": "^2.1.4",
-    "chokidar": "^3.5.3",
-    "clang-format": "^1.8.0",
+    "chokidar": "^3.5.1",
+    "clang-format": "^1.5.0",
     "colors": "^1.4.0",
     "connect": "^3.7.0",
-    "eslint": "^7.32.0",
+    "eslint": "^7.28.0",
     "event-stream": "^4.0.1",
     "faye-websocket": "^0.11.4",
     "gulp": "^4.0.2",
     "gulp-clang-format": "^1.0.27",
-    "jasmine-core": "^3.99.1",
-    "karma": "^6.3.20",
+    "jasmine-core": "^3.7.1",
+    "karma": "^6.3.4",
     "karma-benchmark": "^1.0.4",
     "karma-benchmark-reporter": "^0.1.1",
-    "karma-chrome-launcher": "^3.1.1",
-    "karma-firefox-launcher": "^2.1.2",
-    "karma-jasmine": "^4.0.2",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-firefox-launcher": "^2.1.1",
+    "karma-jasmine": "^4.0.1",
     "karma-mocha-reporter": "^2.2.5",
     "karma-sourcemap-loader": "^0.3.8",
     "morgan": "^1.10.0",
     "nunjucks": "^3.2.3",
-    "send": "^0.17.2",
-    "yargs": "^17.5.0"
+    "send": "^0.17.1",
+    "yargs": "^17.0.1"
   },
   "dependencies": {
     "@types/codemirror": "5.60.0",
@@ -77,6 +77,7 @@
     "@types/pako": "^1.0.4",
     "@types/webpack-env": "^1.16.4",
     "codemirror": "^5.65.3",
+    "compress-json": "^2.1.2",
     "esbuild": "^0.12.8",
     "firebase": "^9.8.1",
     "gl-matrix": "3.1.0",
@@ -92,5 +93,10 @@
     "typedoc": "^0.23.18",
     "typedoc-plugin-missing-exports": "^1.0.0",
     "typescript": "^4.6.4"
+  },
+  "overrides": {
+    "karma-benchmark": {
+      "karma": "$karma"
+    }
   }
 }
