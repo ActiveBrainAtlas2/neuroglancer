@@ -415,7 +415,6 @@ export class AnnotationLayerView extends Tab {
     this.registerDisposer(
         layer.annotationStates.changed.add(() => this.updateAttachedAnnotationLayerStates()));
     this.headerRow.classList.add('neuroglancer-annotation-list-header');
-
     let toolColorFunc = () => {
       if (this.layer.tool.value instanceof PlaceVolumeTool) {
         const iconDiv = this.layer.tool.value.icon.value;
