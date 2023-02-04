@@ -76,6 +76,8 @@ import { CellSessionDialog } from './cell_session';
 import { ComSessionDialog } from './com_session';
 import { makeVisibilityButton } from '../widget/visibility_button';
 import { Viewer } from '../viewer';
+import {FetchTracingAnnotationWidget} from 'neuroglancer/widget/fetch_tracing_annotation';
+import {SegmentationUserLayer} from 'neuroglancer/segmentation_user_layer';
 
 export interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -393,8 +395,17 @@ export class AnnotationLayerView extends Tab {
       public displayState: AnnotationDisplayState) {
     super();
 
-    const fetchAnnotationWidget = this.registerDisposer(new FetchAnnotationWidget(this));
-    this.element.appendChild(fetchAnnotationWidget.element);
+    const layerName = layer.managedLayer.name;
+
+    if (layerName.includes('mouselight') && layerName.includes('pma')) {
+      const fetchTracingAnnotationWidget = this.registerDisposer(
+        new FetchTracingAnnotationWidget(this.layer as SegmentationUserLayer));
+      this.element.appendChild(fetchTracingAnnotationWidget.element);    }
+
+    else {
+      const fetchAnnotationWidget = this.registerDisposer(new FetchAnnotationWidget(this));
+      this.element.appendChild(fetchAnnotationWidget.element);
+    }
 
     const saveAnnotationWidget = this.registerDisposer(new SaveAnnotationWidget(this));
     this.element.appendChild(saveAnnotationWidget.element);
@@ -404,6 +415,7 @@ export class AnnotationLayerView extends Tab {
     this.registerDisposer(
         layer.annotationStates.changed.add(() => this.updateAttachedAnnotationLayerStates()));
     this.headerRow.classList.add('neuroglancer-annotation-list-header');
+
     let toolColorFunc = () => {
       if (this.layer.tool.value instanceof PlaceVolumeTool) {
         const iconDiv = this.layer.tool.value.icon.value;
@@ -471,7 +483,9 @@ export class AnnotationLayerView extends Tab {
             shader => shader.match(/\bdefaultColor\b/) !== null,
             displayState.shaderControls.processedFragmentMain),
         colorPicker.element));
-    toolbox.appendChild(colorPicker.element);
+    if (!layerName.includes('mouselight')) {
+      toolbox.appendChild(colorPicker.element);
+    }
     
     this.layer.setAnnotationColorPicker();
     if (this.layer.annotationColorPicker !== undefined) toolbox.append(this.layer.annotationColorPicker.element);

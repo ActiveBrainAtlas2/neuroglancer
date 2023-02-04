@@ -1,0 +1,86 @@
+.neuroglancer-fetch-mouselight-tool {
+  /*display: flex;*/
+  border:  1px solid yellow;
+  border-style: solid;
+  width: 100%;
+}
+
+.neuroglancer-mouselight-tool-title {
+  width: 70%;
+  margin: auto;
+  text-align: center;
+  padding: 5px;
+}
+
+.neuroglancer-mouselight-filter-title {
+  width: 70%;
+  margin: auto;
+  text-align: center;
+  padding: 5px;
+}
+
+.neuroglancer-mouselight-newfilter-checkbox {
+  width: 100%;
+  display: flex;
+  /*flex-direction: column;*/
+  align-items: center;
+  position: relative;
+  }
+
+
+.neuroglancer-fetch-mouselight-selection {
+  width: 70%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 5px;
+  text-align: center;
+  padding: 3px;
+
+}
+
+.neuroglancer-fetch-mouselight-threshold {
+  min-width: 0;
+  width: 70%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.neuroglancer-mouselight-neuronpart-title {
+  width: 70%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+
+}
+.neuroglancer-mouselight-neuronpart {
+  width: 70%;
+
+  display: flex;
+  /*flex-direction: column;*/
+  align-items: center;
+  position: relative;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  }
+
+.neuroglancer-fetch-mouselight-button {
+  background-color: #4CAF50; /* Green */
+  width: 80px;
+  margin-bottom: 5px;
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+input, select {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}

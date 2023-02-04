@@ -42,6 +42,7 @@ import {CdfController, getUpdatedRangeAndWindowParameters, RangeAndWindowInterva
 import {makeToolButton} from 'neuroglancer/ui/tool';
 import {ANNOTATE_MERGE_SEGMENTS_TOOL_ID, ANNOTATE_SPLIT_SEGMENTS_TOOL_ID} from 'neuroglancer/ui/segment_split_merge_tools';
 import { SELECT_SEGMENTS_TOOLS_ID } from 'neuroglancer/ui/segment_select_tools';
+import {FetchMouselightNeuronsWidget} from 'neuroglancer/widget/fetch_mouselight_neurons'
 
 const tempUint64 = new Uint64();
 
@@ -779,6 +780,14 @@ export class SegmentDisplayTab extends Tab {
     super();
     const {element} = this;
     element.classList.add('neuroglancer-segment-display-tab');
+
+    const layerName = layer.managedLayer.name;
+    if (layerName.includes('mouselight')) {
+      const fetchMouselightNeuronsWidget = this.registerDisposer(
+        new FetchMouselightNeuronsWidget(this.layer,layerName));
+      this.element.appendChild(fetchMouselightNeuronsWidget.element);
+    }
+
     element.appendChild(
         this.registerDisposer(new DependentViewWidget(
                                   layer.displayState.segmentationGroupState.value.graph,
