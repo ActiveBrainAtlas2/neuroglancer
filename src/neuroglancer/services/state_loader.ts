@@ -171,7 +171,7 @@ export class StateAPI {
                 owner: json['owner'],
                 comments: json['comments'],
                 user_date: json['user_date'],
-                url: json['url'],
+                neuroglancer_state: json['neuroglancer_state'],
                 readonly: json['readonly']
             };
         } catch (err) {
@@ -181,7 +181,7 @@ export class StateAPI {
                 owner: 0,
                 comments: err,
                 user_date: "0",
-                url: {},
+                neuroglancer_state: {},
                 readonly: false
             };
         }
@@ -194,7 +194,7 @@ export class StateAPI {
             owner: state['owner'],
             comments: state['comments'],
             user_date: state['user_date'],
-            url: state['url'],
+            neuroglancer_state: state['neuroglancer_state'],
             readonly: state['readonly']
         };
         const response = await fetchOk(url, {
@@ -215,7 +215,7 @@ export class StateAPI {
             owner: json['owner'],
             comments: json['comments'],
             user_date: json['user_date'],
-            url: json['url'],
+            neuroglancer_state: json['neuroglancer_state'],
             readonly: json['readonly']
         };
     }
@@ -227,7 +227,7 @@ export class StateAPI {
             owner: state['owner'],
             comments: state['comments'],
             user_date: state['user_date'],
-            url: state['url'],
+            neuroglancer_state: state['neuroglancer_state'],
             readonly: state['readonly']
         };
 
@@ -264,7 +264,7 @@ export class StateAPI {
             owner: json['owner'],
             comments: json['comments'],
             user_date: json['user_date'],
-            url: json['url'],
+            neuroglancer_state: json['neuroglancer_state'],
             readonly: json['readonly']
         };
     }
@@ -414,7 +414,7 @@ export class StateLoader extends RefCounted {
             owner: this.user.user_id,
             comments: comments,
             user_date: String(Date.now()),
-            url: getCachedJson(this.viewer.state).value,
+            neuroglancer_state: getCachedJson(this.viewer.state).value,
             readonly: false,
         };
 
@@ -450,7 +450,7 @@ export class StateLoader extends RefCounted {
             owner: this.user.user_id,
             comments: comments,
             user_date: String(Date.now()),
-            url: getCachedJson(this.viewer.state).value,
+            neuroglancer_state: getCachedJson(this.viewer.state).value,
             readonly: false,
         };
 
@@ -481,7 +481,7 @@ export class StateLoader extends RefCounted {
             owner: this.user.user_id,
             comments: comments,
             user_date: String(Date.now()),
-            url: getCachedJson(this.viewer.state).value,
+            neuroglancer_state: getCachedJson(this.viewer.state).value,
             readonly: false
         };
 
@@ -523,7 +523,7 @@ export class StateLoader extends RefCounted {
             owner: this.user.user_id,
             comments: comments,
             user_date: String(Date.now()),
-            url: getCachedJson(this.viewer.state).value,
+            neuroglancer_state: getCachedJson(this.viewer.state).value,
             readonly: false
         };
 

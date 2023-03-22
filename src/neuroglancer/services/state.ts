@@ -3,7 +3,7 @@ export interface State {
     owner: number;
     comments: string;
     user_date: string;
-    url: Record<string, unknown>;
+    neuroglancer_state: Record<string, unknown>;
     readonly: boolean;
 }
 

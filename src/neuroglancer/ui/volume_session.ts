@@ -295,7 +295,6 @@ import { LegacyTool } from './tool';
       const button = document.createElement('button');
 
       button.setAttribute('type', 'button');
-      button.setAttribute('disabled', '');
       button.textContent = 'Segment volume';
       button.addEventListener('click', () => {
         const selectionState : PersistentViewerSelectionState|undefined = 
