@@ -6,7 +6,6 @@
  * operations are take care of by this module interfacing with the REST API.
  */
 import './state_loader.css';
-
 import { Completion } from 'neuroglancer/util/completion';
 import { AutocompleteTextInput } from 'neuroglancer/widget/multiline_autocomplete';
 import { CancellationToken } from 'neuroglancer/util/cancellation';
@@ -144,9 +143,11 @@ export class StateAutocomplete extends AutocompleteTextInput {
  * with the Neuroglancer state.
  */
 export class StateAPI {
-    constructor(private userUrl: string, private stateUrl: string) { }
 
-    public async getUser(): Promise<User> {
+    constructor(private userUrl: string, 
+        private stateUrl: string) { }
+
+    public async getPortalUser(): Promise<User> {
         const url = this.userUrl;
         console.log(url);
 
@@ -157,6 +158,38 @@ export class StateAPI {
         const json = await response.json();
         return json;
     }
+
+
+    public async getUser(): Promise<User> {
+        
+        /*
+        const user_id = this.cookieService.get('id');
+        const username = this.cookieService.get('username');
+        console.log('username = ' + username + ' ID=' + user_id);
+        */
+        const url = this.userUrl;
+        console.log(url);
+
+        const response = await fetchOk(url, {
+            method: 'GET',
+            credentials: 'include',
+        });
+        const json = await response.json();
+        return json;
+    }
+
+    public async getFrontEndUser(): Promise<User> {
+        const url = this.userUrl;
+        console.log(url);
+
+        const response = await fetchOk(url, {
+            method: 'GET',
+            credentials: 'include',
+        });
+        const json = await response.json();
+        return json;
+    }
+
 
     public async getState(stateID: number | string): Promise<State> {
         const url = `${this.stateUrl}/${stateID}`;
@@ -231,24 +264,6 @@ export class StateAPI {
             readonly: state['readonly']
         };
 
-        let size = encodeURI(JSON.stringify(json_body)).split(/%..|./).length - 1;
-        let kiloBytes = size / 1024;
-        let megaBytes = kiloBytes / 1024;
-        console.log('Size of JSON state');
-        console.log(megaBytes);
-
-        // let compressed = await compress(json_body);
-        // console.log(compressed);
-
-
-        /*
-        size = encodeURI(JSON.stringify(compressed)).split(/%..|./).length - 1;
-        kiloBytes = size / 1024;
-        megaBytes = kiloBytes / 1024;
-        console.log('Size of compressed JSON state');
-        console.log(megaBytes);
-        */
-
         const response = await fetchOk(url, {
             method: 'PUT',
             credentials: 'omit',
@@ -291,10 +306,12 @@ export class StateAPI {
     }
 }
 
+
 export const stateAPI = new StateAPI(
     `${AppSettings.API_ENDPOINT}/session`,
     `${AppSettings.API_ENDPOINT}/neuroglancer`,
 );
+
 
 export const urlParams = getUrlParams();
 
@@ -318,9 +335,13 @@ export class StateLoader extends RefCounted {
     constructor(public viewer: Viewer) {
         super();
         this.element.classList.add('state-loader');
-
         this.stateAPI = stateAPI;
 
+        /**
+         * Try getting the session var from Django. If there is none,
+         * try getting the cookies from the angular front end.
+         * that were actually sent from Django when logging in.
+         */
         this.stateAPI.getUser().then(user => {
             this.user = user;
 
@@ -344,7 +365,7 @@ export class StateLoader extends RefCounted {
 
                 this.portalButton = makeIcon({ text: 'Portal', title: 'Admin Portal' });
                 this.registerEventListener(this.portalButton, 'click', () => {
-                  this.redirectPortal();
+                    this.redirectPortal();
                 });
                 this.element.appendChild(this.portalButton);
 
