@@ -153,10 +153,13 @@ export class StateAPI {
     constructor(private stateUrl: string) { }
 
     public async getUser(): Promise<User> {
+        let userjson = {'user_id': 0, 'username': ''};
         let user_id = getCookie('id') ?? 0;
         this.access = getCookie('access');
         let username = getCookie('username') ?? '';
-        let userjson = {'user_id': +user_id, 'username': username};
+        if ((user_id !== undefined) && (username !== undefined)) {
+            userjson = {'user_id': +user_id, 'username': username};
+        }
         return userjson;
     }
 
