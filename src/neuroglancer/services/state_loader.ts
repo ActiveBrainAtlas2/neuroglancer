@@ -19,6 +19,8 @@ import { AppSettings } from 'neuroglancer/services/service';
 import { User } from 'neuroglancer/services/user_loader';
 import { Segmentation, State } from 'neuroglancer/services/state';
 
+import { getCookie } from 'typescript-cookie';
+
 
 /**
  * Fuzzy search algorithm from https://github.com/bevacqua/fuzzysearch in Typescript.
@@ -141,63 +143,34 @@ export class StateAutocomplete extends AutocompleteTextInput {
 /**
  * This class works with the REST API and interfaces
  * with the Neuroglancer state.
+ * Authentication is done via a cookie which is initially set by Django in the neuroglancer/apis.py and neuroglancer/services.py programs
+ * The angular frontend also uses these cookies.
  */
 export class StateAPI {
 
-    constructor(private userUrl: string, 
-        private stateUrl: string) { }
+    access: string | undefined;
 
-    public async getPortalUser(): Promise<User> {
-        const url = this.userUrl;
-        console.log(url);
-
-        const response = await fetchOk(url, {
-            method: 'GET',
-            credentials: 'include',
-        });
-        const json = await response.json();
-        return json;
-    }
-
+    constructor(private stateUrl: string) { }
 
     public async getUser(): Promise<User> {
-        
-        /*
-        const user_id = this.cookieService.get('id');
-        const username = this.cookieService.get('username');
-        console.log('username = ' + username + ' ID=' + user_id);
-        */
-        const url = this.userUrl;
-        console.log(url);
-
-        const response = await fetchOk(url, {
-            method: 'GET',
-            credentials: 'include',
-        });
-        const json = await response.json();
-        return json;
+        let user_id = getCookie('id') ?? 0;
+        this.access = getCookie('access');
+        let username = getCookie('username') ?? '';
+        let userjson = {'user_id': +user_id, 'username': username};
+        return userjson;
     }
 
-    public async getFrontEndUser(): Promise<User> {
-        const url = this.userUrl;
-        console.log(url);
-
-        const response = await fetchOk(url, {
-            method: 'GET',
-            credentials: 'include',
-        });
-        const json = await response.json();
-        return json;
-    }
-
-
+    /**
+     * No authentication/authorization is required to get data
+     * @param stateID The integer from the REST API of the neuroglancer_state id column
+     * @returns the JSON state
+     */
     public async getState(stateID: number | string): Promise<State> {
+
         const url = `${this.stateUrl}/${stateID}`;
 
         try {
-            const response = await fetchOk(url, {
-                method: 'GET',
-            });
+            const response = await fetchOk(url, {method: 'GET'});
             const json = await response.json();
             return {
                 state_id: json['id'],
@@ -220,6 +193,12 @@ export class StateAPI {
         }
     }
 
+    /**
+     * Creates a new neuroglancer_state in the database via a REST POST
+     * Authorization is required
+     * @param state the JSON state
+     * @returns the JSON state
+     */
     async newState(state: State): Promise<State> {
         const url = this.stateUrl;
         const json_body = {
@@ -234,7 +213,8 @@ export class StateAPI {
             method: 'POST',
             credentials: 'omit',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.access}`,
             },
             body: JSON.stringify(json_body, null, 0),
         });
@@ -253,6 +233,12 @@ export class StateAPI {
         };
     }
 
+    /**
+     * This saves the data in the DB via a REST PUT
+     * @param stateID  The integer from the REST API of the neuroglancer_state id column
+     * @param state the JSON state
+     * @returns the JSON state
+     */
     async saveState(stateID: number | string, state: State): Promise<State> {
         const url = `${this.stateUrl}/${stateID}`;
         const json_body = {
@@ -268,7 +254,8 @@ export class StateAPI {
             method: 'PUT',
             credentials: 'omit',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.access}`,
             },
             body: JSON.stringify(json_body, null, 0),
         });
@@ -284,11 +271,23 @@ export class StateAPI {
         };
     }
 
+    /**
+     * This is the method that calls the REST API to run the method that creates the segmenation volume.
+     * Requires authorization
+     * @param stateID The integer from the REST API of the neuroglancer_state id column
+     * @param volumeId A UUID string defining the volume
+     * @returns A JSON object of the Segmenation
+     */
     public async segmentVolume(stateID: number | string, volumeId: string): Promise<Segmentation> {
         const url = `${this.stateUrl.substring(0, this.stateUrl.lastIndexOf('/'))}/contour_to_segmentation/${stateID}/${volumeId}`;
 
         const response = await fetchOk(url, {
             method: 'GET',
+            credentials: 'omit',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.access}`,
+            },
         });
         const json = await response.json();
         return {
@@ -301,16 +300,18 @@ export class StateAPI {
         const url = `${this.stateUrl.substring(0, this.stateUrl.lastIndexOf('/'))}/save_annotations/${stateId}/${layerName}`;
         const response = await fetchOk(url, {
             method: 'GET',
+            credentials: 'omit',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.access}`,
+            },
         });
         return await response.json();
     }
 }
 
 
-export const stateAPI = new StateAPI(
-    `${AppSettings.API_ENDPOINT}/session`,
-    `${AppSettings.API_ENDPOINT}/neuroglancer`,
-);
+export const stateAPI = new StateAPI(`${AppSettings.API_ENDPOINT}/neuroglancer`);
 
 
 export const urlParams = getUrlParams();
@@ -464,7 +465,6 @@ export class StateLoader extends RefCounted {
             StatusMessage.showTemporaryMessage(`Error: the comment cannot be empty.`);
             return;
         }
-        console.log('user id ' + this.user.user_id);
 
         const state = {
             state_id: this.stateID,
