@@ -47,7 +47,6 @@ interface VolumeAnnotationInfo {
   session_id:string,
   prep_id: string,
   annotator: string,
-  source: string,
   brain_region: string,
 }
 
@@ -152,21 +151,21 @@ async updateAnnotationList(type:string) {
       }
        break; 
     } 
-    case 'Volume': { 
+    case 'Volume': {
       const url = `${AppSettings.API_ENDPOINT}/get_volume_list`;
       try {
-        const response:Array<VolumeAnnotationInfo> = await fetchOk(url, {
+        const response: Array<VolumeAnnotationInfo> = await fetchOk(url, {
           method: 'GET',
         }).then(response => {
           return response.json();
         });
         response.forEach(VolumeAnnotationInfo => {
-          const {session_id,prep_id, annotator, source,brain_region} = VolumeAnnotationInfo;
+          const { session_id, prep_id, annotator, brain_region } = VolumeAnnotationInfo;
           const option = document.createElement('option');
           // We need to send the prep_it to get the resolutionUrl correct
           // option.value = `${session_id}`; // NOGOOD
           option.value = `${prep_id}_${session_id}`;
-          option.text = `${prep_id}/${annotator}/${source}/${brain_region}`;
+          option.text = `${prep_id}/${annotator}/${brain_region}`;
           annotationSelection.add(option);
         });
         this.annotationSelection = annotationSelection
@@ -174,8 +173,8 @@ async updateAnnotationList(type:string) {
       } catch (err) {
         StatusMessage.showTemporaryMessage('Failed to load the list of annotations, please refresh.');
       }
-      break; 
-   } 
+      break;
+    } 
  } 
   };
 
