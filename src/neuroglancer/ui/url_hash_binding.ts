@@ -87,6 +87,7 @@ export class UrlHashBinding extends RefCounted {
      * Do not change URL when the current state changes.
      * Instead, when the current state change in the multi-user mode,
      * push the update to Firebase.
+     * 2023-04-24 I put in a check to make sure this.stateData is not undefined.
      */
     private setUrlHash() {
         if (this.stateID && this.multiUserMode) {
@@ -99,7 +100,7 @@ export class UrlHashBinding extends RefCounted {
             const urlData = JSON.parse(urlString);
             const { prevUrlString } = this;
             const sameUrl = prevUrlString === urlString;
-            if (!sameUrl) {
+            if ((!sameUrl) && (this.stateData)) {
                 updateUser(this.stateID, this.user.user_id, this.user.username);
                 this.stateData.neuroglancer_state = urlData;
                 this.updateStateData(this.stateData);
