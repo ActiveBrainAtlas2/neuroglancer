@@ -18,6 +18,8 @@
  * @file Support for editing Neuroglancer state as JSON directly within browser.
  */
  import { Overlay } from 'neuroglancer/overlay';
+import { ref, update } from "firebase/database";
+import { database } from 'neuroglancer/services/firebase';
 import { AnnotationType } from '../annotation';
 import { AnnotationLayerView, getLandmarkList, PlaceCellTool, CellSession, CellToolMode, getCategoryList } from './annotations';
 import { StatusMessage } from '../status';
@@ -94,7 +96,19 @@ import { packColor, parseRGBColorSpecification } from '../util/color';
         this.annotationLayerView.layer.tool.value = new PlaceCellTool(this.annotationLayerView.layer, {}, 
           undefined, CellToolMode.DRAW, this.annotationLayerView.cellSession, this.annotationLayerView.cellButton);
         const cellTool = <PlaceCellTool>this.annotationLayerView.layer.tool.value;
-        cellTool.session.value = <CellSession>{label: description, color: color, category: category};
+        const cell_session = <CellSession>{label: description, color: color, category: category};
+        cellTool.session.value = cell_session;
+        
+        const updates: any = {};
+        updates['/test_annotations_tool/test'] = cell_session;
+        update(ref(database), updates)
+            .then(() => {
+                console.log('Succefully Published Cell Session State to Firebase');
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        
         this.dispose();
       });
       button.classList.add('cell-session-btn');

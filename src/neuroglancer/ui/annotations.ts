@@ -78,6 +78,8 @@ import { makeVisibilityButton } from '../widget/visibility_button';
 import { Viewer } from '../viewer';
 import {FetchTracingAnnotationWidget} from 'neuroglancer/widget/fetch_tracing_annotation';
 import {SegmentationUserLayer} from 'neuroglancer/segmentation_user_layer';
+import { database, dbRef } from 'neuroglancer/services/firebase';
+import { child, get, onValue, ref, update } from "firebase/database";
 
 export interface LandmarkListJSON {
   land_marks: Array<string>,
@@ -2360,6 +2362,25 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
 }
 PlaceVolumeTool.prototype.annotationType = AnnotationType.VOLUME;
 
+function get_cell_tool_state_from_firebase(): any {
+  get(child(dbRef, '/test_annotations_tool/test')).then((snapshot) => {
+    if (snapshot.exists()) {
+      console.log("Successfully retrieved cell sesssion data from firebase");
+      console.log(snapshot.val());
+      return snapshot.val();
+      return ([CellToolMode.DRAW, snapshot.val()]);
+    } else {
+      console.log("Could not retrieve cell sesssion data from firebase");
+      return undefined;
+      return [CellToolMode.NOOP, undefined];
+    }
+  }).catch((error) => {
+    console.error(error);
+  });
+  return undefined;
+  return [CellToolMode.NOOP, undefined];
+}
+
 /**
  * This class is used to create the Cell annotation tool.
  */
@@ -2374,19 +2395,32 @@ export class PlaceCellTool extends PlaceAnnotationTool {
 
   constructor(public layer: UserLayerWithAnnotations, options: any, session: CellSession|undefined = undefined,
      mode: CellToolMode = CellToolMode.NOOP, sessionDiv: HTMLElement|undefined = undefined,
-     iconDiv: HTMLElement|undefined = undefined) {
+     iconDiv: HTMLElement|undefined = undefined, restore_from_firebase: boolean = false) {
     super(layer, options);
-    this.mode = mode;
     const func = this.displayCellSession.bind(this);
     this.sessionWidgetDiv = sessionDiv;
     this.session.changed.add(() => func());
-    this.session.value = session;
     this.active = true;
+
+    if(restore_from_firebase) {
+      const cell_tool_state = get_cell_tool_state_from_firebase();
+      //@ts-ignore
+      session = cell_tool_state;
+      mode = CellToolMode.DRAW;
+    }
+    this.mode = mode;
+    this.session.value = session;
+
+    console.log("printing mode");
+    console.log(this.mode);
+    console.log("printing session");
+    console.log(this.session.value);
+
     this.bindingsRef = new RefCounted();
-    if (mode === CellToolMode.DRAW) {
+    if (this.mode === CellToolMode.DRAW) {
       //@ts-ignore
       setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
-    } else if (mode === CellToolMode.EDIT) {
+    } else if (this.mode === CellToolMode.EDIT) {
       //@ts-ignore
       setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     }
@@ -3015,6 +3049,8 @@ class PlaceEllipsoidTool extends TwoStepAnnotationTool {
   }
 }
 
+
+
 registerLegacyTool(
     ANNOTATE_POINT_TOOL_ID,
     (layer, options) => new PlacePointTool(<UserLayerWithAnnotations>layer, options));
@@ -3038,7 +3074,7 @@ registerLegacyTool(
 registerLegacyTool(
     ANNOTATE_CELL_TOOL_ID,
     //@ts-ignore
-    (layer, options) => undefined);
+    (layer, options) => new PlaceCellTool(<UserLayerWithAnnotations>layer, options, <CellSession>{label: "positive", color: "#ffff00", category: "Premotor"}, CellToolMode.DRAW, undefined, undefined, true));
 registerLegacyTool(
     ANNOTATE_COM_TOOL_ID,
     //@ts-ignore
