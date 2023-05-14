@@ -24,6 +24,9 @@ import { StatusMessage } from '../status';
  import './com_session.css';
 import { LegacyTool } from './tool';
 import { packColor, parseRGBColorSpecification } from '../util/color';
+import { ref, update } from "firebase/database";
+import { database } from 'neuroglancer/services/firebase';
+import { urlParams } from 'neuroglancer/services/state_loader';
  
 /**
  * Centre of mass session element for drawing annotation
@@ -83,7 +86,21 @@ import { packColor, parseRGBColorSpecification } from '../util/color';
         this.annotationLayerView.layer.tool.value = new PlaceComTool(this.annotationLayerView.layer, {}, 
           undefined, ComToolMode.DRAW, this.annotationLayerView.comSession, this.annotationLayerView.comButton);
         const comTool = <PlaceComTool>this.annotationLayerView.layer.tool.value;
-        comTool.session.value = <COMSession>{label: description, color: color};
+        let com_session = <COMSession>{label: description, color: color};
+        comTool.session.value = com_session;
+
+        
+        const updates: any = {};
+        updates[`/test_annotations_tool/com_session/${urlParams.stateID}`] = com_session;
+        updates[`/test_annotations_tool/com_mode/${urlParams.stateID}`] = ComToolMode.DRAW;
+        update(ref(database), updates)
+            .then(() => {
+                console.log('Succefully Published COM State to Firebase');
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
         this.dispose();
       });
       button.classList.add('com-session-btn');

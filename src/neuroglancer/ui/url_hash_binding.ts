@@ -28,6 +28,7 @@ import { State } from 'neuroglancer/services/state';
 import { database, dbRef } from 'neuroglancer/services/firebase';
 import { child, get, onValue, ref, update } from "firebase/database";
 import { User, updateUser } from 'neuroglancer/services/user_loader';
+import { updateGlobalCellSession, updateGlobalCellMode, updateGlobalComSession, updateGlobalComMode } from 'neuroglancer/ui/annotations';
 
 /**
  * @file Implements a binding between a Trackable value and the URL hash state.
@@ -201,6 +202,7 @@ export class UrlHashBinding extends RefCounted {
         this.updateStateData(this.stateData);
         updateUser(this.stateID, this.user.user_id, this.user.username);
         this.checkAndSetStateFromFirebase();
+        this.updateToolStateFromFirebase();
     }
 
     /**
@@ -218,6 +220,28 @@ export class UrlHashBinding extends RefCounted {
             verifyObject(jsonStateUrl);
             this.root.restoreState(jsonStateUrl);
             this.prevUrlString = JSON.stringify(jsonStateUrl);
+        });
+    }
+
+    private updateToolStateFromFirebase() {
+        const stateRefCellSession = ref(database, `/test_annotations_tool/test/${this.stateID}`);
+        onValue(stateRefCellSession, (snapshot) => {
+            updateGlobalCellSession(snapshot.val());
+        });
+
+        const stateRefCellMode = ref(database, `/test_annotations_tool/mode/${this.stateID}`);
+        onValue(stateRefCellMode , (snapshot) => {
+            updateGlobalCellMode(snapshot.val());
+        });
+
+        const stateRefComSession = ref(database, `/test_annotations_tool/com_session/${this.stateID}`);
+        onValue(stateRefComSession, (snapshot) => {
+            updateGlobalComSession(snapshot.val());
+        });
+
+        const stateRefComMode = ref(database, `/test_annotations_tool/com_mode/${this.stateID}`);
+        onValue(stateRefComMode, (snapshot) => {
+            updateGlobalComMode(snapshot.val());
         });
     }
 

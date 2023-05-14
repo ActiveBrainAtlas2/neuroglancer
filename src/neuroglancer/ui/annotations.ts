@@ -2360,6 +2360,18 @@ export class PlaceVolumeTool extends PlaceCollectionAnnotationTool {
 }
 PlaceVolumeTool.prototype.annotationType = AnnotationType.VOLUME;
 
+let glocal_cell_session: CellSession|undefined = undefined;
+
+let glocal_cell_mode: CellToolMode = CellToolMode.NOOP;
+
+export function updateGlobalCellSession(session: CellSession|undefined = undefined) {
+  glocal_cell_session = session;
+}
+
+export function updateGlobalCellMode(mode: CellToolMode = CellToolMode.NOOP) {
+  glocal_cell_mode = mode;
+}
+
 /**
  * This class is used to create the Cell annotation tool.
  */
@@ -2374,19 +2386,27 @@ export class PlaceCellTool extends PlaceAnnotationTool {
 
   constructor(public layer: UserLayerWithAnnotations, options: any, session: CellSession|undefined = undefined,
      mode: CellToolMode = CellToolMode.NOOP, sessionDiv: HTMLElement|undefined = undefined,
-     iconDiv: HTMLElement|undefined = undefined) {
+     iconDiv: HTMLElement|undefined = undefined, restore_from_firebase: boolean = false) {
     super(layer, options);
-    this.mode = mode;
     const func = this.displayCellSession.bind(this);
     this.sessionWidgetDiv = sessionDiv;
     this.session.changed.add(() => func());
-    this.session.value = session;
     this.active = true;
+
+    if(restore_from_firebase) {
+      this.mode = glocal_cell_mode;
+      this.session.value = glocal_cell_session;
+    }
+    else {
+      this.mode = mode;
+      this.session.value = session;
+    }
+
     this.bindingsRef = new RefCounted();
-    if (mode === CellToolMode.DRAW) {
+    if (this.mode === CellToolMode.DRAW) {
       //@ts-ignore
       setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
-    } else if (mode === CellToolMode.EDIT) {
+    } else if (this.mode === CellToolMode.EDIT) {
       //@ts-ignore
       setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     }
@@ -2631,6 +2651,18 @@ export class PlaceCellTool extends PlaceAnnotationTool {
     return ANNOTATE_CELL_TOOL_ID;
   }
 }
+
+let glocal_com_session: CellSession|undefined = undefined;
+
+let glocal_com_mode: ComToolMode = ComToolMode.NOOP;
+
+export function updateGlobalComSession(session: CellSession|undefined = undefined) {
+  glocal_com_session = session;
+}
+
+export function updateGlobalComMode(mode: ComToolMode = ComToolMode.NOOP) {
+  glocal_com_mode = mode;
+}
 /**
  * This class is used to create the Centre of Mass (COM) annotation tool.
  */
@@ -2645,19 +2677,27 @@ export class PlaceComTool extends PlaceAnnotationTool {
 
   constructor(public layer: UserLayerWithAnnotations, options: any, session: COMSession|undefined = undefined,
      mode: ComToolMode = ComToolMode.NOOP, sessionDiv: HTMLElement|undefined = undefined,
-     iconDiv: HTMLElement|undefined = undefined) {
+     iconDiv: HTMLElement|undefined = undefined, restore_from_firebase: boolean = false) {
     super(layer, options);
-    this.mode = mode;
     const func = this.displayComSession.bind(this);
     this.sessionWidgetDiv = sessionDiv;
     this.session.changed.add(() => func());
-    this.session.value = session;
     this.active = true;
     this.bindingsRef = new RefCounted();
-    if (mode === ComToolMode.DRAW) {
+
+    if(restore_from_firebase) {
+      this.mode = glocal_com_mode;
+      this.session.value = glocal_com_session;
+    }
+    else {
+      this.mode = mode;
+      this.session.value = session;
+    }
+
+    if (this.mode === ComToolMode.DRAW) {
       //@ts-ignore
       setPointDrawModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
-    } else if (mode === ComToolMode.EDIT) {
+    } else if (this.mode === ComToolMode.EDIT) {
       //@ts-ignore
       setPointEditModeInputEventBindings(this.bindingsRef, window['viewer'].inputEventBindings);
     }
@@ -3015,6 +3055,8 @@ class PlaceEllipsoidTool extends TwoStepAnnotationTool {
   }
 }
 
+
+
 registerLegacyTool(
     ANNOTATE_POINT_TOOL_ID,
     (layer, options) => new PlacePointTool(<UserLayerWithAnnotations>layer, options));
@@ -3037,12 +3079,10 @@ registerLegacyTool(
     (layer, options) => undefined);
 registerLegacyTool(
     ANNOTATE_CELL_TOOL_ID,
-    //@ts-ignore
-    (layer, options) => undefined);
+    (layer, options) => new PlaceCellTool(<UserLayerWithAnnotations>layer, options, undefined, CellToolMode.NOOP, undefined, undefined, true));
 registerLegacyTool(
     ANNOTATE_COM_TOOL_ID,
-    //@ts-ignore
-    (layer, options) => undefined);
+    (layer, options) => new PlaceComTool(<UserLayerWithAnnotations>layer, options, undefined, ComToolMode.NOOP, undefined, undefined, true));
 
 const newRelatedSegmentKeyMap = EventActionMap.fromObject({
   'enter': {action: 'commit'},
